@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
+    <script src="/js/Draw.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>layout - 01</title>
   </head>
@@ -55,22 +56,24 @@
 
           <div id="body" hidden>
 
-            <div layout data-layout-x="1" data-layout-y="1">
+            <div layout data-layout-grid="1-1">
               <div table>
                 <section title>
                   <h3>Title</h3><h5>subtitle</h5><h6>description</h6>
                 </section>
                 <section header>
-                  <div col>col 1</div>
-                  <div col>col 2</div>
-                  <div col>col 3</div>
+                  <template id="col">
+                    <span col></span>
+                  </template>
+                  <div row></div>
                 </section>
 
-                <section body>body table
+                <section body>
+                  <template id="row"><div row></div></template>
 
                 </section>
 
-                <section footer>footer table
+                <section footer>
 
                 </section>
 

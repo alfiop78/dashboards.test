@@ -86,11 +86,12 @@ footer div span{color: #3a3a3a;}
 
 }
 
-div[layout][data-layout-x='1'][data-layout-y='1'] > div[table]{display: grid;grid-template-rows: auto; grid-template-areas: "title" "header" "body" "footer";}
+div[layout][data-layout-grid='1-1'] > div[table]{display: grid;grid-template-rows: auto; grid-template-areas: "title" "header" "body" "footer";}
 section[title]{display: grid;grid-area: title;}
-section[header]{display: grid;grid-area: header;grid-template-columns: auto;grid-auto-flow: column;grid-column-gap: 16px;}
-section[body]{display: grid;grid-area: body;}
+section[header]{display: grid;grid-area: header;grid-template-columns: auto;grid-auto-flow: row;grid-column-gap: 16px;}
+section[body]{display: grid;grid-area: body;grid-template-columns: auto;grid-auto-flow: row;grid-column-gap: 16px;}
 section[footer]{display: grid;grid-area: footer;}
 
-
-section[header] > div[col]{background: var(--main-primary-color);padding: 1.5em;border-radius: 4px;}
+div[row] {display: grid; grid-template-columns: auto;grid-auto-flow: column;grid-column-gap: 8px;}
+section[header] span[col]{background: var(--main-primary-color);padding: 1.5em;border-radius: 4px;}
+section[body] span[col]{;padding: 1.5em;}
