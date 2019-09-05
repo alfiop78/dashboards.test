@@ -35,18 +35,32 @@ var App = new Application();
           // console.log(request.response);
 
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
+          // console.log(Object.keys(response[0]).length); // quante colonne ci sono
+          // console.log(Object.keys(response[0])); // colonne estratte dalla query
+
           // console.log(Object.keys(response[0])[0]); // nome colonna
           // console.log(Object.keys(response[0])[1]); // nome colonna
           // aggiungo le colonne
           let table = document.getElementById('dealers');
-
           app.Draw = new Draw(table);
-          app.Draw.addColumn('ID');
-          app.Draw.addColumn('Dealer');
+          // Opzione 1 - aggiungo tutte le colonne della query
+          Object.keys(response[0]).forEach((el) => {
+            // console.log('col:'+el);
+            app.Draw.addColumn(el);
+          });
+          // Opzione 2 - aggiungo manualmetne le colonne
+          // app.Draw.addColumn('ID');
+          // app.Draw.addColumn('Dealer');
+
+          // aggiungo le righe
           for (let i in response) {
-            // console.log(response[i]);
-            app.Draw.addRow([response[i].id, response[i].descrizione]);
+            // console.log(Object.values(response[i]));
+            // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
+            app.Draw.addRow(Object.values(response[i]));
+
+            // Opzione 2 - Aggiunta colonne manualmente
+            // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
           }
 
 
