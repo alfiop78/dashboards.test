@@ -7,7 +7,7 @@
 var App = new Application();
 (() => {
   var app = {
-    Draw : new Draw()
+    Draw : null
 
   };
 
@@ -25,6 +25,7 @@ var App = new Application();
 
 
   app.getData = function() {
+    // TODO: utilizzare le promise
     var url = "/ajax/chart.php";
 
     var request = new XMLHttpRequest();
@@ -38,6 +39,9 @@ var App = new Application();
           // console.log(Object.keys(response[0])[0]); // nome colonna
           // console.log(Object.keys(response[0])[1]); // nome colonna
           // aggiungo le colonne
+          let table = document.getElementById('dealers');
+
+          app.Draw = new Draw(table);
           app.Draw.addColumn('ID');
           app.Draw.addColumn('Dealer');
           for (let i in response) {
