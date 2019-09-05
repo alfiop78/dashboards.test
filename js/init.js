@@ -43,7 +43,14 @@ var App = new Application();
           // console.log(Object.keys(response[0])[1]); // nome colonna
           // aggiungo le colonne
           let table = document.getElementById('dealers');
-          app.Draw = new Draw(table);
+          let options =
+            {
+            'cols' : [
+              {'col': 0, 'visible': false},
+              {'col': 1, 'visible': true}
+            ]
+            };
+          app.Draw = new Draw(table, options);
           // Opzione 1 - aggiungo tutte le colonne della query
           Object.keys(response[0]).forEach((el) => {
             // console.log('col:'+el);
@@ -62,6 +69,8 @@ var App = new Application();
             // Opzione 2 - Aggiunta colonne manualmente
             // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
           }
+
+          app.Draw.draw();
 
 
 

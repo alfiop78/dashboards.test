@@ -1,9 +1,11 @@
 class Draw {
-  constructor(table) {
+  constructor(table, options) {
     /*
     * table è il riferimento all'elemento table nel DOM
     */
-    console.log(table);
+    // console.log(table);
+    // console.log(options);
+    this.options = options;
     this.table = table;
     this.headerSection = table.querySelector('section[header]');
     this.bodySection = table.querySelector('section[body]');
@@ -13,11 +15,14 @@ class Draw {
   }
 
   addColumn(colName) {
-    this.col = this.tmplCol.content.cloneNode(true);
-    this.col.querySelector('span[col]').innerHTML = colName;
+    this.colTmpl = this.tmplCol.content.cloneNode(true);
+    this.col = this.colTmpl.querySelector('span[col]');
+    this.col.innerHTML = colName;
+    // aggiungo un id alla colonna
+    this.col.setAttribute("data-colID", this.headerSection.querySelector('div[row]').childElementCount);
     this.headerSection.querySelector('div[row]').appendChild(this.col);
-    let colsCount = this.headerSection.querySelector('div[row]').childElementCount;
-    this.headerSection.querySelector('div[row]').style.gridTemplateColumns = "repeat("+colsCount+", calc(100% / "+colsCount+"))";
+    // let colsCount = this.headerSection.querySelector('div[row]').childElementCount;
+    // this.headerSection.querySelector('div[row]').style.gridTemplateColumns = "repeat("+colsCount+", calc(100% / "+colsCount+"))";
   }
 
   addRow(rowValues) {
@@ -34,9 +39,10 @@ class Draw {
 
     // NOTE: Utilizzando le arrwFunction posso referenziare, con this, l'oggetto esterno alla function
     rowValues.forEach((el) => {
-      this.colT = this.tmplCol.content.cloneNode(true);
-      this.col = this.colT.querySelector('span[col]');
+      this.colTmpl = this.tmplCol.content.cloneNode(true);
+      this.col = this.colTmpl.querySelector('span[col]');
       this.col.innerHTML = el;
+      this.col.setAttribute("data-colID", this.row.childElementCount);
       this.row.appendChild(this.col);
       this.row.style.gridTemplateColumns = "repeat("+colsCount+", calc(100% / "+colsCount+"))";
     });
@@ -47,7 +53,32 @@ class Draw {
     // rowValues.forEach(function(el) {
     //   console.log(this.row);
     // });
+  }
 
+  calcColumns() {
+    let colsCount = this.headerSection.querySelector('div[row]').childElementCount;
+    this.headerSection.querySelector('div[row]').style.gridTemplateColumns = "repeat("+colsCount+", calc(100% / "+colsCount+"))";
+  }
+
+  draw() {
+    this.calcColumns();
+    this.option();
+  }
+
+  option() {
+    console.log(this.options);
+    this.propertyOpt = this.options.cols; // vanno ciclate le proprietà impostate nelle options
+    console.log(this.propertyOpt);
+    console.log(this.propertyOpt[0].col);
+    let col = this.propertyOpt[0].col; // index della colonna impostato
+    console.log(this.propertyOpt[0].visible);
+    // console.log(this.table.querySelectorAll('span[col][data-colID="'+col+'"]')); // elenco della colonna
+    this.table.querySelectorAll('span[col][data-colID="'+col+'"]').forEach((el) => {
+      console.log(el);
+      // el.hidden = true;
+      el.parentElement.removeChild(el);
+    });
+    this.calcColumns();
 
   }
 }
