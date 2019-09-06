@@ -46,8 +46,8 @@ var App = new Application();
           let options =
             {
             'cols' : [
-              {'col': 0, 'visible': false},
-              {'col': 1, 'visible': true}
+              {'col': 0, 'hidden': true},
+              {'col': 1, 'hidden': false}
             ]
             };
           app.Draw = new Draw(table, options);
