@@ -42,7 +42,7 @@ var App = new Application();
           // console.log(Object.keys(response[0])[0]); // nome colonna
           // console.log(Object.keys(response[0])[1]); // nome colonna
           // aggiungo le colonne
-          let table = document.getElementById('dealers');
+          let table = document.getElementById('table-layout-1');
           let options =
             {
             'cols' : [

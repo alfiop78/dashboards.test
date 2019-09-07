@@ -87,29 +87,23 @@ footer div span{color: #3a3a3a;}
 
 }
 
-div[layout][data-layout-grid='1-1'] > div[table]{display: grid;grid-template-rows: auto; grid-template-areas: "title" "bodytable";}
-section[title]{display: grid;grid-area: title;}
-section[table]{display: grid;grid-area: bodytable;grid-template-areas: "header" "body" "footer";
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
-section[table] > section[header]{display: grid;grid-area: header;grid-template-columns: auto;grid-auto-flow: row;grid-column-gap: 16px;}
-section[body]{display: grid;grid-area: body;background: #ffffff4d;font-size: .8rem;text-transform: uppercase;
-  max-height: calc(56px * 6);overflow-y: scroll;
-}
-section[footer]{display: grid;grid-area: footer;}
-
-div[row] {display: grid; grid-template-columns: auto;grid-auto-flow: column;/*grid-column-gap: 2px;*/}
-section[header] span[col]{background: var(--main-color-header-table);padding: 1.5em;border-radius: 2px;}
-/*prima e ultima col non hanno il margine*/
-/* NOTE: span[col]:first-child, span[col]:not(.column) + .column{margin-left: 0;} la prima colonaa oppure la prima colonna non nascosta */
-span[col]:first-child{margin-left: 0;}
-span[col]:last-child{margin-right: 0;}
-/*tutte le colonne centrali hanno un margine left e right di 1px*/
-span[col]{margin: 0 1px;}
-section[body] span[col]{padding: 1.5em;}
-section[body] div[row]{border-bottom: solid thin #3c404326;grid-template-rows: 55px;}
-
-section[body]::-webkit-scrollbar{display: none;}
-
 /*table*/
-table > tbody{background-color: var(--main-color-header-table);}
-table > tbody th, table > tr > td{padding: 1em;}
+section[table]{background-color: white;border-radius: 6px;/*max-height: 400px;overflow-y: scroll;*/margin: 1em auto;letter-spacing: .45px;text-transform: uppercase;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
+section[table] tbody::-webkit-scrollbar{display: none;} /* nascondo la scrollbar */
+table{width: 100%;border-collapse: collapse;}
+table > caption{font-size: 1rem;padding: 1em;background: #d2d29e9e;}
+table > thead{font-size: .83rem;background: #dcdcdc52;}
+table tbody{font-size: .8rem;}
+th, td{padding: 1em;text-align: left;border-bottom: solid thin #d2d2d24f;}
+
+tbody {
+    display:block;
+    height:400px;
+    overflow:auto;
+}
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
