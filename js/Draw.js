@@ -3,16 +3,14 @@ class Draw {
     /*
     * table è il riferimento all'elemento table nel DOM
     */
-    // console.log(table);
-    // console.log(options);
     this.options = options;
     this.table = table;
   }
 
   addColumn(colName) {
-    let th = document.createElement('th');
-    th.innerHTML = colName;
-    this.table.querySelector('thead tr').appendChild(th);
+    this.th = document.createElement('th');
+    this.th.innerHTML = colName;
+    this.table.querySelector('thead tr').appendChild(this.th);
   }
 
   addRow(rowValues) {
@@ -35,25 +33,13 @@ class Draw {
   }
 
   draw() {
-    // this.option();
-    // this.optionTEST();
-    // this.calcColumns();
+    // TODO: qui si dovrebbe impostare una class che applica una transition per visualizzare la table
+    this.option();
   }
 
   option() {
-    // console.log(this.options);
-    this.propertyOpt = this.options.cols; // vanno ciclate le proprietà impostate nelle options
-    // console.log(this.propertyOpt);
-    // console.log(this.propertyOpt[0].col);
-    let col = this.propertyOpt[0].col; // index della colonna impostato
-    // console.log(this.propertyOpt[0].visible);
-    // console.log(this.table.querySelectorAll('span[col][data-colID="'+col+'"]')); // elenco della colonna
-    this.table.querySelectorAll('span[col][data-colID="'+col+'"]').forEach((el) => {
-      // console.log(el);
-      // el.hidden = true;
-      // el.classList.remove('column');
-      // el.parentElement.removeChild(el);
-    });
+    console.log(this.options);
+    console.log(Object.keys(this.options));
 
   }
 }

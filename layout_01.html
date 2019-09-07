@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/css/md-loader.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-controls.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
+    <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
     <script src="/js/Draw.js"></script>
@@ -56,22 +57,67 @@
 
           <div id="body" hidden>
 
-            <section table>
-              <table id="table-layout-1">
-                <caption>Monthly savings</caption>
-                <thead>
-                  <tr></tr>
-                </thead>
+            <div class="layout">
+              <section title>
+                <h3>Title</h3>
+                <h5>Subtitle</h5>
+              </section>
+              <section params>
+                <div class="params column">
 
-                <tbody></tbody>
+                  <div class="cell-full md-field">
+                    <input id="params-01" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
+                    <label for="brandId">Marca</label>
+                  </div>
+                  <div class="cell-full md-field">
+                    <input id="params-02" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
+                    <label for="brandId">Marca</label>
+                  </div>
+                  <div class="cell-full md-field">
+                    <input id="params-03" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
+                    <label for="brandId">Marca</label>
+                  </div>
+                  <div class="cell-full md-field">
+                    <input id="params-03" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
+                    <label for="brandId">Marca</label>
+                  </div>
 
-                <tfoot>
-                  <tr><td>Total</td></tr>
-                </tfoot>
+                </div>
 
-              </table>
+              </section>
+              <section body>
+                <section table>
+                  <table id="table-layout-1" header-fixed>
+                    <caption>caption table</caption>
+                    <thead>
+                      <tr></tr>
+                    </thead>
 
-            </section>
+                    <tbody></tbody>
+
+                    <tfoot>
+                      <tr><td>Total</td></tr>
+                      <tr>
+                        <td>
+                          <div class="cell-full md-field">
+                            <input id="search" type="search" autocomplete="off" required onfocus="this.select()" />
+                            <label for="search">Ricerca</label>
+                          </div>
+                        </td>
+                        <!-- <td>
+                          pagination
+                        </td> -->
+                      </tr>
+                    </tfoot>
+
+                  </table>
+
+                </section>
+              </section>
+
+            </div>
+
+
 
 
 
