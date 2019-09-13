@@ -91,28 +91,33 @@ var App = new Application();
   app.getData();
 
   document.getElementById('search').oninput = function(e) {
-    console.log(this.value);
+    console.log(this.value.toUpperCase());
     // TODO: recupero, dalla table, le righe e le inserisco in un array per poter utilizzare indexOf
     // console.log(document.querySelectorAll('table tr[row="body"]'));
     // var table = document.getElementById('table-layout-1');
     let table = document.querySelector('table > tbody');
+    let rows = [];
     // console.log(table.rows.length);
     // console.log(table.rows);
     for (let i = 0; i < table.rows.length; i++) {
-      console.log(table.rows[i]);
-      console.log(table.rows[i].cells[1]);
+      // console.log(table.rows[i]);
+      // console.log(table.rows[i].cells[1]);
+      let cells = [];
+      for (let n = 0; n < table.rows[i].cells.length; n++) {
+        // console.log(table.rows[i].cells[n].innerText);
+        // ... oppure ...
+        // console.log(table.rows[i].cells.item(n).innerText);
+        cells.push(table.rows[i].cells[n].innerText);
+        // arrayTableContent.push(table.rows[i].cells[n].innerText);
+        if (cells.indexOf(this.value.toUpperCase()) !== -1) {
+          console.log(table.rows[i]);
+          console.log(i);
+          console.log('trovata');
+          table.rows[i].style.backgroundColor = "red";
+        }
+      }
+      rows.push(cells);
     }
-
-    // let arr = [];
-    // for (var r = 0, n = table.rows.length; r < n; r++) {
-    //   for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
-    //     console.log(table.rows[r].cells[c].innerHTML);
-    //     // console.log(table.rows[r].cells[c]);
-    //     let value = table.rows[r].cells[c].innerHTML;
-    //     arr.push(value);
-    //   }
-    // }
-    // console.log(arr);
   }
 
 
