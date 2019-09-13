@@ -48,7 +48,8 @@ var App = new Application();
             'cols' : [
               {'col': 0, 'hidden': true},
               {'col': 1, 'hidden': false}
-            ]
+            ],
+            'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
           app.Draw = new Draw(table, options);
           // Opzione 1 - aggiungo tutte le colonne della query
@@ -88,6 +89,31 @@ var App = new Application();
   };
 
   app.getData();
+
+  document.getElementById('search').oninput = function(e) {
+    console.log(this.value);
+    // TODO: recupero, dalla table, le righe e le inserisco in un array per poter utilizzare indexOf
+    // console.log(document.querySelectorAll('table tr[row="body"]'));
+    // var table = document.getElementById('table-layout-1');
+    let table = document.querySelector('table > tbody');
+    // console.log(table.rows.length);
+    // console.log(table.rows);
+    for (let i = 0; i < table.rows.length; i++) {
+      console.log(table.rows[i]);
+      console.log(table.rows[i].cells[1]);
+    }
+
+    // let arr = [];
+    // for (var r = 0, n = table.rows.length; r < n; r++) {
+    //   for (var c = 0, m = table.rows[r].cells.length; c < m; c++) {
+    //     console.log(table.rows[r].cells[c].innerHTML);
+    //     // console.log(table.rows[r].cells[c]);
+    //     let value = table.rows[r].cells[c].innerHTML;
+    //     arr.push(value);
+    //   }
+    // }
+    // console.log(arr);
+  }
 
 
 })();

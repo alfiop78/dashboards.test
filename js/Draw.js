@@ -14,6 +14,7 @@ class Draw {
   }
 
   addRow(rowValues) {
+    // console.log(rowValues);
     this.tr = document.createElement('tr');
     this.tr.setAttribute('row', 'body');
     this.table.querySelector('tbody').appendChild(this.tr);
@@ -42,4 +43,5 @@ class Draw {
     console.log(Object.keys(this.options));
 
   }
+
 }
