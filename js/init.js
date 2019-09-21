@@ -102,18 +102,24 @@ var App = new Application();
     for (let i = 0; i < table.rows.length; i++) {
       // console.log(table.rows[i]);
       // console.log(table.rows[i].cells[1]);
+      table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
+      table.rows[i].style.backgroundColor = "orange";
+      table.rows[i].removeAttribute('found');
+
       let cells = [];
       for (let n = 0; n < table.rows[i].cells.length; n++) {
         // console.log(table.rows[i].cells[n].innerText);
         // ... oppure ...
         // console.log(table.rows[i].cells.item(n).innerText);
         cells.push(table.rows[i].cells[n].innerText);
+
         // arrayTableContent.push(table.rows[i].cells[n].innerText);
-        if (cells.indexOf(this.value.toUpperCase()) !== -1) {
+        if (cells[n].indexOf(this.value.toUpperCase()) !== -1) {
           console.log(table.rows[i]);
           console.log(i);
           console.log('trovata');
           table.rows[i].style.backgroundColor = "red";
+          table.rows[i].setAttribute('found', true);
         }
       }
       rows.push(cells);
