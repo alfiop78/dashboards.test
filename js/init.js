@@ -92,7 +92,7 @@ var App = new Application();
 
   document.getElementById('search').oninput = function(e) {
     (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
-    console.log(this.value.toUpperCase());
+    // console.log(this.value.toUpperCase());
     // recupero, dalla table, le righe e le celle, successivamente inserisco le celle in un array per poter utilizzare indexOf su ogni singolo carattere contenuto nella row
     // NOTE: se si vuole far in modo da ricercare l'esatta occorrenza (inserendo tutta la parola) bisogna eliminare [n] da cells[n] nell'indexOf
     // console.log(document.querySelectorAll('table tr[row="body"]'));
@@ -126,7 +126,6 @@ var App = new Application();
       (founded) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
     }
 
-  }
-
+  };
 
 })();

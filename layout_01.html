@@ -64,22 +64,21 @@
               </section>
               <section params>
                 <div class="params column">
+                  <template id="params">
+                    <div class="cell-full md-field">
+                      <input list="datalistParams" id="paramsId" value="" onclick="this.select()"/>
+                      <label for="paramsId">Params 1</label>
+                      <datalist id="paramsId"></datalist>
+                    </div>
+                  </template>
 
                   <div class="cell-full md-field">
-                    <input id="params-01" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
-                    <label for="brandId">Marca</label>
-                  </div>
-                  <div class="cell-full md-field">
-                    <input id="params-02" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
-                    <label for="brandId">Marca</label>
-                  </div>
-                  <div class="cell-full md-field">
-                    <input id="params-03" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
-                    <label for="brandId">Marca</label>
-                  </div>
-                  <div class="cell-full md-field">
-                    <input id="params-03" type="text" autocomplete="off" required onfocus="this.select()" data-selected-id="0" />
-                    <label for="brandId">Marca</label>
+                    <input list="datalistParams" id="paramsId" value="" onclick="this.select()"/>
+                    <label for="paramsId">Params 1</label>
+                    <datalist id="datalistParams">
+                      <option value="43">43</option>
+                      <option value="444">444</option>
+                    </datalist>
                   </div>
 
                 </div>
