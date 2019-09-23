@@ -29,10 +29,22 @@ class Draw {
   createDatalist() {
     // console.log(this.table.cols.length);
     console.log(this.table.rows.length);
-    this.table.querySelector('tbody').rows.forEach((el, i) => {
-      console.log(el);
-      console.log(i);
-    })
+    this.tbody = this.table.querySelector('tbody');
+    let arrTest = [];
+    for (let i = 0; i < this.tbody.rows.length; i++) {
+      // console.log(this.tbody.rows[i]);
+      // console.log(this.tbody.rows[i].cells[0]);
+      // console.log(this.tbody.rows[i].cells);
+
+      for (let c = 0; c < this.tbody.rows[i].cells.length; c++) {
+        // console.log(this.tbody.rows[i].cells[c]);
+        let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
+        arrTest.push(arr);
+      }
+
+
+    }
+    console.log(arrTest);
   }
 
   addRow(rowValues) {
