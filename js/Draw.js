@@ -26,6 +26,15 @@ class Draw {
     this.paramsParent.appendChild(this.params);
   }
 
+  createDatalist() {
+    // console.log(this.table.cols.length);
+    console.log(this.table.rows.length);
+    this.table.querySelector('tbody').rows.forEach((el, i) => {
+      console.log(el);
+      console.log(i);
+    })
+  }
+
   addRow(rowValues) {
     // console.log(rowValues);
     this.tr = document.createElement('tr');
@@ -33,7 +42,8 @@ class Draw {
     this.table.querySelector('tbody').appendChild(this.tr);
 
     // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
-    rowValues.forEach((el) => {
+    rowValues.forEach((el, i) => {
+      // el contiene il valore della cella
       this.td = document.createElement('td');
       this.td.innerHTML = el;
       this.tr.appendChild(this.td);

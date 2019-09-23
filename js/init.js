@@ -73,6 +73,8 @@ var App = new Application();
             // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
           }
 
+          app.Draw.createDatalist();
+
           app.Draw.draw();
 
 
