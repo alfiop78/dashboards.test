@@ -53,9 +53,11 @@ var App = new Application();
             };
           app.Draw = new Draw(table, options);
           // Opzione 1 - aggiungo tutte le colonne della query
-          Object.keys(response[0]).forEach((el) => {
+          Object.keys(response[0]).forEach((el, i) => {
             // console.log('col:'+el);
             app.Draw.addColumn(el);
+            // aggiungo un filtro per ogni colonna della tabella
+            app.Draw.addParams(el, i);
           });
           // Opzione 2 - aggiungo manualmetne le colonne
           // app.Draw.addColumn('ID');

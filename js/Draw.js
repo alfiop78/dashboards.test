@@ -5,12 +5,25 @@ class Draw {
     */
     this.options = options;
     this.table = table;
+    this.paramsParent = document.querySelector('section[params] > div.params')
   }
 
   addColumn(colName) {
     this.th = document.createElement('th');
     this.th.innerHTML = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
+  }
+
+  addParams(colName, datalistId) {
+    // TODO: aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
+    this.tmplParams = document.getElementById('params');
+    this.tmplContent = this.tmplParams.content.cloneNode(true);
+    this.params = this.tmplContent.querySelector('div.md-field');
+    this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId);
+    this.params.querySelector('datalist').id = "datalist-"+datalistId;
+    this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
+    this.params.querySelector('input').id = "param-"+datalistId;
+    this.paramsParent.appendChild(this.params);
   }
 
   addRow(rowValues) {
