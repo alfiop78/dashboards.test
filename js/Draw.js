@@ -48,6 +48,32 @@ class Draw {
         arr.push(this.tbody.rows[r].cells[c].innerHTML);
       }
       arrColumns.push(arr);
+
+      // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
+      /*
+      callback
+        Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
+      element
+        The current element being processed in the array.
+      index Optional
+        The index of the current element being processed in the array.
+      array Optional
+        The array filter was called upon.
+      thisArg Optional
+        Value to use as this when executing callback.
+      */
+      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      console.log(arrayUnique);
+      this.datalist = document.getElementById('datalist-'+c);
+      arrayUnique.forEach((el, i) => {
+        this.datalistOpt = document.createElement('option');
+        this.datalistOpt.id = i;
+        this.datalistOpt.value = el;
+        this.datalist.appendChild(this.datalistOpt);
+      });
+
+
+
     }
 
     console.log(arrColumns);
