@@ -22,7 +22,9 @@ class Draw {
     this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId);
     this.params.querySelector('datalist').id = "datalist-"+datalistId;
     this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
+    this.params.querySelector('label').innerHTML = colName;
     this.params.querySelector('input').id = "param-"+datalistId;
+
     this.paramsParent.appendChild(this.params);
   }
 
@@ -38,16 +40,15 @@ class Draw {
     console.log(this.tbody.rows[0].cells.length);
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
-      console.log('cols');
       // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
       // console.log(this.tbody.rows[i].cells[c]);
       // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
-      let arr = [];
+      let arrCols = [];
 
       for (let r = 0; r < this.tbody.rows.length; r++) {
-        arr.push(this.tbody.rows[r].cells[c].innerHTML);
+        arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
       }
-      arrColumns.push(arr);
+      arrColumns.push(arrCols);
 
       // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
       /*
@@ -63,7 +64,7 @@ class Draw {
         Value to use as this when executing callback.
       */
       let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
-      console.log(arrayUnique);
+      // console.log(arrayUnique);
       this.datalist = document.getElementById('datalist-'+c);
       arrayUnique.forEach((el, i) => {
         this.datalistOpt = document.createElement('option');
@@ -71,12 +72,7 @@ class Draw {
         this.datalistOpt.value = el;
         this.datalist.appendChild(this.datalistOpt);
       });
-
-
-
     }
-
-    console.log(arrColumns);
   }
 
   addRow(rowValues) {
