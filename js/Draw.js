@@ -30,21 +30,27 @@ class Draw {
     // console.log(this.table.cols.length);
     console.log(this.table.rows.length);
     this.tbody = this.table.querySelector('tbody');
-    let arrTest = [];
-    for (let i = 0; i < this.tbody.rows.length; i++) {
-      // console.log(this.tbody.rows[i]);
-      // console.log(this.tbody.rows[i].cells[0]);
-      // console.log(this.tbody.rows[i].cells);
+    let arrColumns = [];
 
-      for (let c = 0; c < this.tbody.rows[i].cells.length; c++) {
-        // console.log(this.tbody.rows[i].cells[c]);
-        let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
-        arrTest.push(arr);
+    // console.log(this.tbody.rows[i]);
+    // console.log(this.tbody.rows[i].cells[0]);
+    // console.log(this.tbody.rows[i].cells);
+    console.log(this.tbody.rows[0].cells.length);
+
+    for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
+      console.log('cols');
+      // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
+      // console.log(this.tbody.rows[i].cells[c]);
+      // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
+      let arr = [];
+
+      for (let r = 0; r < this.tbody.rows.length; r++) {
+        arr.push(this.tbody.rows[r].cells[c].innerHTML);
       }
-
-
+      arrColumns.push(arr);
     }
-    console.log(arrTest);
+
+    console.log(arrColumns);
   }
 
   addRow(rowValues) {

@@ -58,26 +58,29 @@ var App = new Application();
             app.Draw.addColumn(el);
             // aggiungo un filtro per ogni colonna della tabella
             app.Draw.addParams(el, i);
+
           });
           // Opzione 2 - aggiungo manualmetne le colonne
           // app.Draw.addColumn('ID');
           // app.Draw.addColumn('Dealer');
 
           // aggiungo le righe
+          let arrParams = [];
           for (let i in response) {
             // console.log(Object.values(response[i]));
             // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
             app.Draw.addRow(Object.values(response[i]));
+            arrParams.push(Object.values(response[i]));
 
             // Opzione 2 - Aggiunta colonne manualmente
             // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
           }
 
-          app.Draw.createDatalist();
+          // console.log(arrParams);
+
+          app.Draw.createDatalist(arrParams);
 
           app.Draw.draw();
-
-
 
         } else {
 
