@@ -76,6 +76,11 @@ var App = new Application();
 
           app.Draw.createDatalist();
 
+          document.querySelectorAll('input[list]').forEach((el) => {
+            console.log(el);
+            el.addEventListener('change', app.handlerParams, true);
+          });
+
           app.Draw.draw();
 
         } else {
@@ -89,6 +94,13 @@ var App = new Application();
     request.open('POST', url);
     request.setRequestHeader('Content-Type','application/json');
     request.send();
+  };
+
+  app.handlerParams = function(e) {
+    console.log(this);
+    console.log(e);
+    console.log(e.path[1]);
+    (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
   };
 
   app.getData();
