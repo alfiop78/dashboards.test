@@ -72,7 +72,10 @@ var App = new Application();
             // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
             el.onchange = app.handlerParams;
             // el.addEventListener('change', app.handlerParams, true);
-            el.addEventListener('mousedown', e => {e.target.value = '';});
+            el.addEventListener('mousedown', e => {
+              e.target.value = '';
+              e.target.removeAttribute('activated');
+            });
           });
 
           app.Draw.draw();
@@ -94,38 +97,74 @@ var App = new Application();
     // console.log(this);
     // console.log(e);
     // console.log(e.path[1]);
-    (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
-    app.search(this.value, this.getAttribute('data-param-id'));
-
+    if (this.value.length > 0) {
+      e.path[1].querySelector('label').classList.add('has-content');
+      this.setAttribute('activated', true);
+    } else {
+      e.path[1].querySelector('label').classList.remove('has-content');
+    }
+    app.search();
   };
 
-  app.search = function(value, fromIndexParam) {
-    /*
-    * value : il valore passato dalla datalist
-    * fromIndexParam : indice della datalist, questo servirà per cercare solo in una determinata colonna
-    */
+  app.search = function() {
     let table = document.querySelector('table > tbody');
+
     // console.log(table.rows.length);
     // console.log(table.rows);
     let cells = [];
-    for (let i = 0; i < table.rows.length; i++) {
-      // let founded = false;
-      // console.log(table.rows[i]);
-      // console.log(table.rows[i].cells[1]);
-      table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
-      table.rows[i].removeAttribute('found');
-      table.rows[i].removeAttribute('hidden');
+
+    /* TODO: fromIndexParam credo non serva. Devo verificare, quandi si seleziona un filtro, anche gli altri filtri (se sono !== vuoti)
+    * dovrei ciclare le colonne dove è presente un filtro impostato
+    * Per ogni colonna della tabella verifico se c'è una datalist impostata
+    */
+
+    document.querySelectorAll('input[list][activated="true"]').forEach((el) => {
+      // per ogni input[list] valorizzata applico il filtro alla tabella
+      console.log(el);
+      // console.log(index);
+      let index = +el.getAttribute('data-param-id');
+      console.log(index);
+
+      for (let i = 0; i < table.rows.length; i++) {
+
+        if (el.value.length > 0) {
+
+          if (table.rows[i].cells[index].innerText.toUpperCase() === el.value.toUpperCase()) {
+            table.rows[i].removeAttribute('hidden');
+            console.log('TROVATA');
+            console.log(table.rows[i]);
+            table.rows[i].setAttribute('found', true);
+          } else {
+            table.rows[i].removeAttribute('found');
+            table.rows[i].hidden = true
+          }
+        }
+
+        // (founded) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+      }
+
+    });
 
 
-      // console.log(table.rows[i].cells[fromIndexParam].innerText);
-      cells.push(table.rows[i].cells[fromIndexParam].innerText);
-      // console.log(cells);
-      let tableValue = table.rows[i].cells[fromIndexParam].innerHTML;
-      (cells.indexOf(value.toUpperCase()) !== -1 && tableValue.toUpperCase() === value.toUpperCase()) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
-      // console.log(table.rows[i].cells[fromIndexParam].innerHTML);
-    }
 
-
+    // for (let i = 0; i < table.rows.length; i++) {
+    //   // let founded = false;
+    //   // console.log(table.rows[i]);
+    //   // console.log(table.rows[i].cells[1]);
+    //   table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
+    //   table.rows[i].removeAttribute('found');
+    //   table.rows[i].removeAttribute('hidden');
+    //
+    //
+    //   // console.log(table.rows[i].cells[fromIndexParam].innerText);
+    //   cells.push(table.rows[i].cells[fromIndexParam].innerText);
+    //
+    //   // console.log(cells);
+    //   let tableValue = table.rows[i].cells[fromIndexParam].innerHTML;
+    //
+    //   (cells.indexOf(value.toUpperCase()) !== -1 && tableValue.toUpperCase() === value.toUpperCase()) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+    //   // console.log(table.rows[i].cells[fromIndexParam].innerHTML);
+    // }
   };
 
   app.getData();
