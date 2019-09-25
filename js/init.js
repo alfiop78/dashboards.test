@@ -15,15 +15,6 @@ var App = new Application();
 
   App.init();
 
-  // let obDraw = new Draw();
-  // console.log(obDraw);
-  // obDraw.addColumn('Dealer');
-  // obDraw.addColumn('id');
-  //
-  // obDraw.addRow('GLM');
-  // obDraw.addRow('43');
-
-
   app.getData = function() {
     // TODO: utilizzare le promise
     var url = "/ajax/chart.php";
@@ -78,7 +69,9 @@ var App = new Application();
 
           document.querySelectorAll('input[list]').forEach((el) => {
             console.log(el);
-            el.addEventListener('change', app.handlerParams, true);
+            // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
+            el.onchange = app.handlerParams;
+            // el.addEventListener('change', app.handlerParams, true);
           });
 
           app.Draw.draw();
@@ -101,6 +94,35 @@ var App = new Application();
     console.log(e);
     console.log(e.path[1]);
     (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
+    app.search(this.value, this.getAttribute('data-param-id'));
+
+  };
+
+  app.search = function(value, fromIndexParam) {
+    /*
+    * value : il valore passato dalla datalist
+    * fromIndexParam : indice della datalist, questo servirà per cercare solo in una determinata colonna
+    */
+    let table = document.querySelector('table > tbody');
+    // console.log(table.rows.length);
+    // console.log(table.rows);
+    let cells = [];
+    for (let i = 0; i < table.rows.length; i++) {
+      let founded = false;
+      // console.log(table.rows[i]);
+      // console.log(table.rows[i].cells[1]);
+      table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
+      table.rows[i].removeAttribute('found');
+      table.rows[i].removeAttribute('hidden');
+
+
+      console.log(table.rows[i].cells[fromIndexParam].innerText);
+      cells.push(table.rows[i].cells[fromIndexParam].innerText);
+      console.log(cells);
+      (cells.indexOf(value.toUpperCase()) !== -1) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+    }
+
+
   };
 
   app.getData();

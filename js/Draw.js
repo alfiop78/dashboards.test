@@ -24,6 +24,7 @@ class Draw {
     this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
     this.params.querySelector('label').innerHTML = colName;
     this.params.querySelector('input').id = "param-"+datalistId;
+    this.params.querySelector('input').setAttribute('data-param-id', datalistId);
 
     this.paramsParent.appendChild(this.params);
   }
