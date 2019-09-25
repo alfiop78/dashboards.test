@@ -68,10 +68,11 @@ var App = new Application();
           app.Draw.createDatalist();
 
           document.querySelectorAll('input[list]').forEach((el) => {
-            console.log(el);
+            // console.log(el);
             // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
             el.onchange = app.handlerParams;
             // el.addEventListener('change', app.handlerParams, true);
+            el.addEventListener('mousedown', e => {e.target.value = '';});
           });
 
           app.Draw.draw();
@@ -90,9 +91,9 @@ var App = new Application();
   };
 
   app.handlerParams = function(e) {
-    console.log(this);
-    console.log(e);
-    console.log(e.path[1]);
+    // console.log(this);
+    // console.log(e);
+    // console.log(e.path[1]);
     (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
     app.search(this.value, this.getAttribute('data-param-id'));
 
@@ -108,7 +109,7 @@ var App = new Application();
     // console.log(table.rows);
     let cells = [];
     for (let i = 0; i < table.rows.length; i++) {
-      let founded = false;
+      // let founded = false;
       // console.log(table.rows[i]);
       // console.log(table.rows[i].cells[1]);
       table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
@@ -116,10 +117,12 @@ var App = new Application();
       table.rows[i].removeAttribute('hidden');
 
 
-      console.log(table.rows[i].cells[fromIndexParam].innerText);
+      // console.log(table.rows[i].cells[fromIndexParam].innerText);
       cells.push(table.rows[i].cells[fromIndexParam].innerText);
-      console.log(cells);
-      (cells.indexOf(value.toUpperCase()) !== -1) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+      // console.log(cells);
+      let tableValue = table.rows[i].cells[fromIndexParam].innerHTML;
+      (cells.indexOf(value.toUpperCase()) !== -1 && tableValue.toUpperCase() === value.toUpperCase()) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+      // console.log(table.rows[i].cells[fromIndexParam].innerHTML);
     }
 
 
