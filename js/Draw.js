@@ -32,6 +32,7 @@ class Draw {
   createDatalist() {
     // console.log(this.table.cols.length);
     console.log(this.table.rows.length);
+    
     this.tbody = this.table.querySelector('tbody');
     let arrColumns = [];
 
@@ -103,8 +104,8 @@ class Draw {
   }
 
   option() {
-    console.log(this.options);
-    console.log(Object.keys(this.options));
+    // console.log(this.options);
+    // console.log(Object.keys(this.options));
 
   }
 

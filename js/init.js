@@ -103,68 +103,30 @@ var App = new Application();
     } else {
       e.path[1].querySelector('label').classList.remove('has-content');
     }
-    app.search();
+    app.search(this.getAttribute('data-param-id'), this.value);
+    app.Draw.createDatalist();
   };
 
-  app.search = function() {
+  app.search = function(index, value) {
+    console.log('search');
     let table = document.querySelector('table > tbody');
+    let rows = [];
+    let row = []; // inserisco qui le righe trovate
 
-    // console.log(table.rows.length);
-    // console.log(table.rows);
-    let cells = [];
-
-    /* TODO: fromIndexParam credo non serva. Devo verificare, quandi si seleziona un filtro, anche gli altri filtri (se sono !== vuoti)
-    * dovrei ciclare le colonne dove è presente un filtro impostato
-    * Per ogni colonna della tabella verifico se c'è una datalist impostata
-    */
-
-    document.querySelectorAll('input[list][activated="true"]').forEach((el) => {
-      // per ogni input[list] valorizzata applico il filtro alla tabella
-      console.log(el);
-      // console.log(index);
-      let index = +el.getAttribute('data-param-id');
-      console.log(index);
-
-      for (let i = 0; i < table.rows.length; i++) {
-
-        if (el.value.length > 0) {
-
-          if (table.rows[i].cells[index].innerText.toUpperCase() === el.value.toUpperCase()) {
-            table.rows[i].removeAttribute('hidden');
-            console.log('TROVATA');
-            console.log(table.rows[i]);
-            table.rows[i].setAttribute('found', true);
-          } else {
-            table.rows[i].removeAttribute('found');
-            table.rows[i].hidden = true
-          }
-        }
-
-        // (founded) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
+    for (let i = 0; i < table.rows.length; i++) {
+      if (table.rows[i].cells[index].innerText.toUpperCase() === value.toUpperCase()) {
+        row.push(i);
+        table.rows[i].setAttribute('found', true);
+        table.rows[i].removeAttribute('hidden');
+      } else {
+        table.rows[i].removeAttribute('found');
+        table.rows[i].hidden = true;
       }
+    }
+    rows.push(row);
+    console.log(rows);
 
-    });
 
-
-
-    // for (let i = 0; i < table.rows.length; i++) {
-    //   // let founded = false;
-    //   // console.log(table.rows[i]);
-    //   // console.log(table.rows[i].cells[1]);
-    //   table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
-    //   table.rows[i].removeAttribute('found');
-    //   table.rows[i].removeAttribute('hidden');
-    //
-    //
-    //   // console.log(table.rows[i].cells[fromIndexParam].innerText);
-    //   cells.push(table.rows[i].cells[fromIndexParam].innerText);
-    //
-    //   // console.log(cells);
-    //   let tableValue = table.rows[i].cells[fromIndexParam].innerHTML;
-    //
-    //   (cells.indexOf(value.toUpperCase()) !== -1 && tableValue.toUpperCase() === value.toUpperCase()) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
-    //   // console.log(table.rows[i].cells[fromIndexParam].innerHTML);
-    // }
   };
 
   app.getData();
