@@ -104,7 +104,7 @@ var App = new Application();
       e.path[1].querySelector('label').classList.remove('has-content');
     }
     app.search(this.getAttribute('data-param-id'), this.value);
-    app.Draw.createDatalist();
+    app.Draw.rebuildDatalist();
   };
 
   app.search = function(index, value) {

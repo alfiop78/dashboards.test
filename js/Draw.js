@@ -5,7 +5,7 @@ class Draw {
     */
     this.options = options;
     this.table = table;
-    this.paramsParent = document.querySelector('section[params] > div.params')
+    this.paramsParent = document.querySelector('section[params] > div.params');
   }
 
   addColumn(colName) {
@@ -29,10 +29,46 @@ class Draw {
     this.paramsParent.appendChild(this.params);
   }
 
+  rebuildDatalist() {
+    this.tbody = this.table.querySelector('tbody');
+    let arrColumns = [];
+    for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
+      // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
+      // console.log(this.tbody.rows[i].cells[c]);
+      // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
+      let arrCols = [];
+
+      for (let r = 0; r < this.tbody.rows.length; r++) {
+        // TODO: se la row è nascosta non la inserisco nell'array
+        // console.log(this.tbody.rows[r].getAttribute('hidden'));
+        if (this.tbody.rows[r].getAttribute('found')) {
+          arrCols.push(this.tbody.rows[r].cells[c].innerText);
+        }
+
+      }
+      arrColumns.push(arrCols);
+
+      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      // console.log(arrayUnique);
+      this.datalist = document.getElementById('datalist-'+c);
+      this.options = this.datalist.querySelectorAll('option');
+      for (let i = 0; i < this.options.length; i++) {
+        // console.log(this.options[i]);
+        this.datalist.removeChild(this.options[i]);
+      }
+      arrayUnique.forEach((el, i) => {
+        this.datalistOpt = document.createElement('option');
+        this.datalistOpt.id = i;
+        this.datalistOpt.value = el;
+        this.datalist.appendChild(this.datalistOpt);
+      });
+    }
+  }
+
   createDatalist() {
     // console.log(this.table.cols.length);
     console.log(this.table.rows.length);
-    
+
     this.tbody = this.table.querySelector('tbody');
     let arrColumns = [];
 
