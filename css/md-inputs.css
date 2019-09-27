@@ -402,7 +402,7 @@ input:invalid ~ label.has-content ~ span{visibility: visible;}
     input:valid ~ label.has-content,
     input:read-only ~ label.has-content {font-size:.8rem;top: 8px;}
 
-  input:not([type='checkbox']):not([type='radio']) ~ span{visibility: hidden;position: absolute;right: 12px; top: 12px;}
+  input:not([type='checkbox']):not([type='radio']) ~ span{visibility: visible;;position: absolute;right: -7px; top: 20px;}
   input:not([type='checkbox']):not([type='radio']) ~ span[help]{visibility: visible;}
 
   input:disabled ~ label.has-content{font-size: .75rem;top:8px;}

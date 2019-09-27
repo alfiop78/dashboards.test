@@ -1,16 +1,17 @@
 class Draw {
-  constructor(table, options) {
+  constructor(table, options, data) {
     /*
     * table è il riferimento all'elemento table nel DOM
     */
     this.options = options;
     this.table = table;
+    this.data = data;
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
 
   addColumn(colName) {
     this.th = document.createElement('th');
-    this.th.innerHTML = colName;
+    this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
   }
 
@@ -22,47 +23,16 @@ class Draw {
     this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId);
     this.params.querySelector('datalist').id = "datalist-"+datalistId;
     this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
-    this.params.querySelector('label').innerHTML = colName;
+    this.params.querySelector('label').innerText = colName;
     this.params.querySelector('input').id = "param-"+datalistId;
+    this.params.querySelector('span > i').id = "cancel-"+datalistId;
     this.params.querySelector('input').setAttribute('data-param-id', datalistId);
 
     this.paramsParent.appendChild(this.params);
   }
 
-  rebuildDatalist() {
-    this.tbody = this.table.querySelector('tbody');
-    let arrColumns = [];
-    for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
-      // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
-      // console.log(this.tbody.rows[i].cells[c]);
-      // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
-      let arrCols = [];
+  filterApplied() {
 
-      for (let r = 0; r < this.tbody.rows.length; r++) {
-        // TODO: se la row è nascosta non la inserisco nell'array
-        // console.log(this.tbody.rows[r].getAttribute('hidden'));
-        if (this.tbody.rows[r].getAttribute('found')) {
-          arrCols.push(this.tbody.rows[r].cells[c].innerText);
-        }
-
-      }
-      arrColumns.push(arrCols);
-
-      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
-      // console.log(arrayUnique);
-      this.datalist = document.getElementById('datalist-'+c);
-      this.options = this.datalist.querySelectorAll('option');
-      for (let i = 0; i < this.options.length; i++) {
-        // console.log(this.options[i]);
-        this.datalist.removeChild(this.options[i]);
-      }
-      arrayUnique.forEach((el, i) => {
-        this.datalistOpt = document.createElement('option');
-        this.datalistOpt.id = i;
-        this.datalistOpt.value = el;
-        this.datalist.appendChild(this.datalistOpt);
-      });
-    }
   }
 
   createDatalist() {
@@ -107,7 +77,7 @@ class Draw {
       arrayUnique.forEach((el, i) => {
         this.datalistOpt = document.createElement('option');
         this.datalistOpt.id = i;
-        this.datalistOpt.value = el;
+        this.datalistOpt.value = el.toUpperCase();
         this.datalist.appendChild(this.datalistOpt);
       });
     }

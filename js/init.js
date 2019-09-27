@@ -42,7 +42,7 @@ var App = new Application();
             ],
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
-          app.Draw = new Draw(table, options);
+          app.Draw = new Draw(table, options, response);
           // Opzione 1 - aggiungo tutte le colonne della query
           Object.keys(response[0]).forEach((el, i) => {
             // console.log('col:'+el);
@@ -61,6 +61,7 @@ var App = new Application();
             // console.log(Object.values(response[i]));
             // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
             app.Draw.addRow(Object.values(response[i]));
+            // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
             // Opzione 2 - Aggiunta colonne manualmente
             // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
           }
@@ -72,10 +73,12 @@ var App = new Application();
             // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
             el.onchange = app.handlerParams;
             // el.addEventListener('change', app.handlerParams, true);
-            el.addEventListener('mousedown', e => {
-              e.target.value = '';
-              e.target.removeAttribute('activated');
-            });
+            // el.addEventListener('mousedown', e => {
+            //   e.target.value = '';
+            //   e.target.removeAttribute('activated');
+            // });
+            // evento click su icona cancel
+            el.parentElement.querySelector('span > i').onclick = app.handlerCancel;
           });
 
           app.Draw.draw();
@@ -93,6 +96,14 @@ var App = new Application();
     request.send();
   };
 
+  app.handlerCancel = function(e) {
+    // console.log(this);
+    // console.log(e.path[2].querySelector('input'));
+    e.path[2].querySelector('input').value = '';
+    e.path[2].querySelector('label').classList.remove('has-content');
+    e.path[2].querySelector('input').removeAttribute('activated');
+  };
+
   app.handlerParams = function(e) {
     // console.log(this);
     // console.log(e);
@@ -103,31 +114,75 @@ var App = new Application();
     } else {
       e.path[1].querySelector('label').classList.remove('has-content');
     }
-    app.search(this.getAttribute('data-param-id'), this.value);
-    app.Draw.rebuildDatalist();
+
+    // TODO: recupero tutte le datalist e le passo alla function search per cercare in base a TUTTI i filtri impostati
+    console.log(this.id);
+    let inputDatalists = document.querySelectorAll("input[list][activated]");
+    let cols = [];
+    for (let i = 0; i < inputDatalists.length; i++) {
+      // console.log(inputDatalists[i].getAttribute('data-param-id'));
+      // values.push(inputDatalists[i].value);
+      cols[+inputDatalists[i].getAttribute('data-param-id')] = inputDatalists[i].value;
+      // values['cols'] = +inputDatalists[i].getAttribute('data-param-id');
+    }
+    // console.log(cols);
+    // return;
+
+    app.search(cols);
+
+    // app.search(this.getAttribute('data-param-id'), this.value);
   };
 
-  app.search = function(index, value) {
+  app.search = function(values) {
+    console.log(values);
     console.log('search');
     let table = document.querySelector('table > tbody');
     let rows = [];
-    let row = []; // inserisco qui le righe trovate
+    let cols = [];
+    let found = [];
 
-    for (let i = 0; i < table.rows.length; i++) {
-      if (table.rows[i].cells[index].innerText.toUpperCase() === value.toUpperCase()) {
-        row.push(i);
-        table.rows[i].setAttribute('found', true);
-        table.rows[i].removeAttribute('hidden');
-      } else {
-        table.rows[i].removeAttribute('found');
-        table.rows[i].hidden = true;
+
+    // console.log('riga : '+i);
+    // let row = [];
+
+    values.forEach((value, index) => {
+      let col = [];
+      let row = [];
+      for (let i = 0; i < table.rows.length; i++) {
+
+        if (table.rows[i].cells[index].innerText === value) {
+          row.push(i);
+        }
       }
-    }
-    rows.push(row);
-    console.log(rows);
+      rows[index] = row;
+      console.log(rows);
 
+      // cols[index] = col;
+    });
+    // console.log(cols);
 
   };
+
+
+  // app.search = function(index, value) {
+  //   console.log('search');
+  //   let table = document.querySelector('table > tbody');
+  //   let rows = [];
+  //   let row = []; // inserisco qui le righe trovate
+  //
+  //   for (let i = 0; i < table.rows.length; i++) {
+  //     if (table.rows[i].cells[index].innerText.toUpperCase() === value.toUpperCase()) {
+  //       row.push(i);
+  //       table.rows[i].setAttribute('found', true);
+  //       table.rows[i].removeAttribute('hidden');
+  //     } else {
+  //       table.rows[i].removeAttribute('found');
+  //       table.rows[i].hidden = true;
+  //     }
+  //   }
+  //   rows.push(row);
+  //   console.log(rows);
+  // };
 
   app.getData();
 
