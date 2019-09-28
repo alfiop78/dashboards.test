@@ -157,9 +157,39 @@ var App = new Application();
       rows[index] = row;
       console.log(rows);
 
-      // cols[index] = col;
     });
-    // console.log(cols);
+    /*ricerca*/
+    // FUNZIONANTE DA RIVEDERE
+    // for (let i = 0; i < table.rows.length; i++) {
+    //   console.log(i);
+    //   let a = [i];
+    //   values.forEach((value, colIndex) => {
+    //     console.log(rows[colIndex].includes(i));
+    //     a.push(rows[colIndex].includes(i)); // ok
+    //   });
+    //   console.log(a);
+    // }
+    for (let i = 0; i < table.rows.length; i++) {
+      console.log(i);
+      let rowsObj = new Object;
+      // let rowsArray = [];
+      let found = [];
+      values.forEach((value, colIndex) => {
+        // console.log(rows[colIndex].includes(i));
+        found.push(rows[colIndex].includes(i));
+        // a = {'row' : i, 'colsMatched' : found};
+        rowsObj = {i, found}; // metodo 1
+        // metodo 2
+        // rowsArray['row'] = [i];
+        // rowsArray['row']['cols'] = found;
+        // altro metodo da provare
+        // rowsArray.push([found]);
+      });
+      console.log(rowsObj);
+      // console.log(rowsArray);
+    }
+
+
 
   };
 
