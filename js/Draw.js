@@ -31,10 +31,6 @@ class Draw {
     this.paramsParent.appendChild(this.params);
   }
 
-  filterApplied() {
-
-  }
-
   createDatalist() {
     // console.log(this.table.cols.length);
     console.log(this.table.rows.length);

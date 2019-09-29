@@ -115,38 +115,57 @@ var App = new Application();
       e.path[1].querySelector('label').classList.remove('has-content');
     }
 
-    // TODO: recupero tutte le datalist e le passo alla function search per cercare in base a TUTTI i filtri impostati
+    // recupero tutte le datalist e le passo alla function search per cercare in base a TUTTI i filtri impostati
     console.log(this.id);
-    let inputDatalists = document.querySelectorAll("input[list][activated]");
     let cols = [];
-    for (let i = 0; i < inputDatalists.length; i++) {
-      // console.log(inputDatalists[i].getAttribute('data-param-id'));
-      // values.push(inputDatalists[i].value);
-      cols[+inputDatalists[i].getAttribute('data-param-id')] = inputDatalists[i].value;
-      // values['cols'] = +inputDatalists[i].getAttribute('data-param-id');
-    }
-    // console.log(cols);
-    // return;
+    // let inputDatalists = document.querySelectorAll("input[list][activated]");
+    // console.log(inputDatalists);
+    let filters = Array.from(document.querySelectorAll("input[list][activated]"));
+    // console.log(filters);
+    /* METODO 1 */
+    // for (let i in filters) {
+    //   console.log(filters[i].value);
+    //   cols2[i] = filters[i].value;
+    //
+    // }
+    /* METODO 2 */
+    filters.forEach(function(item) {
+      cols[+item.getAttribute('data-param-id')] = item.value;
+    });
+    console.log(cols);
+    /* METODO 3 */
+
+    // for (let i = 0; i < inputDatalists.length; i++) {
+    //   cols[+inputDatalists[i].getAttribute('data-param-id')] = inputDatalists[i].value;
+    // }
+
+    // creo l'array da passare al metodo search
+
+    // app.Draw.table
+    cols.forEach((colValue, index) => {
+      let row = [];
+      for (let i = 0; i < table.rows.length; i++) {
+
+        if (table.rows[i].cells[index].innerText === colValue) {
+          row.push(i);
+        }
+      }
+      rows[index] = row;
+      // console.log(rows);
+    });
 
     app.search(cols);
-
-    // app.search(this.getAttribute('data-param-id'), this.value);
   };
 
   app.search = function(values) {
-    console.log(values);
+    // TODO: da spostare nella classe
     console.log('search');
     let table = document.querySelector('table > tbody');
     let rows = [];
     let cols = [];
     let found = [];
 
-
-    // console.log('riga : '+i);
-    // let row = [];
-
     values.forEach((value, index) => {
-      let col = [];
       let row = [];
       for (let i = 0; i < table.rows.length; i++) {
 
@@ -155,22 +174,11 @@ var App = new Application();
         }
       }
       rows[index] = row;
-      console.log(rows);
-
+      // console.log(rows);
     });
-    /*ricerca*/
-    // FUNZIONANTE DA RIVEDERE
-    // for (let i = 0; i < table.rows.length; i++) {
-    //   console.log(i);
-    //   let a = [i];
-    //   values.forEach((value, colIndex) => {
-    //     console.log(rows[colIndex].includes(i));
-    //     a.push(rows[colIndex].includes(i)); // ok
-    //   });
-    //   console.log(a);
-    // }
+
     for (let i = 0; i < table.rows.length; i++) {
-      console.log(i);
+      // console.log(i);
       let rowsObj = new Object;
       // let rowsArray = [];
       let found = [];
@@ -185,34 +193,20 @@ var App = new Application();
         // altro metodo da provare
         // rowsArray.push([found]);
       });
-      console.log(rowsObj);
-      // console.log(rowsArray);
+      // console.log(rowsObj);
+      // esamino la riga
+      // console.log(rowsObj.found);
+      if (rowsObj.found.includes(false)) {
+        // console.log('not matched');
+        table.rows[i].removeAttribute('found');
+        table.rows[i].hidden = true;
+      } else {
+        // console.log('matched');
+        table.rows[i].setAttribute('found', true);
+        table.rows[i].removeAttribute('hidden');
+      }
     }
-
-
-
   };
-
-
-  // app.search = function(index, value) {
-  //   console.log('search');
-  //   let table = document.querySelector('table > tbody');
-  //   let rows = [];
-  //   let row = []; // inserisco qui le righe trovate
-  //
-  //   for (let i = 0; i < table.rows.length; i++) {
-  //     if (table.rows[i].cells[index].innerText.toUpperCase() === value.toUpperCase()) {
-  //       row.push(i);
-  //       table.rows[i].setAttribute('found', true);
-  //       table.rows[i].removeAttribute('hidden');
-  //     } else {
-  //       table.rows[i].removeAttribute('found');
-  //       table.rows[i].hidden = true;
-  //     }
-  //   }
-  //   rows.push(row);
-  //   console.log(rows);
-  // };
 
   app.getData();
 
