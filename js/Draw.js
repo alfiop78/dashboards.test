@@ -74,7 +74,7 @@ class Draw {
       arrayUnique.forEach((el, i) => {
         this.datalistOpt = document.createElement('option');
         this.datalistOpt.id = i;
-        this.datalistOpt.value = el.toUpperCase();
+        this.datalistOpt.value = el.toUpperCase().trim();
         this.datalist.appendChild(this.datalistOpt);
       });
     }
@@ -84,13 +84,13 @@ class Draw {
     // console.log(rowValues);
     this.tr = document.createElement('tr');
     this.tr.setAttribute('row', 'body');
-    this.table.querySelector('tbody').appendChild(this.tr);
+    this.tbody.appendChild(this.tr);
 
     // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
     rowValues.forEach((el, i) => {
       // el contiene il valore della cella
       this.td = document.createElement('td');
-      this.td.innerHTML = el;
+      (!el) ? console.log('NULL'): this.td.innerHTML = el.trim();
       this.tr.appendChild(this.td);
     });
 
@@ -101,34 +101,36 @@ class Draw {
     // });
   }
 
-  search(values) {
+  search(cols) {
     console.log('search');
-    let table = document.querySelector('table > tbody');
     let rows = [];
-    let cols = [];
-    let found = [];
 
-    values.forEach((value, index) => {
+    cols.forEach((value, index) => {
       let row = [];
-      for (let i = 0; i < table.rows.length; i++) {
-
-        if (table.rows[i].cells[index].innerText === value) {
+      for (let i = 0; i < this.tbody.rows.length; i++) {
+        // per ogni riga esamino le colonne
+        if (this.tbody.rows[i].cells[index].innerText === value) {
+          //... esamino le celle di ogni colonna appartente alla riga
+          // il valore ricercare è presente in questa riga, la aggiungo all'array rows
           row.push(i);
         }
       }
       rows[index] = row;
-      console.log(rows);
+      // console.log(rows);
     });
 
-    for (let i = 0; i < table.rows.length; i++) {
+    for (let i = 0; i < this.tbody.rows.length; i++) {
+      // per ogni riga da esaminare
       // console.log(i);
       let rowsObj = new Object;
       // let rowsArray = [];
       let found = [];
-      values.forEach((value, colIndex) => {
+      cols.forEach((value, colIndex) => {
+        // se la riga in esame è presente nell'array, seleziono questa colonna come true
         // console.log(rows[colIndex].includes(i));
         found.push(rows[colIndex].includes(i));
         // a = {'row' : i, 'colsMatched' : found};
+        // TODO: provare ad utilizzare l'array al posto dell'Object
         rowsObj = {i, found}; // metodo 1
         // metodo 2
         // rowsArray['row'] = [i];
@@ -139,14 +141,15 @@ class Draw {
       // console.log(rowsObj);
       // esamino la riga
       console.log(rowsObj.found);
+      // se nell'object (oppure array) rowsObj è presente una colonna con 'false' NON seleziono la riga
       if (rowsObj.found.includes(false)) {
-        console.log('not matched');
-        table.rows[i].removeAttribute('found');
-        table.rows[i].hidden = true;
+        // console.log('not matched');
+        this.tbody.rows[i].removeAttribute('found');
+        this.tbody.rows[i].hidden = true;
       } else {
-        console.log('matched');
-        table.rows[i].setAttribute('found', true);
-        table.rows[i].removeAttribute('hidden');
+        // console.log('matched');
+        this.tbody.rows[i].setAttribute('found', true);
+        this.tbody.rows[i].removeAttribute('hidden');
       }
     }
   }

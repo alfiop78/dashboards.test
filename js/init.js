@@ -118,7 +118,7 @@ var App = new Application();
     // recupero tutte le datalist e le passo alla function search per cercare in base a TUTTI i filtri impostati
     console.log(this.id);
     let cols = [];
-    let inputDatalists = document.querySelectorAll("input[list][activated]");
+    // let inputDatalists = document.querySelectorAll("input[list][activated]");
     // console.log(inputDatalists);
     let filters = Array.from(document.querySelectorAll("input[list][activated]"));
     // console.log(filters);
@@ -139,8 +139,6 @@ var App = new Application();
     //   cols[+inputDatalists[i].getAttribute('data-param-id')] = inputDatalists[i].value;
     // }
 
-    // app.search(cols);
-    // TODO: passare al metodo l'array delle righe trovate anzichè le colonne, in modo da poter utilizzare il metodo search anche da altri punti
     app.Draw.search(cols);
   };
 
