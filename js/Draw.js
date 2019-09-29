@@ -5,6 +5,7 @@ class Draw {
     */
     this.options = options;
     this.table = table;
+    this.tbody = this.table.querySelector('tbody');
     this.data = data;
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
@@ -98,6 +99,56 @@ class Draw {
     // rowValues.forEach(function(el) {
     //   console.log(this.row);
     // });
+  }
+
+  search(values) {
+    console.log('search');
+    let table = document.querySelector('table > tbody');
+    let rows = [];
+    let cols = [];
+    let found = [];
+
+    values.forEach((value, index) => {
+      let row = [];
+      for (let i = 0; i < table.rows.length; i++) {
+
+        if (table.rows[i].cells[index].innerText === value) {
+          row.push(i);
+        }
+      }
+      rows[index] = row;
+      console.log(rows);
+    });
+
+    for (let i = 0; i < table.rows.length; i++) {
+      // console.log(i);
+      let rowsObj = new Object;
+      // let rowsArray = [];
+      let found = [];
+      values.forEach((value, colIndex) => {
+        // console.log(rows[colIndex].includes(i));
+        found.push(rows[colIndex].includes(i));
+        // a = {'row' : i, 'colsMatched' : found};
+        rowsObj = {i, found}; // metodo 1
+        // metodo 2
+        // rowsArray['row'] = [i];
+        // rowsArray['row']['cols'] = found;
+        // altro metodo da provare
+        // rowsArray.push([found]);
+      });
+      // console.log(rowsObj);
+      // esamino la riga
+      console.log(rowsObj.found);
+      if (rowsObj.found.includes(false)) {
+        console.log('not matched');
+        table.rows[i].removeAttribute('found');
+        table.rows[i].hidden = true;
+      } else {
+        console.log('matched');
+        table.rows[i].setAttribute('found', true);
+        table.rows[i].removeAttribute('hidden');
+      }
+    }
   }
 
   draw() {
