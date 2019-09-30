@@ -102,12 +102,18 @@ var App = new Application();
     e.path[2].querySelector('input').value = '';
     e.path[2].querySelector('label').classList.remove('has-content');
     e.path[2].querySelector('input').removeAttribute('activated');
+
+    let cols = [];
+    let filters = Array.from(document.querySelectorAll("input[list][activated]"));
+
+    filters.forEach(function(item) {
+      cols[+item.getAttribute('data-param-id')] = item.value;
+    });
+
+    app.Draw.search(cols);
   };
 
   app.handlerParams = function(e) {
-    // console.log(this);
-    // console.log(e);
-    // console.log(e.path[1]);
     if (this.value.length > 0) {
       e.path[1].querySelector('label').classList.add('has-content');
       this.setAttribute('activated', true);
@@ -115,29 +121,14 @@ var App = new Application();
       e.path[1].querySelector('label').classList.remove('has-content');
     }
 
-    // recupero tutte le datalist e le passo alla function search per cercare in base a TUTTI i filtri impostati
+    // recupero tutte le datalist impostate e le passo alla function search per cercare in base a TUTTI i filtri impostati
     console.log(this.id);
     let cols = [];
-    // let inputDatalists = document.querySelectorAll("input[list][activated]");
-    // console.log(inputDatalists);
     let filters = Array.from(document.querySelectorAll("input[list][activated]"));
-    // console.log(filters);
-    /* METODO 1 */
-    // for (let i in filters) {
-    //   console.log(filters[i].value);
-    //   cols2[i] = filters[i].value;
-    //
-    // }
-    /* METODO 2 */
+
     filters.forEach(function(item) {
       cols[+item.getAttribute('data-param-id')] = item.value;
     });
-    // console.log(cols);
-    /* METODO 3 */
-
-    // for (let i = 0; i < inputDatalists.length; i++) {
-    //   cols[+inputDatalists[i].getAttribute('data-param-id')] = inputDatalists[i].value;
-    // }
 
     app.Draw.search(cols);
   };

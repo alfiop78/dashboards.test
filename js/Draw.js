@@ -102,8 +102,12 @@ class Draw {
   }
 
   search(cols) {
+    /*Ricerca in base alla selezione dei filtri*/
     console.log('search');
     let rows = [];
+    /* per ogni colonna (filtro) impostato, inserisco in un array le righe trovate per il filtro impostato
+    * es.: rows = [3, 44, 54, ecc..] le righe che hanno il valore del filtro
+    */
 
     cols.forEach((value, index) => {
       let row = [];
@@ -119,30 +123,22 @@ class Draw {
       // console.log(rows);
     });
 
+    /* esamino ogni riga della table e verifico se la riga esaminata è presente nell'array precedente (rows).
+    * se è presente imposto true per ogni colonna (quindi per ogni filtro impostato)
+    * infine, se tutte le colonne hanno true (rowsArray = [true, true, ecc...]) la riga corrispondente è mostrata altrimenti...
+    * rowsArray = [true, false, true, ecc...] è nascosta
+    */
+
     for (let i = 0; i < this.tbody.rows.length; i++) {
-      // per ogni riga da esaminare
       // console.log(i);
-      let rowsObj = new Object;
-      // let rowsArray = [];
-      let found = [];
+      let rowsArray = [];
       cols.forEach((value, colIndex) => {
         // se la riga in esame è presente nell'array, seleziono questa colonna come true
-        // console.log(rows[colIndex].includes(i));
-        found.push(rows[colIndex].includes(i));
-        // a = {'row' : i, 'colsMatched' : found};
-        // TODO: provare ad utilizzare l'array al posto dell'Object
-        rowsObj = {i, found}; // metodo 1
-        // metodo 2
-        // rowsArray['row'] = [i];
-        // rowsArray['row']['cols'] = found;
-        // altro metodo da provare
-        // rowsArray.push([found]);
+        rowsArray.push(rows[colIndex].includes(i));
       });
-      // console.log(rowsObj);
-      // esamino la riga
-      console.log(rowsObj.found);
-      // se nell'object (oppure array) rowsObj è presente una colonna con 'false' NON seleziono la riga
-      if (rowsObj.found.includes(false)) {
+      console.log(rowsArray);
+      // se nell'array rowsObj è presente una colonna con 'false' NON seleziono la riga
+      if (rowsArray.includes(false)) {
         // console.log('not matched');
         this.tbody.rows[i].removeAttribute('found');
         this.tbody.rows[i].hidden = true;
