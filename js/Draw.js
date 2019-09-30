@@ -21,12 +21,13 @@ class Draw {
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div.md-field');
-    this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId);
-    this.params.querySelector('datalist').id = "datalist-"+datalistId;
+    // this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId); datalist
+    // this.params.querySelector('datalist').id = "datalist-"+datalistId; datalist
+    this.params.querySelector('ul').id = "datalist-"+datalistId;
     this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
     this.params.querySelector('label').innerText = colName;
     this.params.querySelector('input').id = "param-"+datalistId;
-    this.params.querySelector('span > i').id = "cancel-"+datalistId;
+    // this.params.querySelector('span > i').id = "cancel-"+datalistId; datalist
     this.params.querySelector('input').setAttribute('data-param-id', datalistId);
 
     this.paramsParent.appendChild(this.params);
@@ -34,6 +35,7 @@ class Draw {
 
   createDatalist() {
     // console.log(this.table.cols.length);
+    // creo le option nella datalist in base a quello che 'vedo' nella table
     console.log(this.table.rows.length);
 
     this.tbody = this.table.querySelector('tbody');
@@ -72,16 +74,42 @@ class Draw {
       // console.log(arrayUnique);
       this.datalist = document.getElementById('datalist-'+c);
       arrayUnique.forEach((el, i) => {
-        this.datalistOpt = document.createElement('option');
+        // this.datalistOpt = document.createElement('option'); datalist
+        this.datalistOpt = document.createElement('li');
         this.datalistOpt.id = i;
-        this.datalistOpt.value = el.toUpperCase().trim();
+        // this.datalistOpt.value = el.toUpperCase().trim(); datalist
+        this.datalistOpt.innerHTML = el.toUpperCase().trim();
+        this.datalistOpt.setAttribute('label', el.toUpperCase().trim());
         this.datalist.appendChild(this.datalistOpt);
+        this.datalistOpt.onclick = this.handlerFilters;
       });
     }
   }
 
+  handlerFilters(e) {
+    // console.log(e);
+    console.log(e.path);
+    e.path[1].removeAttribute('show');
+    e.path[2].querySelector('input').value = this.getAttribute('label');
+  }
+
   resetFilters(excludedFilter) {
-    
+    console.log(excludedFilter);
+    // TODO: svuoto le datalist, tranne quella che ho selezionato (excludedFilter)
+    let inputs = Array.from(document.querySelectorAll('input[list]:not([id="'+excludedFilter+'"])'));
+    //:not([id="'+excludedFilter+'")]
+    console.log(inputs);
+    // TODO: ripopolo le datalist come fatto in createDatalist
+    inputs.forEach((input) => {
+      // recupero l'elemento datalist
+      let datalist = input.parentElement.querySelector('datalist');
+      // recupero tutte le option da eliminare
+      // console.log(el);
+      let opt = Array.from(input.parentElement.querySelectorAll('datalist > option'));
+      opt.forEach((option) => {
+        datalist.removeChild(option);
+      });
+    });
   }
 
   addRow(rowValues) {
@@ -150,6 +178,45 @@ class Draw {
         this.tbody.rows[i].setAttribute('found', true);
         this.tbody.rows[i].removeAttribute('hidden');
       }
+    }
+    this.rebuildDatalists();
+  }
+
+  rebuildDatalists() {
+    console.log(this.table.rows.length);
+
+    let arrColumns = [];
+
+    // console.log(this.tbody.rows[i]);
+    // console.log(this.tbody.rows[i].cells[0]);
+    // console.log(this.tbody.rows[i].cells);
+    console.log(this.tbody.rows[0].cells.length);
+
+    for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
+      // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
+      // console.log(this.tbody.rows[i].cells[c]);
+      // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
+      let arrCols = [];
+
+      for (let r = 0; r < this.tbody.rows.length; r++) {
+        // console.log(this.tbody.rows[r]);
+        if (this.tbody.rows[r].getAttribute('found')) {
+          arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
+        }
+      }
+      arrColumns.push(arrCols);
+
+      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      // console.log(arrayUnique);
+      this.datalist = document.getElementById('datalist-'+c);
+      console.log(this.datalist);
+      let options = Array.from(this.datalist.querySelectorAll('option'));
+      options.forEach((opt) => {
+        console.log(opt);
+        opt.style.display   = "none";
+        // opt.hidden = true;
+      });
+
     }
   }
 

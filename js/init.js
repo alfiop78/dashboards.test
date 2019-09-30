@@ -68,17 +68,20 @@ var App = new Application();
 
           app.Draw.createDatalist();
 
-          document.querySelectorAll('input[list]').forEach((el) => {
+          document.querySelectorAll('input[type="search"]').forEach((el) => {
             // console.log(el);
             // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
             el.onchange = app.handlerParams;
+            el.onclick = app.showFilters;
+            // lego evento ad ogni <li> nell'ul
+
             // el.addEventListener('change', app.handlerParams, true);
             // el.addEventListener('mousedown', e => {
             //   e.target.value = '';
             //   e.target.removeAttribute('activated');
             // });
             // evento click su icona cancel
-            el.parentElement.querySelector('span > i').onclick = app.handlerCancel;
+            // el.parentElement.querySelector('span > i').onclick = app.handlerCancel;
           });
 
           app.Draw.draw();
@@ -94,6 +97,10 @@ var App = new Application();
     request.open('POST', url);
     request.setRequestHeader('Content-Type','application/json');
     request.send();
+  };
+
+  app.showFilters = function(e) {
+    e.path[1].querySelector('ul').setAttribute('show', true);
   };
 
   app.handlerCancel = function(e) {
@@ -131,7 +138,7 @@ var App = new Application();
     });
 
     app.Draw.search(cols);
-    app.Draw.resetFilters(this);
+    // app.Draw.resetFilters(this.id);
   };
 
   app.getData();
