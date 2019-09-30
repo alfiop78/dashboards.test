@@ -131,6 +131,7 @@ var App = new Application();
     });
 
     app.Draw.search(cols);
+    app.Draw.resetFilters(this);
   };
 
   app.getData();

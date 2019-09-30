@@ -5,7 +5,7 @@ class Draw {
     */
     this.options = options;
     this.table = table;
-    this.tbody = this.table.querySelector('tbody');
+    this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.data = data;
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
@@ -17,7 +17,7 @@ class Draw {
   }
 
   addParams(colName, datalistId) {
-    // TODO: aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
+    // aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div.md-field');
@@ -80,6 +80,10 @@ class Draw {
     }
   }
 
+  resetFilters(excludedFilter) {
+    
+  }
+
   addRow(rowValues) {
     // console.log(rowValues);
     this.tr = document.createElement('tr');
@@ -136,7 +140,6 @@ class Draw {
         // se la riga in esame è presente nell'array, seleziono questa colonna come true
         rowsArray.push(rows[colIndex].includes(i));
       });
-      console.log(rowsArray);
       // se nell'array rowsObj è presente una colonna con 'false' NON seleziono la riga
       if (rowsArray.includes(false)) {
         // console.log('not matched');
