@@ -68,20 +68,11 @@ var App = new Application();
 
           app.Draw.createDatalist();
 
-          document.querySelectorAll('input[type="search"]').forEach((el) => {
-            // console.log(el);
-            // NOTE: è possibile utilizzare entrambe le sintassi, con addEventListener o senza
-            el.onchange = app.handlerParams;
+          document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
+            el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
-            // lego evento ad ogni <li> nell'ul
-
-            // el.addEventListener('change', app.handlerParams, true);
-            // el.addEventListener('mousedown', e => {
-            //   e.target.value = '';
-            //   e.target.removeAttribute('activated');
-            // });
-            // evento click su icona cancel
-            // el.parentElement.querySelector('span > i').onclick = app.handlerCancel;
+            // lego evento click alle <li>
+            el.parentElement.querySelectorAll('ul > li').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
           });
 
           app.Draw.draw();
@@ -99,46 +90,50 @@ var App = new Application();
     request.send();
   };
 
-  app.showFilters = function(e) {
-    e.path[1].querySelector('ul').setAttribute('show', true);
-  };
-
-  app.handlerCancel = function(e) {
+  app.handlerInput = function(e) {
+    // console.log('input');
     // console.log(this);
-    // console.log(e.path[2].querySelector('input'));
-    e.path[2].querySelector('input').value = '';
-    e.path[2].querySelector('label').classList.remove('has-content');
-    e.path[2].querySelector('input').removeAttribute('activated');
-
+    let parentElement = e.path[1];
+    // let input = parentElement.querySelector('input');
+    let label = parentElement.querySelector('label');
+    if (this.value.length > 0) {
+      this.setAttribute('activated', true);
+      label.classList.add('has-content');
+    } else {
+      this.removeAttribute('activated');
+      label.classList.remove('has-content');
+    }
     let cols = [];
-    let filters = Array.from(document.querySelectorAll("input[list][activated]"));
-
+    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
     filters.forEach(function(item) {
       cols[+item.getAttribute('data-param-id')] = item.value;
     });
-
     app.Draw.search(cols);
   };
 
-  app.handlerParams = function(e) {
-    if (this.value.length > 0) {
-      e.path[1].querySelector('label').classList.add('has-content');
-      this.setAttribute('activated', true);
+  app.handlerSelect = function(e) {
+    // console.log(this);
+    let parentElement = e.path[2];
+    let input = parentElement.querySelector('input');
+    let label = parentElement.querySelector('label');
+    input.value = this.getAttribute('label');
+    if (input.value.length > 0) {
+      input.setAttribute('activated', true);
+      label.classList.add('has-content');
     } else {
-      e.path[1].querySelector('label').classList.remove('has-content');
+      label.classList.remove('has-content');
     }
 
-    // recupero tutte le datalist impostate e le passo alla function search per cercare in base a TUTTI i filtri impostati
-    console.log(this.id);
     let cols = [];
-    let filters = Array.from(document.querySelectorAll("input[list][activated]"));
-
+    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
     filters.forEach(function(item) {
       cols[+item.getAttribute('data-param-id')] = item.value;
     });
-
     app.Draw.search(cols);
-    // app.Draw.resetFilters(this.id);
+  };
+
+  app.showFilters = function(e) {
+    e.path[1].querySelector('ul').toggleAttribute('show');
   };
 
   app.getData();

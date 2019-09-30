@@ -36,15 +36,14 @@ class Draw {
   createDatalist() {
     // console.log(this.table.cols.length);
     // creo le option nella datalist in base a quello che 'vedo' nella table
-    console.log(this.table.rows.length);
+    // console.log(this.table.rows.length);
 
-    this.tbody = this.table.querySelector('tbody');
     let arrColumns = [];
 
     // console.log(this.tbody.rows[i]);
     // console.log(this.tbody.rows[i].cells[0]);
     // console.log(this.tbody.rows[i].cells);
-    console.log(this.tbody.rows[0].cells.length);
+    // console.log(this.tbody.rows[0].cells.length);
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
@@ -56,6 +55,7 @@ class Draw {
         arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
       }
       arrColumns.push(arrCols);
+      // console.log(arrColumns);
 
       // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
       /*
@@ -74,42 +74,13 @@ class Draw {
       // console.log(arrayUnique);
       this.datalist = document.getElementById('datalist-'+c);
       arrayUnique.forEach((el, i) => {
-        // this.datalistOpt = document.createElement('option'); datalist
         this.datalistOpt = document.createElement('li');
         this.datalistOpt.id = i;
-        // this.datalistOpt.value = el.toUpperCase().trim(); datalist
         this.datalistOpt.innerHTML = el.toUpperCase().trim();
         this.datalistOpt.setAttribute('label', el.toUpperCase().trim());
         this.datalist.appendChild(this.datalistOpt);
-        this.datalistOpt.onclick = this.handlerFilters;
       });
     }
-  }
-
-  handlerFilters(e) {
-    // console.log(e);
-    console.log(e.path);
-    e.path[1].removeAttribute('show');
-    e.path[2].querySelector('input').value = this.getAttribute('label');
-  }
-
-  resetFilters(excludedFilter) {
-    console.log(excludedFilter);
-    // TODO: svuoto le datalist, tranne quella che ho selezionato (excludedFilter)
-    let inputs = Array.from(document.querySelectorAll('input[list]:not([id="'+excludedFilter+'"])'));
-    //:not([id="'+excludedFilter+'")]
-    console.log(inputs);
-    // TODO: ripopolo le datalist come fatto in createDatalist
-    inputs.forEach((input) => {
-      // recupero l'elemento datalist
-      let datalist = input.parentElement.querySelector('datalist');
-      // recupero tutte le option da eliminare
-      // console.log(el);
-      let opt = Array.from(input.parentElement.querySelectorAll('datalist > option'));
-      opt.forEach((option) => {
-        datalist.removeChild(option);
-      });
-    });
   }
 
   addRow(rowValues) {
@@ -135,7 +106,7 @@ class Draw {
 
   search(cols) {
     /*Ricerca in base alla selezione dei filtri*/
-    console.log('search');
+    // console.log('search');
     let rows = [];
     /* per ogni colonna (filtro) impostato, inserisco in un array le righe trovate per il filtro impostato
     * es.: rows = [3, 44, 54, ecc..] le righe che hanno il valore del filtro
@@ -183,14 +154,14 @@ class Draw {
   }
 
   rebuildDatalists() {
-    console.log(this.table.rows.length);
+    // console.log(this.table.rows.length);
 
     let arrColumns = [];
 
     // console.log(this.tbody.rows[i]);
     // console.log(this.tbody.rows[i].cells[0]);
     // console.log(this.tbody.rows[i].cells);
-    console.log(this.tbody.rows[0].cells.length);
+    // console.log(this.tbody.rows[0].cells.length);
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
@@ -204,18 +175,21 @@ class Draw {
           arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
         }
       }
-      arrColumns.push(arrCols);
-
-      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      // arrColumns.push(arrCols);
+      // console.log(arrColumns);
+      //
+      //
+      // let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      // // console.log(arrayUnique);
+      // this.datalist = document.getElementById('datalist-'+c);
+      //
+      // // console.log(this.datalist);
       // console.log(arrayUnique);
-      this.datalist = document.getElementById('datalist-'+c);
-      console.log(this.datalist);
-      let options = Array.from(this.datalist.querySelectorAll('option'));
-      options.forEach((opt) => {
-        console.log(opt);
-        opt.style.display   = "none";
-        // opt.hidden = true;
-      });
+      //
+      // arrayUnique.forEach((el, i) => {
+      //   console.log(el);
+      //
+      // });
 
     }
   }

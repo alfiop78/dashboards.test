@@ -21,6 +21,7 @@ class Application {
   	var i = document.querySelector("i.md-circle");
     // gestore dell'evento scroll
     document.querySelector('main').addEventListener('scroll', this.handlerScroll, true);
+    document.getElementById('container').addEventListener('click', this.containerClick, true);
 
   	/*console.log(window.screen.height);
   	console.log(window.screen.availHeight);
@@ -86,7 +87,7 @@ class Application {
   containerClick() {
     // console.log('containerClick');
     this.drawerOpen = document.querySelector('#drawer[open]');
-    console.log(this.drawerOpen);
+    // console.log(this.drawerOpen);
     // chiudo il drawer
     // se il drawer è aperto lo chiudo
     if (this.drawerOpen) {
@@ -98,6 +99,7 @@ class Application {
   	  // console.log('tooltip aperti');
   	  openedTooltips.removeAttribute('open');
   	}
+    document.querySelectorAll('ul[show]').forEach((ul) => {ul.removeAttribute('show');});
   }
 
   menuOpen(url) {

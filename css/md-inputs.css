@@ -406,7 +406,7 @@ input:invalid ~ label.has-content ~ span{visibility: visible;}
   input:not([type='checkbox']):not([type='radio']) ~ span[help]{visibility: visible;}
 
   input:disabled ~ label.has-content{font-size: .75rem;top:8px;}
-  label[for]{top: 32px;}
+  label[for]{top: 28px;}
   input:invalid ~ label.has-content {top: 8px;font-size: .8rem;}
   input:read-only ~ label.has-content {top: 8px;}
   /* .md-field{min-width: 300px;} */
