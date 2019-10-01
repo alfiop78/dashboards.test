@@ -16,19 +16,17 @@ class Draw {
     this.table.querySelector('thead tr').appendChild(this.th);
   }
 
-  addParams(colName, datalistId) {
+  addParams(colName, id) {
     // aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
-    this.params = this.tmplContent.querySelector('div.md-field');
-    // this.params.querySelector('input').setAttribute('list', "datalist-"+datalistId); datalist
-    // this.params.querySelector('datalist').id = "datalist-"+datalistId; datalist
-    this.params.querySelector('ul').id = "datalist-"+datalistId;
-    this.params.querySelector('label').setAttribute('for', "param-"+datalistId);
+    this.params = this.tmplContent.querySelector('div[data-param-id]');
+    this.params.setAttribute('data-param-id', id);
+    this.params.querySelector('ul').id = "datalist-"+id;
+    this.params.querySelector('label').setAttribute('for', "param-"+id);
     this.params.querySelector('label').innerText = colName;
-    this.params.querySelector('input').id = "param-"+datalistId;
-    // this.params.querySelector('span > i').id = "cancel-"+datalistId; datalist
-    this.params.querySelector('input').setAttribute('data-param-id', datalistId);
+    this.params.querySelector('input').id = "param-"+id;
+    this.params.querySelector('input').setAttribute('data-param-id', id);
 
     this.paramsParent.appendChild(this.params);
   }
@@ -39,11 +37,6 @@ class Draw {
     // console.log(this.table.rows.length);
 
     let arrColumns = [];
-
-    // console.log(this.tbody.rows[i]);
-    // console.log(this.tbody.rows[i].cells[0]);
-    // console.log(this.tbody.rows[i].cells);
-    // console.log(this.tbody.rows[0].cells.length);
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
@@ -172,25 +165,29 @@ class Draw {
       for (let r = 0; r < this.tbody.rows.length; r++) {
         // console.log(this.tbody.rows[r]);
         if (this.tbody.rows[r].getAttribute('found')) {
-          arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
+          arrCols.push(this.tbody.rows[r].cells[c].innerHTML.toUpperCase());
         }
       }
-      // arrColumns.push(arrCols);
+      arrColumns.push(arrCols);
       // console.log(arrColumns);
-      //
-      //
-      // let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
-      // // console.log(arrayUnique);
-      // this.datalist = document.getElementById('datalist-'+c);
-      //
-      // // console.log(this.datalist);
-      // console.log(arrayUnique);
-      //
-      // arrayUnique.forEach((el, i) => {
-      //   console.log(el);
-      //
-      // });
 
+      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+      // console.log(arrayUnique);
+      // recupero le datalist tranne quelle con activated
+
+      this.datalist = document.querySelector('.params .md-field:not([activated]) > ul.filters[id="datalist-'+c+'"]');
+      if (this.datalist) {
+        // console.log(this.datalist.querySelectorAll('li'));
+        this.datalist.querySelectorAll('li').forEach((el, index) => {
+          // console.log(el);
+          let label = el.getAttribute('label');
+          if (!arrayUnique.includes(label)) {
+            el.hidden = true;
+          } else {
+            el.removeAttribute('hidden');
+          }
+        });
+      }
     }
   }
 

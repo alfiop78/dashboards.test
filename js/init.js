@@ -94,13 +94,14 @@ var App = new Application();
     // console.log('input');
     // console.log(this);
     let parentElement = e.path[1];
-    // let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
     if (this.value.length > 0) {
+      parentElement.setAttribute('activated', true);
       this.setAttribute('activated', true);
       label.classList.add('has-content');
     } else {
       this.removeAttribute('activated');
+      parentElement.removeAttribute('activated');
       label.classList.remove('has-content');
     }
     let cols = [];
@@ -114,10 +115,12 @@ var App = new Application();
   app.handlerSelect = function(e) {
     // console.log(this);
     let parentElement = e.path[2];
+
     let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
     input.value = this.getAttribute('label');
     if (input.value.length > 0) {
+      parentElement.setAttribute('activated', true);
       input.setAttribute('activated', true);
       label.classList.add('has-content');
     } else {
