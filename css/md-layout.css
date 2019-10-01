@@ -120,24 +120,20 @@ h3 ~ h5{padding: 0;font-size: 1rem;margin: 0 0 1em;font-weight: 300;color: var(-
 
 /*filters*/
 input[type='search']:hover{cursor: pointer;}
-div.elements{transition: transform 200ms;transform: scaleY(0);transform-origin: top;padding: 0 1em;background: white;
-  position: absolute;z-index: 10;width: calc(100% - 8px);top: 56px;max-height: 400px;overflow-y: auto;}
-div.elements[show]{transform: scaleY(1);background: white;
-  border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;box-shadow: 0 5px 10px -2px rgba(10,10,10,.3);}
-
-div.elements > ul{transition: opacity 150ms;opacity: 0;}
-div.elements[show] > ul{transition: opacity 150ms; transition-delay: 130ms;opacity: 1;}
+div.elements{transition: opacity 200ms;padding: 0 1em;background: white;opacity: 0;
+  position: absolute;z-index: -1;width: calc(100% - 8px);top: 56px;max-height: 400px;overflow-y: auto;}
+div.elements[show]{background: white;border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;box-shadow: 0 5px 10px -2px rgba(10,10,10,.3);
+  z-index: 10;opacity: 1;}
 
 div.elements > ul{max-height: 300px;overflow-y: auto;padding-inline-start: 0;}
-/*
-ul.filters{transition: transform 200ms;transform: scaleY(0);transform-origin: top;padding: 1em;
-  position: absolute;z-index: 10;width: calc(100% - 8px);top: 44px;max-height: 350px;overflow-y: auto;}
-ul.filters[show]{transform: scaleY(1);background: white;
-  border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;box-shadow: 0 5px 10px -2px rgba(10,10,10,.3);overflow-y: auto;max-height: 350px;} */
 
-ul.filters > li{list-style: none;padding: .5em;font-size: small;}
-ul.filters > li:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
+ul.filters > .elementContent > .element{font-size: small;display: flex;justify-content: space-between;align-items: center;}
+ul.filters li{list-style: none;padding: .5em;}
+ul.filters div.elementContent:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
+/* ul.filters > li[hidden]{display: none;} */
 ul::-webkit-scrollbar{display: none;}
 div.elements::-webkit-scrollbar{display: none;}
-.elements > section{text-align: right;padding: .5em;}
+.elements:not([multi]) > section{display: none;}
+.elements[multi] > section{text-align: right;padding: .5em;}
+.elements:not([multi]) ul i.material-icons[hidden]{visibility: hidden;}
 /*filters*/

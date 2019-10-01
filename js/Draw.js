@@ -1,12 +1,11 @@
 class Draw {
-  constructor(table, options, data) {
+  constructor(table, options) {
     /*
     * table è il riferimento all'elemento table nel DOM
     */
     this.options = options;
     this.table = table;
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    this.data = data;
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
 
@@ -47,6 +46,7 @@ class Draw {
       for (let r = 0; r < this.tbody.rows.length; r++) {
         arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
       }
+      // ottengo gli elementi che vedo nella table
       arrColumns.push(arrCols);
       // console.log(arrColumns);
 
@@ -67,12 +67,38 @@ class Draw {
       // console.log(arrayUnique);
       this.datalist = document.getElementById('datalist-'+c);
       arrayUnique.forEach((el, i) => {
-        this.datalistOpt = document.createElement('li');
-        this.datalistOpt.id = i;
-        this.datalistOpt.innerHTML = el.toUpperCase().trim();
-        this.datalistOpt.setAttribute('label', el.toUpperCase().trim());
-        this.datalist.appendChild(this.datalistOpt);
+        let elContent = document.createElement('div');
+        elContent.classList.add('elementContent');
+        this.datalist.appendChild(elContent);
+        let element = document.createElement('div');
+        element.classList.add('element');
+        elContent.appendChild(element);
+        let iconDone = document.createElement('i');
+        iconDone.innerText = 'done';
+        iconDone.hidden = true; // default non è multiselezione
+        iconDone.classList.add("material-icons", "md-18");
+
+        this.li = document.createElement('li');
+        this.li.id = i;
+        this.li.innerHTML = el.toUpperCase().trim();
+        this.li.setAttribute('label', el.toUpperCase().trim());
+        element.appendChild(this.li);
+        element.appendChild(iconDone);
       });
+
+      // arrayUnique.forEach((el, i) => {
+      //   let iElement = document.createElement('i');
+      //   iElement.innerText = 'done';
+      //   iElement.hidden = true;
+      //   iElement.classList.add("material-icons", "md-18");
+      //
+      //   this.li = document.createElement('li');
+      //   this.li.id = i;
+      //   this.li.innerHTML = el.toUpperCase().trim();
+      //   this.li.setAttribute('label', el.toUpperCase().trim());
+      //   this.datalist.appendChild(this.li);
+      //   this.li.appendChild(iElement);
+      // });
     }
   }
 
@@ -175,17 +201,14 @@ class Draw {
       // console.log(arrayUnique);
       // recupero le datalist tranne quelle con activated
 
-      this.datalist = document.querySelector('.params .md-field:not([activated]) > div > ul.filters[id="datalist-'+c+'"]');
+      this.datalist = document.querySelector('.params .md-field:not([activated]) ul.filters[id="datalist-'+c+'"]');
       if (this.datalist) {
         // console.log(this.datalist.querySelectorAll('li'));
         this.datalist.querySelectorAll('li').forEach((el, index) => {
-          // console.log(el);
           let label = el.getAttribute('label');
-          if (!arrayUnique.includes(label)) {
-            el.hidden = true;
-          } else {
-            el.removeAttribute('hidden');
-          }
+          let elementContent = el.parentElement.parentElement;
+          (!arrayUnique.includes(label)) ? elementContent.hidden = true : elementContent.removeAttribute('hidden');
+          // (!arrayUnique.includes(label)) ? el.hidden = true : el.removeAttribute('hidden');
         });
       }
     }

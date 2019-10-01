@@ -40,9 +40,12 @@ var App = new Application();
               {'col': 0, 'hidden': true},
               {'col': 1, 'hidden': false}
             ],
+            'filter' : [
+              {'col': 0, 'multi': true}
+            ],
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
-          app.Draw = new Draw(table, options, response);
+          app.Draw = new Draw(table, options);
           // Opzione 1 - aggiungo tutte le colonne della query
           Object.keys(response[0]).forEach((el, i) => {
             // console.log('col:'+el);
@@ -71,7 +74,7 @@ var App = new Application();
             el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
             // lego evento click alle <li>
-            el.parentElement.querySelectorAll('ul > li').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
+            el.parentElement.querySelectorAll('ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
           });
 
           app.Draw.draw();
@@ -121,11 +124,11 @@ var App = new Application();
 
   app.handlerSelect = function(e) {
     // console.log(this);
-    let parentElement = e.path[3];
-
+    let parentElement = e.path[5];
+    let liElement = e.path[1].querySelector('li');
     let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
-    input.value = this.getAttribute('label');
+    input.value = liElement.getAttribute('label');
     if (input.value.length > 0) {
       parentElement.setAttribute('activated', true);
       input.setAttribute('activated', true);
@@ -144,6 +147,7 @@ var App = new Application();
 
   app.showFilters = function(e) {
     e.path[1].querySelector('div.elements').toggleAttribute('show');
+    this.setAttribute('placeholder', 'Search...');
   };
 
   app.getData();

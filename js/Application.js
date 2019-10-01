@@ -99,7 +99,10 @@ class Application {
   	  // console.log('tooltip aperti');
   	  openedTooltips.removeAttribute('open');
   	}
-    document.querySelectorAll('div.elements[show]').forEach((el) => {el.removeAttribute('show');});
+    document.querySelectorAll('div.elements[show]').forEach((el) => {
+      el.removeAttribute('show');
+      console.log(el.parentElement.querySelector('input').removeAttribute('placeholder'));
+    });
   }
 
   menuOpen(url) {
