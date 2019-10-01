@@ -22,6 +22,8 @@ class Draw {
     this.params = this.tmplContent.querySelector('div[data-param-id]');
     this.params.setAttribute('data-param-id', id);
     this.params.querySelector('ul').id = "datalist-"+id;
+    this.params.querySelector('.elements').setAttribute('options', 'filters'); // questo è in grado di ricevere impostazioni dalle options
+    this.params.querySelector('.elements').setAttribute('col', id); // questo serve per le options
     this.params.querySelector('label').setAttribute('for', "param-"+id);
     this.params.querySelector('label').innerText = colName;
     this.params.querySelector('input').id = "param-"+id;
@@ -220,8 +222,25 @@ class Draw {
   }
 
   option() {
-    // console.log(this.options);
-    // console.log(Object.keys(this.options));
+    console.log(this.options);
+    let objOptions = Object.keys(this.options);
+    // console.log(objOptions);
+    console.log(this.options.filters);
+    this.options.filters.forEach((p) => {
+      console.log(p);
+      let propertyReference = Object.keys(p)[0]; // col
+      let propertyValue = p[propertyReference];
+      let propertyName = Object.keys(p)[1];
+      let propertyAttributeValue = p[propertyName];
+      console.log(propertyReference);
+      console.log(propertyValue);
+      // TODO: cerco gli elementi che hanno attributo options='filters' e propertyReference="propertyValue"
+      let element = document.querySelector(".elements[options='filters']["+propertyReference+"='"+propertyValue+"']");
+      console.log(element);
+      element.setAttribute(propertyName, propertyAttributeValue);
+
+
+    });
 
   }
 

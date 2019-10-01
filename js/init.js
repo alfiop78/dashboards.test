@@ -40,7 +40,7 @@ var App = new Application();
               {'col': 0, 'hidden': true},
               {'col': 1, 'hidden': false}
             ],
-            'filter' : [
+            'filters' : [
               {'col': 0, 'multi': true}
             ],
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
