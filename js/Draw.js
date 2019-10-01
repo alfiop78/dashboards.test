@@ -86,7 +86,7 @@ class Draw {
     rowValues.forEach((el, i) => {
       // el contiene il valore della cella
       this.td = document.createElement('td');
-      (!el) ? console.log('NULL'): this.td.innerHTML = el.trim();
+      (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
       this.tr.appendChild(this.td);
     });
 
@@ -175,7 +175,7 @@ class Draw {
       // console.log(arrayUnique);
       // recupero le datalist tranne quelle con activated
 
-      this.datalist = document.querySelector('.params .md-field:not([activated]) > ul.filters[id="datalist-'+c+'"]');
+      this.datalist = document.querySelector('.params .md-field:not([activated]) > div > ul.filters[id="datalist-'+c+'"]');
       if (this.datalist) {
         // console.log(this.datalist.querySelectorAll('li'));
         this.datalist.querySelectorAll('li').forEach((el, index) => {

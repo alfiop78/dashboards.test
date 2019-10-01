@@ -99,7 +99,7 @@ class Application {
   	  // console.log('tooltip aperti');
   	  openedTooltips.removeAttribute('open');
   	}
-    document.querySelectorAll('ul[show]').forEach((ul) => {ul.removeAttribute('show');});
+    document.querySelectorAll('div.elements[show]').forEach((el) => {el.removeAttribute('show');});
   }
 
   menuOpen(url) {

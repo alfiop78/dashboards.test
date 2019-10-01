@@ -49,7 +49,6 @@ var App = new Application();
             app.Draw.addColumn(el);
             // aggiungo un filtro per ogni colonna della tabella
             app.Draw.addParams(el, i);
-
           });
           // Opzione 2 - aggiungo manualmetne le colonne
           // app.Draw.addColumn('ID');
@@ -109,12 +108,20 @@ var App = new Application();
     filters.forEach(function(item) {
       cols[+item.getAttribute('data-param-id')] = item.value;
     });
+    // mentre digito filtro l'elenco degli elementi <li>
+    let liElement = parentElement.querySelectorAll('ul > li:not([hidden])');
+    // console.log(liElement);
+    liElement.forEach((el) => {
+      let label = el.getAttribute('label');
+      (label.indexOf(this.value.toUpperCase()) !== -1) ? el.removeAttribute('hidden') : el.hidden = true;
+    });
     app.Draw.search(cols);
+
   };
 
   app.handlerSelect = function(e) {
     // console.log(this);
-    let parentElement = e.path[2];
+    let parentElement = e.path[3];
 
     let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
@@ -136,7 +143,7 @@ var App = new Application();
   };
 
   app.showFilters = function(e) {
-    e.path[1].querySelector('ul').toggleAttribute('show');
+    e.path[1].querySelector('div.elements').toggleAttribute('show');
   };
 
   app.getData();
