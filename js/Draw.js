@@ -77,7 +77,7 @@ class Draw {
         elContent.appendChild(element);
         let iconDone = document.createElement('i');
         iconDone.innerText = 'done';
-        iconDone.hidden = true; // default non è multiselezione
+        // iconDone.hidden = true; // default non è multiselezione
         iconDone.classList.add("material-icons", "md-18");
 
         this.li = document.createElement('li');

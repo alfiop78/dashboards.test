@@ -129,11 +129,14 @@ div.elements > ul{max-height: 300px;overflow-y: auto;padding-inline-start: 0;}
 
 ul.filters > .elementContent > .element{font-size: small;display: flex;justify-content: space-between;align-items: center;}
 ul.filters li{list-style: none;padding: .5em;}
-ul.filters div.elementContent:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
+ul.filters .elementContent:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
+.elements[multi] ul.filters .elementContent:hover{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
 /* ul.filters > li[hidden]{display: none;} */
 ul::-webkit-scrollbar{display: none;}
 div.elements::-webkit-scrollbar{display: none;}
 .elements:not([multi]) > section{display: none;}
 .elements[multi] > section{text-align: right;padding: .5em;}
-.elements:not([multi]) ul i.material-icons[hidden]{visibility: hidden;}
+.elements ul i{visibility: hidden;}
+.elements[multi] .elementContent:hover i{visibility: visible;}
+
 /*filters*/
