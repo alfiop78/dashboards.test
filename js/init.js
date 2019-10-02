@@ -75,10 +75,8 @@ var App = new Application();
           document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
             el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
-            // lego evento click alle <li>
+            el.onblur = function(e) {this.removeAttribute('placeholder');};
 
-            // console.log(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
-            // console.log(el.parentElement.querySelectorAll('.elements[multi] > ul div.element'));
             el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
             el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
           });
@@ -129,8 +127,15 @@ var App = new Application();
   };
 
   app.handlerSelectMulti = function(e) {
+    let elements = e.path[4];
     this.parentElement.setAttribute('selected', true);
-    
+    // cerco il tasto OK per legare l'evento click
+    let btnOk = elements.querySelector('section > button');
+    btnOk.onclick = app.handlerMultiBtn;
+  };
+
+  app.handlerMultiBtn = function(e) {
+    console.log(this);
   };
 
   app.handlerSelect = function(e) {

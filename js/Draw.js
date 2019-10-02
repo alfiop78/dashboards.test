@@ -34,6 +34,7 @@ class Draw {
     this.paramsParent.appendChild(this.params);
   }
 
+
   createDatalist() {
     // console.log(this.table.cols.length);
     // creo le option nella datalist in base a quello che 'vedo' nella table
@@ -214,7 +215,6 @@ class Draw {
           let label = el.getAttribute('label');
           let elementContent = el.parentElement.parentElement;
           (!arrayUnique.includes(label)) ? elementContent.hidden = true : elementContent.removeAttribute('hidden');
-          // (!arrayUnique.includes(label)) ? el.hidden = true : el.removeAttribute('hidden');
         });
       }
     }
