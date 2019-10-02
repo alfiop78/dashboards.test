@@ -37,11 +37,11 @@ var App = new Application();
           let options =
             {
             'cols' : [
-              {'col': 0, 'hidden': true},
-              {'col': 1, 'hidden': false}
+              {'col': 1, 'attribute': 'hidden'}
             ],
             'filters' : [
-              {'col': 0, 'multi': true}
+              {'col': 0, 'attribute': 'multi'},
+              {'col': 1, 'attribute': 'hidden'}
             ],
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
@@ -49,7 +49,7 @@ var App = new Application();
           // Opzione 1 - aggiungo tutte le colonne della query
           Object.keys(response[0]).forEach((el, i) => {
             // console.log('col:'+el);
-            app.Draw.addColumn(el);
+            app.Draw.addColumn(el, i);
             // aggiungo un filtro per ogni colonna della tabella
             app.Draw.addParams(el, i);
           });
@@ -69,15 +69,21 @@ var App = new Application();
           }
 
           app.Draw.createDatalist();
+          // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
+          app.Draw.draw();
 
           document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
             el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
             // lego evento click alle <li>
-            el.parentElement.querySelectorAll('ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
+
+            // console.log(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
+            // console.log(el.parentElement.querySelectorAll('.elements[multi] > ul div.element'));
+            el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
+            el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
           });
 
-          app.Draw.draw();
+
 
         } else {
 
@@ -122,8 +128,13 @@ var App = new Application();
 
   };
 
+  app.handlerSelectMulti = function(e) {
+    this.parentElement.setAttribute('selected', true);
+    
+  };
+
   app.handlerSelect = function(e) {
-    // console.log(this);
+    console.log(this);
     let parentElement = e.path[5];
     let liElement = e.path[1].querySelector('li');
     let input = parentElement.querySelector('input');

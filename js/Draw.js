@@ -9,8 +9,10 @@ class Draw {
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
 
-  addColumn(colName) {
+  addColumn(colName, index) {
     this.th = document.createElement('th');
+    this.th.setAttribute('col', index);
+    this.th.setAttribute('options', 'cols');
     this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
   }
@@ -20,14 +22,14 @@ class Draw {
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div[data-param-id]');
+    this.params.setAttribute('col', id);
     this.params.setAttribute('data-param-id', id);
     this.params.querySelector('ul').id = "datalist-"+id;
-    this.params.querySelector('.elements').setAttribute('options', 'filters'); // questo è in grado di ricevere impostazioni dalle options
-    this.params.querySelector('.elements').setAttribute('col', id); // questo serve per le options
     this.params.querySelector('label').setAttribute('for', "param-"+id);
     this.params.querySelector('label').innerText = colName;
     this.params.querySelector('input').id = "param-"+id;
     this.params.querySelector('input').setAttribute('data-param-id', id);
+    this.params.querySelector('.elements').setAttribute('col', id);
 
     this.paramsParent.appendChild(this.params);
   }
@@ -114,6 +116,8 @@ class Draw {
     rowValues.forEach((el, i) => {
       // el contiene il valore della cella
       this.td = document.createElement('td');
+      this.td.setAttribute('col', i);
+      this.td.setAttribute('options', 'cols');
       (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
       this.tr.appendChild(this.td);
     });
@@ -222,26 +226,35 @@ class Draw {
   }
 
   option() {
-    console.log(this.options);
-    let objOptions = Object.keys(this.options);
-    // console.log(objOptions);
-    console.log(this.options.filters);
-    this.options.filters.forEach((p) => {
-      console.log(p);
-      let propertyReference = Object.keys(p)[0]; // col
-      let propertyValue = p[propertyReference];
-      let propertyName = Object.keys(p)[1];
-      let propertyAttributeValue = p[propertyName];
-      console.log(propertyReference);
-      console.log(propertyValue);
-      // TODO: cerco gli elementi che hanno attributo options='filters' e propertyReference="propertyValue"
-      let element = document.querySelector(".elements[options='filters']["+propertyReference+"='"+propertyValue+"']");
-      console.log(element);
-      element.setAttribute(propertyName, propertyAttributeValue);
+    // console.log(this.options);
+    // console.log(Object.keys(this.options));
+    let arrProperties = Object.keys(this.options);
 
+
+    arrProperties.forEach((property) => {
+      // console.log(property);
+      if (Array.isArray(this.options[property])) {
+        // console.log('array di proprieta');
+        this.options[property].forEach((prop) => {
+          // console.log(prop);
+          let propertyRef = Object.keys(prop)[0]; // col
+          let propertyRefValue = prop[propertyRef]; // quale colonna impostare ?
+          // let propertyName = Object.keys(prop)[1]; // proprietà da impostare (es.: multi)
+          let propertyAttributeValue = prop['attribute'];
+          // console.log(property);
+          // console.log(propertyRef);
+          // console.log(propertyRefValue);
+          // console.log(propertyAttributeValue);
+          let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
+          elements.forEach((el) => {
+            el.setAttribute(propertyAttributeValue, true);
+          });
+        });
+      }
 
     });
 
   }
+
 
 }

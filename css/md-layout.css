@@ -138,5 +138,7 @@ div.elements::-webkit-scrollbar{display: none;}
 .elements[multi] > section{text-align: right;padding: .5em;}
 .elements ul i{visibility: hidden;}
 .elements[multi] .elementContent:hover i{visibility: visible;}
+.elements[multi] .elementContent[selected='true']{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
+.elements[multi] .elementContent[selected='true'] i{visibility: visible;}
 
 /*filters*/

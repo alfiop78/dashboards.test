@@ -84,8 +84,9 @@ class Application {
     document.getElementById('container').addEventListener('click', this.containerClick, true);
   }
 
-  containerClick() {
+  containerClick(e) {
     // console.log('containerClick');
+    // console.log(e.target);
     this.drawerOpen = document.querySelector('#drawer[open]');
     // console.log(this.drawerOpen);
     // chiudo il drawer
@@ -99,7 +100,8 @@ class Application {
   	  // console.log('tooltip aperti');
   	  openedTooltips.removeAttribute('open');
   	}
-    document.querySelectorAll('div.elements[show]').forEach((el) => {
+    // chiudo i filtri che non sono multiselezione, per chiudere quelli muiltiselezione c'è il tasto OK
+    document.querySelectorAll('div.elements[show]:not([multi])').forEach((el) => {
       el.removeAttribute('show');
       console.log(el.parentElement.querySelector('input').removeAttribute('placeholder'));
     });
