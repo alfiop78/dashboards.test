@@ -124,14 +124,14 @@ div.elements{transition: opacity 200ms;padding: 0 1em;background: white;opacity:
   position: absolute;z-index: -1;width: calc(100% - 8px);top: 56px;max-height: 400px;overflow-y: auto;}
 div.elements[show]{background: white;border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;box-shadow: 0 5px 10px -2px rgba(10,10,10,.3);
   z-index: 10;opacity: 1;}
+.filters > .elementContent{margin: 4px 0;}
 
 div.elements > ul{max-height: 300px;overflow-y: auto;padding-inline-start: 0;}
 
-ul.filters > .elementContent > .element{font-size: small;display: flex;justify-content: space-between;align-items: center;}
-ul.filters li{list-style: none;padding: .5em;}
+ul.filters > .elementContent > .element{font-size: small;display: flex;justify-content: space-between;align-items: center;position: relative;}
+ul.filters li{list-style: none;padding: .5em;width: 100%;position: absolute;z-index: 1;}
 ul.filters .elementContent:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
 .elements[multi] ul.filters .elementContent:hover{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
-/* ul.filters > li[hidden]{display: none;} */
 ul::-webkit-scrollbar{display: none;}
 div.elements::-webkit-scrollbar{display: none;}
 .elements:not([multi]) > section{display: none;}
@@ -140,5 +140,6 @@ div.elements::-webkit-scrollbar{display: none;}
 .elements[multi] .elementContent:hover i{visibility: visible;}
 .elements[multi] .elementContent[selected='true']{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
 .elements[multi] .elementContent[selected='true'] i{visibility: visible;}
+.element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
 
 /*filters*/

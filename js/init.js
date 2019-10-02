@@ -76,13 +76,11 @@ var App = new Application();
             el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
             el.onblur = function(e) {this.removeAttribute('placeholder');};
+            let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
 
             el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
             el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
           });
-
-
-
         } else {
 
         }
@@ -94,6 +92,11 @@ var App = new Application();
     request.open('POST', url);
     request.setRequestHeader('Content-Type','application/json');
     request.send();
+  };
+
+  app.test = function(e) {
+    console.log(e.target);
+    console.log(e.path);
   };
 
   app.handlerInput = function(e) {
@@ -135,12 +138,29 @@ var App = new Application();
   };
 
   app.handlerMultiBtn = function(e) {
-    console.log(this);
+    // console.log(this);
+    // console.log(e.path);
+    // console.log(e.path[2]);
+    let parentElement = e.path[3]; // md-field
+    let input = parentElement.querySelector('input');
+    let label = parentElement.querySelector('label');
+    let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
+    if (liSelected.length > 0) {
+      parentElement.setAttribute('activated', true);
+      input.setAttribute('activated', true);
+      label.classList.add('has-content');
+      input.value = "[MULTISELECT]";
+    } else {
+      label.classList.remove('has-content');
+    }
+    // liSelected.forEach((selected) => {
+    //   console.log(selected.getAttribute('label'));
+    // });
+    app.Draw.search();
   };
 
   app.handlerSelect = function(e) {
-    console.log(this);
-    let parentElement = e.path[5];
+    let parentElement = e.path[5]; // md-field
     let liElement = e.path[1].querySelector('li');
     let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
@@ -153,12 +173,7 @@ var App = new Application();
       label.classList.remove('has-content');
     }
 
-    let cols = [];
-    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
-    filters.forEach(function(item) {
-      cols[+item.getAttribute('data-param-id')] = item.value;
-    });
-    app.Draw.search(cols);
+    app.Draw.search();
   };
 
   app.showFilters = function(e) {

@@ -130,8 +130,33 @@ class Draw {
     // });
   }
 
-  search(cols) {
+  search() {
     /*Ricerca in base alla selezione dei filtri*/
+    console.log('search');
+    let cols = [], multiSelectElements = [];
+    // recupero i filtri che sono stati impostati
+    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
+    console.log(filters);
+    filters.forEach(function(item) {
+      console.log(item);
+      // per ogni filtro impostato, inserisco nell'array cols i valori selezionati nei filtri
+      // TODO: verifico se questo filtro è multiple
+      // console.log(item.parentElement.querySelector('.elements').getAttribute('multi'));
+      if (item.parentElement.querySelector('.elements').getAttribute('multi')) {
+        // multi
+        let liSelected = Array.from(item.parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
+        console.log(liSelected);
+        liSelected.forEach((selected) => {
+          console.log(selected.getAttribute('label'));
+          multiSelectElements.push(selected.getAttribute('label'));
+        });
+        cols[+item.getAttribute('data-param-id')] = multiSelectElements;
+      } else {
+        cols[+item.getAttribute('data-param-id')] = item.value;
+      }
+    });
+    console.log(cols);
+
     // console.log('search');
     let rows = [];
     /* per ogni colonna (filtro) impostato, inserisco in un array le righe trovate per il filtro impostato
