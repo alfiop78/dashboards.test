@@ -142,6 +142,7 @@ var App = new Application();
     // console.log(e.path);
     // console.log(e.path[2]);
     let parentElement = e.path[3]; // md-field
+    let elements = parentElement.querySelector('.elements[show]');
     let input = parentElement.querySelector('input');
     let label = parentElement.querySelector('label');
     let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
@@ -153,10 +154,9 @@ var App = new Application();
     } else {
       label.classList.remove('has-content');
     }
-    // liSelected.forEach((selected) => {
-    //   console.log(selected.getAttribute('label'));
-    // });
     app.Draw.search();
+    elements.removeAttribute('show');
+    
   };
 
   app.handlerSelect = function(e) {

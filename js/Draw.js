@@ -136,9 +136,9 @@ class Draw {
     let cols = [], multiSelectElements = [];
     // recupero i filtri che sono stati impostati
     let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
-    console.log(filters);
+    // console.log(filters);
     filters.forEach(function(item) {
-      console.log(item);
+      // console.log(item);
       // per ogni filtro impostato, inserisco nell'array cols i valori selezionati nei filtri
       // TODO: verifico se questo filtro è multiple
       // console.log(item.parentElement.querySelector('.elements').getAttribute('multi'));
@@ -147,7 +147,7 @@ class Draw {
         let liSelected = Array.from(item.parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
         console.log(liSelected);
         liSelected.forEach((selected) => {
-          console.log(selected.getAttribute('label'));
+          // console.log(selected.getAttribute('label'));
           multiSelectElements.push(selected.getAttribute('label'));
         });
         cols[+item.getAttribute('data-param-id')] = multiSelectElements;
@@ -166,15 +166,17 @@ class Draw {
     cols.forEach((value, index) => {
       let row = [];
       for (let i = 0; i < this.tbody.rows.length; i++) {
-        // per ogni riga esamino le colonne
-        if (this.tbody.rows[i].cells[index].innerText === value) {
+        // per ogni riga verifico la presenza del valore per ogni filtro selezionato
+        // nel caso della multiselect verifico la presenza nell'array di valori selezionati
+        if ( (this.tbody.rows[i].cells[index].innerText === value) || (value.includes(this.tbody.rows[i].cells[index].innerText)) ) {
           //... esamino le celle di ogni colonna appartente alla riga
           // il valore ricercare è presente in questa riga, la aggiungo all'array rows
           row.push(i);
         }
+
       }
       rows[index] = row;
-      // console.log(rows);
+      console.log(rows);
     });
 
     /* esamino ogni riga della table e verifico se la riga esaminata è presente nell'array precedente (rows).
