@@ -75,7 +75,13 @@ var App = new Application();
           document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
             el.oninput = app.handlerInput;
             el.onclick = app.showFilters;
-            el.onblur = function(e) {this.removeAttribute('placeholder');};
+            el.onblur = function(e) {
+              // console.log(e);
+              this.removeAttribute('placeholder');
+              // quando l'elemento input perde il focus devo chiudere anche la dropdown
+              console.log(this.parentElement.querySelector('.elements'));
+              // this.parentElement.querySelector('.elements').removeAttribute('show');
+            };
             let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
 
             el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
@@ -92,11 +98,6 @@ var App = new Application();
     request.open('POST', url);
     request.setRequestHeader('Content-Type','application/json');
     request.send();
-  };
-
-  app.test = function(e) {
-    console.log(e.target);
-    console.log(e.path);
   };
 
   app.handlerInput = function(e) {
@@ -157,18 +158,21 @@ var App = new Application();
   };
 
   app.handlerSelect = function(e) {
-    let parentElement = e.path[5]; // md-field
+    console.log('handlerSelect');
+    console.log(this);
+    let parent = e.path[5]; // md-field
     let liElement = e.path[1].querySelector('li');
-    let input = parentElement.querySelector('input');
-    let label = parentElement.querySelector('label');
+    let input = parent.querySelector('input');
+    let label = parent.querySelector('label');
     input.value = liElement.getAttribute('label');
     if (input.value.length > 0) {
-      parentElement.setAttribute('activated', true);
+      parent.setAttribute('activated', true);
       input.setAttribute('activated', true);
       label.classList.add('has-content');
     } else {
       label.classList.remove('has-content');
     }
+    parent.querySelector('.elements[show]').removeAttribute('show');
 
     app.Draw.search();
   };
