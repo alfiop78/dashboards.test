@@ -101,10 +101,9 @@ class Application {
   	  openedTooltips.removeAttribute('open');
   	}
     // chiudo i filtri che non sono multiselezione, per chiudere quelli muiltiselezione c'è il tasto OK
-    // document.querySelectorAll('div.elements[show]:not([multi])').forEach((el) => {
-    //   el.removeAttribute('show');
-    //   console.log(el.parentElement.querySelector('input').removeAttribute('placeholder'));
-    // });
+    document.querySelectorAll('div.elements[show]:not([multi])').forEach((el) => {
+      el.removeAttribute('show');
+    });
   }
 
   menuOpen(url) {

@@ -13,11 +13,11 @@ var App = new Application();
 
   // App.getSessionName();
 
-  App.init();
+  // App.init();
 
   app.getData = function() {
     // TODO: utilizzare le promise
-    var url = "/ajax/chart.php";
+    var url = "/ajax/table.php";
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -37,11 +37,12 @@ var App = new Application();
           let options =
             {
             'cols' : [
-              {'col': 1, 'attribute': 'hidden'}
+              {'col': 1, 'attribute': 'hidden'},
+              {'col': 4, 'attribute': 'hidden'}
             ],
             'filters' : [
               {'col': 0, 'attribute': 'multi'},
-              {'col': 1, 'attribute': 'hidden'}
+              {'col': 5, 'attribute': 'hidden'}
             ],
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
@@ -71,6 +72,7 @@ var App = new Application();
           app.Draw.createDatalist();
           // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
           app.Draw.draw();
+          App.init();
 
           document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
             el.oninput = app.handlerInput;
@@ -78,9 +80,6 @@ var App = new Application();
             el.onblur = function(e) {
               // console.log(e);
               this.removeAttribute('placeholder');
-              // quando l'elemento input perde il focus devo chiudere anche la dropdown
-              console.log(this.parentElement.querySelector('.elements'));
-              // this.parentElement.querySelector('.elements').removeAttribute('show');
             };
             let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
 
@@ -172,12 +171,16 @@ var App = new Application();
     } else {
       label.classList.remove('has-content');
     }
-    parent.querySelector('.elements[show]').removeAttribute('show');
 
     app.Draw.search();
   };
 
   app.showFilters = function(e) {
+    // verifico prima se ci sono altre dropdown aperte, le chiudo.
+    document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
+      elementsShow.removeAttribute('show');
+    });
+    // apro la dropdown
     e.path[1].querySelector('div.elements').toggleAttribute('show');
     this.setAttribute('placeholder', 'Search...');
   };

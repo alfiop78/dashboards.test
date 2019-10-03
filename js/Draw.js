@@ -237,19 +237,21 @@ class Draw {
 
 
     arrProperties.forEach((property) => {
-      // console.log(property);
+      console.log(property); // cols, filters, ecc...
       if (Array.isArray(this.options[property])) {
-        // console.log('array di proprieta');
+        // console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
         this.options[property].forEach((prop) => {
-          // console.log(prop);
+          // console.log(prop); // {col: 1, attribute: "hidden"}
           let propertyRef = Object.keys(prop)[0]; // col
-          let propertyRefValue = prop[propertyRef]; // quale colonna impostare ?
-          // let propertyName = Object.keys(prop)[1]; // proprietà da impostare (es.: multi)
+          let propertyRefValue = prop[propertyRef]; // numero di colonna
           let propertyAttributeValue = prop['attribute'];
-          // console.log(property);
-          // console.log(propertyRef);
-          // console.log(propertyRefValue);
-          // console.log(propertyAttributeValue);
+
+          console.log(propertyRef);
+          console.log(propertyRefValue);
+          console.log(propertyAttributeValue);
+          // es. : :root [options='cols'][col='1']
+          // es. : :root [options='filters'][col='0']
+
           let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
           elements.forEach((el) => {
             el.setAttribute(propertyAttributeValue, true);
