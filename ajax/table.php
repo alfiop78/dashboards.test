@@ -8,7 +8,9 @@ setlocale (LC_TIME, "it_IT");
 
 $a = new Queries();
 
-$result = $a->q_1();
+// $result = $a->dealers();
+$result = $a->FreeCourtesy();
+
 
 ob_clean();
 echo json_encode($result, JSON_FORCE_OBJECT);

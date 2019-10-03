@@ -143,3 +143,5 @@ div.elements::-webkit-scrollbar{display: none;}
 .element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
 
 /*filters*/
+/*tfoot*/
+tr.tr-right{display: flex;justify-content: flex-end;}

@@ -5,7 +5,7 @@ class Queries {
 
   function __construct() {}
 
-  public function q_1() {
+  public function dealers() {
     $l = new ConnectDB("automotive_bi_data"); // TODO: si potrebbe mettere come Proprietà della Classe
     $query = "SELECT versioneDMS as Versione, id, descrizione as Dealer, CodDealerCM as 'Cod.Ford', CodAziendaSId as sID, VAT FROM Azienda a WHERE a.id_CasaMadre = 1 AND a.isDealer = 1 AND a.attiva = 1 AND a.CodMercato = 'IT';";
 
@@ -13,10 +13,36 @@ class Queries {
     return $this->_result;
   }
 
-  public function IngressiVeicoliCommerciali() {
+  public function FreeCourtesy() {
     $l = new ConnectDB("automotive_bi_data"); // TODO: si potrebbe mettere come Proprietà della Classe
 
-    $query = ";";
+    $query = "SELECT detail.Distretto, detail.Zona, detail.CodFord, detail.DealerId, detail.DealerDs, detail.MONTH, SUM(detail.FREECOURTESY) as FreeCOURTESY FROM (
+            SELECT
+               zv.Descrizione as Distretto, zv.Codice as Zona,
+               a.CodDealerCM as CodFord, a.id as DealerId, a.descrizione as DealerDs, i.VIN as VIN, LK_DATE.ID_MONTH as MONTH, d.DataDocumento as DAY_ID,
+                IFNULL(COUNT( Distinct (   i.VIN   )),0)  AS FREECOURTESY
+            FROM
+               Azienda a, CodSedeDealer s, DocVenditaDettaglio d, DocVenditaIntestazione i, LK_DATE LK_DATE, ZonaVenditaCM zv
+             WHERE d.CancellatStampa = 'S'
+               AND d.CodiceManoOpera = '540900MUA'
+               AND d.Reparto = 'OFF'
+               AND i.FlagAnnullata = 'A'
+               AND (case when  d.Addebito IN ( '---' , 'CLI' ) then 1 when  d.Addebito = 'GAR' then 2 when  d.Addebito IN ( 'INT' , 'Lav' ) then 3 end = '1')
+               AND a.Attiva = 1 AND a.CodMercato = 'IT'  AND a.Id_CasaMadre = 1  AND a.IsDealer = 1
+               AND i.id_CasaMadre_Veicolo = 1
+               AND LK_DATE.ID_MONTH = 201904
+               AND a.id=s.id_Azienda
+               AND s.id=i.id_CodSedeDealer
+               AND s.id_Azienda=i.id_Azienda
+               AND d.DataDocumento=LK_DATE.ID_DAY
+               AND d.NumRifInt=i.NumRifInt
+               AND d.id_Azienda=a.id
+               AND d.id_Azienda=i.id_Azienda
+               AND i.NumRifInt=d.NumRifInt
+               AND zv.id=a.id_ZonaVenditaCM
+                GROUP BY
+               i.VIN, d.DataDocumento) detail
+            GROUP BY detail.DISTRETTO, detail.ZONA, detail.DealerId;";
 
     $this->_result = $l->getResultAssoc($query);
     return $this->_result;

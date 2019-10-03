@@ -33,20 +33,25 @@ var App = new Application();
           // console.log(Object.keys(response[0])[0]); // nome colonna
           // console.log(Object.keys(response[0])[1]); // nome colonna
           // aggiungo le colonne
-          let table = document.getElementById('table-layout-1');
+          let table = document.getElementById('table-01');
+
           let options =
             {
             'cols' : [
-              {'col': 1, 'attribute': 'hidden'},
-              {'col': 4, 'attribute': 'hidden'}
+              {'col': 3, 'attribute': 'hidden'}
+
             ],
             'filters' : [
               {'col': 0, 'attribute': 'multi'},
-              {'col': 5, 'attribute': 'hidden'}
+              {'col': 1, 'attribute': 'multi'},
+              {'col': 3, 'attribute': 'hidden'}
             ],
+            'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri
+            'title' : 'Free Courtesy',
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
           app.Draw = new Draw(table, options);
+          console.log(app.Draw);
           // Opzione 1 - aggiungo tutte le colonne della query
           Object.keys(response[0]).forEach((el, i) => {
             // console.log('col:'+el);

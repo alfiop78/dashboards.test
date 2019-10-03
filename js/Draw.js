@@ -9,6 +9,14 @@ class Draw {
     this.paramsParent = document.querySelector('section[params] > div.params');
   }
 
+  set title(value) {
+    this.titleCaption = value;
+    // console.log(this.titleCaption);
+    console.log(this.table.querySelector('caption'));
+    this.table.querySelector('caption').innerHTML = this.titleCaption;
+  }
+  get title() {return this.titleCaption;}
+
   addColumn(colName, index) {
     this.th = document.createElement('th');
     this.th.setAttribute('col', index);
@@ -123,7 +131,7 @@ class Draw {
       if (item.parentElement.querySelector('.elements').getAttribute('multi')) {
         // multi
         let liSelected = Array.from(item.parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
-        console.log(liSelected);
+        // console.log(liSelected);
         liSelected.forEach((selected) => {
           // console.log(selected.getAttribute('label'));
           multiSelectElements.push(selected.getAttribute('label'));
@@ -133,7 +141,7 @@ class Draw {
         cols[+item.getAttribute('data-param-id')] = item.value;
       }
     });
-    console.log(cols);
+    // console.log(cols);
 
     // console.log('search');
     let rows = [];
@@ -154,7 +162,7 @@ class Draw {
 
       }
       rows[index] = row;
-      console.log(rows);
+      // console.log(rows);
     });
 
     /* esamino ogni riga della table e verifico se la riga esaminata è presente nell'array precedente (rows).
@@ -182,6 +190,7 @@ class Draw {
       }
     }
     this.rebuildDatalists();
+    this.info();
   }
 
   rebuildDatalists() {
@@ -228,16 +237,29 @@ class Draw {
   draw() {
     // TODO: qui si dovrebbe impostare una class che applica una transition per visualizzare la table
     this.option();
+    this.info();
+  }
+
+  info() {
+    this.infoRef = this.table.querySelector('tfoot div[info]');
+    this.rowCounter = this.infoRef.querySelector('span[row-number]');
+    for (let i = 0, count = 1; i < this.tbody.rows.length; i++) {
+      if (this.tbody.rows[i].getAttribute('hidden') === null) {
+        this.rowCounter.innerText = count++;
+      }
+    }
   }
 
   option() {
     // console.log(this.options);
     // console.log(Object.keys(this.options));
     let arrProperties = Object.keys(this.options);
+    // console.log(arrProperties);
+    if (arrProperties.includes('title')) {this.title = this.options.title;}
 
 
     arrProperties.forEach((property) => {
-      console.log(property); // cols, filters, ecc...
+      // console.log(property); // cols, filters, ecc...
       if (Array.isArray(this.options[property])) {
         // console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
         this.options[property].forEach((prop) => {
@@ -246,9 +268,9 @@ class Draw {
           let propertyRefValue = prop[propertyRef]; // numero di colonna
           let propertyAttributeValue = prop['attribute'];
 
-          console.log(propertyRef);
-          console.log(propertyRefValue);
-          console.log(propertyAttributeValue);
+          // console.log(propertyRef);
+          // console.log(propertyRefValue);
+          // console.log(propertyAttributeValue);
           // es. : :root [options='cols'][col='1']
           // es. : :root [options='filters'][col='0']
 
