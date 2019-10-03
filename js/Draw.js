@@ -12,7 +12,7 @@ class Draw {
   set title(value) {
     this.titleCaption = value;
     // console.log(this.titleCaption);
-    console.log(this.table.querySelector('caption'));
+    // console.log(this.table.querySelector('caption'));
     this.table.querySelector('caption').innerHTML = this.titleCaption;
   }
   get title() {return this.titleCaption;}
@@ -256,12 +256,14 @@ class Draw {
     let arrProperties = Object.keys(this.options);
     // console.log(arrProperties);
     if (arrProperties.includes('title')) {this.title = this.options.title;}
+    console.log(this.options.metrics);
+    if (arrProperties.includes('metrics')) {document.querySelector('.params > .md-field[col="'+this.options.metrics+'"]');}
 
 
     arrProperties.forEach((property) => {
-      // console.log(property); // cols, filters, ecc...
+      console.log(property); // cols, filters, ecc...
       if (Array.isArray(this.options[property])) {
-        // console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
+        console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
         this.options[property].forEach((prop) => {
           // console.log(prop); // {col: 1, attribute: "hidden"}
           let propertyRef = Object.keys(prop)[0]; // col

@@ -38,7 +38,8 @@ var App = new Application();
           let options =
             {
             'cols' : [
-              {'col': 3, 'attribute': 'hidden'}
+              {'col': 3, 'attribute': 'hidden'},
+              {'col': 5, 'attribute': 'hidden'}
 
             ],
             'filters' : [
