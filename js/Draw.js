@@ -90,20 +90,6 @@ class Draw {
         element.appendChild(this.li);
         element.appendChild(iconDone);
       });
-
-      // arrayUnique.forEach((el, i) => {
-      //   let iElement = document.createElement('i');
-      //   iElement.innerText = 'done';
-      //   iElement.hidden = true;
-      //   iElement.classList.add("material-icons", "md-18");
-      //
-      //   this.li = document.createElement('li');
-      //   this.li.id = i;
-      //   this.li.innerHTML = el.toUpperCase().trim();
-      //   this.li.setAttribute('label', el.toUpperCase().trim());
-      //   this.datalist.appendChild(this.li);
-      //   this.li.appendChild(iElement);
-      // });
     }
   }
 
@@ -122,12 +108,6 @@ class Draw {
       (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
       this.tr.appendChild(this.td);
     });
-
-    // NOTE: L'utilizzo di this all'interno della function referenzia la function stessa, non ho possibilità di fare riferimento a this di un oggetto esterno
-    // alla function
-    // rowValues.forEach(function(el) {
-    //   console.log(this.row);
-    // });
   }
 
   search() {
@@ -138,10 +118,8 @@ class Draw {
     let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
     // console.log(filters);
     filters.forEach(function(item) {
-      // console.log(item);
       // per ogni filtro impostato, inserisco nell'array cols i valori selezionati nei filtri
-      // TODO: verifico se questo filtro è multiple
-      // console.log(item.parentElement.querySelector('.elements').getAttribute('multi'));
+      // verifico se questo filtro è multiple
       if (item.parentElement.querySelector('.elements').getAttribute('multi')) {
         // multi
         let liSelected = Array.from(item.parentElement.querySelectorAll('.elementContent[selected] > .element > li'));

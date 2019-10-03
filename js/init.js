@@ -112,26 +112,23 @@ var App = new Application();
       this.removeAttribute('activated');
       parentElement.removeAttribute('activated');
       label.classList.remove('has-content');
+      app.Draw.search();
     }
-    let cols = [];
-    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
-    filters.forEach(function(item) {
-      cols[+item.getAttribute('data-param-id')] = item.value;
-    });
+
     // mentre digito filtro l'elenco degli elementi <li>
-    let liElement = parentElement.querySelectorAll('ul > li:not([hidden])');
-    // console.log(liElement);
+    let liElement = parentElement.querySelectorAll('ul > .elementContent li');
     liElement.forEach((el) => {
       let label = el.getAttribute('label');
-      (label.indexOf(this.value.toUpperCase()) !== -1) ? el.removeAttribute('hidden') : el.hidden = true;
+      // imposto hidden su elementContent e non su li
+      let elementContent = el.parentElement.parentElement;
+      (label.indexOf(this.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
     });
-    app.Draw.search(cols);
 
   };
 
   app.handlerSelectMulti = function(e) {
     let elements = e.path[4];
-    this.parentElement.setAttribute('selected', true);
+    this.parentElement.toggleAttribute('selected');
     // cerco il tasto OK per legare l'evento click
     let btnOk = elements.querySelector('section > button');
     btnOk.onclick = app.handlerMultiBtn;
@@ -156,7 +153,7 @@ var App = new Application();
     }
     app.Draw.search();
     elements.removeAttribute('show');
-    
+
   };
 
   app.handlerSelect = function(e) {

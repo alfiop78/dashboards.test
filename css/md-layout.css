@@ -138,8 +138,8 @@ div.elements::-webkit-scrollbar{display: none;}
 .elements[multi] > section{text-align: right;padding: .5em;}
 .elements ul i{visibility: hidden;}
 .elements[multi] .elementContent:hover i{visibility: visible;}
-.elements[multi] .elementContent[selected='true']{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
-.elements[multi] .elementContent[selected='true'] i{visibility: visible;}
+.elements[multi] .elementContent[selected]{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
+.elements[multi] .elementContent[selected] i{visibility: visible;}
 .element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
 
 /*filters*/
