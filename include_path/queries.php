@@ -50,5 +50,20 @@ class Queries {
     return $this->_result;
   }
 
+  public function showTable() {
+    $l = new ConnectDB('automotive_bi_data');
+    $this->_result = $l->getResultArray("SHOW TABLES;");
+    // $this->_result = $l->getResultAssoc("SHOW TABLES;");
+    return $this->_result;
+  }
+
+  public function describe($table) {
+    $l = new ConnectDB('automotive_bi_data');
+    $query = "DESCRIBE $table;";
+    $this->_result = $l->getResultArray($query);
+    // $this->_result = $l->getResultAssoc("SHOW TABLES;");
+    return $this->_result;
+  }
+
 
 } // End Class
