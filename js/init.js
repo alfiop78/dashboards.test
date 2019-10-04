@@ -47,7 +47,7 @@ var App = new Application();
               {'col': 1, 'attribute': 'multi'},
               {'col': 3, 'attribute': 'hidden'}
             ],
-            'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri
+            'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
             'title' : 'Free Courtesy',
             'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
             };
@@ -105,6 +105,8 @@ var App = new Application();
     request.send();
   };
 
+
+  // TODO: QUESTE FUNZIONI LE DOVRO' AGGIUNGERE ALLA CLASSE COME METODI
   app.handlerInput = function(e) {
     // console.log('input');
     // console.log(this);
@@ -192,43 +194,5 @@ var App = new Application();
   };
 
   app.getData();
-
-  document.getElementById('search').oninput = function(e) {
-    (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
-    // console.log(this.value.toUpperCase());
-    // recupero, dalla table, le righe e le celle, successivamente inserisco le celle in un array per poter utilizzare indexOf su ogni singolo carattere contenuto nella row
-    // NOTE: se si vuole far in modo da ricercare l'esatta occorrenza (inserendo tutta la parola) bisogna eliminare [n] da cells[n] nell'indexOf
-    // console.log(document.querySelectorAll('table tr[row="body"]'));
-    // var table = document.getElementById('table-layout-1');
-    let table = document.querySelector('table > tbody');
-    // console.log(table.rows.length);
-    // console.log(table.rows);
-    for (let i = 0; i < table.rows.length; i++) {
-      let founded = false;
-      // console.log(table.rows[i]);
-      // console.log(table.rows[i].cells[1]);
-      table.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
-      table.rows[i].removeAttribute('found');
-      table.rows[i].removeAttribute('hidden');
-
-      let cells = [];
-      for (let n = 0; n < table.rows[i].cells.length; n++) {
-        // console.log(table.rows[i].cells[n].innerText);
-        // ... oppure ...
-        // console.log(table.rows[i].cells.item(n).innerText);
-        cells.push(table.rows[i].cells[n].innerText);
-
-        // arrayTableContent.push(table.rows[i].cells[n].innerText);
-        if (cells[n].indexOf(this.value.toUpperCase()) !== -1) {
-          // console.log(table.rows[i]);
-          // console.log(i);
-          // console.log('trovata');
-          founded = true;
-        }
-      }
-      (founded) ? table.rows[i].setAttribute('found', true) : table.rows[i].hidden = true;
-    }
-
-  };
 
 })();

@@ -1,3 +1,43 @@
+/*
+  setting delle opzioni
+
+    cols : Definisce le colonne della tabella su cui applicare le opzioni
+      {'riferimento_colonna' : numero_colonna, 'elemento_da_impostare': attributo}
+      elemento_da_impostare : 'attribute', 'class', ecc....
+
+    filters : Definisce le opzioni per i Filtri da impostare
+      {'riferimento_colonna': numero_colonna, 'elemento_da_impostare': attributo}
+
+    metrics : Da vedere
+
+    rowsNumber : Numero di righe da mostrare prima dell'overflow-y nella tabella
+
+    title : Imposta il titolo della tabella
+
+    inputSearch (boolean)
+      true = viene legato il metodo searchInput all'evento input della input type=search
+      false = viene nascosta la input type=search
+
+    -----------------------------------Esempio ----------------------------
+
+    let options =
+      {
+      'cols' : [
+        {'col': 3, 'attribute': 'hidden'},
+        {'col': 5, 'attribute': 'hidden'}
+
+      ],
+      'filters' : [
+        {'col': 0, 'attribute': 'multi'},
+        {'col': 1, 'attribute': 'multi'},
+        {'col': 3, 'attribute': 'hidden'}
+      ],
+      'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri
+      'title' : 'Free Courtesy',
+      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
+      };
+*/
+
 class Draw {
   constructor(table, options) {
     /*
@@ -41,7 +81,6 @@ class Draw {
 
     this.paramsParent.appendChild(this.params);
   }
-
 
   createDatalist() {
     // console.log(this.table.cols.length);
@@ -257,7 +296,20 @@ class Draw {
     // console.log(arrProperties);
     if (arrProperties.includes('title')) {this.title = this.options.title;}
     console.log(this.options.metrics);
-    if (arrProperties.includes('metrics')) {document.querySelector('.params > .md-field[col="'+this.options.metrics+'"]');}
+    if (arrProperties.includes('metrics')) {
+      // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
+      document.querySelector('.params > .md-field[col="'+this.options.metrics+'"]').hidden = true;
+      // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
+      this.table.querySelectorAll('tr > td[col="'+this.options.metrics+'"], tr > th[col="'+this.options.metrics+'"]').forEach((col) => {col.classList.add('metrics');});
+    }
+    console.log(this.options.inputSearch);
+    if (arrProperties.includes('inputSearch') && this.options.inputSearch) {
+      // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
+      document.getElementById('search').oninput = this.searchInput.bind(this);
+    } else {
+      // nascondo la input search
+      document.getElementById('search').parentElement.hidden = true;
+    }
 
 
     arrProperties.forEach((property) => {
@@ -285,6 +337,46 @@ class Draw {
 
     });
 
+  }
+
+  searchInput(event) {
+    // ricerca dalla input in basso
+    console.log('search input');
+    // console.log(this);
+    // console.log(event);
+    // console.log(event.target.value.length);
+
+
+    (event.target.value.length > 0) ? event.target.parentElement.querySelector('label').classList.add('has-content') : event.target.parentElement.querySelector('label').classList.remove('has-content');
+    // recupero, dalla table, le righe e le celle, successivamente inserisco le celle in un array per poter utilizzare indexOf su ogni singolo carattere contenuto nella row
+    // NOTE: se si vuole far in modo da ricercare l'esatta occorrenza (inserendo tutta la parola) bisogna eliminare [n] da cells[n] nell'indexOf
+    // console.log(document.querySelectorAll('table tr[row="body"]'));
+
+    for (let i = 0; i < this.tbody.rows.length; i++) {
+      let founded = false;
+      // console.log(table.rows[i]);
+      // console.log(table.rows[i].cells[1]);
+      this.tbody.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
+      this.tbody.rows[i].removeAttribute('found');
+      this.tbody.rows[i].removeAttribute('hidden');
+
+      let cells = [];
+      for (let n = 0; n < this.tbody.rows[i].cells.length; n++) {
+        // console.log(table.rows[i].cells[n].innerText);
+        // ... oppure ...
+        // console.log(table.rows[i].cells.item(n).innerText);
+        cells.push(this.tbody.rows[i].cells[n].innerText);
+
+        // arrayTableContent.push(table.rows[i].cells[n].innerText);
+        if (cells[n].indexOf(event.target.value.toUpperCase()) !== -1) {
+          // console.log(table.rows[i]);
+          // console.log(i);
+          // console.log('trovata');
+          founded = true;
+        }
+      }
+      (founded) ? this.tbody.rows[i].setAttribute('found', true) : this.tbody.rows[i].hidden = true;
+    }
   }
 
 
