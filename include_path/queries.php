@@ -22,14 +22,16 @@ class Queries {
                a.CodDealerCM as CodFord, a.id as DealerId, a.descrizione as DealerDs, i.VIN as VIN, LK_DATE.ID_MONTH as MONTH, d.DataDocumento as DAY_ID,
                 IFNULL(COUNT( Distinct (   i.VIN   )),0)  AS FREECOURTESY
             FROM
-               Azienda a, CodSedeDealer s, DocVenditaDettaglio d, DocVenditaIntestazione i, LK_DATE LK_DATE, ZonaVenditaCM zv
+               Azienda a, CodSedeDealer s, DocVenditaDettaglio d, DocVenditaIntestazione i, LK_DATE LK_DATE, ZonaVenditaCM zv, CodOperatoreOfficina op, TipoMovimento tm
              WHERE d.CancellatStampa = 'S'
                AND d.CodiceManoOpera = '540900MUA'
                AND d.Reparto = 'OFF'
                AND i.FlagAnnullata = 'A'
-               AND (case when  d.Addebito IN ( '---' , 'CLI' ) then 1 when  d.Addebito = 'GAR' then 2 when  d.Addebito IN ( 'INT' , 'Lav' ) then 3 end = '1')
+               AND (case when  d.Addebito IN ( '---' , 'CLI' ) then 1 when d.Addebito IN ( 'INT' , 'Lav' ) then 3 end /*= '1' */)
                AND a.Attiva = 1 AND a.CodMercato = 'IT'  AND a.Id_CasaMadre = 1  AND a.IsDealer = 1
                AND i.id_CasaMadre_Veicolo = 1
+               AND op.id=i.id_CodOperatoreOfficina AND i.id_Azienda=op.id_Azienda
+               AND tm.id=d.id_TipoMovimento AND tm.id_Azienda=d.id_Azienda AND tm.IsCarrozzeria = 0
                AND LK_DATE.ID_MONTH = 201904
                AND a.id=s.id_Azienda
                AND s.id=i.id_CodSedeDealer

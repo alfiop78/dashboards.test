@@ -8,7 +8,8 @@
     filters : Definisce le opzioni per i Filtri da impostare
       {'riferimento_colonna': numero_colonna, 'elemento_da_impostare': attributo}
 
-    metrics : Da vedere
+    metrics : Array di colonne che devono essere impostate come metriche [5,6,3, ecc...] Le stesse avranno una formattazione
+      diversa in tbody e verranno nascoste nei Params
 
     rowsNumber : Numero di righe da mostrare prima dell'overflow-y nella tabella
 
@@ -297,10 +298,12 @@ class Draw {
     if (arrProperties.includes('title')) {this.title = this.options.title;}
     console.log(this.options.metrics);
     if (arrProperties.includes('metrics')) {
-      // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
-      document.querySelector('.params > .md-field[col="'+this.options.metrics+'"]').hidden = true;
-      // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
-      this.table.querySelectorAll('tr > td[col="'+this.options.metrics+'"], tr > th[col="'+this.options.metrics+'"]').forEach((col) => {col.classList.add('metrics');});
+      this.options.metrics.forEach((col) => {
+        // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
+        document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
+        // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
+        this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {cols.classList.add('metrics');});
+      });
     }
     console.log(this.options.inputSearch);
     if (arrProperties.includes('inputSearch') && this.options.inputSearch) {
