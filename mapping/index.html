@@ -58,16 +58,15 @@
                   <input list="datalistTables" id="tableListId" value="" onclick="this.select()"/>
                   <label for="tableListId">Tabelle</label>
                   <datalist id="datalistTables"></datalist>
-
                 </div>
 
+                <div class="cell-full md-field">
+                  <select id="columns" multiple>
 
-                <select id="columns" multiple>
+                  </select>
+                </div>
 
-                </select>
-
-
-                <button id="add" type="button" name="button" class="button dense">add</button>
+                <button id="add" type="button" name="button" class="button dense raised">add</button>
               </section>
 
               <template id="template-table-added">
@@ -80,7 +79,10 @@
               </template>
 
               <section id="tables">
-                <button id="relation" class="button dense">relazione</button>
+                <div id="table-list">
+
+                </div>
+                <button id="relation" class="button dense raised" hidden>crea relazione</button>
 
               </section>
 

@@ -52,6 +52,8 @@ var App = new Application();
 
   document.getElementById('tableListId').onchange = function(e) {
     console.log('change');
+    let label = this.parentElement.querySelector('label');
+    (this.value.length > 0) ? label.classList.add('has-content') : label.classList.remove('has-content');
     // TODO: carico l'elenco delle colonne della tabella selezionata
     console.log(this.value);
     app.tableSelected = this.value;
