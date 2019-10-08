@@ -58,6 +58,7 @@ class Cube {
         // console.log(li);
         hier.push(li.getAttribute('label')+"."+li.innerText);
         li.removeAttribute('selected');
+        li.hidden = true;
       });
     });
     this.hierarchies.push(hier);

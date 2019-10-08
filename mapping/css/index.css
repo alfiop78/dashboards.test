@@ -1,3 +1,9 @@
+
+#pages{width: 100%;overflow-x: hidden;}
+.overflowX{display: flex;transition: all 250ms;}
+.page{min-width: 100%;max-width: 800px;transition: all 500ms;transform: translateX(0);}
+/* #body{overflow-x: hidden;} */
+.steps{display: grid;grid-template-rows: auto;}
 .layout[col-x="1"][col-y="2"] {display: grid;grid-template-columns: auto auto;grid-template-rows: auto;}
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 select[multiple]{height: 300px;width: 250px;border: none;}
