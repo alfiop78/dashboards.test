@@ -8,7 +8,7 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
-    tableSelected : [],
+    tableSelected : null,
     columnsSelected : []
 
   };
@@ -54,7 +54,7 @@ var App = new Application();
     console.log('change');
     // TODO: carico l'elenco delle colonne della tabella selezionata
     console.log(this.value);
-    app.tableSelected.push(this.value);
+    app.tableSelected = this.value;
 
 
     var url = "ajax/tableInfo.php";
@@ -92,7 +92,7 @@ var App = new Application();
 
   };
 
-  document.getElementById('save').onclick = function() {
+  document.getElementById('add').onclick = function() {
     let columns = document.getElementById('columns');
     // console.log(columns.selectedOptions);
     let collection = columns.selectedOptions;
@@ -102,10 +102,22 @@ var App = new Application();
       cols.push(columns.selectedOptions[i].value);
     }
     console.log(cols);
+    console.log(app.tableSelected);
 
     app.Cube.tables = app.tableSelected;
     app.Cube.columns = cols;
+    app.Cube.createTable();
+
+    document.querySelectorAll('#columns > option').forEach((opt) => {
+      // console.log(opt);
+      columns.removeChild(opt);
+    });
+    document.getElementById('tableListId').value = "";
   };
+
+  document.getElementById('relation').onclick = function(e) {
+    app.Cube.createHierarchy();
+  }
 
   app.getDatabaseTable();
 
