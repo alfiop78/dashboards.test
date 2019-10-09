@@ -1,6 +1,10 @@
 
 #pages{width: 100%;overflow-x: hidden;}
-.overflowX{display: flex;transition: all 250ms;}
+#overflowX{display: flex;transition: all 250ms;transform: translateX(0px);}
+#overflowX[data-step-active="1"]{transform: translateX(0px);}
+#overflowX[data-step-active="2"]{transform: translateX(-800px);}
+#overflowX[data-step-active="3"]{transform: translateX(-1600px);}
+
 .page{min-width: 100%;max-width: 800px;transition: all 500ms;transform: translateX(0);}
 /* #body{overflow-x: hidden;} */
 .steps{display: grid;grid-template-rows: auto;}

@@ -121,6 +121,27 @@ var App = new Application();
     app.Cube.createHierarchy();
   }
 
+  document.getElementById('mdc-next').onclick = function(e) {
+    // pagina attiva in questo momento
+    let activePage = document.querySelector('.page[selected]');
+    activePage.removeAttribute('selected');
+    // pagina da attivare
+    let page = activePage.nextElementSibling;
+    page.setAttribute('selected', true);
+    let overflow = document.getElementById('overflowX');
+    overflow.setAttribute('data-step-active', page.getAttribute('data-step'));
+  };
+  document.getElementById('mdc-back').onclick = function(e) {
+    // pagina attiva in questo momento
+    let activePage = document.querySelector('.page[selected]');
+    activePage.removeAttribute('selected');
+    // pagina da attivare
+    let page = activePage.previousElementSibling;
+    page.setAttribute('selected', true);
+    let overflow = document.getElementById('overflowX');
+    overflow.setAttribute('data-step-active', page.getAttribute('data-step'));
+  };
+
   app.getDatabaseTable();
 
 })();
