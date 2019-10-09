@@ -56,7 +56,8 @@ var App = new Application();
     (this.value.length > 0) ? label.classList.add('has-content') : label.classList.remove('has-content');
     // TODO: carico l'elenco delle colonne della tabella selezionata
     console.log(this.value);
-    app.tableSelected = this.value;
+    // app.tableSelected = this.value;
+    app.Cube.table = this.value;
 
 
     var url = "ajax/tableInfo.php";
@@ -104,9 +105,9 @@ var App = new Application();
       cols.push(columns.selectedOptions[i].value);
     }
     console.log(cols);
-    console.log(app.tableSelected);
+    // console.log(app.tableSelected);
 
-    app.Cube.tables = app.tableSelected;
+    // app.Cube.table = app.tableSelected;
     app.Cube.columns = cols;
     app.Cube.createTable();
 

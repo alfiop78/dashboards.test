@@ -2,22 +2,22 @@ class Cube {
 
   constructor() {
     this.dimension = [];
-    this.tables = [];
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
 
   }
 
-  set table(values) {
-    this.tables = values;
-    this.dimension = this.tables;
+  set table(value) {
+    this.tableSelected = value;
+    console.log(this.tableSelected);
   }
 
   set columns(values) {
     this.cols = values;
-    this.dimension[this.tables] = this.cols;
+    console.log(this.tableSelected);
+    this.dimension[this.tableSelected] = this.cols;
     console.log(this.dimension);
-    console.log(Object.keys(this.dimension).length);
+    // console.log(Object.keys(this.dimension).length);
   }
 
   createTable() {
@@ -26,13 +26,13 @@ class Cube {
     let section = tableAddedContent.querySelector('section');
     section.id = "table-selected-"+Object.keys(this.dimension).length;
     let parent = document.getElementById('table-list');
-    section.querySelector('h5').innerText = this.tables;
+    section.querySelector('h5').innerText = this.tableSelected;
     parent.appendChild(section);
     this.cols.forEach((el) => {
       // console.log(el);
       let li = document.createElement('li');
       li.innerText = el;
-      li.setAttribute('label', this.tables);
+      li.setAttribute('label', this.tableSelected);
       section.appendChild(li);
       section.querySelector('ul').appendChild(li);
       li.onclick = this.handlerColumnsSelected;
