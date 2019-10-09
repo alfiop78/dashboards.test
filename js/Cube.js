@@ -12,6 +12,8 @@ class Cube {
     console.log(this.tableSelected);
   }
 
+  get table() {return this.tableSelected;}
+
   set columns(values) {
     this.cols = values;
     console.log(this.tableSelected);

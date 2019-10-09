@@ -61,19 +61,14 @@
                     <div class="layout" col-x="1" col-y="2">
 
                       <section>
-                        <div class="cell-full md-field">
-                          <input list="datalistTables" id="tableListId" value="" onclick="this.select()"/>
-                          <label for="tableListId">Tabelle</label>
-                          <datalist id="datalistTables"></datalist>
+                        <div tables-columns>
+                          <div tableList><ul></ul></div>
+                          <div columnList><ul></ul></div>
+                          <div>
+                            <button id="add" type="button" name="button" class="button dense raised">add</button>
+                          </div>
                         </div>
 
-                        <div class="cell-full md-field">
-                          <select id="columns" multiple>
-
-                          </select>
-                        </div>
-
-                        <button id="add" type="button" name="button" class="button dense raised">add</button>
                       </section>
 
                       <template id="template-table-added">

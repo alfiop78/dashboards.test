@@ -27,14 +27,15 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
 
-          let datalistTable = document.getElementById('datalistTables');
+          let tableListContainer = document.querySelector('div[tablelist] > ul');
 
           for (let i in response) {
-            let opt = document.createElement('option');
-            opt.label = response[i][0];
-            opt.value = response[i][0];
-            opt.id = i;
-            datalistTable.appendChild(opt);
+            let li = document.createElement('li');
+            li.setAttribute('label', response[i][0]);
+            li.innerText = response[i][0];
+            li.id = i;
+            tableListContainer.appendChild(li);
+            li.onclick = app.handlerTableSelected;
           }
 
         } else {
@@ -50,34 +51,31 @@ var App = new Application();
     request.send();
   };
 
-  document.getElementById('tableListId').onchange = function(e) {
-    console.log('change');
-    let label = this.parentElement.querySelector('label');
-    (this.value.length > 0) ? label.classList.add('has-content') : label.classList.remove('has-content');
-    // TODO: carico l'elenco delle colonne della tabella selezionata
-    console.log(this.value);
-    // app.tableSelected = this.value;
-    app.Cube.table = this.value;
+  app.handlerTableSelected = function(e) {
+    this.toggleAttribute('selected');
+    app.Cube.table = this.getAttribute('label');
+
+    let columnListContainer = document.querySelector('div[columnList] > ul');
+    columnListContainer.querySelectorAll('li').forEach((el) => {columnListContainer.removeChild(el);});
 
 
     var url = "ajax/tableInfo.php";
-    let params = "tableName="+this.value;
+    let params = "tableName="+app.Cube.table;
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-
-
-          let selectMultiple = document.getElementById('columns');
+          console.table(response);
 
           for (let i in response) {
-            let opt = document.createElement('option');
-            opt.value = response[i][0];
-            opt.innerText = response[i][0];
-            opt.id = i;
-            selectMultiple.appendChild(opt);
+            li = document.createElement('li');
+            li.innerText = response[i][0];
+            li.setAttribute('label', response[i][0]);
+            li.id = i;
+            columnListContainer.appendChild(li);
+            li.onclick = app.handlerColumnsSelected;
           }
 
         } else {
@@ -92,18 +90,20 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+  };
 
+  app.handlerColumnsSelected = function(e) {
+    this.toggleAttribute('selected');
   };
 
   document.getElementById('add').onclick = function() {
-    let columns = document.getElementById('columns');
-    // console.log(columns.selectedOptions);
-    let collection = columns.selectedOptions;
+    // let columns = document.getElementById('columns');
+    let columnListContainer = document.querySelector('div[columnList] > ul');
     let cols = [];
-    // console.log(this.selectedOptions[0].value); // si può ciclare la collection
-    for (let i = 0; i < collection.length; i++) {
-      cols.push(columns.selectedOptions[i].value);
-    }
+    columnListContainer.querySelectorAll('li[selected]').forEach((el) => {
+      cols.push(el.getAttribute('label'));
+    });
+
     console.log(cols);
     // console.log(app.tableSelected);
 
