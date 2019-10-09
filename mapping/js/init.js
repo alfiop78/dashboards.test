@@ -27,7 +27,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
 
-          let tableListContainer = document.querySelector('div[tablelist] > ul');
+          let tableListContainer = document.querySelector('div[tablelist] ul');
 
           for (let i in response) {
             let li = document.createElement('li');
@@ -55,7 +55,7 @@ var App = new Application();
     this.toggleAttribute('selected');
     app.Cube.table = this.getAttribute('label');
 
-    let columnListContainer = document.querySelector('div[columnList] > ul');
+    let columnListContainer = document.querySelector('div[columnList] ul');
     columnListContainer.querySelectorAll('li').forEach((el) => {columnListContainer.removeChild(el);});
 
 
@@ -94,11 +94,15 @@ var App = new Application();
 
   app.handlerColumnsSelected = function(e) {
     this.toggleAttribute('selected');
+    // almeno una colonna deve essere selezionata per attivare il tasto ADD
+    let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
+
+    (colsSelectedCount > 0) ? document.getElementById('add').removeAttribute('hidden') : document.getElementById('add').hidden = true;
   };
 
   document.getElementById('add').onclick = function() {
     // let columns = document.getElementById('columns');
-    let columnListContainer = document.querySelector('div[columnList] > ul');
+    let columnListContainer = document.querySelector('div[columnList] ul');
     let cols = [];
     columnListContainer.querySelectorAll('li[selected]').forEach((el) => {
       cols.push(el.getAttribute('label'));
