@@ -68,22 +68,41 @@
                 </div>
 
                 <div class="hierarchies">
-                  <section class="card-table" active>
-                    <h5>TABELLA</h5>
-                    <p>Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</p>
-                    <ul>
+                  <template id="template-card-table">
+                    <div class="card">
+                      <section class="card-table">
+                        <h5>TABELLA</h5>
+                        <p>Clicca qui per attivare questa tabella</p>
+                        <ul></ul>
+                      </section>
 
-                    </ul>
+                      <div class="relation"></div>
+                      <div class="icon-relation"><i class="material-icons md-24">insert_link</i><span class="tooltip">Aggiungi tabella</span></div>
+                    </div>
 
-                  </section>
+                  </template>
 
-                  <div class="relation"></div>
-                  <!-- <button id="add" type="button" name="button" class="md-button">aggiungi tabella</button> -->
-                  <div class="icon-relation"><i class="material-icons md-24">insert_link</i><span class="tooltip">Aggiungi tabella</span></div>
-                  <div class="relation"></div>
 
-                  <section class="card-table" fact-table>
+                  <div class="containerCards" id="containerCards">
+
+                    <div class="card">
+                      <section class="card-table" active>
+                        <h5>TABELLA</h5>
+                        <p>Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</p>
+                        <ul></ul>
+                      </section>
+
+                      <div class="relation"></div>
+                      <div class="icon-relation"><i class="material-icons md-24">insert_link</i><span class="tooltip">Aggiungi tabella</span></div>
+                    </div>
+
+                  </div>
+
+
+                  <section id="fact" class="card-table" fact-table>
                     <h5>FACT TABLE</h5>
+                    <p>Aggiungi la Fact Table, seleziona le colonne che vuoi mostrare come metriche e procedi al prossimo passaggio</p>
+                    <!-- <span class="tooltip">Clicca per aggiungere la Fact Table, selezionandola dall'elenco a sinistra</span> -->
 
                   </section>
                 </div>
