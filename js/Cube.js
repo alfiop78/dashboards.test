@@ -1,7 +1,8 @@
 class Cube {
 
   constructor() {
-    this.dimension = [];
+    this.tables = [];
+    this.cols = [];
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
 
@@ -10,16 +11,29 @@ class Cube {
   set table(value) {
     this.tableSelected = value;
     console.log(this.tableSelected);
+    // azzero il contenuto di this.cols
+    this.cols = [];
   }
 
   get table() {return this.tableSelected;}
 
+  set activeCard(cardRef) {
+    this.activeCardRef = cardRef;
+    // imposto il titolo della tabella selezionata e memorizzata in this.tableSelected
+    this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
+  }
+
+  get activeCard() {return this.activeCardRef;}
+
   set columns(values) {
-    this.cols = values;
-    console.log(this.tableSelected);
-    this.dimension[this.tableSelected] = this.cols;
-    console.log(this.dimension);
-    // console.log(Object.keys(this.dimension).length);
+    console.log('set columns');
+    this.cols.push(values);
+    this.tables[this.tableSelected] = this.cols;
+    console.log(this.tables);
+    // console.log(Object.keys(this.tables).length);
+    let li = document.createElement('li');
+    li.innerText = values;
+    this.activeCard.querySelector('ul').appendChild(li);
   }
 
   createTable() {

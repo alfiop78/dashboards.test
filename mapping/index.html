@@ -50,7 +50,49 @@
         <div id="content">
           <div id="body" hidden>
 
-            <div id="pages">
+
+            <!-- Creazione gerarchie -->
+            <section id="hier-structure">
+              <h3>Creazione della struttura gerarchica</h3>
+              <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
+
+              <div class="structure">
+
+                <div class="lists">
+                  <div class="list">
+                    <ul id="tables"></ul>
+                  </div>
+                  <div class="list">
+                    <ul id="columns"></ul>
+                  </div>
+                </div>
+
+                <div class="hierarchies">
+                  <section class="card-table" active>
+                    <h5>TABELLA</h5>
+                    <p>Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</p>
+                    <ul>
+
+                    </ul>
+
+                  </section>
+
+                  <div class="relation"></div>
+                  <!-- <button id="add" type="button" name="button" class="md-button">aggiungi tabella</button> -->
+                  <div class="icon-relation"><i class="material-icons md-24">insert_link</i><span class="tooltip">Aggiungi tabella</span></div>
+                  <div class="relation"></div>
+
+                  <section class="card-table" fact-table>
+                    <h5>FACT TABLE</h5>
+
+                  </section>
+                </div>
+
+
+              </div>
+            </section>
+
+            <!-- <div id="pages">
               <div id="overflowX" data-step-active="1">
                 <div data-step="1" class="page" selected="true">
 
@@ -165,7 +207,7 @@
 
               </div>
 
-            </div>
+            </div> -->
 
           </div>
 

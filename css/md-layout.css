@@ -56,7 +56,7 @@ footer div span{color: #3a3a3a;}
   .nav-button #menu{display: none;}
   h4 {font-size: 1.7rem;}
 
-  p{font-size: .8rem;}
+  p{font-size: .7rem;padding: 8px;}
 }
 
 @media screen and (max-device-width: 768px) {

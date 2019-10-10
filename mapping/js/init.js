@@ -27,14 +27,15 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
 
-          let tableListContainer = document.querySelector('div[tablelist] ul');
+          let ulContainer = document.getElementById('tables');
+          console.log(ulContainer);
 
           for (let i in response) {
             let li = document.createElement('li');
             li.setAttribute('label', response[i][0]);
             li.innerText = response[i][0];
             li.id = i;
-            tableListContainer.appendChild(li);
+            ulContainer.appendChild(li);
             li.onclick = app.handlerTableSelected;
           }
 
@@ -54,27 +55,29 @@ var App = new Application();
   app.handlerTableSelected = function(e) {
     this.toggleAttribute('selected');
     app.Cube.table = this.getAttribute('label');
+    // inserisco il nome della tabella selezionata nella card [active]
+    // let activeCard = document.querySelector('.card-table[active]');
+    app.Cube.activeCard = document.querySelector('.card-table[active]');
 
-    let columnListContainer = document.querySelector('div[columnList] ul');
-    columnListContainer.querySelectorAll('li').forEach((el) => {columnListContainer.removeChild(el);});
-
+    let ulContainer = document.getElementById('columns');
+    // pulisco l'elenco delle colonne in base alla selezione della tabella
+    ulContainer.querySelectorAll('li').forEach((el) => {ulContainer.removeChild(el);});
 
     var url = "ajax/tableInfo.php";
     let params = "tableName="+app.Cube.table;
-
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
 
           for (let i in response) {
             li = document.createElement('li');
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
             li.id = i;
-            columnListContainer.appendChild(li);
+            ulContainer.appendChild(li);
             li.onclick = app.handlerColumnsSelected;
           }
 
@@ -96,35 +99,37 @@ var App = new Application();
     this.toggleAttribute('selected');
     // almeno una colonna deve essere selezionata per attivare il tasto ADD
     let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
-
-    (colsSelectedCount > 0) ? document.getElementById('add').removeAttribute('hidden') : document.getElementById('add').hidden = true;
+    // ogni click sulla colonna selezionata la passo al metodo columns che le inserisce in un array di colonne es.:
+    // [Azienda: ['id','descrizione', ecc...]]
+    app.Cube.columns = this.getAttribute('label');
+    
   };
 
-  document.getElementById('add').onclick = function() {
-    // let columns = document.getElementById('columns');
-    let columnListContainer = document.querySelector('div[columnList] ul');
-    let cols = [];
-    columnListContainer.querySelectorAll('li[selected]').forEach((el) => {
-      cols.push(el.getAttribute('label'));
-    });
+  // document.getElementById('add').onclick = function() {
+  //   // let columns = document.getElementById('columns');
+  //   let columnListContainer = document.querySelector('div[columnList] ul');
+  //   let cols = [];
+  //   columnListContainer.querySelectorAll('li[selected]').forEach((el) => {
+  //     cols.push(el.getAttribute('label'));
+  //   });
+  //
+  //   console.log(cols);
+  //   // console.log(app.tableSelected);
+  //
+  //   // app.Cube.table = app.tableSelected;
+  //   app.Cube.columns = cols;
+  //   app.Cube.createTable();
+  //
+  //   document.querySelectorAll('#columns > option').forEach((opt) => {
+  //     // console.log(opt);
+  //     columns.removeChild(opt);
+  //   });
+  //   document.getElementById('tableListId').value = "";
+  // };
 
-    console.log(cols);
-    // console.log(app.tableSelected);
-
-    // app.Cube.table = app.tableSelected;
-    app.Cube.columns = cols;
-    app.Cube.createTable();
-
-    document.querySelectorAll('#columns > option').forEach((opt) => {
-      // console.log(opt);
-      columns.removeChild(opt);
-    });
-    document.getElementById('tableListId').value = "";
-  };
-
-  document.getElementById('relation').onclick = function(e) {
-    app.Cube.createHierarchy();
-  }
+  // document.getElementById('relation').onclick = function(e) {
+  //   app.Cube.createHierarchy();
+  // }
 
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento
