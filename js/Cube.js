@@ -34,6 +34,12 @@ class Cube {
     let li = document.createElement('li');
     li.innerText = values;
     this.activeCard.querySelector('ul').appendChild(li);
+    li.onclick = this.handlerColumns;
+  }
+
+  handlerColumns(e) {
+    console.log(this);
+    this.toggleAttribute('selected');
   }
 
   createTable() {

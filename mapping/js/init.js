@@ -102,20 +102,13 @@ var App = new Application();
     // ogni click sulla colonna selezionata la passo al metodo columns che le inserisce in un array di colonne es.:
     // [Azienda: ['id','descrizione', ecc...]]
     app.Cube.columns = this.getAttribute('label');
+    // nell'impostare le colonne selezionate, da aggiungere alla gerarchia nelle tabelle, imposto anche l'evento click
 
   };
 
-  // document.getElementById('relation').onclick = function(e) {
-  //   app.Cube.createHierarchy();
-  // }
-
-  // document.getElementById('fact').onclick = function(e) {
-  //   console.log(this);
-  //   document.getElementById('tables').setAttribute('fact', true);
-  //   // rimuovo l'attriubto active dalla card-table aattiva
-  //   document.querySelector('.card-table[active]').removeAttribute('active');
-  //   this.setAttribute('active', true);
-  // };
+  document.getElementById('relation').onclick = function(e) {
+    app.Cube.createHierarchy();
+  }
 
   app.handlerCardSelected = function(e) {
     console.log(this);
@@ -150,8 +143,6 @@ var App = new Application();
     card.querySelector('.icon-relation > i').onclick = app.handlerAddTable;
 
   };
-
-  app.addE = function(e) {};
 
   document.querySelectorAll('.structure .icon-relation > i').forEach((i) => {
     // console.log(card);

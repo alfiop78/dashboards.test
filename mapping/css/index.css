@@ -34,9 +34,9 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 ul#tables[fact]{background-color: #494949;color: white;}
 
 
-.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 50% 50%;grid-template-rows: auto;}
+.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 55% 45%;grid-template-rows: auto;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  background: #f0ece2;color: #494949;margin: 8px;opacity: .7;position: relative;min-width: 90%;}
+  background: #f0ece2;color: #494949;margin: 8px;opacity: .7;position: relative;max-width: 80%;}
 .structure .card-table[active]{opacity: 1;}
 
 .structure .card-table[fact-table]{margin: .5em;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -50,5 +50,5 @@ ul#tables[fact]{background-color: #494949;color: white;}
 .structure .icon-relation > i ~ .tooltip{align-items: center;height: 48px;box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12);display: inline-flex;visibility: hidden;
   position: absolute;padding: 12px;border-radius: 6px;background: #dfd3c3;color: #494949;font-size: .75rem;}
 .structure .icon-relation i:hover ~ .tooltip{visibility: visible;}
-.structure .hierarchies, .structure .containerCards{display: flex;flex-direction: column;align-items: center;width: 100%;}
-.structure .hierarchies, .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;min-width: 80%; width: 80%;}
+.structure .containerCards{display: flex;flex-direction: column;align-items: center;}
+.structure .hierarchies, .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
