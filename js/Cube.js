@@ -34,12 +34,38 @@ class Cube {
     let li = document.createElement('li');
     li.innerText = values;
     this.activeCard.querySelector('ul').appendChild(li);
-    li.onclick = this.handlerColumns;
+    // NOTE: in questo modo this, nel Metodo handlerColumns è riferito a Cube e non a <li> su cui si è cliccato
+    li.onclick = this.handlerColumns.bind(this);
   }
 
   handlerColumns(e) {
-    console.log(this);
-    this.toggleAttribute('selected');
+    // console.log(this);
+    // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
+    // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
+    // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
+    // [filter] : consente di impostare le colonne che saranno utilizzate come filtri nella query
+    // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
+    // console.log(this.activeCardRef.attributes);
+    let attributes = this.activeCardRef.attributes;
+
+    // console.log(this.activeCardRef.hasAttribute('hierarchies'));
+    for (let i = 1; i < attributes.length; i++) {
+      // i = 1 perchè il primo attributo è certamente [class]
+      console.log(attributes[i].name);
+      switch (attributes[i].name) {
+        case 'hierarchies':
+          e.target.setAttribute('selected', true);
+          break;
+        case 'columns':
+          e.target.setAttribute('selected', true);
+          break;
+        case 'filters':
+          e.target.setAttribute('selected', true);
+          break;
+      }
+
+    }
+    console.log(e.target);
   }
 
   createTable() {

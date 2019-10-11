@@ -111,7 +111,7 @@ var App = new Application();
   }
 
   app.handlerCardSelected = function(e) {
-    console.log(this);
+    // console.log(this);
     // rimuovo l'attriubto active dalla card-table aattiva
     document.querySelector('.card-table[active]').removeAttribute('active');
     if (this.id === "fact") {
@@ -140,14 +140,32 @@ var App = new Application();
     parentElement.appendChild(card);
     // lego evento click sulla card
     card.querySelector('.card-table').onclick = app.handlerCardSelected;
-    card.querySelector('.icon-relation > i').onclick = app.handlerAddTable;
+    card.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
+    card.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
+    card.querySelector('.icon-relation > i[columns]').onclick = app.handlerAddColumns;
+    card.querySelector('.icon-relation > i[filters]').onclick = app.handlerAddFilters;
 
   };
 
-  document.querySelectorAll('.structure .icon-relation > i').forEach((i) => {
-    // console.log(card);
-    i.onclick = app.handlerAddTable;
-  });
+  app.handlerAddHierarchy = function(e) {
+    console.log(this);
+  };
+
+  app.handlerAddColumns = function(e) {
+    console.log(this);
+  };
+
+  app.handlerAddFilters = function(e) {
+    console.log(this);
+  };
+
+  // evento su icona per aggiungere una tabella alla gerarchia
+  document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
+  document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
+  document.querySelector('.icon-relation > i[columns]').onclick = app.handlerAddColumns;
+  document.querySelector('.icon-relation > i[filters]').onclick = app.handlerAddFilters;
+
+
 
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento

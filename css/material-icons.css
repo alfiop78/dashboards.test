@@ -1,4 +1,4 @@
-.material-icons{padding: .5em;user-select: none;cursor: pointer;}
+.material-icons{padding: 6px;user-select: none;cursor: pointer;}
 
 .material-icons.noPad{padding: 0;}
 .material-icons.padding-4{padding: 4px;}

@@ -79,14 +79,18 @@
                       <div class="relation">
                         <div class="line"></div>
                         <div class="icon-relation">
-                          <!-- aggiungi tabella -->
-                          <i class="material-icons md-24">add</i>
+                          <!-- option per la tabella sopra -->
+                          <i class="material-icons md-24 md-circle">more_vert</i>
                           <!-- aggiungi relazioni -->
-                          <i class="material-icons md-24 anim">insert_link</i>
+                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
                           <!-- aggiungi colonne da mostrare nel report -->
-                          <i class="material-icons md-24 anim">view_list</i>
+                          <i class="material-icons md-24 anim" columns>view_list</i>
                           <!-- aggiunta di colonne da utilizzare come filtri del report -->
-                          <i class="material-icons md-24 anim">filter_list</i>
+                          <i class="material-icons md-24 anim" filters>filter_list</i>
+                        </div>
+                        <div class="icon-relation">
+                          <!-- aggiungi tabella -->
+                          <i class="material-icons md-24 md-circle" add>add</i>
                           <!-- <span class="tooltip">Aggiungi tabella</span> -->
                         </div>
                       </div>
@@ -98,7 +102,7 @@
                   <div class="containerCards" id="containerCards">
 
                     <div class="card">
-                      <section class="card-table" active>
+                      <section class="card-table" active hierarchies>
                         <h5>TABELLA</h5>
                         <p>Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</p>
                         <ul></ul>
@@ -107,14 +111,18 @@
                       <div class="relation">
                         <div class="line"></div>
                         <div class="icon-relation">
-                          <!-- aggiungi tabella -->
-                          <i class="material-icons md-24">add</i>
+                          <!-- option per la tabella sopra -->
+                          <i class="material-icons md-24 md-circle">more_vert</i>
                           <!-- aggiungi relazioni -->
-                          <i class="material-icons md-24 anim">insert_link</i>
+                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
                           <!-- aggiungi colonne da mostrare nel report -->
-                          <i class="material-icons md-24 anim">view_list</i>
+                          <i class="material-icons md-24 anim" columns>view_list</i>
                           <!-- aggiunta di colonne da utilizzare come filtri del report -->
-                          <i class="material-icons md-24 anim">filter_list</i>
+                          <i class="material-icons md-24 anim" filters>filter_list</i>
+                        </div>
+                        <div class="icon-relation">
+                          <!-- aggiungi tabella -->
+                          <i class="material-icons md-24 md-circle" add>add</i>
                           <!-- <span class="tooltip">Aggiungi tabella</span> -->
                         </div>
                       </div>
@@ -127,6 +135,7 @@
                     <h5>FACT TABLE</h5>
                     <p>Aggiungi la Fact Table, seleziona le colonne che vuoi mostrare come metriche e procedi al prossimo passaggio</p>
                     <!-- <span class="tooltip">Clicca per aggiungere la Fact Table, selezionandola dall'elenco a sinistra</span> -->
+                    <ul></ul>
 
                   </section>
                   <button id="relation" class="button dense raised">crea relazione</button>
@@ -262,7 +271,7 @@
             <!-- <a href="#" id="previous-step" title="Previous step">logout</a> -->
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
-            <button id="mdc-next" class="button dense raised">next</button>
+            <button id="mdc-next" class="button dense raised" disabled>next</button>
           </div>
         </div>
 
