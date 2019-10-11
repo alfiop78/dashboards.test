@@ -47,14 +47,17 @@ class Cube {
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
     let attributes = this.activeCardRef.attributes;
-
+    // console.log(e.target);
     // console.log(this.activeCardRef.hasAttribute('hierarchies'));
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
-      console.log(attributes[i].name);
+      // console.log(attributes[i].name);
       switch (attributes[i].name) {
+        // OPTIMIZE: ottimizzare
         case 'hierarchies':
-          e.target.setAttribute('selected', true);
+          // nella scelta della relazione posso selezionare solo una colonnna per volta, quindi ad ogni selezione di colonna elimino la selezione precedente
+          e.target.parentElement.querySelectorAll('li[selected]').forEach((li) => {li.removeAttribute('selected');});
+          e.target.toggleAttribute('selected');
           break;
         case 'columns':
           e.target.setAttribute('selected', true);
@@ -65,56 +68,37 @@ class Cube {
       }
 
     }
-    console.log(e.target);
-  }
-
-  createTable() {
-    let tmplTableAdded = document.getElementById('template-table-added');
-    let tableAddedContent = tmplTableAdded.content.cloneNode(true);
-    let section = tableAddedContent.querySelector('section');
-    section.id = "table-selected-"+Object.keys(this.dimension).length;
-    let parent = document.getElementById('table-list');
-    section.querySelector('h5').innerText = this.tableSelected;
-    parent.appendChild(section);
-    this.cols.forEach((el) => {
-      // console.log(el);
-      let li = document.createElement('li');
-      li.innerText = el;
-      li.setAttribute('label', this.tableSelected);
-      section.appendChild(li);
-      section.querySelector('ul').appendChild(li);
-      li.onclick = this.handlerColumnsSelected;
-    });
-
-  }
-
-  handlerColumnsSelected(e) {
-    // console.log(this);
-    // console.log(e.path[2]);
-    // this.setAttribute('selected', true);
-    // deseleziono prima tutte quelle attualmente selezionate
-    e.path[2].querySelectorAll('li[selected]').forEach((selected) => {selected.removeAttribute('selected');});
-    this.toggleAttribute('selected');
-    // se ci sono almeno due colonne selezionate posso creare la gerarchia
-    (document.querySelectorAll('li[selected]').length > 1) ? document.getElementById('relation').removeAttribute('hidden') : document.getElementById('relation').hidden = true;
+    // console.log(e.target);
+    this.createHierarchy();
   }
 
   createHierarchy() {
     let hier = [];
-    document.querySelectorAll('.table-selected').forEach((el) => {
-      el.querySelectorAll('li[selected]').forEach((li) => {
+    document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
+      let tableName = card.querySelector('h5').innerText;
+      console.log(tableName);
+      // recupero la colonna selezionata per questa card
+      // let liSelected = card.querySelector('li[selected]');
+      // hier.push(tableName+"."+liSelected.innerText);
+      // TODO: aggiungo un icona per confermare che la colonna è stata messa in relazione
+      //   // la stessa colonna, non la elimino, potrebbe servire per impostare anche i filtri(FILTERS) e le columns(SELECT)
+
+      card.querySelectorAll('li[selected]').forEach((li) => {
         // console.log(li);
-        hier.push(li.getAttribute('label')+"."+li.innerText);
-        li.removeAttribute('selected');
-        li.hidden = true;
+        hier.push(tableName+"."+li.innerText);
+
       });
     });
-    this.hierarchies.push(hier);
-    this.hierarchy.hier = this.hierarchies;
+    console.log(hier.length);
+    if (hier.length === 2) {
+      this.hierarchies.push(hier);
+      this.hierarchy.hier = this.hierarchies;
+      // TODO: inserisco un icona per capire che c'è una relazione tra le due colonne
+      // se, in una delle due tabelle, viene selezionata un'altra colonna (per creare un'altra relazione)
+      // devo azzerare le selezioni in entrambe le tabelle
+    }
+
     console.log(this.hierarchy);
-    // console.log(this.hierarchy.hier);
-    // nascondo il tasto CREA RELAZIONI
-    document.getElementById('relation').hidden = true;
   }
 
 
