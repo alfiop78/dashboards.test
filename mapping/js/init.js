@@ -132,12 +132,14 @@ var App = new Application();
   });
 
   app.handlerAddTable = function(e) {
-    console.log(this);
+    // console.log(this);
     let tmplCard = document.getElementById('template-card-table');
     let tmplContent = tmplCard.content.cloneNode(true);
     let card = tmplContent.querySelector('.card');
     let parentElement = document.getElementById('containerCards');
-    parentElement.appendChild(card);
+    let factTable = document.getElementById('fact-card');
+    parentElement.insertBefore(card, factTable);
+    // parentElement.appendChild(card);
     // lego evento click sulla card
     card.querySelector('.card-table').onclick = app.handlerCardSelected;
     card.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
@@ -149,6 +151,36 @@ var App = new Application();
 
   app.handlerAddHierarchy = function(e) {
     console.log(this);
+    // console.log(e.path);
+    // console.log(e.path[3]);
+    // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
+    // recupero le due card dove in mezzo c'è questo tasto
+    let upCard = e.path[3].querySelector('section.card-table');
+    let downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
+    // se è presente solo una card vado sulla fact
+    // quindi vado sul containerCards e conto quante class="card" ci sono
+    // let cardsNumber = e.path[4].querySelectorAll('.card').length;
+    // console.log(cardsNumber);
+    // let downCard;
+    // console.log(e.path[4].querySelector('.card:nth-child('+cardsNumber+') section.card-table'));
+    // if (cardsNumber === 1) {
+    //   // è presente solo una card, vado a prendere la fact per creare la gerarchia
+    //   downCard = document.getElementById('fact');
+    // } else {
+    //   // è presente l'altra card da mettere in relazione (sotto a questo tasto)
+    //   downCard = e.path[4].querySelector('.card:nth-child('+cardsNumber+') section.card-table');
+    // }
+
+    console.log(upCard);
+    console.log(downCard);
+    upCard.setAttribute('hierarchies', true);
+    downCard.setAttribute('hierarchies', true);
+
+    Array.from(document.querySelectorAll('section[hierarchies] > .help')).forEach((help) => {
+      help.innerText = "Seleziona colonne da mettere in relazione";
+    });
+
+
   };
 
   app.handlerAddColumns = function(e) {
