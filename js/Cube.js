@@ -26,20 +26,24 @@ class Cube {
   get activeCard() {return this.activeCardRef;}
 
   set columns(values) {
+    // selezione delle colonne nella card attiva
     console.log('set columns');
+    console.log(this.activeCardRef);
     this.cols.push(values);
     this.tables[this.tableSelected] = this.cols;
     console.log(this.tables);
     // console.log(Object.keys(this.tables).length);
-    let li = document.createElement('li');
-    li.innerText = values;
-    this.activeCard.querySelector('ul').appendChild(li);
-    // NOTE: in questo modo this, nel Metodo handlerColumns è riferito a Cube e non a <li> su cui si è cliccato
-    li.onclick = this.handlerColumns.bind(this);
+    // let li = document.createElement('li');
+    // li.innerText = values;
+    // this.activeCard.querySelector('ul').appendChild(li);
+    // // NOTE: in questo modo this, nel Metodo handlerColumns è riferito a Cube e non a <li> su cui si è cliccato
+    // li.onclick = this.handlerColumns.bind(this);
+
+
   }
 
   handlerColumns(e) {
-    // console.log(this);
+    console.log(this);
     // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
     // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
     // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
@@ -74,6 +78,7 @@ class Cube {
 
   createHierarchy() {
     let hier = [];
+    this.hierarchies = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.querySelector('h5').innerText;
       console.log(tableName);

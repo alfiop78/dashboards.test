@@ -59,7 +59,8 @@ var App = new Application();
     // let activeCard = document.querySelector('.card-table[active]');
     app.Cube.activeCard = document.querySelector('.card-table[active]');
 
-    let ulContainer = document.getElementById('columns');
+    // let ulContainer = document.getElementById('columns');
+    let ulContainer = app.Cube.activeCard.querySelector('#columns')
     // pulisco l'elenco delle colonne in base alla selezione della tabella
     ulContainer.querySelectorAll('li').forEach((el) => {ulContainer.removeChild(el);});
 
@@ -96,14 +97,11 @@ var App = new Application();
   };
 
   app.handlerColumnsSelected = function(e) {
-    this.toggleAttribute('selected');
-    // almeno una colonna deve essere selezionata per attivare il tasto ADD
-    let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
-    // ogni click sulla colonna selezionata la passo al metodo columns che le inserisce in un array di colonne es.:
-    // [Azienda: ['id','descrizione', ecc...]]
-    app.Cube.columns = this.getAttribute('label');
-    // nell'impostare le colonne selezionate, da aggiungere alla gerarchia nelle tabelle, imposto anche l'evento click
+    // this.toggleAttribute('selected');
+    // let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
 
+    app.Cube.columns = this.getAttribute('label');
+    // app.Cube.createHierarchy();
   };
 
   document.getElementById('relation').onclick = function(e) {

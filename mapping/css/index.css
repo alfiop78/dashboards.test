@@ -13,7 +13,8 @@
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 ul{padding-inline-start: 1em;font-size: .75rem;border-radius: 4px;}
-.list ul{max-height: 400px;overflow-y: auto;background-color: #f0ece2;width: fit-content;
+.card-table ul{max-height: 160px;overflow-y: auto;}
+.list ul{max-height: 550px;overflow-y: auto;background-color: #f0ece2;width: fit-content;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);margin: 8px;}
 ul > li{list-style: none;padding: 6px;margin: 4px;}
 ul > li:hover{list-style: none;padding: 6px;background-color: #c7b198;border-radius: 4px;cursor: pointer;}
@@ -34,7 +35,7 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 ul#tables[fact]{background-color: #494949;color: white;}
 
 
-.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 55% 45%;grid-template-rows: auto;}
+.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 40% 60%;grid-template-rows: auto;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: #f0ece2;color: #494949;margin: 8px;opacity: .7;position: relative;max-width: 80%;min-width: 270px;}
 .structure .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;}
@@ -65,8 +66,7 @@ ul#tables[fact]{background-color: #494949;color: white;}
 .icon-relation:hover i.anim:nth-child(4):hover{opacity: 1;}
 
 
-/* .structure .icon-relation > .tooltip{align-items: center;height: 48px;box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12);display: inline-flex;visibility: hidden; */
-  position: absolute;padding: 12px;border-radius: 6px;background: #494949;color: white;font-size: .75rem;}
-/* .structure .icon-relation > i:hover ~ .tooltip{visibility: visible;} */
-.structure .containerCards{display: flex;flex-direction: column;align-items: center;}
-.structure .hierarchies, .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
+/* .structure .containerCards{width: 60%;} */
+.structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;}
+.structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
+.structure .hierarchies::-webkit-scrollbar{display: none;}
