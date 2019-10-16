@@ -102,19 +102,6 @@ var App = new Application();
     request.send(params);
   };
 
-  // app.handlerColumnsSelected = function(e) {
-  //   // this.toggleAttribute('selected');
-  //   // let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
-  //
-  //
-  //   app.Cube.columns = this.getAttribute('label');
-  //   // app.Cube.createHierarchy();
-  // };
-
-  document.getElementById('relation').onclick = function(e) {
-    app.Cube.createHierarchy();
-  }
-
   app.handlerCardSelected = function(e) {
     // console.log(this);
     // rimuovo l'attriubto active dalla card-table aattiva
