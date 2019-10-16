@@ -26,9 +26,13 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 
 .card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 8px;padding: 2px 8px;}
 .card-table ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
-.card-table ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;padding: 0 6px;}
-.card-table ul > .element li:hover{background-color: #c7b198;border-radius: 4px;padding: 0 6px;}
-.card-table ul > .element > i[hover]{visibility: hidden;}
+.card-table[hierarchies] ul > .element li[selected]{background-color: #99b19c;border-radius: 4px;padding: 0 6px;}
+.card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;}
+.card-table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;padding: 0 6px;}
+.card-table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;padding: 0 6px;color: white;}
+.card-table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;color: white;}
+.card-table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;padding: 0 6px;color: white;}
+.card-table ul > .element > i[hide]{visibility: hidden;}
 
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
@@ -45,6 +49,8 @@ ul#tables[fact]{background-color: #494949;color: white;}
 .structure .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;}
 .structure .card-table > .help[alert]{background: indianred;color: white;}
 .structure .card-table[hierarchies] > .help{background: #99b19c;color: white;}
+.structure .card-table[columns] > .help{background: #9a6a6a;color: white;}
+.structure .card-table[filters] > .help{background: #3b7096;color: white;}
 
 .structure .card-table[active]{opacity: 1;}
 .structure .card-table[hierarchies]{opacity: 1;}

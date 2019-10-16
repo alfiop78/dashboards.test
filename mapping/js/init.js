@@ -82,8 +82,6 @@ var App = new Application();
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
             li.id = i;
-            iElement.innerText = "info";
-
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
@@ -103,8 +101,8 @@ var App = new Application();
   };
 
   app.handlerCardSelected = function(e) {
-    // console.log(this);
-    // rimuovo l'attriubto active dalla card-table aattiva
+
+    // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
     if (this.id === "fact") {
       // è stata selezionata la fact table
@@ -162,14 +160,33 @@ var App = new Application();
         help.innerText = "Seleziona le colonne da mettere in relazione";
       }
     });
+    for (let name of upCard.getAttributeNames()) {
+      if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
+    }
   };
 
   app.handlerAddColumns = function(e) {
-    console.log(this);
+    // console.log(this);
+    let upCard = e.path[3].querySelector('section.card-table');
+    let help = upCard.querySelector('.help');
+    help.innerHTML = "Seleziona le colonne da mettere nel corpo della tabella";
+    upCard.setAttribute('columns', true);
+    for (let name of upCard.getAttributeNames()) {
+      // let value = upCard.getAttribute(name);
+      // console.log(name);
+      if (name === 'hierarchies' || name === 'filters') {upCard.removeAttribute(name);}
+    }
   };
 
   app.handlerAddFilters = function(e) {
     console.log(this);
+    let upCard = e.path[3].querySelector('section.card-table');
+    let help = upCard.querySelector('.help');
+    help.innerHTML = "Seleziona le colonne su cui verranno applicati dei filtri";
+    upCard.setAttribute('filters', true);
+    for (let name of upCard.getAttributeNames()) {
+      if (name === 'hierarchies' || name === 'columns') {upCard.removeAttribute(name);}
+    }
   };
 
   // evento su icona per aggiungere una tabella alla gerarchia
