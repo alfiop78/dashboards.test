@@ -141,7 +141,7 @@ div.elements::-webkit-scrollbar{display: none;}
 .elements[multi] .elementContent:hover i{visibility: visible;}
 .elements[multi] .elementContent[selected]{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
 .elements[multi] .elementContent[selected] i{visibility: visible;}
-.element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
+.filters .element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
 /*filters*/
 /*tfoot*/
 tr.tr-right{display: flex;justify-content: flex-end;}

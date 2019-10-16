@@ -62,7 +62,7 @@ var App = new Application();
     // let ulContainer = document.getElementById('columns');
     let ulContainer = app.Cube.activeCard.querySelector('#columns')
     // pulisco l'elenco delle colonne in base alla selezione della tabella
-    ulContainer.querySelectorAll('li').forEach((el) => {ulContainer.removeChild(el);});
+    ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
 
     var url = "ajax/tableInfo.php";
     let params = "tableName="+app.Cube.table;
@@ -74,12 +74,18 @@ var App = new Application();
           // console.table(response);
 
           for (let i in response) {
-            li = document.createElement('li');
+            let tmplList = document.getElementById('template-list-columns');
+            let tmplContent = tmplList.content.cloneNode(true);
+            let element = tmplContent.querySelector('.element');
+            let li = element.querySelector('li');
+            let iElement = element.querySelector('i');
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
             li.id = i;
-            ulContainer.appendChild(li);
-            li.onclick = app.handlerColumnsSelected;
+            iElement.innerText = "info";
+
+            ulContainer.appendChild(element);
+            li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
 
         } else {
@@ -96,13 +102,14 @@ var App = new Application();
     request.send(params);
   };
 
-  app.handlerColumnsSelected = function(e) {
-    // this.toggleAttribute('selected');
-    // let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
-
-    app.Cube.columns = this.getAttribute('label');
-    // app.Cube.createHierarchy();
-  };
+  // app.handlerColumnsSelected = function(e) {
+  //   // this.toggleAttribute('selected');
+  //   // let colsSelectedCount = this.parentElement.querySelectorAll('li[selected]').length;
+  //
+  //
+  //   app.Cube.columns = this.getAttribute('label');
+  //   // app.Cube.createHierarchy();
+  // };
 
   document.getElementById('relation').onclick = function(e) {
     app.Cube.createHierarchy();
@@ -165,7 +172,7 @@ var App = new Application();
       } else {
         help.removeAttribute('alert');
         card.setAttribute('hierarchies', true);
-        help.innerText = "Seleziona colonne da mettere in relazione";
+        help.innerText = "Seleziona le colonne da mettere in relazione";
       }
     });
   };
