@@ -56,27 +56,29 @@ class Cube {
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
     let attributes = this.activeCardRef.attributes;
-    // console.log(e.target);
-    // console.log(this.activeCardRef.hasAttribute('hierarchies'));
-    let ulContainer = e.path[2];
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
-      // console.log(attributes[i].name);
+      console.log(attributes[i].name);
       switch (attributes[i].name) {
         // OPTIMIZE: ottimizzare
         case 'hierarchies':
-          // nella scelta della relazione posso selezionare solo una colonnna per volta, quindi ad ogni selezione di colonna elimino la selezione precedente
-          // console.log(e.path[2].querySelectorAll('li[selected]'));
-          // ulContainer.querySelectorAll('li[selected]').forEach((li) => {li.removeAttribute('selected');});
-          e.target.toggleAttribute('selected');
+          console.log('hierarchies');
+          e.target.toggleAttribute('relation');
+          (e.target.hasAttribute('relation')) ?
+            e.path[1].querySelector('#hierarchy-icon').removeAttribute('hide') :
+            e.path[1].querySelector('#hierarchy-icon').setAttribute('hide', true);
+
           this.createHierarchy();
           break;
         case 'columns':
-          e.target.setAttribute('selected', true);
-
+        console.log('columns');
+          e.target.toggleAttribute('columns');
+          e.path[1].querySelector('#columns-icon').toggleAttribute('hide');
           break;
         case 'filters':
-          e.target.setAttribute('selected', true);
+        console.log('filters');
+          e.target.toggleAttribute('filters');
+          e.path[1].querySelector('#filters-icon').toggleAttribute('hide');
           break;
       }
 
@@ -98,7 +100,7 @@ class Cube {
       // TODO: aggiungo un icona per confermare che la colonna è stata messa in relazione
       // la stessa colonna, non la elimino, potrebbe servire per impostare anche i filtri(FILTERS) e le columns(SELECT)
 
-      card.querySelectorAll('li[selected]:not([relation])').forEach((li) => {
+      card.querySelectorAll('li[relation]:not([data-relation-id])').forEach((li) => {
         // console.log(li);
         this.colSelected.push(li);
         hier.push(tableName+"."+li.innerText);
@@ -111,9 +113,9 @@ class Cube {
       this.hierarchy.hier = this.hierarchies;
       // TODO: inserisco un icona per capire che c'è una relazione tra le due colonne
       this.colSelected.forEach((el) => {
-        el.setAttribute('relation', true);
-        el.parentElement.querySelector('i').removeAttribute('hide');
-        el.parentElement.querySelector('i').innerText = "insert_link";
+        el.setAttribute('data-relation-id', this.hierarchies.length);
+        // el.parentElement.querySelector('i').removeAttribute('hide');
+        // el.parentElement.querySelector('i').innerText = "insert_link";
         el.parentElement.querySelector('small').innerText = this.hierarchies.length;
       });
       console.log(this.hierarchy);

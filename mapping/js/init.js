@@ -168,6 +168,7 @@ var App = new Application();
   app.handlerAddColumns = function(e) {
     // console.log(this);
     let upCard = e.path[3].querySelector('section.card-table');
+    app.Cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne da mettere nel corpo della tabella";
     upCard.setAttribute('columns', true);
@@ -181,6 +182,7 @@ var App = new Application();
   app.handlerAddFilters = function(e) {
     console.log(this);
     let upCard = e.path[3].querySelector('section.card-table');
+    app.Cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne su cui verranno applicati dei filtri";
     upCard.setAttribute('filters', true);
