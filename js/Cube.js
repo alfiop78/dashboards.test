@@ -58,12 +58,18 @@ class Cube {
     let attributes = this.activeCardRef.attributes;
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
-      console.log(attributes[i].name);
+      // console.log(attributes[i].name);
       switch (attributes[i].name) {
         // OPTIMIZE: ottimizzare
         case 'hierarchies':
           console.log('hierarchies');
+          // TODO: se è presente un altro elemento coon attributo relation ma NON data-relation-id, "deseleziono" quello con relation per mettere [relation]
+          // ...a quello appena selezionato
+          let liRelationSelected = e.path[3].querySelector('li[relation]:not([data-relation-id])');
+          if (liRelationSelected) {liRelationSelected.toggleAttribute('relation');}
+
           e.target.toggleAttribute('relation');
+
           (e.target.hasAttribute('relation')) ?
             e.path[1].querySelector('#hierarchy-icon').removeAttribute('hide') :
             e.path[1].querySelector('#hierarchy-icon').setAttribute('hide', true);
@@ -71,12 +77,12 @@ class Cube {
           this.createHierarchy();
           break;
         case 'columns':
-        console.log('columns');
+          console.log('columns');
           e.target.toggleAttribute('columns');
           e.path[1].querySelector('#columns-icon').toggleAttribute('hide');
           break;
         case 'filters':
-        console.log('filters');
+          console.log('filters');
           e.target.toggleAttribute('filters');
           e.path[1].querySelector('#filters-icon').toggleAttribute('hide');
           break;
@@ -93,34 +99,30 @@ class Cube {
     // this.hierarchies = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.querySelector('h5').innerText;
-      // console.log(tableName);
-      // recupero la colonna selezionata per questa card
-      // let liSelected = card.querySelector('li[selected]');
-      // hier.push(tableName+"."+liSelected.innerText);
-      // TODO: aggiungo un icona per confermare che la colonna è stata messa in relazione
-      // la stessa colonna, non la elimino, potrebbe servire per impostare anche i filtri(FILTERS) e le columns(SELECT)
 
-      card.querySelectorAll('li[relation]:not([data-relation-id])').forEach((li) => {
-        // console.log(li);
-        this.colSelected.push(li);
-        hier.push(tableName+"."+li.innerText);
-      });
+      let liRef = card.querySelector('li[relation]:not([data-relation-id])');
+      if (liRef) {
+        this.colSelected.push(liRef);
+        hier.push(tableName+"."+liRef.innerText);
+      }
+
+      // per creare correttamente la relazione è necessario avere due elementi selezionati
+      if (hier.length === 2) {
+        this.hierarchies.push(hier);
+        this.hierarchy.hier = this.hierarchies;
+        // TODO: inserisco un icona per capire che c'è una relazione tra le due colonne
+        this.colSelected.forEach((el) => {
+          el.setAttribute('data-relation-id', this.hierarchies.length);
+          // el.parentElement.querySelector('i').removeAttribute('hide');
+          // el.parentElement.querySelector('i').innerText = "insert_link";
+          el.parentElement.querySelector('small').innerText = this.hierarchies.length;
+        });
+        console.log(this.hierarchy);
+
+      }
     });
-    // console.log(hier.length);
-    // per creare correttamente la relazione è necessario avere due elementi selezionati
-    if (hier.length === 2) {
-      this.hierarchies.push(hier);
-      this.hierarchy.hier = this.hierarchies;
-      // TODO: inserisco un icona per capire che c'è una relazione tra le due colonne
-      this.colSelected.forEach((el) => {
-        el.setAttribute('data-relation-id', this.hierarchies.length);
-        // el.parentElement.querySelector('i').removeAttribute('hide');
-        // el.parentElement.querySelector('i').innerText = "insert_link";
-        el.parentElement.querySelector('small').innerText = this.hierarchies.length;
-      });
-      console.log(this.hierarchy);
 
-    }
+
 
   }
 

@@ -26,13 +26,16 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 
 .card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 8px;padding: 2px 8px;}
 .card-table ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
-.card-table[hierarchies] ul > .element li[selected]{background-color: #99b19c;border-radius: 4px;padding: 0 6px;}
 .card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;}
 .card-table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;padding: 0 6px;}
 .card-table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table ul > .element > i[hide]{visibility: hidden;}
+.card-table ul > .element > i[hide] ~ small{visibility: hidden;}
+/*li con attributo [relation] visualizzo l'icona relation*/
+.card-table ul > .element li[relation] ~ #hierarchy-icon{visibility: visible;}
+.card-table ul > .element li:not([relation]) ~ #hierarchy-icon{visibility: hidden;}
 
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
