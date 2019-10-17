@@ -5,6 +5,7 @@ class Cube {
     this.cols = [];
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
+    this.relationId = 0;
   }
 
   set table(value) {
@@ -43,7 +44,8 @@ class Cube {
   }
 
   handlerColumns(e) {
-    // console.log(e.path);
+    console.log(e.path);
+    console.log(e.target);
     // console.log(e.path[3].querySelector('h5').innerText);
     let tableName = e.path[3].querySelector('h5').innerText;
     // console.log(tableName);
@@ -56,6 +58,7 @@ class Cube {
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
     let attributes = this.activeCardRef.attributes;
+    console.log(this.activeCardRef);
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
       // console.log(attributes[i].name);
@@ -63,16 +66,14 @@ class Cube {
         // OPTIMIZE: ottimizzare
         case 'hierarchies':
           console.log('hierarchies');
-          // TODO: se è presente un altro elemento coon attributo relation ma NON data-relation-id, "deseleziono" quello con relation per mettere [relation]
-          // ...a quello appena selezionato
+          // se è presente un altro elemento coon attributo relation ma NON data-relation-id, "deseleziono" quello con relation per mettere [relation]
+          // ...a quello appena selezionato, in questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
+          // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
+          // ...entrambe le tabelle tramite un identificatifo di relazione
           let liRelationSelected = e.path[3].querySelector('li[relation]:not([data-relation-id])');
           if (liRelationSelected) {liRelationSelected.toggleAttribute('relation');}
 
           e.target.toggleAttribute('relation');
-
-          (e.target.hasAttribute('relation')) ?
-            e.path[1].querySelector('#hierarchy-icon').removeAttribute('hide') :
-            e.path[1].querySelector('#hierarchy-icon').setAttribute('hide', true);
 
           this.createHierarchy();
           break;
@@ -96,7 +97,6 @@ class Cube {
   createHierarchy() {
     let hier = [];
     this.colSelected = [];
-    // this.hierarchies = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.querySelector('h5').innerText;
 
@@ -108,14 +108,15 @@ class Cube {
 
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
-        this.hierarchies.push(hier);
+        this.relationId++;
+        this.hierarchies['rel_'+this.relationId] = hier;
+        // this.hierarchies.push(hier);
         this.hierarchy.hier = this.hierarchies;
-        // TODO: inserisco un icona per capire che c'è una relazione tra le due colonne
+        // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
-          el.setAttribute('data-relation-id', this.hierarchies.length);
-          // el.parentElement.querySelector('i').removeAttribute('hide');
-          // el.parentElement.querySelector('i').innerText = "insert_link";
-          el.parentElement.querySelector('small').innerText = this.hierarchies.length;
+          console.log(Object.keys(this.hierarchies));
+          el.setAttribute('data-relation-id', Object.keys(this.hierarchies));
+          el.parentElement.querySelector('small').innerText = this.relationId;
         });
         console.log(this.hierarchy);
 

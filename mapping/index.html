@@ -70,16 +70,16 @@
                 <div class="hierarchies">
                   <template id="template-card-table">
                     <div class="card">
-                      <section class="card-table">
+                      <section class="card-table" active>
                         <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
                         <h5>TABELLA</h5>
                         <ul id="columns">
                           <template id="template-list-columns">
                             <div class="element">
                               <li></li>
-                              <i id="hierarchy-icon" class="material-icons md-18" hide>insert_link</i><small relation-counter></small>
-                              <i id="columns-icon" class="material-icons md-18" hide>view_list</i>
-                              <i id="filters-icon" class="material-icons md-18" hide>filter_list</i>
+                              <i id="hierarchy-icon" class="material-icons md-18">insert_link</i><small relation-counter></small>
+                              <i id="columns-icon" class="material-icons md-18">view_list</i>
+                              <i id="filters-icon" class="material-icons md-18">filter_list</i>
                             </div>
                           </template>
                         </ul>
@@ -118,9 +118,9 @@
                           <template id="template-list-columns">
                             <div class="element">
                               <li></li>
-                              <i id="hierarchy-icon" class="material-icons md-18" hide>insert_link</i><small relation-counter></small>
-                              <i id="columns-icon" class="material-icons md-18" hide>view_list</i>
-                              <i id="filters-icon" class="material-icons md-18" hide>filter_list</i>
+                              <i id="hierarchy-icon" class="material-icons md-18">insert_link</i><small relation-counter></small>
+                              <i id="columns-icon" class="material-icons md-18">view_list</i>
+                              <i id="filters-icon" class="material-icons md-18">filter_list</i>
                             </div>
                           </template>
                         </ul>
@@ -129,19 +129,13 @@
                       <div class="relation">
                         <div class="line"></div>
                         <div class="icon-relation">
-                          <!-- option per la tabella sopra -->
                           <i class="material-icons md-24 md-circle">more_vert</i>
-                          <!-- aggiungi relazioni -->
                           <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                          <!-- aggiungi colonne da mostrare nel report -->
                           <i class="material-icons md-24 anim" columns>view_list</i>
-                          <!-- aggiunta di colonne da utilizzare come filtri del report -->
                           <i class="material-icons md-24 anim" filters>filter_list</i>
                         </div>
                         <div class="icon-relation">
-                          <!-- aggiungi tabella -->
                           <i class="material-icons md-24 md-circle" add>add</i>
-                          <!-- <span class="tooltip">Aggiungi tabella</span> -->
                         </div>
                       </div>
                     </div>

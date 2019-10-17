@@ -145,6 +145,11 @@ var App = new Application();
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
     // recupero le due card dove in mezzo c'è questo tasto
+    // TODO: elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
+    document.querySelectorAll('.hierarchies .card-table[hierarchies]').forEach((cardHierarchies) => {
+      cardHierarchies.removeAttribute('hierarchies');
+      cardHierarchies.querySelector('.help').innerText = "";
+    });
     let upCard = e.path[3].querySelector('section.card-table');
     let downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
     let arrCards = [upCard, downCard];
