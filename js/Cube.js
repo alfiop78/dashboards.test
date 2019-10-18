@@ -11,6 +11,7 @@ class Cube {
   set table(value) {
     this.tableSelected = value;
     // console.log(this.tableSelected);
+    this.activeCardRef.setAttribute('name', this.tableSelected);
     this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
     // azzero il contenuto di this.cols
     this.cols = [];
@@ -43,8 +44,7 @@ class Cube {
     // console.log(e.path);
     this.activeCard = e.path[3];
     // console.log(e.target);
-    // console.log(e.path[3].querySelector('h5').innerText);
-    let tableName = e.path[3].querySelector('h5').innerText;
+    let tableName = e.path[3].getAttribute('name');
     // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
     // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
     // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
@@ -101,14 +101,22 @@ class Cube {
   }
 
   removeHierarchy(relationId) {
-    console.log(document.querySelectorAll('.card-table ul > .element > li[data-relation-id="'+relationId+'"]'));
+    document.querySelectorAll('.card-table ul > .element > li[data-relation-id="'+relationId+'"]').forEach((li) => {
+      li.removeAttribute('data-relation-id');
+      if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
+    });
+    // cerco, nell'array this.hierarchies la relazione (relationId) da eliminare
+    delete this.hierarchies[relationId];
+    // la successiva chiamata a createHierachy (nel metodo handlerColumns) aggiornerà l'array delle gerarchie (this.hierarchy) eliminando la
+    // relazione appena eliminata qui da this.hierarchies
   }
 
   createHierarchy() {
+    console.log('createHierarchy');
     let hier = [];
     this.colSelected = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
-      let tableName = card.querySelector('h5').innerText;
+      let tableName = card.getAttribute('name');
 
       let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
       if (liRef) {

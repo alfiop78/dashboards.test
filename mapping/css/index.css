@@ -41,6 +41,8 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 .card-table ul > .element li:not([filters]) ~ #filters-icon{visibility: hidden;}
 .card-table ul > .element li[filters] ~ #filters-icon{visibility: visible;color: #3b7096;}
 
+.help[alert]{content: 'test';}
+
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 

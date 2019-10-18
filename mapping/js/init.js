@@ -101,7 +101,6 @@ var App = new Application();
   };
 
   app.handlerCardSelected = function(e) {
-    console.log('click sulla card');
     app.Cube.activeCard = this;
     // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
@@ -155,7 +154,7 @@ var App = new Application();
       if (card.querySelectorAll('ul li').length === 0) {
         help.setAttribute('alert', true);
         card.removeAttribute('hierarchies');
-        help.innerText = "Necessario aggiungere almeno una colonna per creare una relazione";
+        help.innerText = "Necessario aggiungere una tabella per creare una relazione";
       } else {
         help.removeAttribute('alert');
         card.setAttribute('hierarchies', true);
