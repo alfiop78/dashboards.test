@@ -4,6 +4,10 @@ class Cube {
     this.tables = [];
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
+    this.columns = new Object(); // contiene l'array di colonne che andranno nella SELECT
+    this.cols = [];
+    this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
+    this.conditions = [];
     this.relationId = 0;
   }
 
@@ -43,7 +47,6 @@ class Cube {
           // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
           // ...entrambe le tabelle tramite un identificatifo di relazione
 
-
           if (e.target.hasAttribute('data-relation-id')) {
             /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
             relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
@@ -80,6 +83,21 @@ class Cube {
         case 'columns':
           console.log('columns');
           e.target.toggleAttribute('columns');
+          // if (!this.columns[tableName]) {this.cols = [];}
+
+          if (e.target.hasAttribute('columns')) {
+            // se la selezione appartiene ad una tabella non presente in this.columns.nometabella azzero l'array this.cols
+
+            this.cols.push(e.target.innerText);
+            this.columns[tableName] = this.cols;
+          } else {
+            // rimuovo l'elemento dall'array
+            // cerco la posizione dell'elemento deselezionato
+            let pos = this.columns[tableName].indexOf(e.target.innerText);
+            this.columns[tableName].splice(pos, 1);
+          }
+          // console.log(this.cols);
+          console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');
