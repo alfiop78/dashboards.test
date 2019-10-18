@@ -51,7 +51,8 @@ class Cube {
             */
             let relationId = e.target.getAttribute('data-relation-id');
             // verifico se questo relationId è presente su qualche altra colonna, di altre tabelle
-            console.log('verifico relation : '+relationId);
+            // anche se è già impostata una relazione su questa colonna, aggiungo [selected] se è necessario crearne un'altra (ad es.: per doppia chiave)
+            e.target.toggleAttribute('selected');
 
             this.removeHierarchy(relationId);
           } else {
@@ -94,7 +95,9 @@ class Cube {
     */
     // elementi li che hanno la relazione relationId
     let liElementsRelated = document.querySelectorAll('.card-table[hierarchies] li[data-relation-id="'+relationId+'"]').length;
+
     if (liElementsRelated === 2) {
+      // tra le due tabelle attualmente .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
       // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
       document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id="'+relationId+'"]').forEach((li) => {
         console.log('elimino li :'+li.innerText);
@@ -102,11 +105,8 @@ class Cube {
         if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
       });
       delete this.hierarchies[relationId];
-    } else {
-      // tra le due tabelle attualmente .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
-      console.log('si sta creando una nuova relazione');
-
     }
+
   }
 
   createHierarchy() {
@@ -116,12 +116,13 @@ class Cube {
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.getAttribute('name');
 
-      let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
+      // let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
+      let liRef = card.querySelector('li[hierarchy][selected]');
       if (liRef) {
         this.colSelected.push(liRef);
         hier.push(tableName+"."+liRef.innerText);
       }
-      console.log(hier);
+      // console.log(hier);
 
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
@@ -132,6 +133,8 @@ class Cube {
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
           el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          // la relazione è stata creata, posso eliminare [selected]
+          el.removeAttribute('selected');
         });
         console.log(this.hierarchy);
       }
