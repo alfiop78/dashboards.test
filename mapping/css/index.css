@@ -31,13 +31,15 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 .card-table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;padding: 0 6px;color: white;}
-.card-table ul > .element > i{visibility: hidden;}
-.card-table ul > .element > li[data-relation-id] ~ small{visibility: visible;;}
-.card-table ul > .element > li:not([data-relation-id]) ~ small{visibility: hidden;}
 
-/*li con attributo [relation] visualizzo l'icona relation*/
-.card-table[hierarchies] ul > .element li[relation] ~ #hierarchy-icon{visibility: visible;}
-.card-table[hierarchies] ul > .element li:not([relation]) ~ #hierarchy-icon{visibility: hidden;}
+
+.card-table ul > .element li:not([hierarchy]) ~ #hierarchy-icon{visibility: hidden;}
+.card-table ul > .element li[hierarchy]:not([data-relation-id]) ~ #hierarchy-icon{visibility: visible;}
+.card-table ul > .element li[hierarchy][data-relation-id] ~ #hierarchy-icon{visibility: visible;color: #99b19c;}
+.card-table ul > .element li:not([columns]) ~ #columns-icon{visibility: hidden;}
+.card-table ul > .element li[columns] ~ #columns-icon{visibility: visible;color: #9a6a6a;}
+.card-table ul > .element li:not([filters]) ~ #filters-icon{visibility: hidden;}
+.card-table ul > .element li[filters] ~ #filters-icon{visibility: visible;color: #3b7096;}
 
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}

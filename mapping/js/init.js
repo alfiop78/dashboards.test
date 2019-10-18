@@ -53,11 +53,11 @@ var App = new Application();
   };
 
   app.handlerTableSelected = function(e) {
+    console.log('handlerTableSelected');
     this.toggleAttribute('selected');
-    app.Cube.table = this.getAttribute('label');
-    // inserisco il nome della tabella selezionata nella card [active]
-    // let activeCard = document.querySelector('.card-table[active]');
     app.Cube.activeCard = document.querySelector('.card-table[active]');
+    // inserisco il nome della tabella selezionata nella card [active]
+    app.Cube.table = this.getAttribute('label');
 
     // let ulContainer = document.getElementById('columns');
     let ulContainer = app.Cube.activeCard.querySelector('#columns')
@@ -101,13 +101,13 @@ var App = new Application();
   };
 
   app.handlerCardSelected = function(e) {
-
+    console.log('click sulla card');
+    app.Cube.activeCard = this;
     // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
     if (this.id === "fact") {
-      // è stata selezionata la fact table
+      // è stata selezionata la fact table, coloro la lista delle tabelle dello stesso colore della fact
       document.getElementById('tables').setAttribute('fact', true);
-
     } else {
       // tabella
       document.getElementById('tables').removeAttribute('fact');
@@ -145,11 +145,8 @@ var App = new Application();
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
     // recupero le due card dove in mezzo c'è questo tasto
-    // TODO: elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
-    document.querySelectorAll('.hierarchies .card-table[hierarchies]').forEach((cardHierarchies) => {
-      cardHierarchies.removeAttribute('hierarchies');
-      cardHierarchies.querySelector('.help').innerText = "";
-    });
+    // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
+    app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
     let downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
     let arrCards = [upCard, downCard];
@@ -172,6 +169,8 @@ var App = new Application();
 
   app.handlerAddColumns = function(e) {
     // console.log(this);
+
+    app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
     app.Cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
@@ -186,6 +185,7 @@ var App = new Application();
 
   app.handlerAddFilters = function(e) {
     console.log(this);
+    app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
     app.Cube.activeCard = upCard;
     let help = upCard.querySelector('.help');

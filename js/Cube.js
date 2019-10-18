@@ -11,18 +11,14 @@ class Cube {
   set table(value) {
     this.tableSelected = value;
     // console.log(this.tableSelected);
+    this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
     // azzero il contenuto di this.cols
     this.cols = [];
   }
 
   get table() {return this.tableSelected;}
 
-  set activeCard(cardRef) {
-    console.log('active Card');
-    this.activeCardRef = cardRef;
-    // imposto il titolo della tabella selezionata e memorizzata in this.tableSelected
-    this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
-  }
+  set activeCard(cardRef) {this.activeCardRef = cardRef;}
 
   get activeCard() {return this.activeCardRef;}
 
@@ -44,13 +40,11 @@ class Cube {
   }
 
   handlerColumns(e) {
-    console.log(e.path);
-    console.log(e.target);
+    // console.log(e.path);
+    this.activeCard = e.path[3];
+    // console.log(e.target);
     // console.log(e.path[3].querySelector('h5').innerText);
     let tableName = e.path[3].querySelector('h5').innerText;
-    // console.log(tableName);
-    // console.log(e.target);
-    // console.log(this);
     // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
     // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
     // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
@@ -58,7 +52,7 @@ class Cube {
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
     let attributes = this.activeCardRef.attributes;
-    console.log(this.activeCardRef);
+    // console.log(this.activeCardRef);
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
       // console.log(attributes[i].name);
@@ -66,26 +60,38 @@ class Cube {
         // OPTIMIZE: ottimizzare
         case 'hierarchies':
           console.log('hierarchies');
-          // se è presente un altro elemento coon attributo relation ma NON data-relation-id, "deseleziono" quello con relation per mettere [relation]
+          // se è presente un altro elemento coon attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere [hierarchy]
           // ...a quello appena selezionato, in questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
           // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
           // ...entrambe le tabelle tramite un identificatifo di relazione
-          let liRelationSelected = e.path[3].querySelector('li[relation]:not([data-relation-id])');
-          if (liRelationSelected) {liRelationSelected.toggleAttribute('relation');}
+          let liRelationSelected = e.path[3].querySelector('li[hierarchy]:not([data-relation-id])');
+          // console.log(liRelationSelected);
+          e.target.toggleAttribute('hierarchy');
+          // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+          // se è stata selezionata una colonna già selezionata la deseleziono
+          if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {liRelationSelected.toggleAttribute('hierarchy');}
+          /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+          relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+          Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+          */
 
-          e.target.toggleAttribute('relation');
+          if (e.target.hasAttribute('data-relation-id')) {
+            let relationId = e.target.getAttribute('data-relation-id');
+            // verifico se questo relationId è presente su qualche altra colonna, di altre tabelle
+            console.log('verifico rel : '+relationId);
+            this.removeHierarchy(relationId);
+
+          }
 
           this.createHierarchy();
           break;
         case 'columns':
           console.log('columns');
           e.target.toggleAttribute('columns');
-          e.path[1].querySelector('#columns-icon').toggleAttribute('hide');
           break;
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
-          e.path[1].querySelector('#filters-icon').toggleAttribute('hide');
           break;
       }
 
@@ -94,13 +100,17 @@ class Cube {
 
   }
 
+  removeHierarchy(relationId) {
+    console.log(document.querySelectorAll('.card-table ul > .element > li[data-relation-id="'+relationId+'"]'));
+  }
+
   createHierarchy() {
     let hier = [];
     this.colSelected = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.querySelector('h5').innerText;
 
-      let liRef = card.querySelector('li[relation]:not([data-relation-id])');
+      let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
       if (liRef) {
         this.colSelected.push(liRef);
         hier.push(tableName+"."+liRef.innerText);
@@ -114,20 +124,23 @@ class Cube {
         this.hierarchy.hier = this.hierarchies;
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
-          console.log(Object.keys(this.hierarchies));
-          el.setAttribute('data-relation-id', Object.keys(this.hierarchies));
-          el.parentElement.querySelector('small').innerText = this.relationId;
+          el.setAttribute('data-relation-id', 'rel_'+this.relationId);
         });
         console.log(this.hierarchy);
-
       }
     });
-
-
-
   }
 
+  changeMode() {
+    /*
+    * quando si imposta la modalità tra hierarchies, columns e filters resetto tutte le card-table
+    */
+    document.querySelectorAll('.hierarchies .card-table').forEach((card) => {
+      if (card.hasAttribute("hierarchies")) {card.removeAttribute('hierarchies');}
+      if (card.hasAttribute("columns")) {card.removeAttribute('columns');}
+      if (card.hasAttribute("filters")) {card.removeAttribute('filters');}
+      card.querySelector('.help').innerText = "";
+    });
 
-
-
+  }
 }
