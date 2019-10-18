@@ -61,12 +61,6 @@ class Cube {
               }
 
             }
-            // let relationId = e.target.getAttribute('data-rel-id');
-            // let relationId = e.target.getAttribute('data-relation-id');
-            // verifico se questo relationId è presente su qualche altra colonna, di altre tabelle
-            // anche se è già impostata una relazione su questa colonna, aggiungo [selected] se è necessario crearne un'altra (ad es.: per doppia chiave)
-
-
 
           } else {
             let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
@@ -116,10 +110,25 @@ class Cube {
       // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
       document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id]['+relationId+']').forEach((li) => {
         console.log('elimino li :'+li.innerText);
-        li.removeAttribute('data-relation-id');
+        // TODO: se è presente un'altra relazione, quindi un altro attributo data-rel, NON elimino [hierarchy] e [data-relation-id]
+        //... (per non eliminare l'icona) che fa riferimento ad un'altra relazione sulla stessa colonna (doppia chiave)
         li.removeAttribute(relationId);
         li.removeAttribute('selected');
-        if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
+        let relationFound = false; // altra relazione trovata ?
+        // console.log(li.getAttributeNames());
+        // console.log(li.getAttributeNames().indexOf('data-rel-'));
+        li.getAttributeNames().forEach((attr) => {
+          // console.log(attr.indexOf('data-rel-'));
+          if (attr.indexOf('data-rel-') !== -1) {
+            console.log('trovata altra relazione : '+attr);
+            relationFound = true;
+          }
+
+        });
+        if (!relationFound) {
+          li.removeAttribute('data-relation-id');
+          li.removeAttribute('hierarchy');
+        }
       });
       delete this.hierarchies['rel_'+value];
     }
