@@ -24,7 +24,7 @@ class Cube {
     // console.log(e.path);
     this.activeCard = e.path[3];
     // console.log(e.target);
-    let tableName = e.path[3].getAttribute('name');
+    let tableName = this.activeCardRef.getAttribute('name');
     // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
     // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
     // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
@@ -37,32 +37,36 @@ class Cube {
       // i = 1 perchè il primo attributo è certamente [class]
       // console.log(attributes[i].name);
       switch (attributes[i].name) {
-        // OPTIMIZE: ottimizzare
         case 'hierarchies':
-          console.log('hierarchies');
           // se è presente un altro elemento coon attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere [hierarchy]
           // ...a quello appena selezionato, in questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
           // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
           // ...entrambe le tabelle tramite un identificatifo di relazione
-          let liRelationSelected = e.path[3].querySelector('li[hierarchy]:not([data-relation-id])');
-          // console.log(liRelationSelected);
-          e.target.toggleAttribute('hierarchy');
-          // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
-          // se è stata selezionata una colonna già selezionata la deseleziono
-          if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {liRelationSelected.toggleAttribute('hierarchy');}
-          /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
-          relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
-          Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
-          */
+
 
           if (e.target.hasAttribute('data-relation-id')) {
+            /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+            relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+            Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+            */
             let relationId = e.target.getAttribute('data-relation-id');
             // verifico se questo relationId è presente su qualche altra colonna, di altre tabelle
-            console.log('verifico rel : '+relationId);
+            console.log('verifico relation : '+relationId);
+
             this.removeHierarchy(relationId);
+          } else {
+            let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
+            // console.log(liRelationSelected);
+            e.target.toggleAttribute('hierarchy');
+            e.target.toggleAttribute('selected');
+            // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+            // se è stata selezionata una colonna già selezionata la deseleziono
+            if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+              liRelationSelected.toggleAttribute('hierarchy');
+              liRelationSelected.toggleAttribute('selected');
+            }
 
           }
-
           this.createHierarchy();
           break;
         case 'columns':
@@ -81,14 +85,28 @@ class Cube {
   }
 
   removeHierarchy(relationId) {
-    document.querySelectorAll('.card-table ul > .element > li[data-relation-id="'+relationId+'"]').forEach((li) => {
-      li.removeAttribute('data-relation-id');
-      if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
-    });
-    // cerco, nell'array this.hierarchies la relazione (relationId) da eliminare
-    delete this.hierarchies[relationId];
-    // la successiva chiamata a createHierachy (nel metodo handlerColumns) aggiornerà l'array delle gerarchie (this.hierarchy) eliminando la
-    // relazione appena eliminata qui da this.hierarchies
+    console.log('delete hierarchies');
+    /* prima di eliminare la gerarchia devo stabilire se le due card, in questo momento, sono in modalità hierarchies
+    // ...(questo lo vedo dall'attributo presente su card-table)
+    // elimino la gerarchia solo se la relazione tra le due tabelle riguarda le due tabelle attualmente impostate in modalità [hierarchies]
+    // se la relazione riguarda le tabelle A e B e attualmente la modalità = A e B allora elimino la gerarchia
+    // altrimenti se la relazione riguarda A e B e attualmente la modalità impostata [hierarchies] riguarda B e C aggiungo la relazione e non la elimino
+    */
+    // elementi li che hanno la relazione relationId
+    let liElementsRelated = document.querySelectorAll('.card-table[hierarchies] li[data-relation-id="'+relationId+'"]').length;
+    if (liElementsRelated === 2) {
+      // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
+      document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id="'+relationId+'"]').forEach((li) => {
+        console.log('elimino li :'+li.innerText);
+        li.removeAttribute('data-relation-id');
+        if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
+      });
+      delete this.hierarchies[relationId];
+    } else {
+      // tra le due tabelle attualmente .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
+      console.log('si sta creando una nuova relazione');
+
+    }
   }
 
   createHierarchy() {
@@ -103,6 +121,7 @@ class Cube {
         this.colSelected.push(liRef);
         hier.push(tableName+"."+liRef.innerText);
       }
+      console.log(hier);
 
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
