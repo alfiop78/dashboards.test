@@ -2,7 +2,6 @@ class Cube {
 
   constructor() {
     this.tables = [];
-    this.cols = [];
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
     this.relationId = 0;
@@ -13,8 +12,6 @@ class Cube {
     // console.log(this.tableSelected);
     this.activeCardRef.setAttribute('name', this.tableSelected);
     this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
-    // azzero il contenuto di this.cols
-    this.cols = [];
   }
 
   get table() {return this.tableSelected;}
@@ -22,23 +19,6 @@ class Cube {
   set activeCard(cardRef) {this.activeCardRef = cardRef;}
 
   get activeCard() {return this.activeCardRef;}
-
-  set columns(values) {
-    // selezione delle colonne nella card attiva
-    console.log('set columns');
-    console.log(this.activeCardRef);
-    this.cols.push(values);
-    this.tables[this.tableSelected] = this.cols;
-    console.log(this.tables);
-    // console.log(Object.keys(this.tables).length);
-    // let li = document.createElement('li');
-    // li.innerText = values;
-    // this.activeCard.querySelector('ul').appendChild(li);
-    // // NOTE: in questo modo this, nel Metodo handlerColumns è riferito a Cube e non a <li> su cui si è cliccato
-    // li.onclick = this.handlerColumns.bind(this);
-
-
-  }
 
   handlerColumns(e) {
     // console.log(e.path);
