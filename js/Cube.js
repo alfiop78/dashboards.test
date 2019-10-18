@@ -49,12 +49,25 @@ class Cube {
             relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
             Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
             */
-            let relationId = e.target.getAttribute('data-relation-id');
+            e.target.toggleAttribute('selected');
+            // TODO: recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+            for (let name of e.target.getAttributeNames()) {
+              // console.log(name);
+              let relationId, value;
+              if (name.substring(0, 9) === "data-rel-") {
+                relationId = name;
+                value = e.target.getAttribute(name);
+                this.removeHierarchy(relationId, value);
+              }
+
+            }
+            // let relationId = e.target.getAttribute('data-rel-id');
+            // let relationId = e.target.getAttribute('data-relation-id');
             // verifico se questo relationId è presente su qualche altra colonna, di altre tabelle
             // anche se è già impostata una relazione su questa colonna, aggiungo [selected] se è necessario crearne un'altra (ad es.: per doppia chiave)
-            e.target.toggleAttribute('selected');
 
-            this.removeHierarchy(relationId);
+
+
           } else {
             let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
             // console.log(liRelationSelected);
@@ -85,7 +98,9 @@ class Cube {
 
   }
 
-  removeHierarchy(relationId) {
+  removeHierarchy(relationId, value) {
+    console.log(relationId);
+    console.log(value);
     console.log('delete hierarchies');
     /* prima di eliminare la gerarchia devo stabilire se le due card, in questo momento, sono in modalità hierarchies
     // ...(questo lo vedo dall'attributo presente su card-table)
@@ -94,17 +109,19 @@ class Cube {
     // altrimenti se la relazione riguarda A e B e attualmente la modalità impostata [hierarchies] riguarda B e C aggiungo la relazione e non la elimino
     */
     // elementi li che hanno la relazione relationId
-    let liElementsRelated = document.querySelectorAll('.card-table[hierarchies] li[data-relation-id="'+relationId+'"]').length;
+    let liElementsRelated = document.querySelectorAll('.card-table[hierarchies] li[data-relation-id]['+relationId+']').length;
 
     if (liElementsRelated === 2) {
       // tra le due tabelle attualmente .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
       // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
-      document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id="'+relationId+'"]').forEach((li) => {
+      document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id]['+relationId+']').forEach((li) => {
         console.log('elimino li :'+li.innerText);
         li.removeAttribute('data-relation-id');
+        li.removeAttribute(relationId);
+        li.removeAttribute('selected');
         if (li.hasAttribute('hierarchy')) {li.removeAttribute('hierarchy');}
       });
-      delete this.hierarchies[relationId];
+      delete this.hierarchies['rel_'+value];
     }
 
   }
@@ -132,7 +149,9 @@ class Cube {
         this.hierarchy.hier = this.hierarchies;
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
-          el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          el.setAttribute('data-rel-'+this.relationId, this.relationId);
+          // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          el.setAttribute('data-relation-id', true);
           // la relazione è stata creata, posso eliminare [selected]
           el.removeAttribute('selected');
         });

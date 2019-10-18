@@ -161,6 +161,7 @@ var App = new Application();
         help.innerText = "Seleziona le colonne da mettere in relazione";
       }
     });
+    // REVIEW: probabilmente questo non serve più perchè lo faccio in app.Cube.changeMode
     for (let name of upCard.getAttributeNames()) {
       if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
     }
