@@ -7,7 +7,7 @@ class Cube {
     this.columns = new Object(); // contiene l'array di colonne che andranno nella SELECT
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
-    this.conditions = [];
+    this.conditionsColName = [];
     this.relationId = 0;
   }
 
@@ -84,24 +84,30 @@ class Cube {
           console.log('columns');
           e.target.toggleAttribute('columns');
           // if (!this.columns[tableName]) {this.cols = [];}
+          this.cols = [];
 
-          if (e.target.hasAttribute('columns')) {
-            // se la selezione appartiene ad una tabella non presente in this.columns.nometabella azzero l'array this.cols
-
-            this.cols.push(e.target.innerText);
-            this.columns[tableName] = this.cols;
-          } else {
-            // rimuovo l'elemento dall'array
-            // cerco la posizione dell'elemento deselezionato
-            let pos = this.columns[tableName].indexOf(e.target.innerText);
-            this.columns[tableName].splice(pos, 1);
-          }
+          this.activeCardRef.querySelectorAll('li[columns]').forEach((li) => {
+            // console.log(li);
+            this.cols.push(li.getAttribute('label'));
+          });
           // console.log(this.cols);
+          this.columns[tableName] = this.cols;
           console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
+
+          this.conditions = [];
+          let values = [34];
+
+          this.activeCardRef.querySelectorAll('li[filters]').forEach((li) => {
+            // console.log(li);
+            this.conditions[li.getAttribute('label')] = {'operator': "=", 'values' : values};
+          });
+          // console.log(this.cols);
+          this.filters[tableName] = this.conditions;
+          console.log(this.filters);
           break;
       }
 
