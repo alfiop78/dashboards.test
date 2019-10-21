@@ -9,6 +9,8 @@ class Cube {
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
     this.relationId = 0;
+    this.dialogFilters = document.getElementById('filter-setting');
+
   }
 
   set table(value) {
@@ -97,23 +99,56 @@ class Cube {
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
+          // riferimento all'icona filters-icon per poter aprire la dialog con textarea
+          let btnFilter = e.target.parentElement.querySelector('#filters-icon');
 
-          this.conditions = [];
-          let values = [34];
+          // this.conditions = [];
+          // let values = [34];
 
-          this.activeCardRef.querySelectorAll('li[filters]').forEach((li) => {
-            // console.log(li);
-            this.conditions[li.getAttribute('label')] = {'operator': "=", 'values' : values};
-          });
+          // this.activeCardRef.querySelectorAll('li[filters]').forEach((li) => {
+          //   // console.log(li);
+          //   // this.conditions[li.getAttribute('label')] = {'operator': "=", 'values' : values};
+          // });
+          // imposto evento click sul tasto id="filters-icon"
+          btnFilter.onclick = this.handlerFilterSetting.bind(this);
           // console.log(this.cols);
-          this.filters[tableName] = this.conditions;
-          console.log(this.filters);
+          // this.filters[tableName] = this.conditions;
+          // console.log(this.filters);
           break;
       }
 
     }
 
 
+  }
+
+  handlerFilterSetting(e) {
+    console.log(e);
+    // let fieldSelected = e.path[1].querySelector('li').getAttribute('label');
+    let fieldName = document.getElementById('fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+
+    this.dialogFilters.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
+    this.dialogFilters.querySelector('#btnFilterCancel').onclick = this.handlerBtnFilterCancel.bind(this);
+
+  }
+
+  handlerBtnFilterDone() {
+    let tableName = this.activeCardRef.getAttribute('name');
+    let fieldName = document.getElementById('fieldName').innerText;
+    let operator = document.getElementById('operator').innerText;
+    let values = document.getElementById('input-values').value;
+    this.conditionsColName[fieldName] = {'operator': operator, 'values': values};
+    this.filters[tableName] = this.conditionsColName;
+    console.log(this.filters);
+    this.dialogFilters.close();
+
+  }
+
+  handlerBtnFilterCancel() {
+    this.dialogFilters.close();
   }
 
   removeHierarchy(relationId, value) {
