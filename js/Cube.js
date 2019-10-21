@@ -99,21 +99,27 @@ class Cube {
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
-          // riferimento all'icona filters-icon per poter aprire la dialog con textarea
-          let btnFilter = e.target.parentElement.querySelector('#filters-icon');
+          if (e.target.hasAttribute('filters')) {
+            // verifico se questa tabellaè presente in this.filters
+            let tableFound = false;
+            Array.from(Object.keys(this.filters)).forEach((table) => {
+              if (table === tableName) {
+                tableFound = true;
+              }
+            });
+            if (!tableFound) {this.conditionsColName = [];}
+            // riferimento all'icona filters-icon per poter aprire la dialog con textarea
+            let btnFilter = e.target.parentElement.querySelector('#filters-icon');
 
-          // this.conditions = [];
-          // let values = [34];
-
-          // this.activeCardRef.querySelectorAll('li[filters]').forEach((li) => {
-          //   // console.log(li);
-          //   // this.conditions[li.getAttribute('label')] = {'operator': "=", 'values' : values};
-          // });
-          // imposto evento click sul tasto id="filters-icon"
-          btnFilter.onclick = this.handlerFilterSetting.bind(this);
-          // console.log(this.cols);
-          // this.filters[tableName] = this.conditions;
-          // console.log(this.filters);
+            // imposto evento click sul tasto id="filters-icon"
+            btnFilter.onclick = this.handlerFilterSetting.bind(this);
+          } else {
+            // elimino questo campo dall'oggetto this.filters
+            delete this.filters[tableName][e.target.getAttribute('label')];
+            // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
+            if (Object.keys(this.filters[tableName]).length === 0) {delete this.filters[tableName];}
+            console.log(this.filters);
+          }
           break;
       }
 
@@ -123,8 +129,8 @@ class Cube {
   }
 
   handlerFilterSetting(e) {
-    console.log(e);
-    // let fieldSelected = e.path[1].querySelector('li').getAttribute('label');
+    // console.log(e);
+    // appro la dialog per filters
     let fieldName = document.getElementById('fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
@@ -140,6 +146,13 @@ class Cube {
     let fieldName = document.getElementById('fieldName').innerText;
     let operator = document.getElementById('operator').innerText;
     let values = document.getElementById('input-values').value;
+    // Array.from(Object.keys(this.filters)).forEach((key) => {
+    //   console.log(key);
+    //   if (key === tableName) {
+    //     // la tabella in esame è già presente in this.filters, per cui aggiungo la colonna selezionata all'oggetto this.conditionsColName[fieldName]
+    //
+    //   }
+    // });
     this.conditionsColName[fieldName] = {'operator': operator, 'values': values};
     this.filters[tableName] = this.conditionsColName;
     console.log(this.filters);

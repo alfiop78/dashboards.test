@@ -184,7 +184,7 @@ var App = new Application();
   };
 
   app.handlerAddFilters = function(e) {
-    console.log(this);
+    // console.log(this);
     app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
     app.Cube.activeCard = upCard;
