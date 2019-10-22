@@ -60,6 +60,7 @@
 
                 <div class="lists">
                   <div class="list">
+                    <input type="search" id="tableSearch" name="tableSearch" value="" placeholder="Ricerca..."/>
                     <ul id="tables"></ul>
                   </div>
                   <!-- <div class="list">
@@ -167,11 +168,19 @@
                     </div>
 
                     <div class="card" id="fact-card">
-                      <section id="fact" class="card-table" fact-table>
-                        <div class="help">Aggiungi la Fact Table</div>
-                        <h5>FACT TABLE</h5>
-                        <ul id="columns"></ul>
-                      </section>
+                      <div class="card-layout">
+                        <section id="fact" class="card-table" fact-table>
+                          <div class="help">Aggiungi la Fact Table</div>
+                          <h5>FACT TABLE</h5>
+                          <ul id="columns"></ul>
+                        </section>
+                        <section options>
+                          <i class="material-icons md-18" metrics>show_chart</i>
+                          <i class="material-icons md-18" columns>view_list</i>
+                          <i class="material-icons md-18" filters>filter_list</i>
+                        </section>
+                      </div>
+
                     </div>
 
 

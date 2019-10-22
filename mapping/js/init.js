@@ -204,6 +204,8 @@ var App = new Application();
 
 
 
+
+
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento
     let activePage = document.querySelector('.page[selected]');
@@ -226,6 +228,24 @@ var App = new Application();
     overflow.setAttribute('data-step-active', page.getAttribute('data-step'));
   };
 
+  document.getElementById('tableSearch').oninput = function(e) {
+    console.log(this.value);
+    let listElement = Array.from(document.querySelectorAll('#tables > li'));
+
+  	for (let i in listElement) {
+  	  let li = listElement[i];
+  	  // reset eventuali selezioni precedenti
+  	  li.removeAttribute('filtered');
+  	  if (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) {
+        li.setAttribute('hidden', '');
+  	  } else {
+        li.removeAttribute('hidden');
+  	  }
+  	}
+  };
+
   app.getDatabaseTable();
+
+
 
 })();
