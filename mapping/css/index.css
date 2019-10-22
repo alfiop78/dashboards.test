@@ -19,7 +19,7 @@ h5{font-size: .9rem;padding: 8px;margin: 0;}
 .hierarchies > h6{font-size: .9rem;margin: 8px;font-weight: lighter;}
 .dialog-filters{border: none;box-shadow: 0 2px 5px 1px rgba(10,10,10,.35);border-radius: 4px;padding: 2em;}
 
-ul{padding-inline-start: 1em;font-size: .75rem;border-radius: 4px;}
+ul{padding-inline-start: 0;font-size: .75rem;border-radius: 4px;}
 .card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
 .list ul{max-height: 550px;overflow-y: auto;background-color: #f0ece2;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);margin: 8px;
@@ -32,13 +32,15 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 8px;padding: 2px 8px;}
+.card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
 .card-table ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
 .card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;}
 .card-table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;padding: 0 6px;}
+.card-table[groupby] ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;padding: 0 6px;}
 .card-table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;padding: 0 6px;color: white;}
+.card-table[groupby] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;padding: 0 6px;color: white;}
 
 
 .card-table ul > .element li:not([hierarchy]) ~ #hierarchy-icon{visibility: hidden;}
@@ -48,6 +50,8 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 .card-table ul > .element li[columns] ~ #columns-icon{visibility: visible;color: #9a6a6a;}
 .card-table ul > .element li:not([filters]) ~ #filters-icon{visibility: hidden;}
 .card-table ul > .element li[filters] ~ #filters-icon{visibility: visible;color: #3b7096;}
+.card-table ul > .element li:not([groupby]) ~ #groupby-icon{visibility: hidden;}
+.card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;}
 
 .help[alert]{content: 'test';}
 
@@ -62,7 +66,7 @@ ul#tables[fact]{background-color: #494949;color: white;}
 
 .structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 40% 60%;grid-template-rows: auto;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  background: #f0ece2;color: #494949;margin: 8px;opacity: .7;position: relative;max-width: 80%;min-width: 270px;}
+  background: #f0ece2;color: #494949;padding: 8px;opacity: .7;position: relative;max-width: 300px;width: 300px;min-width: 300px;}
 .structure .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;}
 .structure .card-table > .help[alert]{background: indianred;color: white;}
 .structure .card-table[hierarchies] > .help{background: #99b19c;color: white;}
@@ -72,13 +76,12 @@ ul#tables[fact]{background-color: #494949;color: white;}
 .structure .card-table[active]{opacity: 1;}
 .structure .card-table[hierarchies]{opacity: 1;}
 
-.structure .card-table[fact-table]{margin: .5em;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  background: #494949;color: white;}
+.structure .card-table[fact-table]{background: #494949;color: white;}
 
 .structure .card-table[fact-table]:hover{cursor: pointer;opacity: 1;}
 .structure .card-table:hover{cursor: pointer;opacity: 1;}
 
-.structure .relation{align-items: center;display: flex;flex-direction: column;}
+.structure .relation{align-items: center;display: flex;flex-direction: column;margin: 8px 0;}
 .structure .relation > .line{background: grey;width: 1px;height: 40px;}
 .structure .icon-relation{display: flex;justify-self: center;/*direction: rtl;*/position: relative;margin-top: 4px;margin-bottom: 4px;}
 
@@ -99,8 +102,9 @@ ul#tables[fact]{background-color: #494949;color: white;}
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}
-.card-layout > section[options]{position: absolute;display: flex;margin: .5em;flex-flow: column;left: calc(100% - 36px);transition: left 200ms, opacity 200ms;opacity: 0;}
-.card:hover section[options]{left: 100%;margin: .5em;opacity: 1;transition: left 200ms, opacity 200ms;}
+.card-layout > section[options]{position: absolute;display: flex;padding: 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
+.card-layout:hover section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
 section[options] > i[metrics]{color: #587850;}
 section[options] > i[columns]{color: #9a6a6a;}
 section[options] > i[filters]{color: #3b7096;}
+section[options] > i[groupby]{color: #c7b198;}

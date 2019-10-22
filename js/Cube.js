@@ -8,6 +8,8 @@ class Cube {
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
+    this.groupBy = new Object();
+    this.colsGroupBy = [];
     this.relationId = 0;
     this.dialogFilters = document.getElementById('filter-setting');
 
@@ -120,6 +122,20 @@ class Cube {
             if (Object.keys(this.filters[tableName]).length === 0) {delete this.filters[tableName];}
             console.log(this.filters);
           }
+          break;
+        case 'groupby':
+          console.log('groupby');
+          e.target.toggleAttribute('groupby');
+          // if (!this.columns[tableName]) {this.cols = [];}
+          this.colsGroupBy = [];
+
+          this.activeCardRef.querySelectorAll('li[groupby]').forEach((li) => {
+            // console.log(li);
+            this.colsGroupBy.push(li.getAttribute('label'));
+          });
+          // console.log(this.cols);
+          this.groupBy[tableName] = this.colsGroupBy;
+          console.log(this.groupBy);
           break;
       }
 
@@ -249,6 +265,7 @@ class Cube {
       if (card.hasAttribute("hierarchies")) {card.removeAttribute('hierarchies');}
       if (card.hasAttribute("columns")) {card.removeAttribute('columns');}
       if (card.hasAttribute("filters")) {card.removeAttribute('filters');}
+      if (card.hasAttribute("groupby")) {card.removeAttribute('groupby');}
       card.querySelector('.help').innerText = "";
     });
 

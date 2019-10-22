@@ -60,7 +60,7 @@ var App = new Application();
     app.Cube.table = this.getAttribute('label');
 
     // let ulContainer = document.getElementById('columns');
-    let ulContainer = app.Cube.activeCard.querySelector('#columns')
+    let ulContainer = app.Cube.activeCard.querySelector('#columns');
     // pulisco l'elenco delle colonne in base alla selezione della tabella
     ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
 
@@ -191,18 +191,26 @@ var App = new Application();
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne su cui verranno applicati dei filtri";
     upCard.setAttribute('filters', true);
-    for (let name of upCard.getAttributeNames()) {
-      if (name === 'hierarchies' || name === 'columns') {upCard.removeAttribute(name);}
-    }
+  };
+
+  app.handlerAddGroupBy = function(e) {
+    // console.log(this);
+    app.Cube.changeMode();
+    let upCard = e.path[3].querySelector('section.card-table');
+    app.Cube.activeCard = upCard;
+    let help = upCard.querySelector('.help');
+    help.innerHTML = "Seleziona le colonne su cui applicare il GROUP BY";
+    upCard.setAttribute('groupby', true);
   };
 
   // evento su icona per aggiungere una tabella alla gerarchia
   document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
   document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
-  document.querySelector('.icon-relation > i[columns]').onclick = app.handlerAddColumns;
-  document.querySelector('.icon-relation > i[filters]').onclick = app.handlerAddFilters;
-
-
+  document.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerRemoveHierarchy;
+  // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
+  document.querySelector('section[options] > i[columns]').onclick = app.handlerAddColumns;
+  document.querySelector('section[options] > i[filters]').onclick = app.handlerAddFilters;
+  document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
 
 
 
