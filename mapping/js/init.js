@@ -203,6 +203,16 @@ var App = new Application();
     upCard.setAttribute('groupby', true);
   };
 
+  app.handlerAddMetrics = function(e) {
+    // console.log(this);
+    app.Cube.changeMode();
+    let upCard = e.path[3].querySelector('section.card-table');
+    app.Cube.activeCard = upCard;
+    let help = upCard.querySelector('.help');
+    help.innerHTML = "Seleziona le colonne da impostare come Metriche";
+    upCard.setAttribute('metrics', true);
+  };
+
   // evento su icona per aggiungere una tabella alla gerarchia
   document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
   document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
@@ -211,6 +221,7 @@ var App = new Application();
   document.querySelector('section[options] > i[columns]').onclick = app.handlerAddColumns;
   document.querySelector('section[options] > i[filters]').onclick = app.handlerAddFilters;
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
+  document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
 
 

@@ -50,6 +50,8 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 .card-table ul > .element li[columns] ~ #columns-icon{visibility: visible;color: #9a6a6a;}
 .card-table ul > .element li:not([filters]) ~ #filters-icon{visibility: hidden;}
 .card-table ul > .element li[filters] ~ #filters-icon{visibility: visible;color: #3b7096;}
+.card-table ul > .element li:not([metrics]) ~ #metrics-icon{visibility: hidden;}
+.card-table ul > .element li[metrics] ~ #metrics-icon{visibility: visible;color: #587850;}
 .card-table ul > .element li:not([groupby]) ~ #groupby-icon{visibility: hidden;}
 .card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;}
 

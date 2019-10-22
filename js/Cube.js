@@ -8,6 +8,8 @@ class Cube {
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
+    this.metrics = new Object();
+    this.colsMetrics = [];
     this.groupBy = new Object();
     this.colsGroupBy = [];
     this.relationId = 0;
@@ -136,6 +138,19 @@ class Cube {
           // console.log(this.cols);
           this.groupBy[tableName] = this.colsGroupBy;
           console.log(this.groupBy);
+          break;
+        case 'metrics':
+          console.log('metrics');
+          e.target.toggleAttribute('metrics');
+          // if (!this.columns[tableName]) {this.cols = [];}
+          this.colsMetrics = [];
+
+          this.activeCardRef.querySelectorAll('li[metrics]').forEach((li) => {
+            // console.log(li);
+            this.colsMetrics.push(li.getAttribute('label'));
+          });
+          this.metrics[tableName] = this.colsMetrics;
+          console.log(this.metrics);
           break;
       }
 
@@ -266,6 +281,7 @@ class Cube {
       if (card.hasAttribute("columns")) {card.removeAttribute('columns');}
       if (card.hasAttribute("filters")) {card.removeAttribute('filters');}
       if (card.hasAttribute("groupby")) {card.removeAttribute('groupby');}
+      if (card.hasAttribute("metrics")) {card.removeAttribute('metrics');}
       card.querySelector('.help').innerText = "";
     });
 
