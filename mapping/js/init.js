@@ -58,6 +58,11 @@ var App = new Application();
     app.Cube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
     app.Cube.table = this.getAttribute('label');
+    let tmplList;
+    // se è stata selezionata la fact-table aggiungo il template che ha, al suo interno, anche le metrics
+    (app.Cube.activeCardRef.getAttribute('fact-table') !== null) ? tmplList = document.getElementById('template-list-fact-columns') :
+      tmplList = document.getElementById('template-list-columns');
+
 
     // let ulContainer = document.getElementById('columns');
     let ulContainer = app.Cube.activeCard.querySelector('#columns');
@@ -74,7 +79,6 @@ var App = new Application();
           // console.table(response);
 
           for (let i in response) {
-            let tmplList = document.getElementById('template-list-columns');
             let tmplContent = tmplList.content.cloneNode(true);
             let element = tmplContent.querySelector('.element');
             let li = element.querySelector('li');
@@ -85,6 +89,11 @@ var App = new Application();
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
+          // TODO: lego eventi ai tasti i[....] nascosti
+
+          app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
 
         } else {
 
@@ -122,6 +131,7 @@ var App = new Application();
 
   app.handlerAddTable = function(e) {
     // console.log(this);
+    // aggiungo un'altra tabella alla gerarchia
     let tmplCard = document.getElementById('template-card-table');
     let tmplContent = tmplCard.content.cloneNode(true);
     let card = tmplContent.querySelector('.card');
@@ -176,11 +186,12 @@ var App = new Application();
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne da mettere nel corpo della tabella";
     upCard.setAttribute('columns', true);
-    for (let name of upCard.getAttributeNames()) {
-      // let value = upCard.getAttribute(name);
-      // console.log(name);
-      if (name === 'hierarchies' || name === 'filters') {upCard.removeAttribute(name);}
-    }
+    // NOTE: esempio utilizzo di for...of
+    // for (let name of upCard.getAttributeNames()) {
+    //   // let value = upCard.getAttribute(name);
+    //   // console.log(name);
+    //   if (name === 'hierarchies' || name === 'filters') {upCard.removeAttribute(name);}
+    // }
   };
 
   app.handlerAddFilters = function(e) {
@@ -223,6 +234,15 @@ var App = new Application();
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
+  document.getElementById('saveHierarchy').onclick = function(e) {
+    app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
+    app.Cube.cube['columns'] = app.Cube.columns;
+    app.Cube.cube['filters'] = app.Cube.filters;
+    app.Cube.cube['metrics'] = app.Cube.metrics;
+    app.Cube.cube['groupby'] = app.Cube.groupBy;
+
+    console.log(app.Cube.cube);
+  };
 
 
   document.getElementById('mdc-next').onclick = function(e) {

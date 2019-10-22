@@ -1,7 +1,7 @@
 class Cube {
 
   constructor() {
-    this.tables = [];
+    this.cube = new Object();
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.hierarchies = [];
     this.columns = new Object(); // contiene l'array di colonne che andranno nella SELECT
@@ -14,6 +14,7 @@ class Cube {
     this.colsGroupBy = [];
     this.relationId = 0;
     this.dialogFilters = document.getElementById('filter-setting');
+    this.dialogMetrics = document.getElementById('metric-setting');
 
   }
 
@@ -142,15 +143,27 @@ class Cube {
         case 'metrics':
           console.log('metrics');
           e.target.toggleAttribute('metrics');
-          // if (!this.columns[tableName]) {this.cols = [];}
-          this.colsMetrics = [];
+          if (e.target.hasAttribute('metrics')) {
+            // verifico se questa tabellaè presente in this.metrics
+            let tableFound = false;
+            Array.from(Object.keys(this.metrics)).forEach((table) => {
+              if (table === tableName) {
+                tableFound = true;
+              }
+            });
+            if (!tableFound) {this.colsMetrics = [];}
+            // riferimento all'icona filters-icon per poter aprire la dialog con textarea
+            let btn = e.target.parentElement.querySelector('#metrics-icon');
 
-          this.activeCardRef.querySelectorAll('li[metrics]').forEach((li) => {
-            // console.log(li);
-            this.colsMetrics.push(li.getAttribute('label'));
-          });
-          this.metrics[tableName] = this.colsMetrics;
-          console.log(this.metrics);
+            // imposto evento click sul tasto id="metrics-icon"
+            btn.onclick = this.handlerMetricSetting.bind(this);
+          } else {
+            // elimino questo campo dall'oggetto this.filters
+            delete this.metrics[tableName][e.target.getAttribute('label')];
+            // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
+            if (Object.keys(this.metrics[tableName]).length === 0) {delete this.metrics[tableName];}
+            console.log(this.metrics);
+          }
           break;
       }
 
@@ -162,7 +175,7 @@ class Cube {
   handlerFilterSetting(e) {
     // console.log(e);
     // appro la dialog per filters
-    let fieldName = document.getElementById('fieldName');
+    let fieldName = document.getElementById('filter-fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogFilters.showModal();
@@ -172,9 +185,22 @@ class Cube {
 
   }
 
+  handlerMetricSetting(e) {
+    // console.log(e);
+    // appro la dialog per filters
+    let fieldName = document.getElementById('metric-fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+
+    this.dialogMetrics.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
+    this.dialogMetrics.querySelector('#btnMetricCancel').onclick = this.handlerBtnMetricCancel.bind(this);
+
+  }
+
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = document.getElementById('fieldName').innerText;
+    let fieldName = document.getElementById('filter-fieldName').innerText;
     let operator = document.getElementById('operator').innerText;
     let values = document.getElementById('input-values').value;
     // Array.from(Object.keys(this.filters)).forEach((key) => {
@@ -193,6 +219,21 @@ class Cube {
 
   handlerBtnFilterCancel() {
     this.dialogFilters.close();
+  }
+
+  handlerBtnMetricDone() {
+    let tableName = this.activeCardRef.getAttribute('name');
+    let fieldName = document.getElementById('metric-fieldName').innerText;
+    let func = document.getElementById('function').innerText;
+
+    this.colsMetrics[fieldName] = {'function': func, 'fieldname': fieldName};
+    this.metrics[tableName] = this.colsMetrics;
+    console.log(this.metrics);
+    this.dialogMetrics.close();
+  }
+
+  handlerBtnMetricCancel() {
+    this.dialogMetrics.close();
   }
 
   removeHierarchy(relationId, value) {
