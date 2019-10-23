@@ -9,39 +9,25 @@ setlocale (LC_TIME, "it_IT");
 // var_dump($_POST['data']);
 // var_dump(json_decode($_POST['data']));
 $objData = json_decode($_POST['data']); // object
-$arrData = json_decode($_POST['data'], true); // array
-// var_dump($objData);
+// $arrData = json_decode($_POST['data'], true); // array
 
-echo 'columns';
-print_r($objData->{'columns'}) ;
-echo 'filters';
-print_r($objData->{'filters'}) ;
-echo 'from';
-print_r($objData->{'from'});
-echo 'groupby';
-print_r($objData->{'groupby'});
-echo 'hierarchy';
+// echo 'columns';
+// print_r($objData->{'columns'}) ;
+// echo 'filters';
+// print_r($objData->{'filters'}) ;
+// echo 'from';
+// print_r($objData->{'from'});
+// echo 'groupby';
+// print_r($objData->{'groupby'});
+// echo 'hierarchy';
 print_r($objData->{'hierarchy'});
-echo 'metrics';
-print_r($objData->{'metrics'});
+// echo 'metrics';
+// print_r($objData->{'metrics'});
+$q = new Queries();
 
-
-return;
-foreach ($objData->{'hierarchy'} as $key => $value) {
-  // var_dump($key);
-  echo $key;
-
-  // echo $value;
-  print_r($value);
-
-  // foreach ($key as $kRel => $vRel) {
-  //   var_dump($kRel);
-  //   var_dump($vRel);
-  // }
-  // var_dump($value);
-}
-// print_r($objData->{'hierarchy["hier"]'});
-// print $objData->{'hierarchy.hier'};
+// echo $q->SELECT($objData->{'columns'});
+// echo $q->FROM($objData->{'from'});
+echo $q->WHERE($objData->{'hierarchy'});
 
 // $q = new Queries();
 

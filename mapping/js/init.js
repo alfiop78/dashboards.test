@@ -239,8 +239,11 @@ var App = new Application();
     // recupero le tabelle per la clausola FROM
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
-      from.push(card.getAttribute('name'));
-      app.Cube.cube['from'] = from;
+      if (card.getAttribute('name')) {
+        from.push(card.getAttribute('name'));
+        app.Cube.cube['from'] = from;
+      }
+
     });
     app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
     app.Cube.cube['columns'] = app.Cube.columns;
@@ -302,7 +305,8 @@ var App = new Application();
   };
 
   document.getElementById('tableSearch').oninput = function(e) {
-    console.log(this.value);
+    // console.log(this.value);
+    (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
     let listElement = Array.from(document.querySelectorAll('#tables > li'));
 
   	for (let i in listElement) {

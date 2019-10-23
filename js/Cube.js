@@ -3,7 +3,7 @@ class Cube {
   constructor() {
     this.cube = new Object();
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
-    this.columns = new Object(); // contiene l'array di colonne che andranno nella SELECT
+    this.columns = new Array();
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
@@ -89,16 +89,23 @@ class Cube {
         case 'columns':
           console.log('columns');
           e.target.toggleAttribute('columns');
-          // if (!this.columns[tableName]) {this.cols = [];}
-          this.cols = [];
+          let fieldName = e.target.getAttribute('label');
+          if (e.target.hasAttribute('columns')) {
+            console.log(this.cols);
+            if (this.cols.includes(tableName+"."+fieldName)) {
+              console.log('presente');
+            } else {
+              console.log('non presente');
+              this.cols.push(tableName+"."+fieldName);
+            }
+          } else {
+            // ho deselezionato un elemento
+            // TODO: completare la parte dove elimino un elemento dall'array, se deselezionato
+          }
 
-          this.activeCardRef.querySelectorAll('li[columns]').forEach((li) => {
-            // console.log(li);
-            this.cols.push(li.getAttribute('label'));
-          });
           // console.log(this.cols);
-          this.columns[tableName] = this.cols;
-          console.log(this.columns);
+          this.columns = this.cols;
+          // console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');

@@ -65,5 +65,36 @@ class Queries {
     return $this->_result;
   }
 
+  public function SELECT($cols) {
+    $select = "SELECT ";
+    $fieldList = array();
+    $fieldList = implode(", ", $cols); // aggiungo uno spazio, ogni elemento viene separato da una virgola
+    $select .= $fieldList;
+    return $select;
+  }
+
+  public function FROM($fields) {
+    $from = " FROM ";
+    $fieldList = array();
+    $fieldList = implode(", ", $fields);
+    $from .= $fieldList;
+    return $from;
+  }
+
+  public function WHERE($hierarchy) {
+    $condition = null;
+    $where = " WHERE ";
+    $and = " AND ";
+    $i = 0;
+    foreach ($hierarchy as $hierarchies) {
+      $hier = array();
+      $hier = implode(" = ", $hierarchies);
+      ($i === 0) ? $condition .= $where.$hier : $condition .= $and.$hier;
+      $i++;
+    }
+    return $condition;
+  }
+
+
 
 } // End Class
