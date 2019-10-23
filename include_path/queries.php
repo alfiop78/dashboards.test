@@ -2,6 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
+  private $_select, $_from, $_where, $_filters, $_metrics, $_groupBy, $_sql;
 
   function __construct() {}
 
@@ -66,33 +67,101 @@ class Queries {
   }
 
   public function SELECT($cols) {
-    $select = "SELECT ";
+    // TODO: verificare se sono presenti altrimenti inserire (*) che sta per SELECT *
     $fieldList = array();
     $fieldList = implode(", ", $cols); // aggiungo uno spazio, ogni elemento viene separato da una virgola
-    $select .= $fieldList;
-    return $select;
+    $this->_select = "SELECT ".$fieldList;
+    return $this->_select;
   }
 
   public function FROM($fields) {
-    $from = " FROM ";
     $fieldList = array();
     $fieldList = implode(", ", $fields);
-    $from .= $fieldList;
-    return $from;
+    $this->_from = " FROM ".$fieldList;
+    return $this->_from;
   }
 
   public function WHERE($hierarchy) {
-    $condition = null;
-    $where = " WHERE ";
-    $and = " AND ";
     $i = 0;
     foreach ($hierarchy as $hierarchies) {
       $hier = array();
       $hier = implode(" = ", $hierarchies);
-      ($i === 0) ? $condition .= $where.$hier : $condition .= $and.$hier;
+      ($i === 0) ? $this->_where .= " WHERE ".$hier : $this->_where .= " AND ".$hier;
       $i++;
     }
-    return $condition;
+    return $this->_where;
+  }
+
+  public function FILTERS($filters) {
+    /*es.: object(stdClass)#4 (1) {
+    ["AggiornamentoDatiNote"]=>
+        array(1) {
+          [0]=>
+          object(stdClass)#3 (3) {
+            ["fieldName"]=>
+            string(10) "id_Azienda"
+            ["operator"]=>
+            string(1) "="
+            ["values"]=>
+            string(2) "12"
+          }
+        }
+    }*/
+
+    // $conditions = array();
+    // $condition = null;
+    $and = " AND ";
+    $or = " OR ";
+    // TODO: aggiungere gli altri operatori
+    foreach ($filters as $table => $filter) {
+      foreach ($filter as $param) {
+        $this->_filters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+      }
+    }
+    return $this->_filters;
+  }
+
+  public function METRICS($metrics) {
+    /*es.:
+    [AppuntamentiOfficina] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [sqlfunction] => SUM
+                    [fieldname] => id_Azienda
+                )
+
+        )
+    */
+    // TODO: verificare se sono presenti le metriche (obbligatorie)
+    $metricsList = array();
+    foreach ($metrics as $table => $metric) {
+      foreach ($metric as $param) {
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.")";
+      }
+    }
+    return $this->_metrics = implode(", ", $metricsList);
+  }
+
+  public function GROUPBY($groups) {
+    // var_dump(is_array($groups));
+    if (is_array($groups)) {
+      $fieldList = array();
+      $fieldList = implode(", ", $groups);
+      $this->_groupBy = "GROUP BY ".$fieldList;
+    } else {$this->_groupBy = null;}
+    return $this->_groupBy;
+  }
+
+  public function completeQuery() {
+    $this->_sql = $this->_select.", ".$this->_metrics."\n";
+    $this->_sql .= $this->_from."\n";
+    $this->_sql .= $this->_where."\n";
+    $this->_sql .= $this->_filters;
+    if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
+
+    return $this->_sql;
+
   }
 
 

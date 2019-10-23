@@ -46,6 +46,7 @@ class Cube {
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
       // console.log(attributes[i].name);
+      let fieldName = e.target.getAttribute('label');
       switch (attributes[i].name) {
         case 'hierarchies':
           // se è presente un altro elemento coon attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere [hierarchy]
@@ -89,13 +90,13 @@ class Cube {
         case 'columns':
           console.log('columns');
           e.target.toggleAttribute('columns');
-          let fieldName = e.target.getAttribute('label');
+          // let fieldName = e.target.getAttribute('label');
           if (e.target.hasAttribute('columns')) {
-            console.log(this.cols);
+            // console.log(this.cols);
             if (this.cols.includes(tableName+"."+fieldName)) {
-              console.log('presente');
+              // console.log('presente');
             } else {
-              console.log('non presente');
+              // console.log('non presente');
               this.cols.push(tableName+"."+fieldName);
             }
           } else {
@@ -103,9 +104,7 @@ class Cube {
             // TODO: completare la parte dove elimino un elemento dall'array, se deselezionato
           }
 
-          // console.log(this.cols);
           this.columns = this.cols;
-          // console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');
@@ -129,22 +128,36 @@ class Cube {
             delete this.filters[tableName][e.target.getAttribute('label')];
             // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
             if (Object.keys(this.filters[tableName]).length === 0) {delete this.filters[tableName];}
-            console.log(this.filters);
+            // console.log(this.filters);
           }
           break;
         case 'groupby':
           console.log('groupby');
           e.target.toggleAttribute('groupby');
-          // if (!this.columns[tableName]) {this.cols = [];}
-          this.colsGroupBy = [];
+          // let fieldName = e.target.getAttribute('label');
+          if (e.target.hasAttribute('groupby')) {
+            if (this.colsGroupBy.includes(tableName+"."+fieldName)) {
+            } else {
+              this.colsGroupBy.push(tableName+"."+fieldName);
+            }
+          } else {
+            // ho deselezionato un elemento
+            // TODO: completare la parte dove elimino un elemento dall'array, se deselezionato
+          }
 
-          this.activeCardRef.querySelectorAll('li[groupby]').forEach((li) => {
-            // console.log(li);
-            this.colsGroupBy.push(li.getAttribute('label'));
-          });
-          // console.log(this.cols);
-          this.groupBy[tableName] = this.colsGroupBy;
-          console.log(this.groupBy);
+          this.groupBy = this.colsGroupBy;
+          //--------------------
+          // // if (!this.columns[tableName]) {this.cols = [];}
+          // this.colsGroupBy = [];
+          //
+          // this.activeCardRef.querySelectorAll('li[groupby]').forEach((li) => {
+          //   // console.log(li);
+          //   this.colsGroupBy.push(li.getAttribute('label'));
+          // });
+          // // console.log(this.cols);
+          // this.groupBy[tableName] = this.colsGroupBy;
+          // // console.log(this.groupBy);
+          // -----------------
           break;
         case 'metrics':
           console.log('metrics');
@@ -168,7 +181,7 @@ class Cube {
             delete this.metrics[tableName][e.target.getAttribute('label')];
             // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
             if (Object.keys(this.metrics[tableName]).length === 0) {delete this.metrics[tableName];}
-            console.log(this.metrics);
+            // console.log(this.metrics);
           }
           break;
       }
@@ -225,7 +238,7 @@ class Cube {
     let fieldName = document.getElementById('metric-fieldName').innerText;
     let func = document.getElementById('function').innerText;
 
-    this.colsMetrics.push({'sqlfunction': func, 'fieldname': fieldName});
+    this.colsMetrics.push({'sqlFunction': func, 'fieldName': fieldName});
     this.metrics[tableName] = this.colsMetrics;
     console.log(this.metrics);
     this.dialogMetrics.close();

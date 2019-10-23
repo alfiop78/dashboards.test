@@ -14,21 +14,30 @@ $objData = json_decode($_POST['data']); // object
 // echo 'columns';
 // print_r($objData->{'columns'}) ;
 // echo 'filters';
-// print_r($objData->{'filters'}) ;
+// print_r($objData->{'filters'});
+
 // echo 'from';
 // print_r($objData->{'from'});
 // echo 'groupby';
 // print_r($objData->{'groupby'});
 // echo 'hierarchy';
-print_r($objData->{'hierarchy'});
+// print_r($objData->{'hierarchy'});
 // echo 'metrics';
 // print_r($objData->{'metrics'});
 $q = new Queries();
 
 // echo $q->SELECT($objData->{'columns'});
 // echo $q->FROM($objData->{'from'});
-echo $q->WHERE($objData->{'hierarchy'});
-
+// echo $q->WHERE($objData->{'hierarchy'});
+// echo $q->FILTERS($objData->{'filters'});
+// echo $q->METRICS($objData->{'metrics'});
+$select = $q->SELECT($objData->{'columns'});
+$from = $q->FROM($objData->{'from'});
+$hierarchy = $q->WHERE($objData->{'hierarchy'});
+$filters = $q->FILTERS($objData->{'filters'});
+$metrics = $q->METRICS($objData->{'metrics'});
+$groupBy = $q->GROUPBY($objData->{'groupby'});
+echo $q->completeQuery();
 // $q = new Queries();
 
 // $result = $q->describe($table);
