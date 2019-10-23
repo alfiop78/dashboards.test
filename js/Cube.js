@@ -202,14 +202,7 @@ class Cube {
     let fieldName = document.getElementById('filter-fieldName').innerText;
     let operator = document.getElementById('operator').innerText;
     let values = document.getElementById('input-values').value;
-    // Array.from(Object.keys(this.filters)).forEach((key) => {
-    //   console.log(key);
-    //   if (key === tableName) {
-    //     // la tabella in esame è già presente in this.filters, per cui aggiungo la colonna selezionata all'oggetto this.conditionsColName[fieldName]
-    //
-    //   }
-    // });
-    this.conditionsColName[fieldName] = {'operator': operator, 'values': values};
+    this.conditionsColName.push({'fieldName' : fieldName, 'operator': operator, 'values': values});
     this.filters[tableName] = this.conditionsColName;
     console.log(this.filters);
     this.dialogFilters.close();
@@ -225,7 +218,7 @@ class Cube {
     let fieldName = document.getElementById('metric-fieldName').innerText;
     let func = document.getElementById('function').innerText;
 
-    this.colsMetrics[fieldName] = {'function': func, 'fieldname': fieldName};
+    this.colsMetrics.push({'sqlfunction': func, 'fieldname': fieldName});
     this.metrics[tableName] = this.colsMetrics;
     console.log(this.metrics);
     this.dialogMetrics.close();

@@ -8,16 +8,23 @@ setlocale (LC_TIME, "it_IT");
 
 // var_dump($_POST['data']);
 // var_dump(json_decode($_POST['data']));
-$objData = json_decode($_POST['data']);
-$arrData = json_decode($_POST['data'], true);
+$objData = json_decode($_POST['data']); // object
+$arrData = json_decode($_POST['data'], true); // array
 // var_dump($objData);
 
-
-// print_r($objData->{'hierarchy'}) ;
+echo 'columns';
 print_r($objData->{'columns'}) ;
-print_r($objData->{'hierarchy'}) ;
-// print_r($objData->{'hierarchy'}->{'hier'}) ;
-// print_r($arrData['hierarchy']['hier']);
+echo 'filters';
+print_r($objData->{'filters'}) ;
+echo 'from';
+print_r($objData->{'from'});
+echo 'groupby';
+print_r($objData->{'groupby'});
+echo 'hierarchy';
+print_r($objData->{'hierarchy'});
+echo 'metrics';
+print_r($objData->{'metrics'});
+
 
 return;
 foreach ($objData->{'hierarchy'} as $key => $value) {
