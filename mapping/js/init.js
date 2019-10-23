@@ -143,8 +143,9 @@ var App = new Application();
     card.querySelector('.card-table').onclick = app.handlerCardSelected;
     card.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
     card.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
-    card.querySelector('.icon-relation > i[columns]').onclick = app.handlerAddColumns;
-    card.querySelector('.icon-relation > i[filters]').onclick = app.handlerAddFilters;
+    card.querySelector('.icon-relation > i[hierarchies-left]').onclick = app.handlerAddHierarchiesLeft;
+    card.querySelector('.icon-relation > i[hierarchies-right]').onclick = app.handlerAddHierarchiesRight;
+    card.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerAddHierarchiesRemove;
 
   };
 
@@ -235,6 +236,12 @@ var App = new Application();
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
   document.getElementById('saveHierarchy').onclick = function(e) {
+    // recupero le tabelle per la clausola FROM
+    let from = [];
+    document.querySelectorAll('.card-table').forEach((card) => {
+      from.push(card.getAttribute('name'));
+      app.Cube.cube['from'] = from;
+    });
     app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
     app.Cube.cube['columns'] = app.Cube.columns;
     app.Cube.cube['filters'] = app.Cube.filters;
@@ -242,6 +249,33 @@ var App = new Application();
     app.Cube.cube['groupby'] = app.Cube.groupBy;
 
     console.log(app.Cube.cube);
+
+    var data = JSON.stringify(app.Cube.cube);
+    // console.log(data);
+
+    var url = "ajax/cube.php";
+    let params = "data="+data;
+    // console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          // var response = JSON.parse(request.response);
+          // console.table(response);
+
+        } else {
+
+        }
+      } else {
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+
   };
 
 

@@ -85,7 +85,7 @@
                                 <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
                                 <i id="columns-icon" class="material-icons md-18">view_list</i>
                                 <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">view_agenda</i>
+                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
                               </div>
                             </template>
                           </ul>
@@ -94,7 +94,7 @@
                           <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
                           <i class="material-icons md-18" columns>view_list</i>
                           <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>view_agenda</i>
+                          <i class="material-icons md-18" groupby>dynamic_feed</i>
                         </section>
                       </div>
 
@@ -104,13 +104,11 @@
                         <div class="icon-relation">
                           <i class="material-icons md-24 md-circle" add>add</i>
                           <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
+
                           <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
-                          <!-- <i class="material-icons md-24 anim" columns>view_list</i>
-                          <i class="material-icons md-24 anim" filters>filter_list</i> -->
                         </div>
-                        <!-- <div class="icon-relation">
-                          <i class="material-icons md-24 md-circle" add>add</i>
-                        </div> -->
                       </div>
                     </div>
                   </template>
@@ -174,7 +172,7 @@
                                 <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
                                 <i id="columns-icon" class="material-icons md-18">view_list</i>
                                 <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">view_agenda</i>
+                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
                               </div>
                             </template>
                             <template id="template-list-fact-columns">
@@ -183,7 +181,7 @@
                                 <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
                                 <i id="columns-icon" class="material-icons md-18">view_list</i>
                                 <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">view_agenda</i>
+                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
                                 <i id="metrics-icon" class="material-icons md-18">show_chart</i>
                               </div>
                             </template>
@@ -193,7 +191,7 @@
                           <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
                           <i class="material-icons md-18" columns>view_list</i>
                           <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>view_agenda</i>
+                          <i class="material-icons md-18" groupby>dynamic_feed</i>
                         </section>
                       </div>
 
@@ -203,6 +201,8 @@
                         <div class="icon-relation">
                           <i class="material-icons md-24 md-circle" add>add</i>
                           <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
                           <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
                         </div>
                       </div>
@@ -219,7 +219,7 @@
                           <i class="material-icons md-18" metrics>show_chart</i>
                           <i class="material-icons md-18" columns>view_list</i>
                           <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>view_agenda</i>
+                          <i class="material-icons md-18" groupby>dynamic_feed</i>
                         </section>
                       </div>
 
@@ -228,8 +228,8 @@
 
                   </div>
 
-                  <button type="button" name="addHierarchy" id="addHierarchy">Nuova gerarchia</button>
-                  <button type="button" name="saveHierarchy" id="saveHierarchy">Salva Dimensione</button>
+                  <button type="button" class="md-button" name="addHierarchy" id="addHierarchy">Nuova gerarchia</button>
+                  <button type="button" class="md-button" name="saveHierarchy" id="saveHierarchy">Salva Dimensione</button>
 
                 </div>
 

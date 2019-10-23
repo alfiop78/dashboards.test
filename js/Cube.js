@@ -3,7 +3,6 @@ class Cube {
   constructor() {
     this.cube = new Object();
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
-    this.hierarchies = [];
     this.columns = new Object(); // contiene l'array di colonne che andranno nella SELECT
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
@@ -239,7 +238,7 @@ class Cube {
   removeHierarchy(relationId, value) {
     console.log(relationId);
     console.log(value);
-    console.log('delete hierarchies');
+    console.log('delete hierarchy');
     /* prima di eliminare la gerarchia devo stabilire se le due card, in questo momento, sono in modalità hierarchies
     // ...(questo lo vedo dall'attributo presente su card-table)
     // elimino la gerarchia solo se la relazione tra le due tabelle riguarda le due tabelle attualmente impostate in modalità [hierarchies]
@@ -274,7 +273,7 @@ class Cube {
           li.removeAttribute('hierarchy');
         }
       });
-      delete this.hierarchies['rel_'+value];
+      delete this.hierarchy['hier_'+value];
     }
 
   }
@@ -293,13 +292,10 @@ class Cube {
         hier.push(tableName+"."+liRef.innerText);
       }
       // console.log(hier);
-
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
         this.relationId++;
-        this.hierarchies['rel_'+this.relationId] = hier;
-        // this.hierarchies.push(hier);
-        this.hierarchy.hier = this.hierarchies;
+        this.hierarchy['hier_'+this.relationId] = hier;
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
           el.setAttribute('data-rel-'+this.relationId, this.relationId);
