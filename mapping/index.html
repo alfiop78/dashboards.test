@@ -12,8 +12,10 @@
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
     <script src="/js/Cube.js"></script>
+    <script src="/js/Draw.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>Mapping Database</title>
   </head>
@@ -52,190 +54,260 @@
 
 
             <!-- Creazione gerarchie -->
-            <section id="hier-structure">
-              <h3>Creazione della struttura gerarchica</h3>
-              <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
+            <div id="pages" data-step="1">
+              <section class="page" selected data-step="1">
+                <h2>Title</h2>
+                <section id="hier-structure">
+                  <h3>Creazione della struttura gerarchica</h3>
+                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
 
-              <div class="structure">
+                  <div class="structure">
 
-                <div class="lists">
-                  <div class="list">
-                    <div class="md-field">
-                      <input type="search" id="tableSearch" name="tableSearch" value=""/>
-                      <label for="tableSearch" class="">Ricerca</label>
-                    </div>
-
-                    <ul id="tables"></ul>
-                  </div>
-                </div>
-
-                <div class="hierarchies">
-                  <h6>Inserisci un titolo per questa gerarchia</h6>
-                  <template id="template-card-table">
-
-                    <div class="card">
-                      <div class="card-layout">
-                        <section class="card-table" active="true" name="">
-                          <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
-                          <h5>TABELLA</h5>
-                          <ul id="columns">
-                            <template id="template-list-columns">
-                              <div class="element">
-                                <li></li>
-                                <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                              </div>
-                            </template>
-                          </ul>
-                        </section>
-                        <section options>
-                          <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
-                          <i class="material-icons md-18" columns>view_list</i>
-                          <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>dynamic_feed</i>
-                        </section>
-                      </div>
-
-
-                      <div class="relation">
-                        <div class="line"></div>
-                        <div class="icon-relation">
-                          <i class="material-icons md-24 md-circle" add>add</i>
-                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-
-                          <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                    <div class="lists">
+                      <div class="list">
+                        <div class="md-field">
+                          <input type="search" id="tableSearch" name="tableSearch" value=""/>
+                          <label for="tableSearch" class="">Ricerca</label>
                         </div>
+
+                        <ul id="tables"></ul>
                       </div>
                     </div>
-                  </template>
 
-                  <dialog id="filter-setting" class="dialog-filters">
-                    <span>Inserisci qui la condizione di filtro es.: nomecampo = 12</span>
-                    <div class="formula">
-                      <span id="filter-fieldName"></span>
-                      <span id="operator">=</span>
-                      <ul id="operator-list">
-                        <li>&equals;</li>
-                        <li>&lt;&gt;</li>
-                        <li>&lt;</li>
-                        <li>&gt;</li>
-                      </ul>
-                      <span id="values">
-                        <input type="text" name="values" value="" id="input-values" />
-                      </span>
-                      <button id="btnFilterDone" type="button" name="done">ok</button>
-                      <button id="btnFilterCancel" type="button" name="cancel">annulla</button>
-                    </div>
+                    <div class="hierarchies">
+                      <h6>Inserisci un titolo per questa gerarchia</h6>
+                      <template id="template-card-table">
 
-
-                    <!-- <div> -->
-                    <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
-                      <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
-                    </div> -->
-                  </dialog>
-                  <dialog id="metric-setting" class="dialog-metrics">
-                    <span>Inserisci qui la funzione per la metrica es.: SUM(nomecampo)</span>
-                    <div class="formula">
-                      <span id="function">SUM</span>&lpar;<span id="metric-fieldName"></span>&rpar;
-                      <ul id="function-list">
-                        <li>SUM</li>
-                        <li>COUNT</li>
-                        <li>AVG</li>
-                      </ul>
-                      <button id="btnMetricDone" type="button" name="done">ok</button>
-                      <button id="btnMetricCancel" type="button" name="cancel">annulla</button>
-                    </div>
+                        <div class="card">
+                          <div class="card-layout">
+                            <section class="card-table" active="true" name="">
+                              <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
+                              <h5>TABELLA</h5>
+                              <ul id="columns">
+                                <template id="template-list-columns">
+                                  <div class="element">
+                                    <li></li>
+                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
+                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                  </div>
+                                </template>
+                              </ul>
+                            </section>
+                            <section options>
+                              <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
+                              <i class="material-icons md-18" columns>view_list</i>
+                              <i class="material-icons md-18" filters>filter_list</i>
+                              <i class="material-icons md-18" groupby>dynamic_feed</i>
+                            </section>
+                          </div>
 
 
-                    <!-- <div> -->
-                    <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
-                      <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
-                    </div> -->
-                  </dialog>
+                          <div class="relation">
+                            <div class="line"></div>
+                            <div class="icon-relation">
+                              <i class="material-icons md-24 md-circle" add>add</i>
+                              <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                              <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                              <i class="material-icons md-24 anim" hierarchies-right>flip</i>
 
-
-                  <div class="containerCards" id="containerCards">
-
-                    <div class="card">
-                      <div class="card-layout">
-                        <section class="card-table" active="true" name="">
-                          <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
-                          <h5>TABELLA</h5>
-                          <ul id="columns">
-                            <template id="template-list-columns">
-                              <div class="element">
-                                <li></li>
-                                <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                              </div>
-                            </template>
-                            <template id="template-list-fact-columns">
-                              <div class="element">
-                                <li></li>
-                                <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                                <i id="metrics-icon" class="material-icons md-18">show_chart</i>
-                              </div>
-                            </template>
-                          </ul>
-                        </section>
-                        <section options>
-                          <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
-                          <i class="material-icons md-18" columns>view_list</i>
-                          <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>dynamic_feed</i>
-                        </section>
-                      </div>
-
-
-                      <div class="relation">
-                        <div class="line"></div>
-                        <div class="icon-relation">
-                          <i class="material-icons md-24 md-circle" add>add</i>
-                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                          <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                              <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      </template>
 
-                    <div class="card" id="fact-card">
-                      <div class="card-layout">
-                        <section id="fact" class="card-table" fact-table>
-                          <div class="help">Aggiungi la Fact Table</div>
-                          <h5>FACT TABLE</h5>
-                          <ul id="columns"></ul>
-                        </section>
-                        <section options>
-                          <i class="material-icons md-18" metrics>show_chart</i>
-                          <i class="material-icons md-18" columns>view_list</i>
-                          <i class="material-icons md-18" filters>filter_list</i>
-                          <i class="material-icons md-18" groupby>dynamic_feed</i>
-                        </section>
+                      <dialog id="filter-setting" class="dialog-filters">
+                        <span>Inserisci qui la condizione di filtro es.: nomecampo = 12</span>
+                        <div class="formula">
+                          <span id="filter-fieldName"></span>
+                          <span id="operator">=</span>
+                          <ul id="operator-list">
+                            <li>&equals;</li>
+                            <li>&lt;&gt;</li>
+                            <li>&lt;</li>
+                            <li>&gt;</li>
+                          </ul>
+                          <span id="values">
+                            <input type="text" name="values" value="" id="input-values" />
+                          </span>
+                          <button id="btnFilterDone" type="button" name="done">ok</button>
+                          <button id="btnFilterCancel" type="button" name="cancel">annulla</button>
+                        </div>
+
+
+                        <!-- <div> -->
+                        <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
+                          <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
+                        </div> -->
+                      </dialog>
+                      <dialog id="metric-setting" class="dialog-metrics">
+                        <span>Inserisci qui la funzione per la metrica es.: SUM(nomecampo)</span>
+                        <div class="formula">
+                          <span id="function">SUM</span>&lpar;<span id="metric-fieldName"></span>&rpar;
+                          <ul id="function-list">
+                            <li>SUM</li>
+                            <li>COUNT</li>
+                            <li>AVG</li>
+                          </ul>
+                          <button id="btnMetricDone" type="button" name="done">ok</button>
+                          <button id="btnMetricCancel" type="button" name="cancel">annulla</button>
+                        </div>
+
+
+                        <!-- <div> -->
+                        <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
+                          <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
+                        </div> -->
+                      </dialog>
+
+
+                      <div class="containerCards" id="containerCards">
+
+                        <div class="card">
+                          <div class="card-layout">
+                            <section class="card-table" active="true" name="">
+                              <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
+                              <h5>TABELLA</h5>
+                              <ul id="columns">
+                                <template id="template-list-columns">
+                                  <div class="element">
+                                    <li></li>
+                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
+                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                  </div>
+                                </template>
+                                <template id="template-list-fact-columns">
+                                  <div class="element">
+                                    <li></li>
+                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
+                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                    <i id="metrics-icon" class="material-icons md-18">show_chart</i>
+                                  </div>
+                                </template>
+                              </ul>
+                            </section>
+                            <section options>
+                              <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
+                              <i class="material-icons md-18" columns>view_list</i>
+                              <i class="material-icons md-18" filters>filter_list</i>
+                              <i class="material-icons md-18" groupby>dynamic_feed</i>
+                            </section>
+                          </div>
+
+
+                          <div class="relation">
+                            <div class="line"></div>
+                            <div class="icon-relation">
+                              <i class="material-icons md-24 md-circle" add>add</i>
+                              <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                              <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                              <i class="material-icons md-24 anim" hierarchies-right>flip</i>
+                              <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="card" id="fact-card">
+                          <div class="card-layout">
+                            <section id="fact" class="card-table" fact-table>
+                              <div class="help">Aggiungi la Fact Table</div>
+                              <h5>FACT TABLE</h5>
+                              <ul id="columns"></ul>
+                            </section>
+                            <section options>
+                              <i class="material-icons md-18" metrics>show_chart</i>
+                              <i class="material-icons md-18" columns>view_list</i>
+                              <i class="material-icons md-18" filters>filter_list</i>
+                              <i class="material-icons md-18" groupby>dynamic_feed</i>
+                            </section>
+                          </div>
+
+                        </div>
+
+
                       </div>
+
+                      <button type="button" class="md-button" name="addHierarchy" id="addHierarchy">Nuova gerarchia</button>
+                      <button type="button" class="md-button" name="saveHierarchy" id="saveHierarchy">Salva Dimensione</button>
 
                     </div>
 
 
                   </div>
+                </section>
+              </section>
+              <section class="page" data-step="2">
+                <h2>Title</h2>
+                <div class="layout" lyt-col="1" lyt-row="1">
+                  <section title>
+                    <h3>Page Title</h3>
+                    <h5>Page Subtitle</h5>
+                  </section>
+                  <section params>
+                    <div class="params column">
+                      <template id="params">
+                        <div class="cell-full md-field" data-param-id="" options='filters'>
+                          <input type="search" id="" value="" onclick="this.select()"/>
+                          <label for=""></label>
+                          <div class="elements" options="filters" col="">
+                            <ul class="filters" id=""></ul>
+                            <section>
+                              <button class="button dense raised">ok</button>
+                            </section>
+                          </div>
 
-                  <button type="button" class="md-button" name="addHierarchy" id="addHierarchy">Nuova gerarchia</button>
-                  <button type="button" class="md-button" name="saveHierarchy" id="saveHierarchy">Salva Dimensione</button>
+                        </div>
+                      </template>
+
+                    </div>
+
+                  </section>
+                  <section body>
+                    <section table>
+                      <table id="table-01" header-fixed>
+                        <caption>caption table</caption>
+                        <thead>
+                          <tr></tr>
+                        </thead>
+
+                        <tbody></tbody>
+
+                        <tfoot>
+                          <tr><td>Total</td></tr>
+                          <tr>
+                            <td>
+                              <div class="cell-full md-field">
+                                <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                <label for="search">Ricerca</label>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr class="tr-right">
+                            <td>
+                              <div info>
+                                <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                              </div>
+                            </td>
+
+                          </tr>
+                        </tfoot>
+
+                      </table>
+
+                    </section>
+                  </section>
 
                 </div>
+              </section>
+            </div>
 
 
-              </div>
-            </section>
 
 
           </div>
@@ -247,7 +319,8 @@
             <!-- <a href="#" id="previous-step" title="Previous step">logout</a> -->
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
-            <button id="mdc-next" class="button dense raised" disabled>next</button>
+            <button id="mdc-next" class="button dense raised">next</button>
+            <!-- <button id="mdc-next" class="button dense raised" disabled>next</button> -->
           </div>
         </div>
 

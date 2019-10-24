@@ -1,19 +1,14 @@
-
-#pages{width: 100%;overflow-x: hidden;}
-#overflowX{display: flex;transition: all 250ms;transform: translateX(0px);}
-#overflowX[data-step-active="1"]{transform: translateX(0px);}
-#overflowX[data-step-active="2"]{transform: translateX(-800px);}
-#overflowX[data-step-active="3"]{transform: translateX(-1600px);}
+/*pages*/
+#pages{display: flex;transition: all 250ms;transform: translateX(0);}
+.page{min-width: 100%;}
+#pages[data-step="1"]{transform: translateX(0px);}
+#pages[data-step="2"]{transform: translateX(-800px);}
+/*pages*/
 
 .formula{display: flex;flex-direction: row;align-items: center;margin: 16px;justify-content: space-between;}
 #operator{background-color: grey;border-radius: 4px;color: white;font-size: 1.10rem; font-weight: bold;margin: 16px;padding: 8px;}
 #operator:hover #operator-list{visibility: visible;}
 
-.page{min-width: 100%;max-width: 800px;transition: all 500ms;transform: translateX(0);}
-/* #body{overflow-x: hidden;} */
-.steps{display: grid;grid-template-rows: auto;}
-.layout[col-x="1"][col-y="2"] {display: grid;grid-template-columns: auto auto;grid-template-rows: auto;}
-.layout[col-x="2"][col-y="1"] {display: grid;grid-template-columns: auto;grid-template-rows: auto auto;}
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 .hierarchies > h6{font-size: .9rem;margin: 8px;font-weight: lighter;}
