@@ -160,7 +160,12 @@ class Queries {
     $this->_sql .= $this->_filters;
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    return $this->_sql;
+    $l = new ConnectDB("automotive_bi_data");
+
+    $this->_result = $l->getResultAssoc($this->_sql);
+    return $this->_result;
+
+    // return $this->_sql;
 
   }
 

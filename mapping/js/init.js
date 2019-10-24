@@ -264,8 +264,9 @@ var App = new Application();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
-          // var response = JSON.parse(request.response);
+          var response = JSON.parse(request.response);
           // console.table(response);
+          app.createReport(response);
 
         } else {
 
@@ -291,7 +292,7 @@ var App = new Application();
     page.setAttribute('selected', true);
     let pages = document.getElementById('pages');
     pages.setAttribute('data-step', page.getAttribute('data-step'));
-    app.getData();
+    // app.getData();
   };
 
   document.getElementById('mdc-back').onclick = function(e) {
@@ -327,6 +328,68 @@ var App = new Application();
   /**
   funzioni che facevano parte di /js/init.js
   */
+  app.createReport = function(response) {
+
+    console.log('create Report');
+    let table = document.getElementById('table-01');
+
+    let options =
+      {
+      'cols' : [
+        {'col': 3, 'attribute': 'hidden'},
+        {'col': 5, 'attribute': 'hidden'}
+
+      ],
+      'filters' : [
+        {'col': 0, 'attribute': 'multi'},
+        {'col': 1, 'attribute': 'multi'},
+        {'col': 3, 'attribute': 'hidden'}
+      ],
+      'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'title' : 'Free Courtesy',
+      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
+      };
+    app.Draw = new Draw(table, options);
+    console.log(app.Draw);
+    // Opzione 1 - aggiungo tutte le colonne della query
+    Object.keys(response[0]).forEach((el, i) => {
+      // console.log('col:'+el);
+      app.Draw.addColumn(el, i);
+      // aggiungo un filtro per ogni colonna della tabella
+      app.Draw.addParams(el, i);
+    });
+    // Opzione 2 - aggiungo manualmetne le colonne
+    // app.Draw.addColumn('ID');
+    // app.Draw.addColumn('Dealer');
+
+    // aggiungo le righe
+    let arrParams = [];
+    for (let i in response) {
+      // console.log(Object.values(response[i]));
+      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
+      app.Draw.addRow(Object.values(response[i]));
+      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
+      // Opzione 2 - Aggiunta colonne manualmente
+      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
+    }
+
+    app.Draw.createDatalist();
+    // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
+    app.Draw.draw();
+
+    document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
+      el.oninput = app.handlerInput;
+      el.onclick = app.showFilters;
+      el.onblur = function(e) {
+        // console.log(e);
+        this.removeAttribute('placeholder');
+      };
+      let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
+
+      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
+      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
+    });
+  }
   app.getData = function() {
     // TODO: utilizzare le promise
     var url = "/ajax/table.php";

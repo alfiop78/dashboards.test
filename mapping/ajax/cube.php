@@ -37,10 +37,9 @@ $hierarchy = $q->WHERE($objData->{'hierarchy'});
 $filters = $q->FILTERS($objData->{'filters'});
 $metrics = $q->METRICS($objData->{'metrics'});
 $groupBy = $q->GROUPBY($objData->{'groupby'});
-echo $q->completeQuery();
+// echo $q->completeQuery();
+$result = $q->completeQuery();
 // $q = new Queries();
 
-// $result = $q->describe($table);
-
-// ob_clean();
-// echo json_encode($result, JSON_FORCE_OBJECT);
+ob_clean();
+echo json_encode($result, JSON_FORCE_OBJECT);
