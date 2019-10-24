@@ -1,6 +1,6 @@
 /*pages*/
-#pages{display: flex;transition: all 250ms;transform: translateX(0);}
-.page{min-width: 100%;}
+#pages{display: flex;transition: all 250ms;}
+.page{align-items: center;display: flex;flex-direction: column;min-width: 100%;margin: 8px;}
 #pages[data-step="1"]{transform: translateX(0px);}
 #pages[data-step="2"]{transform: translateX(-800px);}
 /*pages*/
@@ -56,7 +56,7 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
-#hier-structure{display: flex;flex-direction: column;align-items: center;}
+#hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
 
 .lists{display: flex;}
 ul#tables[fact]{background-color: #9ac5ab69;color: #494949;}

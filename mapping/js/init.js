@@ -345,7 +345,7 @@ var App = new Application();
         {'col': 1, 'attribute': 'multi'},
         {'col': 3, 'attribute': 'hidden'}
       ],
-      'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : [2], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : 'Free Courtesy',
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
