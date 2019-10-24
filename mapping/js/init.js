@@ -96,6 +96,8 @@ var App = new Application();
           app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
           app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
 
+
+
         } else {
 
         }
@@ -174,9 +176,9 @@ var App = new Application();
       }
     });
     // REVIEW: probabilmente questo non serve più perchè lo faccio in app.Cube.changeMode
-    for (let name of upCard.getAttributeNames()) {
-      if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
-    }
+    // for (let name of upCard.getAttributeNames()) {
+    //   if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
+    // }
   };
 
   app.handlerAddColumns = function(e) {
