@@ -285,62 +285,64 @@ var App = new Application();
 
   };
 
-  document.getElementById('mdc-next').onclick = function(e) {
-    // recupero la left dello step successivo
-    let structure = document.getElementById('structure-test');
-    let step = structure.querySelector('.steps');
-    let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
-    let left = [];
-    let activeStep = +step.getAttribute('active-step');
-    // inserisco in un array tutte le posizioni degli elementi che dovrò translare
-    steps.forEach((content) => {
-      left.push(-content.offsetLeft+"px");
-    });
-    // se non ci sono più elementi da translare non faccio il translalte
-    if (activeStep < left.length-1) {
-      step.style.transform = "translateX("+left[activeStep+1]+")";
-      step.setAttribute('active-step', activeStep+1);
-    }
-  };
-
-  document.getElementById('mdc-back').onclick = function(e) {
-    let structure = document.getElementById('structure-test');
-    let step = structure.querySelector('.steps');
-    let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
-    let left = [];
-    let activeStep = +step.getAttribute('active-step');
-
-    steps.forEach((content) => {
-      left.push(-content.offsetLeft+"px");
-    });
-    // se non ci sono più elementi da translare non faccio il translalte
-    if (activeStep > 0) {
-      step.style.transform = "translateX("+left[activeStep-1]+")";
-      step.setAttribute('active-step', activeStep-1);
-    }
-  };
   // document.getElementById('mdc-next').onclick = function(e) {
-  //   // pagina attiva in questo momento
-  //   let selectedPage = document.querySelector('.page[selected]');
-  //   selectedPage.removeAttribute('selected');
-  //   // pagina da attivare
-  //   let page = selectedPage.nextElementSibling;
-  //   page.setAttribute('selected', true);
-  //   let pages = document.getElementById('pages');
-  //   pages.setAttribute('data-step', page.getAttribute('data-step'));
-  //   // app.getData();
+  //   // recupero la left dello step successivo
+  //   let structure = document.getElementById('structure-test');
+  //   let step = structure.querySelector('.steps');
+  //   let steps = Array.from(step.querySelectorAll(':scope > div:not(:last-child)'));
+  //   console.log(steps);
+  //   let left = [];
+  //   let activeStep = +step.getAttribute('active-step');
+  //   // inserisco in un array tutte le posizioni degli elementi che dovrò translare
+  //   steps.forEach((content) => {
+  //     left.push(-content.offsetLeft+"px");
+  //   });
+  //   // se non ci sono più elementi da translare non faccio il translalte
+  //   if (activeStep < left.length-1) {
+  //     step.style.transform = "translateX("+left[activeStep+1]+")";
+  //     step.setAttribute('active-step', activeStep+1);
+  //   }
   // };
   //
   // document.getElementById('mdc-back').onclick = function(e) {
-  //   // pagina attiva in questo momento
-  //   let selectedPage = document.querySelector('.page[selected]');
-  //   selectedPage.removeAttribute('selected');
-  //   // pagina da attivare
-  //   let page = selectedPage.previousElementSibling;
-  //   page.setAttribute('selected', true);
-  //   let pages = document.getElementById('pages');
-  //   pages.setAttribute('data-step', page.getAttribute('data-step'));
+  //   let structure = document.getElementById('structure-test');
+  //   let step = structure.querySelector('.steps');
+  //   let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
+  //
+  //   let left = [];
+  //   let activeStep = +step.getAttribute('active-step');
+  //
+  //   steps.forEach((content) => {
+  //     left.push(-content.offsetLeft+"px");
+  //   });
+  //   // se non ci sono più elementi da translare non faccio il translalte
+  //   if (activeStep > 0) {
+  //     step.style.transform = "translateX("+left[activeStep-1]+")";
+  //     step.setAttribute('active-step', activeStep-1);
+  //   }
   // };
+  document.getElementById('mdc-next').onclick = function(e) {
+    // pagina attiva in questo momento
+    let selectedPage = document.querySelector('.page[selected]');
+    selectedPage.removeAttribute('selected');
+    // pagina da attivare
+    let page = selectedPage.nextElementSibling;
+    page.setAttribute('selected', true);
+    let pages = document.getElementById('pages');
+    pages.setAttribute('data-step', page.getAttribute('data-step'));
+    // app.getData();
+  };
+
+  document.getElementById('mdc-back').onclick = function(e) {
+    // pagina attiva in questo momento
+    let selectedPage = document.querySelector('.page[selected]');
+    selectedPage.removeAttribute('selected');
+    // pagina da attivare
+    let page = selectedPage.previousElementSibling;
+    page.setAttribute('selected', true);
+    let pages = document.getElementById('pages');
+    pages.setAttribute('data-step', page.getAttribute('data-step'));
+  };
 
   document.getElementById('tableSearch').oninput = function(e) {
     // console.log(this.value);
