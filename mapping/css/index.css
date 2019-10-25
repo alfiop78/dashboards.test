@@ -115,6 +115,6 @@ section[options] > i[filters]{color: #3b7096;}
 section[options] > i[groupby]{color: #c7b198;}
 
 
-.structure-test{width: 100%;overflow-x: hidden;}
-.structure-test > .steps{display: grid;grid-template-columns: 40% 60% 60%;transition: all 250ms;}
-.structure-test > .steps > .first, .structure-test > .steps > .second, .structure-test > .steps > .third{width: 100%;}
+#structure-test{width: 400%;overflow-x: hidden;position: relative;}
+#structure-test > .steps{display: grid;grid-template-columns: 40% 60% 40% 60%;transition: all 250ms;width: calc(100% / 4);}
+#structure-test > .steps > .first, #structure-test > .steps > .second, #structure-test > .steps > .third{width: 100%;}
