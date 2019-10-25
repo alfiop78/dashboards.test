@@ -238,36 +238,73 @@ var App = new Application();
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
+  document.getElementById('cubeTitle').oninput = function() {
+    if (this.value.length > 0) {
+      this.parentElement.querySelector('label').classList.add('has-content');
+      app.Cube.title = this.value;
+    } else {
+      this.parentElement.querySelector('label').classList.remove('has-content');
+    }
+  };
+
   document.getElementById('saveHierarchy').onclick = function(e) {
+    // verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
+    // if (!app.Cube.title) {return;}
+    // if (Object.keys(app.Cube.hierarchy).length === 0) {
+    //   console.log('gerarchie non inserite');
+    //   return;
+    // }
+
+    // app.Cube.cube['title'] = app.Cube.title;
     // recupero le tabelle per la clausola FROM
+    // console.log(app.Cube);
+
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
         app.Cube.cube['from'] = from;
       }
-
     });
-    app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
-    app.Cube.cube['columns'] = app.Cube.columns;
-    app.Cube.cube['filters'] = app.Cube.filters;
-    app.Cube.cube['metrics'] = app.Cube.metrics;
-    app.Cube.cube['groupby'] = app.Cube.groupBy;
+    if (Object.keys(app.Cube.hierarchy).length > 0) {app.Cube.cube['hierarchy'] = app.Cube.hierarchy;}
+    if (Object.keys(app.Cube.columns).length > 0) {app.Cube.cube['columns'] = app.Cube.columns;}
+    if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
+    if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
+    if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
+    //
+    // app.Cube.cube['columns'] = app.Cube.columns;
+    // app.Cube.cube['filters'] = app.Cube.filters;
+    // app.Cube.cube['metrics'] = app.Cube.metrics;
+    // app.Cube.cube['groupby'] = app.Cube.groupBy;
 
-    console.log(app.Cube.cube);
+    // console.log(app.Cube.cube);
 
-    var data = JSON.stringify(app.Cube.cube);
+    // console.log(Object.keys(app.Cube.cube).length);
+    let data;
+    // per il momento, se non ci sono cubi creati, prendo quello in localStorage
+    if (Object.keys(app.Cube.cube).length === 0) {
+      data = window.localStorage.getItem('cube');
+    } else {
+      data = JSON.stringify(app.Cube.cube);
+      window.localStorage.cube = data;
+    }
     // console.log(data);
+
+    // var data = JSON.stringify(app.Cube.cube);
+    // window.localStorage.cube = data;
+    // ...oppure
+    // window.localStorage.setItem("cube",data);
+
 
     var url = "ajax/cube.php";
     let params = "data="+data;
-    // console.log(params);
+    console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          // console.table(response);
+          console.table(response);
           app.createReport(response);
 
         } else {
@@ -367,6 +404,7 @@ var App = new Application();
   funzioni che facevano parte di /js/init.js
   */
   app.createReport = function(response) {
+    console.log('create report');
 
     console.log('create Report');
     let table = document.getElementById('table-01');

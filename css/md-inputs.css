@@ -55,7 +55,7 @@ label[for]{color:#999; left: 1em; margin:0;font-weight:normal;position:absolute;
 .selectList ul li{min-height: 46px; display: flex;align-items: center;padding: 0 16px;}
 .selectList ul li[disabled='true'] {color: darkgray;}
 
-.md-field{padding: 4px;position: relative;width: 100%;}
+.md-field{padding: 4px;position: relative;}
 .md-field-helper{padding: 4px;position: relative;margin-bottom: 12px;}
 .md-field.end{justify-self: end;}
 

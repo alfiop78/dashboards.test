@@ -7,6 +7,8 @@
 #pages[data-step="3"]{transform: translateX(-2000px);}
 /*pages*/
 
+#hier-structure h3{font-size: 1.2rem;margin: 8px;}
+
 .formula{display: flex;flex-direction: row;align-items: center;margin: 16px;justify-content: space-between;}
 #operator{background-color: grey;border-radius: 4px;color: white;font-size: 1.10rem; font-weight: bold;margin: 16px;padding: 8px;}
 #operator:hover #operator-list{visibility: visible;}
@@ -18,7 +20,7 @@ h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 ul{padding-inline-start: 0;font-size: .75rem;border-radius: 4px;}
 .card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
-.list ul{max-height: 550px;overflow-y: auto;background-color: #f0ece2;
+.list ul{max-height: 450px;overflow-y: auto;background-color: #f0ece2;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);margin: 8px;
   width: 250px;max-width: 250px;}
 ul > li{list-style: none;padding: 6px;margin: 2px 8px;}

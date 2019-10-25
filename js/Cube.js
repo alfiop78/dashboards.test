@@ -2,6 +2,7 @@ class Cube {
 
   constructor() {
     this.cube = new Object();
+    this.title = null;
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.columns = new Array();
     this.cols = [];

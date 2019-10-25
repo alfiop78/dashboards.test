@@ -11,35 +11,31 @@ setlocale (LC_TIME, "it_IT");
 $objData = json_decode($_POST['data']); // object
 // $arrData = json_decode($_POST['data'], true); // array
 
-// echo 'columns';
-// print_r($objData->{'columns'}) ;
-// echo 'filters';
-// print_r($objData->{'filters'});
-
-// echo 'from';
-// print_r($objData->{'from'});
-// echo 'groupby';
-// print_r($objData->{'groupby'});
-// echo 'hierarchy';
-// print_r($objData->{'hierarchy'});
-// echo 'metrics';
-// print_r($objData->{'metrics'});
 $q = new Queries();
 
+
 // echo $q->SELECT($objData->{'columns'});
+// echo $q->METRICS($objData->{'metrics'});
 // echo $q->FROM($objData->{'from'});
 // echo $q->WHERE($objData->{'hierarchy'});
 // echo $q->FILTERS($objData->{'filters'});
-// echo $q->METRICS($objData->{'metrics'});
-$select = $q->SELECT($objData->{'columns'});
-$from = $q->FROM($objData->{'from'});
-$hierarchy = $q->WHERE($objData->{'hierarchy'});
-$filters = $q->FILTERS($objData->{'filters'});
-$metrics = $q->METRICS($objData->{'metrics'});
-$groupBy = $q->GROUPBY($objData->{'groupby'});
+$q->SELECT($objData->{'columns'});
+$q->METRICS($objData->{'metrics'});
+$q->FROM($objData->{'from'});
+$q->WHERE($objData->{'hierarchy'});
+$q->FILTERS($objData->{'filters'});
+$q->GROUPBY($objData->{'groupby'});
+
+//
+// $select = $q->SELECT($objData->{'columns'});
+// $from = $q->FROM($objData->{'from'});
+// $hierarchy = $q->WHERE($objData->{'hierarchy'});
+// $filters = $q->FILTERS($objData->{'filters'});
+// $metrics = $q->METRICS($objData->{'metrics'});
+// $groupBy = $q->GROUPBY($objData->{'groupby'});
+
 // echo $q->completeQuery();
 $result = $q->completeQuery();
-// $q = new Queries();
 
 ob_clean();
 echo json_encode($result, JSON_FORCE_OBJECT);

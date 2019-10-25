@@ -153,7 +153,8 @@ class Queries {
     return $this->_groupBy;
   }
 
-  public function completeQuery() {
+  public function completeQuery() {ob_clean();
+    // return 'complete query';
     $this->_sql = $this->_select.", ".$this->_metrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
@@ -161,8 +162,18 @@ class Queries {
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
+    $lCache = new ConnectDB("decisyon_cache");
 
-    $this->_result = $l->getResultAssoc($this->_sql);
+    // $this->_result = $l->getResultAssoc($this->_sql);
+    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01 AS ".$this->_sql;
+
+    // return $sql_createTable;
+    //
+    $l->insert($sql_createTable);
+    // // select sulla nuova tabella creata
+
+    $this->_result = $lCache->getResultAssoc("SELECT * FROM TEST_AP_01;");
+
     return $this->_result;
 
     // return $this->_sql;
