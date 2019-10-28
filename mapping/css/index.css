@@ -16,22 +16,21 @@
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 .hierarchies > h6{font-size: .9rem;margin: 8px;font-weight: lighter;}
-.dialog-filters, .dialog-metrics{border: none;box-shadow: 0 2px 5px 1px rgba(10,10,10,.35);border-radius: 4px;padding: 2em;}
+dialog{border: none;box-shadow: 0 2px 5px 1px rgba(10,10,10,.35);border-radius: 4px;padding: 2em;}
 
 ul{padding-inline-start: 0;font-size: .75rem;border-radius: 4px;}
 .card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
-.list ul{max-height: 450px;overflow-y: auto;background-color: #f0ece2;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);margin: 8px;
-  width: 250px;max-width: 250px;}
+.list ul{max-height: 450px;overflow-y: auto;margin: 8px;width: 100%;min-width: 300px;}
 ul > li{list-style: none;padding: 6px;margin: 2px 8px;}
 ul > li:hover{list-style: none;padding: 6px;background-color: #c7b198;border-radius: 4px;cursor: pointer;}
 ul > li[selected]{list-style: none;padding: 6px;background-color: #c7b198;border-radius: 4px;cursor: pointer;}
-.lists > .list{display: flex;flex-direction: column;align-items: center;}
+.lists > .list{display: flex;flex-direction: column;align-items: center;width: 100%;}
 .table-selected{background: #dbd7cb;padding: 8px;border-radius: 4px;margin: 1em;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
 .card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
+.card-table > h5:hover{text-decoration: underline;}
 .card-table ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
 .card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;}
 .card-table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;padding: 0 6px;}
@@ -63,12 +62,12 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 #hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
 
 .lists{display: flex;}
-ul#tables[fact]{background-color: #9ac5ab69;color: #494949;}
 
 
-.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 40% 60%;grid-template-rows: auto;}
+.structure{width: 100%;justify-content: center;display: flex;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  background: #f0ece2;color: #494949;padding: 8px;opacity: .7;position: relative;max-width: 300px;width: 300px;min-width: 300px;}
+  background: white;color: #494949;padding: 8px;opacity: .6;position: relative;max-width: 300px;width: 300px;min-width: 300px;}
+.structure .card-table[fact-table]{background: var(--main-third-color);}
 .structure .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;}
 .structure .card-table > .help[alert]{background: indianred;color: white;}
 .structure .card-table[hierarchies] > .help{background: #99b19c;color: white;}
@@ -78,7 +77,7 @@ ul#tables[fact]{background-color: #9ac5ab69;color: #494949;}
 .structure .card-table[active]{opacity: 1;}
 .structure .card-table[hierarchies]{opacity: 1;}
 
-.structure .card-table[fact-table]{background: #9ac5ab69;color: #494949;}
+
 
 .structure .card-table[fact-table]:hover{cursor: pointer;opacity: 1;}
 .structure .card-table:hover{cursor: pointer;opacity: 1;}
@@ -88,7 +87,7 @@ ul#tables[fact]{background-color: #9ac5ab69;color: #494949;}
 .structure .icon-relation{display: flex;justify-self: center;/*direction: rtl;*/position: relative;margin-top: 4px;margin-bottom: 4px;}
 
 .icon-relation:hover i:first-child{opacity: 1;}
-.icon-relation i:first-child{background: #c7b198;opacity: .8;}
+.icon-relation i:first-child{opacity: .7;}
 .icon-relation i.anim{position: absolute;top: auto;visibility: hidden;transition: left 300ms;left: 0;}
 .icon-relation:hover i.anim:nth-child(2){color: #99b19c;left: calc(36px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
 .icon-relation:hover i.anim:nth-child(2):hover{opacity: 1;}
@@ -104,7 +103,7 @@ ul#tables[fact]{background-color: #9ac5ab69;color: #494949;}
 
 
 /* .structure .containerCards{width: 60%;} */
-.structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;}
+.structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;width: 100%;}
 .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 

@@ -53,6 +53,7 @@ class Queries {
 
   public function showTable() {
     $l = new ConnectDB('automotive_bi_data');
+    // $l = new ConnectDB('Sql1073234_1');
     $this->_result = $l->getResultArray("SHOW TABLES;");
     // $this->_result = $l->getResultAssoc("SHOW TABLES;");
     return $this->_result;
@@ -60,6 +61,7 @@ class Queries {
 
   public function describe($table) {
     $l = new ConnectDB('automotive_bi_data');
+    // $l = new ConnectDB('Sql1073234_1');
     $query = "DESCRIBE $table;";
     $this->_result = $l->getResultArray($query);
     // $this->_result = $l->getResultAssoc("SHOW TABLES;");

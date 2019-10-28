@@ -2,6 +2,7 @@ class Cube {
 
   constructor() {
     this.cube = new Object();
+    this.name = null;
     this.title = null;
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.columns = new Array();
@@ -17,6 +18,12 @@ class Cube {
     this.dialogMetrics = document.getElementById('metric-setting');
 
   }
+
+  set cubeName(value) {
+    this.name = value;
+  }
+
+  get cubeName() {return this.name;}
 
   set table(value) {
     this.tableSelected = value;

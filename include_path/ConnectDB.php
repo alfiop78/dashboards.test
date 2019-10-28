@@ -12,19 +12,10 @@ class ConnectDB {
       // $this->_host = $_SERVER['SERVER_NAME'];
       // $this->_document_root = $_SERVER['DOCUMENT_ROOT'];
       $this->_schema = $schema;
-			// if ($this->_schema === "automotive_bi_data") {
-			// 	$this->_u='apietrantuono';
-			// 	$this->_host="192.168.2.3";
-			// 	$this->_p="4lfi0";
-			// } else {
-			// 	$this->_u = "apietrantuono";
-			// 	$this->_host = "192.168.2.3";
-			// 	$this->_p = "4lfi0";
-			// }
+
 			$this->_u='apietrantuono';
 			$this->_host="192.168.2.3";
 			$this->_p="4lfi0";
-
 
 	}
 

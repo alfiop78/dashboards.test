@@ -64,6 +64,22 @@
         <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
       </div> -->
     </dialog>
+    <dialog id="table-list">
+      <div class="lists">
+        <div class="list">
+          <div class="md-field">
+            <input type="search" id="tableSearch" name="tableSearch" value=""/>
+            <label for="tableSearch" class="">Ricerca</label>
+          </div>
+
+          <ul id="tables"></ul>
+        </div>
+      </div>
+
+      <div class="dialog-buttons">
+        <button type="button" name="cancel" class="md-button" onclick="document.getElementById('table-list').close();">annulla</button>
+      </div>
+    </dialog>
 
     <main>
       <div id="drawer">
@@ -124,7 +140,7 @@
 
                   <div class="structure">
 
-                    <div class="lists">
+                    <!-- <div class="lists">
                       <div class="list">
                         <div class="md-field">
                           <input type="search" id="tableSearch" name="tableSearch" value=""/>
@@ -133,7 +149,7 @@
 
                         <ul id="tables"></ul>
                       </div>
-                    </div>
+                    </div> -->
 
                     <div class="hierarchies">
                       <!-- <h6>Inserisci un titolo per questa gerarchia</h6> -->
@@ -148,7 +164,7 @@
                           <div class="card-layout">
                             <section class="card-table" active="true" name="">
                               <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
-                              <h5>TABELLA</h5>
+                              <h5>SELEZIONA TABELLA</h5>
                               <ul id="columns">
                                 <template id="template-list-columns">
                                   <div class="element">
@@ -173,7 +189,7 @@
                           <div class="relation">
                             <div class="line"></div>
                             <div class="icon-relation">
-                              <i class="material-icons md-24 md-circle" add>add</i>
+                              <i class="material-icons md-24" add>add</i>
                               <i class="material-icons md-24 anim" hierarchies>insert_link</i>
                               <i class="material-icons md-24 anim" hierarchies-left>flip</i>
                               <i class="material-icons md-24 anim" hierarchies-right>flip</i>
@@ -190,7 +206,7 @@
                           <div class="card-layout">
                             <section class="card-table" active="true" name="">
                               <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
-                              <h5>TABELLA</h5>
+                              <h5>SELEZIONA TABELLA</h5>
                               <ul id="columns">
                                 <template id="template-list-columns">
                                   <div class="element">
@@ -225,7 +241,7 @@
                           <div class="relation">
                             <div class="line"></div>
                             <div class="icon-relation">
-                              <i class="material-icons md-24 md-circle" add>add</i>
+                              <i class="material-icons md-24" add>add</i>
                               <i class="material-icons md-24 anim" hierarchies>insert_link</i>
                               <i class="material-icons md-24 anim" hierarchies-left>flip</i>
                               <i class="material-icons md-24 anim" hierarchies-right>flip</i>
@@ -271,7 +287,7 @@
                     <h5>Page Subtitle</h5>
                   </section>
 
-                  
+
                 </div>
 
               </section>

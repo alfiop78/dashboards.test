@@ -10,7 +10,8 @@ var App = new Application();
     Cube : new Cube(),
     Draw : null,
     tableSelected : null,
-    columnsSelected : []
+    columnsSelected : [],
+    dialogTableList : document.getElementById('table-list')
 
   };
 
@@ -27,6 +28,7 @@ var App = new Application();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
+          // console.table(response);
 
           let ulContainer = document.getElementById('tables');
           // console.log(ulContainer);
@@ -56,7 +58,7 @@ var App = new Application();
   app.handlerTableSelected = function(e) {
     console.log('handlerTableSelected');
     this.toggleAttribute('selected');
-    app.Cube.activeCard = document.querySelector('.card-table[active]');
+    // app.Cube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
     app.Cube.table = this.getAttribute('label');
     let tmplList;
@@ -69,6 +71,7 @@ var App = new Application();
     let ulContainer = app.Cube.activeCard.querySelector('#columns');
     // pulisco l'elenco delle colonne in base alla selezione della tabella
     ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
+    app.dialogTableList.close();
 
     var url = "ajax/tableInfo.php";
     let params = "tableName="+app.Cube.table;
@@ -96,8 +99,6 @@ var App = new Application();
           app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
           app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
 
-
-
         } else {
 
         }
@@ -113,16 +114,12 @@ var App = new Application();
   };
 
   app.handlerCardSelected = function(e) {
+    console.log('handlerCardSelected');
+    // se il viene avviene sull'elemento h5 apro la dialog
+    if (e.target.localName === "h5") {app.dialogTableList.showModal();}
     app.Cube.activeCard = this;
     // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
-    if (this.id === "fact") {
-      // è stata selezionata la fact table, coloro la lista delle tabelle dello stesso colore della fact
-      document.getElementById('tables').setAttribute('fact', true);
-    } else {
-      // tabella
-      document.getElementById('tables').removeAttribute('fact');
-    }
 
     this.setAttribute('active', true);
   };
@@ -271,20 +268,24 @@ var App = new Application();
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
+    app.Cube.cubeName = "testName";
+    app.Cube.cube['name'] = app.Cube.cubeName;
     //
     // app.Cube.cube['columns'] = app.Cube.columns;
     // app.Cube.cube['filters'] = app.Cube.filters;
     // app.Cube.cube['metrics'] = app.Cube.metrics;
     // app.Cube.cube['groupby'] = app.Cube.groupBy;
 
-    // console.log(app.Cube.cube);
+
 
     // console.log(Object.keys(app.Cube.cube).length);
     let data;
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
       data = window.localStorage.getItem('cube');
+      console.log(JSON.parse(data));
     } else {
+      console.log(app.Cube.cube);
       data = JSON.stringify(app.Cube.cube);
       window.localStorage.cube = data;
     }
@@ -298,7 +299,7 @@ var App = new Application();
 
     var url = "ajax/cube.php";
     let params = "data="+data;
-    console.log(params);
+    // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -406,7 +407,6 @@ var App = new Application();
   app.createReport = function(response) {
     console.log('create report');
 
-    console.log('create Report');
     let table = document.getElementById('table-01');
 
     let options =

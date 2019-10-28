@@ -3,8 +3,9 @@
 * {box-sizing: border-box;}
 :root{
   --main-bg-color: #e2e2e2;
-  --main-primary-color: #70b1bb;
-  --main-secondary-color: #511e1a;
+  --main-primary-color: #d4d6c8;
+  --main-secondary-color: #9a9b94;
+  --main-third-color: #e9e9e5;
   --main-color-outisde-card: #424242;
   --main-color-button-flat: #8c5f11;
   --main-color-header-table: #d2d2d2;
