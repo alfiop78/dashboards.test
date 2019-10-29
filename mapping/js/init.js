@@ -322,6 +322,18 @@ var App = new Application();
     request.send(params);
 
   };
+  app.handlerFunctionMetricList = function(e) {
+    // console.log(this);
+    // questo elenco deve avere sempre almeno un elemento selezionato
+    if (this.hasAttribute('selected')) {return;}
+    document.querySelectorAll('#function-list li').forEach((li) => {li.removeAttribute('selected');});
+    this.toggleAttribute('selected');
+  };
+
+
+  document.querySelectorAll('#function-list li').forEach((li) => {
+    li.onclick = app.handlerFunctionMetricList;
+  })
 
   // document.getElementById('mdc-next').onclick = function(e) {
   //   // recupero la left dello step successivo

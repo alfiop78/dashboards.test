@@ -155,7 +155,7 @@ class Queries {
     return $this->_groupBy;
   }
 
-  public function completeQuery() {ob_clean();
+  public function completeQuery() {
     // return 'complete query';
     $this->_sql = $this->_select.", ".$this->_metrics."\n";
     $this->_sql .= $this->_from."\n";

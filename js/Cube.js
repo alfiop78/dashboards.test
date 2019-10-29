@@ -214,7 +214,10 @@ class Cube {
 
   handlerMetricSetting(e) {
     // console.log(e);
+    // visualizzo la lista dei filtri creati, per poterli associare alla metrica
+    this.createFiltersList();
     // appro la dialog per filters
+
     let fieldName = document.getElementById('metric-fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
@@ -230,10 +233,77 @@ class Cube {
     let fieldName = document.getElementById('filter-fieldName').innerText;
     let operator = document.getElementById('operator').innerText;
     let values = document.getElementById('input-values').value;
-    this.conditionsColName.push({'fieldName' : fieldName, 'operator': operator, 'values': values});
+    let filterName = document.getElementById('filter-name').value;
+    this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
     this.filters[tableName] = this.conditionsColName;
+
+
     console.log(this.filters);
+
     this.dialogFilters.close();
+
+  }
+
+  createFiltersList() {
+    // aggiungo il filtro creato alla dialog metric-setting in modo da poter associare i filtri a una determinata metrica
+    // if (Object.keys(this.filters).length > 0) {
+    //   let metricFiltersUl = document.getElementById('metric-filters');
+    //   Object.keys(this.filters).forEach((table) => {
+    //     // per ogni tabella recupero i propri filtri per inserirli in un elenco
+    //     // console.log(table);
+    //     this.filters[table].forEach((filter) => {
+    //       console.log(filter);
+    //       // se questo filtro è già presente nell'elenco non lo inserisco
+    //       console.log(Array.from(document.querySelectorAll('#metric-filters > li')));
+    //
+    //       let li = document.createElement('li');
+    //       li.innerText = filter.filterName;
+    //       li.setAttribute('filter-name', filter.filterName);
+    //       li.setAttribute('table-name', table);
+    //       li.setAttribute('field-name', filter.fieldName);
+    //       li.setAttribute('operator', filter.operator);
+    //       li.setAttribute('values', filter.values);
+    //       metricFiltersUl.appendChild(li);
+    //
+    //     });
+    //   });
+    // }
+    // recupero l'elenco dei filtri già presenti in metric-filters, lo inserisco in un array per confrontarlo con this.filters
+    let metricFiltersList = Array.from(this.dialogMetrics.querySelectorAll('#metric-filters > li'));
+    console.log(metricFiltersList);
+    let arrMetricFilters = [];
+    metricFiltersList.forEach((filter) => {
+      arrMetricFilters.push(filter.getAttribute('filter-name'));
+    });
+    console.log(arrMetricFilters);
+
+    if (Object.keys(this.filters).length > 0) {
+      let metricFiltersUl = document.getElementById('metric-filters');
+      Object.keys(this.filters).forEach((table) => {
+        // per ogni tabella recupero i propri filtri per inserirli in un elenco
+        // console.log(table);
+        this.filters[table].forEach((filter) => {
+          console.log(filter);
+          // se questo filtro è già presente nell'elenco non lo inserisco
+          console.log((arrMetricFilters.includes(filter.filterName)));
+          if ( !arrMetricFilters.includes(filter.filterName) ) {
+            let li = document.createElement('li');
+            li.innerText = filter.filterName;
+            li.setAttribute('filter-name', filter.filterName);
+            li.setAttribute('table-name', table);
+            li.setAttribute('field-name', filter.fieldName);
+            li.setAttribute('operator', filter.operator);
+            li.setAttribute('values', filter.values);
+            metricFiltersUl.appendChild(li);
+          }
+        });
+      });
+    }
+
+
+
+
+
 
   }
 
@@ -244,9 +314,11 @@ class Cube {
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = document.getElementById('metric-fieldName').innerText;
-    let func = document.getElementById('function').innerText;
-
-    this.colsMetrics.push({'sqlFunction': func, 'fieldName': fieldName});
+    let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
+    let distinctOption = document.getElementById('checkbox-distinct').checked;
+    let alias = document.getElementById('alias-metric').value;
+    // TODO: aggiungere i filters associati alla metrica
+    this.colsMetrics.push({'sqlFunction': sqlFunction, 'fieldName': fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, 'filters' : null});
     this.metrics[tableName] = this.colsMetrics;
     console.log(this.metrics);
     this.dialogMetrics.close();
