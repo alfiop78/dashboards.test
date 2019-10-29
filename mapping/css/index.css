@@ -129,6 +129,13 @@ section[options] > i[groupby]{color: #c7b198;}
 dialog h4{font-size: .9rem;}
 dialog #function-list{height: 100px;overflow-y: scroll;}
 
+
 .grid-cols{display: grid;grid-template-columns: 20% 40% 40%;width: 100%;}
 .functionList{display: flex;flex-direction: column;}
 #distinct-option{display: flex;align-items: center;}
+
+#test-01{display: grid;grid-template-columns: auto auto auto;}
+#test-02{display: flex;align-items: center;justify-content: center;position: relative;}
+#test-02 span{position: absolute;width: 100%; height: 40px;background: indianred;z-index: 0;}
+#test-04{opacity: .6;}
+#test-list{height: 100px;overflow-y: scroll;margin: 0;z-index: 1;}

@@ -246,28 +246,6 @@ class Cube {
 
   createFiltersList() {
     // aggiungo il filtro creato alla dialog metric-setting in modo da poter associare i filtri a una determinata metrica
-    // if (Object.keys(this.filters).length > 0) {
-    //   let metricFiltersUl = document.getElementById('metric-filters');
-    //   Object.keys(this.filters).forEach((table) => {
-    //     // per ogni tabella recupero i propri filtri per inserirli in un elenco
-    //     // console.log(table);
-    //     this.filters[table].forEach((filter) => {
-    //       console.log(filter);
-    //       // se questo filtro è già presente nell'elenco non lo inserisco
-    //       console.log(Array.from(document.querySelectorAll('#metric-filters > li')));
-    //
-    //       let li = document.createElement('li');
-    //       li.innerText = filter.filterName;
-    //       li.setAttribute('filter-name', filter.filterName);
-    //       li.setAttribute('table-name', table);
-    //       li.setAttribute('field-name', filter.fieldName);
-    //       li.setAttribute('operator', filter.operator);
-    //       li.setAttribute('values', filter.values);
-    //       metricFiltersUl.appendChild(li);
-    //
-    //     });
-    //   });
-    // }
     // recupero l'elenco dei filtri già presenti in metric-filters, lo inserisco in un array per confrontarlo con this.filters
     let metricFiltersList = Array.from(this.dialogMetrics.querySelectorAll('#metric-filters > li'));
     console.log(metricFiltersList);
