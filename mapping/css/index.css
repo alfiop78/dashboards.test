@@ -128,8 +128,10 @@ section[options] > i[groupby]{color: #c7b198;}
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
 dialog h4{font-size: .9rem;}
 
-.metricDefine{display: grid;grid-template-columns: auto auto auto;margin: 1em 0;}
-.metricDefine > .options{display: flex;align-items: center;}
-.metricDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
+.metricDefine, .filterDefine{display: grid;grid-template-columns: auto auto auto;margin: 1em 0;}
+.metricDefine > .options{align-items: center;display: flex;}
+.metricDefine > .alias, .filterDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
 .metricDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}
 .metricDefine > .filtersList{padding: 16px;}
+
+.name-alias{display: grid;grid-template-columns: auto auto;}

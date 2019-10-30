@@ -202,7 +202,7 @@ class Cube {
   handlerFilterSetting(e) {
     // console.log(e);
     // appro la dialog per filters
-    let fieldName = document.getElementById('filter-fieldName');
+    let fieldName = this.dialogFilters.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogFilters.showModal();
@@ -213,15 +213,24 @@ class Cube {
   }
 
   handlerMetricSetting(e) {
+    // appro la dialog per filters
     // console.log(e);
     // visualizzo la lista dei filtri creati, per poterli associare alla metrica
     this.createFiltersList();
-    // appro la dialog per filters
 
-    let fieldName = document.getElementById('metric-fieldName');
+    let fieldName = this.dialogMetrics.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogMetrics.showModal();
+    // resetto i campi della dialog
+    // TODO: dovrò vedere se ho cliccato su una metrica già impostata, se già impostata, presente in this.metrics,
+    // ...ripropongo i dati precedentemente salvati, altrimenti azzero la dialog
+    document.getElementById('alias-metric').value = "";
+    document.getElementById('checkbox-distinct').checked = false;
+
+    document.querySelectorAll('#metric-filters > li').forEach((filter) => {
+      filter.removeAttribute('selected');
+    });
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
     this.dialogMetrics.querySelector('#btnMetricCancel').onclick = this.handlerBtnMetricCancel.bind(this);
@@ -230,13 +239,12 @@ class Cube {
 
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = document.getElementById('filter-fieldName').innerText;
-    let operator = document.getElementById('operator').innerText;
-    let values = document.getElementById('input-values').value;
+    let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
+    let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').innerText;
+    let values = document.getElementById('filter-values').value;
     let filterName = document.getElementById('filter-name').value;
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
     this.filters[tableName] = this.conditionsColName;
-
 
     console.log(this.filters);
 
@@ -293,11 +301,11 @@ class Cube {
 
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = document.getElementById('metric-fieldName').innerText;
+    let fieldName = documenthis.dialogMetrics.querySelector('#fieldName').innerText;
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;
-    // TODO: aggiungere i filters associati alla metrica
+    // aggiungo i filtri da associare a questa metrica
     let filters = [];
     document.querySelectorAll('#metric-filters > li[selected]').forEach((filter) => {
       filters.push(filter.getAttribute('filter-name'));

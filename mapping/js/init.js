@@ -335,6 +335,18 @@ var App = new Application();
     li.onclick = app.handlerFunctionMetricList;
   });
 
+  app.handlerFunctionOperatorList = function(e) {
+    // console.log(this);
+    // questo elenco deve avere sempre almeno un elemento selezionato
+    if (this.hasAttribute('selected')) {return;}
+    document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
+    this.toggleAttribute('selected');
+  };
+
+  document.querySelectorAll('#operator-list li').forEach((li) => {
+    li.onclick = app.handlerFunctionOperatorList;
+  });
+
   // document.getElementById('mdc-next').onclick = function(e) {
   //   // recupero la left dello step successivo
   //   let structure = document.getElementById('structure-test');
