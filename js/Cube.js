@@ -301,7 +301,7 @@ class Cube {
 
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = documenthis.dialogMetrics.querySelector('#fieldName').innerText;
+    let fieldName = this.dialogMetrics.querySelector('#fieldName').innerText;
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;

@@ -125,21 +125,20 @@ class Queries {
 
   public function METRICS($metrics) {
     /*es.:
-    [AppuntamentiOfficina] => Array
-        (
-            [0] => stdClass Object
-                (
-                    [sqlfunction] => SUM
-                    [fieldname] => id_Azienda
-                )
-
-        )
+    metrics:
+      DocVenditaDettaglio: Array(1)
+      0:
+      aliasMetric: "costo"
+      distinct: false
+      fieldName: "PrzListino"
+      filters: []
+      sqlFunction: "SUM"
     */
     // TODO: verificare se sono presenti le metriche (obbligatorie)
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.")";
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS ".$param->aliasMetric;
       }
     }
     return $this->_metrics = implode(", ", $metricsList);

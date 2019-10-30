@@ -29,27 +29,35 @@
           <label for="filter-name" class="">Nome</label>
         </div>
 
-        <div class="filterDefine">
+        <div class="formulaDefine">
 
-          <div class="formula">
-            <ul id="operator-list">
-              <li label="=" selected>&equals;</li>
-              <li label="<>">&lt;&gt;</li>
-              <li label="<">&lt;</li>
-              <li label=">">&gt;</li>
-              <li label="IN">IN()</li>
-              <li label="NOT IN">NOT IN()</li>
-              <li label="IS NULL">IS NULL</li>
-              <li label="IS NOT NULL">IS NOT NULL</li>
-            </ul>
-          </div>
-
-          <div class="value">
-            <div class="md-field">
-              <input type="text" id="filter-values" value=""/>
-              <label for="filter-values" class="">Valore</label>
+          <section class="formula">
+            <h6>SQL operatori</h6><small>Scorri la lista degli operatori</small>
+            <div class="listContent">
+              <ul id="operator-list" class="miniList">
+                <li label="=" selected>&equals;</li>
+                <li label="<>">&lt;&gt;</li>
+                <li label="<">&lt;</li>
+                <li label=">">&gt;</li>
+                <li label="IN">IN()</li>
+                <li label="NOT IN">NOT IN()</li>
+                <li label="IS NULL">IS NULL</li>
+                <li label="IS NOT NULL">IS NOT NULL</li>
+              </ul>
             </div>
-          </div>
+          </section>
+
+          <section class="values">
+            <h6>Valori</h6>
+            <div class="listContent">
+              <div class="md-field">
+                <input type="text" id="filter-values" value=""/>
+                <label for="filter-values" class="">Valore</label>
+              </div>
+            </div>
+            <!-- TODO: recuperare i possibili valori da inserire dalla query distinct di questa colonna -->
+
+          </section>
 
         </div>
 
@@ -80,30 +88,37 @@
           </div>
         </div>
 
-        <div class="metricDefine">
+        <div class="formulaDefine">
 
-          <div class="formula">
-            <span>SQL Function</span>
-            <ul id="function-list">
-              <li id="0" selected>SUM</li>
-              <li id="1">COUNT</li>
-              <li id="2">AVG</li>
-              <li id="3">MAX</li>
-              <li id="4">MIN</li>
-            </ul>
-          </div>
+          <section class="formula">
+            <h6>SQL Function</h6><small>Scorri la lista delle SQL function</small>
+            <div class="listContent">
+              <ul id="function-list" class="miniList">
+                <li id="0" selected>SUM</li>
+                <li id="1">COUNT</li>
+                <li id="2">AVG</li>
+                <li id="3">MAX</li>
+                <li id="4">MIN</li>
+              </ul>
+            </div>
+            <label class="mdc-checkbox">
+              <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
+              <span>DISTINCT</span>
+            </label>
+
+          </section>
 
 
-          <div class="filtersList">
-            <span>Filtri da applicare alla metrica</span>
-            <ul id="metric-filters"></ul>
-          </div>
+          <section class="filtersList">
+            <h6>Lista Filtri</h6><small>Filtri da applicare alla metrica</small>
+            <div class="listContent">
+              <ul id="metric-filters"></ul>
+            </div>
+
+          </section>
 
         </div>
-        <label class="mdc-checkbox">
-          <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
-          <span>DISTINCT</span>
-        </label>
+
 
 
         <div class="dialog-buttons">

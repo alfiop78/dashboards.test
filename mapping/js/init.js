@@ -268,15 +268,8 @@ var App = new Application();
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
-    app.Cube.cubeName = "testName";
-    app.Cube.cube['name'] = app.Cube.cubeName;
-    //
-    // app.Cube.cube['columns'] = app.Cube.columns;
-    // app.Cube.cube['filters'] = app.Cube.filters;
-    // app.Cube.cube['metrics'] = app.Cube.metrics;
-    // app.Cube.cube['groupby'] = app.Cube.groupBy;
-
-
+    // app.Cube.cubeName = "testName";
+    // app.Cube.cube['name'] = app.Cube.cubeName;
 
     // console.log(Object.keys(app.Cube.cube).length);
     let data;
@@ -299,7 +292,7 @@ var App = new Application();
 
     var url = "ajax/cube.php";
     let params = "data="+data;
-    // console.log(params);
+    console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -347,42 +340,45 @@ var App = new Application();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  // document.getElementById('mdc-next').onclick = function(e) {
-  //   // recupero la left dello step successivo
-  //   let structure = document.getElementById('structure-test');
-  //   let step = structure.querySelector('.steps');
-  //   let steps = Array.from(step.querySelectorAll(':scope > div:not(:last-child)'));
-  //   console.log(steps);
-  //   let left = [];
-  //   let activeStep = +step.getAttribute('active-step');
-  //   // inserisco in un array tutte le posizioni degli elementi che dovrò translare
-  //   steps.forEach((content) => {
-  //     left.push(-content.offsetLeft+"px");
-  //   });
-  //   // se non ci sono più elementi da translare non faccio il translalte
-  //   if (activeStep < left.length-1) {
-  //     step.style.transform = "translateX("+left[activeStep+1]+")";
-  //     step.setAttribute('active-step', activeStep+1);
-  //   }
-  // };
-  //
-  // document.getElementById('mdc-back').onclick = function(e) {
-  //   let structure = document.getElementById('structure-test');
-  //   let step = structure.querySelector('.steps');
-  //   let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
-  //
-  //   let left = [];
-  //   let activeStep = +step.getAttribute('active-step');
-  //
-  //   steps.forEach((content) => {
-  //     left.push(-content.offsetLeft+"px");
-  //   });
-  //   // se non ci sono più elementi da translare non faccio il translalte
-  //   if (activeStep > 0) {
-  //     step.style.transform = "translateX("+left[activeStep-1]+")";
-  //     step.setAttribute('active-step', activeStep-1);
-  //   }
-  // };
+  /* gestione scorrimento layout orizzontale
+
+    // document.getElementById('mdc-next').onclick = function(e) {
+    //   // recupero la left dello step successivo
+    //   let structure = document.getElementById('structure-test');
+    //   let step = structure.querySelector('.steps');
+    //   let steps = Array.from(step.querySelectorAll(':scope > div:not(:last-child)'));
+    //   console.log(steps);
+    //   let left = [];
+    //   let activeStep = +step.getAttribute('active-step');
+    //   // inserisco in un array tutte le posizioni degli elementi che dovrò translare
+    //   steps.forEach((content) => {
+    //     left.push(-content.offsetLeft+"px");
+    //   });
+    //   // se non ci sono più elementi da translare non faccio il translalte
+    //   if (activeStep < left.length-1) {
+    //     step.style.transform = "translateX("+left[activeStep+1]+")";
+    //     step.setAttribute('active-step', activeStep+1);
+    //   }
+    // };
+    //
+    // document.getElementById('mdc-back').onclick = function(e) {
+    //   let structure = document.getElementById('structure-test');
+    //   let step = structure.querySelector('.steps');
+    //   let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
+    //
+    //   let left = [];
+    //   let activeStep = +step.getAttribute('active-step');
+    //
+    //   steps.forEach((content) => {
+    //     left.push(-content.offsetLeft+"px");
+    //   });
+    //   // se non ci sono più elementi da translare non faccio il translalte
+    //   if (activeStep > 0) {
+    //     step.style.transform = "translateX("+left[activeStep-1]+")";
+    //     step.setAttribute('active-step', activeStep-1);
+    //   }
+    // };
+  */
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento
     let selectedPage = document.querySelector('.page[selected]');

@@ -6,8 +6,6 @@ session_regenerate_id();
 require_once 'queries.php';
 setlocale (LC_TIME, "it_IT");
 
-// var_dump($_POST['data']);
-// var_dump(json_decode($_POST['data']));
 $objData = json_decode($_POST['data']); // object
 // $arrData = json_decode($_POST['data'], true); // array
 
