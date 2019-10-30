@@ -17,6 +17,10 @@ $q = new Queries();
 // echo $q->FROM($objData->{'from'});
 // echo $q->WHERE($objData->{'hierarchy'});
 // echo $q->FILTERS($objData->{'filters'});
+// echo $q->GROUPBY($objData->{'groupby'});
+// echo $q->completeQuery();
+// return;
+// TODO: ciclare, per ogni metrica creare una query diversa, se all'interno della metrica, è presente un filtro
 $q->SELECT($objData->{'columns'});
 $q->METRICS($objData->{'metrics'});
 $q->FROM($objData->{'from'});
@@ -33,6 +37,8 @@ $q->GROUPBY($objData->{'groupby'});
 // $groupBy = $q->GROUPBY($objData->{'groupby'});
 
 // echo $q->completeQuery();
+// TODO: creo la tabella base (senza metriche)
+
 $result = $q->completeQuery();
 
 ob_clean();

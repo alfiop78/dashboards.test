@@ -292,7 +292,7 @@ var App = new Application();
 
     var url = "ajax/cube.php";
     let params = "data="+data;
-    console.log(params);
+    // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -432,7 +432,7 @@ var App = new Application();
     let options =
       {
       'cols' : [
-        {'col': 3, 'attribute': 'hidden'},
+        // {'col': 3, 'attribute': 'hidden'},
         {'col': 5, 'attribute': 'hidden'}
 
       ],
@@ -441,7 +441,7 @@ var App = new Application();
         {'col': 1, 'attribute': 'multi'},
         {'col': 3, 'attribute': 'hidden'}
       ],
-      'metrics' : [2], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : 'Free Courtesy',
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };

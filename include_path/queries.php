@@ -134,11 +134,11 @@ class Queries {
       filters: []
       sqlFunction: "SUM"
     */
-    // TODO: verificare se sono presenti le metriche (obbligatorie)
+    // TODO: verificare se sono presenti filtri all'interno della metrica
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS ".$param->aliasMetric;
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
       }
     }
     return $this->_metrics = implode(", ", $metricsList);
@@ -154,6 +154,24 @@ class Queries {
     return $this->_groupBy;
   }
 
+  public function baseTable() {
+    $this->_sql = $this->_select."\n";
+    $this->_sql .= $this->_from."\n";
+    $this->_sql .= $this->_where."\n";
+    $this->_sql .= $this->_filters;
+    if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
+
+    // return $this->_sql;
+
+    $l = new ConnectDB("automotive_bi_data");
+    $lCache = new ConnectDB("decisyon_cache");
+
+    // $this->_result = $l->getResultAssoc($this->_sql);
+    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql;
+
+    return $l->insert($sql_createTable);
+  }
+
   public function completeQuery() {
     // return 'complete query';
     $this->_sql = $this->_select.", ".$this->_metrics."\n";
@@ -162,11 +180,14 @@ class Queries {
     $this->_sql .= $this->_filters;
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
+    // return $this->_sql;
+
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
     // $this->_result = $l->getResultAssoc($this->_sql);
-    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01 AS ".$this->_sql;
+    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01_1 AS ".$this->_sql; // prima metrica
+    // TODO: $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01_2 AS ".$this->_sql; // seconda metrica
 
     // return $sql_createTable;
     //
