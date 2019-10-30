@@ -54,53 +54,39 @@
       <section>
         <h4>Inserisci qui la funzione per la metrica <span id="metric-fieldName" class="highlight"></span></h4>
 
-        <div id="test-01">
-          <div id="test-02">
-            <span></span>
-            <div id="test-04">
-              <ul id="test-list">
-                <li id="0" selected>SUM</li>
-                <li id="1">COUNT</li>
-                <li id="2">AVG</li>
-                <li id="3">MAX</li>
-                <li id="4">MIN</li>
-              </ul>
+        <div class="metricDefine">
+
+          <div class="formula">
+            <ul id="function-list">
+              <li id="0" selected>SUM</li>
+              <li id="1">COUNT</li>
+              <li id="2">AVG</li>
+              <li id="3">MAX</li>
+              <li id="4">MIN</li>
+            </ul>
+
+          </div>
+
+          <div class="alias">
+            <div class="md-field">
+              <input type="text" id="alias-metric" value=""/>
+              <label for="alias-metrics" class="">Alias</label>
             </div>
 
-          </div>
-          <div class="">
-            <span>DISTINCT</span>
-          </div>
-          <div class="">
-            <span>ALIAS</span>
-          </div>
-        </div>
+            <label class="mdc-checkbox">
+              <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
+              <span>DISTINCT</span>
+            </label>
 
-        <!-- <div class="formula">
-          <ul id="function-list">
-            <li id="0" selected>SUM</li>
-            <li id="1">COUNT</li>
-            <li id="2">AVG</li>
-            <li id="3">MAX</li>
-            <li id="4">MIN</li>
-          </ul>
-
-        </div> -->
-        <!-- <input type="checkbox" name="distinct" /> -->
-        <label class="mdc-checkbox">
-          <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
-          <span>DISTINCT</span>
-        </label>
-        <div class="md-field">
-          <input type="text" id="alias-metric" value=""/>
-          <label for="alias-metrics" class="">Alias</label>
-        </div>
-        <div class="list">
-          <span>Seleziona i filtri da applicare alla metrica</span>
-          <ul id="metric-filters">
-          </ul>
+          </div>
+          <div class="filtersList">
+            <span>Filtri da applicare alla metrica</span>
+            <ul id="metric-filters"></ul>
+          </div>
 
         </div>
+
+
         <div class="dialog-buttons">
           <button id="btnMetricCancel" type="button" name="cancel" class="md-button">annulla</button>
           <button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>

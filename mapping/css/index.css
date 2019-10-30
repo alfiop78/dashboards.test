@@ -11,7 +11,7 @@
 
 #hier-structure h3{font-size: 1.2rem;margin: 8px;}
 
-.formula{display: flex;flex-direction: row;align-items: center;margin: 16px;justify-content: space-between;}
+
 #operator{background-color: grey;border-radius: 4px;color: white;font-size: 1.10rem; font-weight: bold;margin: 16px;padding: 8px;}
 #operator:hover #operator-list{visibility: visible;}
 
@@ -127,15 +127,9 @@ section[options] > i[groupby]{color: #c7b198;}
 /* dialog */
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
 dialog h4{font-size: .9rem;}
-dialog #function-list{height: 100px;overflow-y: scroll;}
 
-
-.grid-cols{display: grid;grid-template-columns: 20% 40% 40%;width: 100%;}
-.functionList{display: flex;flex-direction: column;}
-#distinct-option{display: flex;align-items: center;}
-
-#test-01{display: grid;grid-template-columns: auto auto auto;}
-#test-02{display: flex;align-items: center;justify-content: center;position: relative;}
-#test-02 span{position: absolute;width: 100%; height: 40px;background: indianred;z-index: 0;}
-#test-04{opacity: .6;}
-#test-list{height: 100px;overflow-y: scroll;margin: 0;z-index: 1;}
+.metricDefine{display: grid;grid-template-columns: auto auto auto;margin: 1em 0;}
+.metricDefine > .options{display: flex;align-items: center;}
+.metricDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
+.metricDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}
+.metricDefine > .filtersList{padding: 16px;}

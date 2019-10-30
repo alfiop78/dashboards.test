@@ -273,16 +273,18 @@ class Cube {
             li.setAttribute('operator', filter.operator);
             li.setAttribute('values', filter.values);
             metricFiltersUl.appendChild(li);
+            li.onclick = this.handlerFilterMetric;
           }
         });
       });
     }
 
+  }
 
-
-
-
-
+  handlerFilterMetric(e) {
+    // selezione filtro da associare alla metrica
+    // console.log(this);
+    this.toggleAttribute('selected');
   }
 
   handlerBtnFilterCancel() {
@@ -296,7 +298,12 @@ class Cube {
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;
     // TODO: aggiungere i filters associati alla metrica
-    this.colsMetrics.push({'sqlFunction': sqlFunction, 'fieldName': fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, 'filters' : null});
+    let filters = [];
+    document.querySelectorAll('#metric-filters > li[selected]').forEach((filter) => {
+      filters.push(filter.getAttribute('filter-name'));
+    });
+
+    this.colsMetrics.push({'sqlFunction': sqlFunction, 'fieldName': fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, 'filters' : filters});
     this.metrics[tableName] = this.colsMetrics;
     console.log(this.metrics);
     this.dialogMetrics.close();
