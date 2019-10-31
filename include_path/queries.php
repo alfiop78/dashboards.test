@@ -2,7 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_from, $_where, $_filters, $_metrics, $_groupBy, $_sql;
+  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_metrics, $_groupBy, $_sql;
 
   function __construct() {}
 
@@ -94,7 +94,7 @@ class Queries {
     return $this->_where;
   }
 
-  public function FILTERS($filters) {
+  public function FILTERS($filters, $metrics) {
     /*es.: object(stdClass)#4 (1) {
     ["AggiornamentoDatiNote"]=>
         array(1) {
@@ -102,6 +102,8 @@ class Queries {
           object(stdClass)#3 (3) {
             ["fieldName"]=>
             string(10) "id_Azienda"
+            ["filterName"] =>
+            string(4) "test"
             ["operator"]=>
             string(1) "="
             ["values"]=>
@@ -115,12 +117,35 @@ class Queries {
     $and = " AND ";
     $or = " OR ";
     // TODO: aggiungere gli altri operatori
-    foreach ($filters as $table => $filter) {
-      foreach ($filter as $param) {
-        $this->_filters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+
+    foreach ($metrics as $table => $metric) {
+      foreach ($metric as $param) {
+        if (isset($param->filters) ) {
+          foreach ($param->filters as $filterName) {
+            // i filtri trovati qui, all'interno della metrica non vanno a finire in _reportFilters
+            // TODO: questo controllo potrei farlo anche in cube.php
+            foreach ($filters as $table => $filter) {
+              foreach ($filter as $param) {
+                if ($filterName != $param->filterName) {
+                  // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters
+                  $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+                } else {
+                  $this->_metricFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+                }
+
+              }
+            }
+          }
+        }
       }
     }
-    return $this->_filters;
+    // foreach ($filters as $table => $filter) {
+    //   foreach ($filter as $param) {
+    //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+    //   }
+    // }
+    // var_dump($this->_reportFilters);
+    return $this->_reportFilters;
   }
 
   public function METRICS($metrics) {
@@ -155,10 +180,11 @@ class Queries {
   }
 
   public function baseTable() {
+    // TODO: creo una VIEW/TABLE senza metriche su cui, dopo, andrò a fare una left join con le VIEW/TABLE che contengono le metriche
     $this->_sql = $this->_select."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
-    $this->_sql .= $this->_filters;
+    $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     // return $this->_sql;
@@ -166,8 +192,25 @@ class Queries {
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
-    // $this->_result = $l->getResultAssoc($this->_sql);
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql;
+
+    return $l->insert($sql_createTable);
+  }
+
+  public function createMetricTable($tableName, $metric) {
+    $this->_sql = $this->_select.", ".$metric."\n";
+    $this->_sql .= $this->_from."\n";
+    $this->_sql .= $this->_where."\n";
+    $this->_sql .= $this->_reportFilters."\n";
+    $this->_sql .= $this->_metricFilters."\n";
+    if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
+
+    return $this->_sql;
+
+    $l = new ConnectDB("automotive_bi_data");
+    $lCache = new ConnectDB("decisyon_cache");
+
+    $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql;
 
     return $l->insert($sql_createTable);
   }
@@ -177,7 +220,8 @@ class Queries {
     $this->_sql = $this->_select.", ".$this->_metrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
-    $this->_sql .= $this->_filters;
+    $this->_sql .= $this->_reportFilters."\n";
+    $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     // return $this->_sql;
