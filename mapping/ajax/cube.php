@@ -53,8 +53,10 @@ $insertBase = $q->baseTable();
       }
     }
   }
+  var_dump($q->testProcedure());
+  return;
 
-$result = $q->getDatamartData();
+// $result = $q->getDatamartData();
 
 
 

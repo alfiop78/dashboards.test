@@ -3,6 +3,7 @@ require_once 'ConnectDB.php';
 
 class Queries {
   private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql;
+  private $_procedure;
 
   function __construct() {}
 
@@ -201,7 +202,8 @@ class Queries {
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
-    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql;
+    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql.";";
+    $this->_procedure .= $sql_createTable;
 
     return $l->insert($sql_createTable);
   }
@@ -219,7 +221,8 @@ class Queries {
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
-    $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql;
+    $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
+    $this->_procedure .= $sql_createTable;
 
     return $l->insert($sql_createTable);
   }
@@ -263,6 +266,7 @@ class Queries {
         LEFT JOIN TEST_AP_metric_1 metric
         ON base.codice=metric.codice);";
     // return $sql;
+    $this->_procedure .= $sql;
 
     return $l->insert($sql);
 
@@ -272,6 +276,8 @@ class Queries {
     $l = new ConnectDB("decisyon_cache");
     return $l->getResultAssoc("SELECT * FROM TEST_AP_DATAMART;");
   }
+
+  public function testProcedure() {return $this->_procedure;}
 
 
 
