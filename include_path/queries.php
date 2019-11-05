@@ -94,7 +94,7 @@ class Queries {
     return $this->_where;
   }
 
-  public function FILTERS($filters, $metrics) {
+  public function FILTERS_METRICS($filters, $metrics) {
     /*es.: object(stdClass)#4 (1) {
     ["AggiornamentoDatiNote"]=>
         array(1) {
@@ -158,25 +158,25 @@ class Queries {
     return $this->_reportFilters;
   }
 
-  public function METRICS($metrics) {
-    /*es.:
-    metrics:
-      DocVenditaDettaglio: Array(1)
-      0:
-      aliasMetric: "costo"
-      distinct: false
-      fieldName: "PrzListino"
-      filters: []
-      sqlFunction: "SUM"
-    */
-    $metricsList = array();
-    foreach ($metrics as $table => $metric) {
-      foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
-      }
-    }
-    return $this->_metrics = implode(", ", $metricsList);
-  }
+  // public function METRICS($metrics) {
+  //   /*es.:
+  //   metrics:
+  //     DocVenditaDettaglio: Array(1)
+  //     0:
+  //     aliasMetric: "costo"
+  //     distinct: false
+  //     fieldName: "PrzListino"
+  //     filters: []
+  //     sqlFunction: "SUM"
+  //   */
+  //   $metricsList = array();
+  //   foreach ($metrics as $table => $metric) {
+  //     foreach ($metric as $param) {
+  //       $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+  //     }
+  //   }
+  //   return $this->_metrics = implode(", ", $metricsList);
+  // }
 
   public function GROUPBY($groups) {
     // var_dump(is_array($groups));
@@ -196,7 +196,7 @@ class Queries {
     $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    return $this->_sql;
+    // return $this->_sql;
 
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
@@ -214,7 +214,7 @@ class Queries {
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    return $this->_sql;
+    // return $this->_sql;
 
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
@@ -253,6 +253,24 @@ class Queries {
 
     // return $this->_sql;
 
+  }
+
+  public function createDatamart($aliasMetric) {
+    $alias = str_replace(" ", "_", $aliasMetric);
+    $l = new ConnectDB("decisyon_cache");
+    $sql = "CREATE TABLE TEST_AP_DATAMART AS
+      (select base.*, metric.".$alias." AS '".$aliasMetric."' from TEST_AP_base_01 base
+        LEFT JOIN TEST_AP_metric_1 metric
+        ON base.codice=metric.codice);";
+    // return $sql;
+
+    return $l->insert($sql);
+
+  }
+
+  public function getDatamartData() {
+    $l = new ConnectDB("decisyon_cache");
+    return $l->getResultAssoc("SELECT * FROM TEST_AP_DATAMART;");
   }
 
 

@@ -20,23 +20,23 @@ $q = new Queries();
 // echo $q->GROUPBY($objData->{'groupby'});
 // echo $q->completeQuery();
 // return;
-// TODO: ciclare, per ogni metrica creare una query diversa, se all'interno della metrica, è presente un filtro
-// return;
+
 $q->SELECT($objData->{'columns'});
-$q->METRICS($objData->{'metrics'});
+// $q->METRICS($objData->{'metrics'});
 $q->FROM($objData->{'from'});
 $q->WHERE($objData->{'hierarchy'});
-$q->FILTERS($objData->{'filters'}, $objData->{'metrics'});
+$q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
 $q->GROUPBY($objData->{'groupby'});
 
 // echo $q->completeQuery();
 // TODO: creo la tabella base, comprensivo di metriche che non hanno filtri
-echo $q->baseTable();
+// echo $q->baseTable();
 // return;
-// $result = $q->baseTable();
+$insertBase = $q->baseTable();
 // var_dump($result);
 // if ($result) {
   // la metrica contiene dei filtri ?
+
   foreach ($objData->{'metrics'} as $table => $metrics) {
     foreach ($metrics as $id => $param) {
       // echo 'id_metric :'.$id;
@@ -44,15 +44,22 @@ echo $q->baseTable();
       if (count($param->filters) >= 1) {
         // ci sono dei filtri su qeusta metrica
         // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
-        $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+        $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
         // echo $metric;
-        echo $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
+        $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
+        // echo $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
+        // TODO: a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
+        $q->createDatamart($param->aliasMetric);
       }
     }
   }
 
+$result = $q->getDatamartData();
+
+
+
 // }
 // $result = $q->completeQuery();
 
-// ob_clean();
-// echo json_encode($result, JSON_FORCE_OBJECT);
+ob_clean();
+echo json_encode($result, JSON_FORCE_OBJECT);

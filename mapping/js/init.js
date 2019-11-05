@@ -299,7 +299,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // app.createReport(response);
+          app.createReport(response);
 
         } else {
 
