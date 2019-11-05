@@ -2,7 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_metrics, $_groupBy, $_sql;
+  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql;
 
   function __construct() {}
 
@@ -117,10 +117,14 @@ class Queries {
     $and = " AND ";
     $or = " OR ";
     // TODO: aggiungere gli altri operatori
+    $metricsList = array();
 
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        if (isset($param->filters) ) {
+        // var_dump(isset($param->filters));
+        // var_dump(empty($param->filters));
+        if (!empty($param->filters) ) {
+          // echo "filtered : ". $param->fieldName."\n";
           foreach ($param->filters as $filterName) {
             // i filtri trovati qui, all'interno della metrica non vanno a finire in _reportFilters
             // TODO: questo controllo potrei farlo anche in cube.php
@@ -136,15 +140,21 @@ class Queries {
               }
             }
           }
+        } else {
+          // echo "no filtered : ". $param->fieldName."\n";
+          $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
         }
       }
     }
+
+    $this->_reportMetrics = implode(", ", $metricsList);
+    // var_dump($this->_reportMetrics);
     // foreach ($filters as $table => $filter) {
     //   foreach ($filter as $param) {
     //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
     //   }
     // }
-    // var_dump($this->_reportFilters);
+
     return $this->_reportFilters;
   }
 
@@ -159,7 +169,6 @@ class Queries {
       filters: []
       sqlFunction: "SUM"
     */
-    // TODO: verificare se sono presenti filtri all'interno della metrica
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
@@ -181,13 +190,13 @@ class Queries {
 
   public function baseTable() {
     // TODO: creo una VIEW/TABLE senza metriche su cui, dopo, andrò a fare una left join con le VIEW/TABLE che contengono le metriche
-    $this->_sql = $this->_select."\n";
+    $this->_sql = $this->_select.", ".$this->_reportMetrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
     $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    // return $this->_sql;
+    return $this->_sql;
 
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");

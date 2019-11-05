@@ -17,12 +17,11 @@ $q = new Queries();
 // echo $q->FROM($objData->{'from'});
 // echo $q->WHERE($objData->{'hierarchy'});
 // echo $q->FILTERS($objData->{'filters'}, $objData->{'metrics'});
-// return;
 // echo $q->GROUPBY($objData->{'groupby'});
 // echo $q->completeQuery();
 // return;
 // TODO: ciclare, per ogni metrica creare una query diversa, se all'interno della metrica, è presente un filtro
-
+// return;
 $q->SELECT($objData->{'columns'});
 $q->METRICS($objData->{'metrics'});
 $q->FROM($objData->{'from'});
@@ -30,17 +29,10 @@ $q->WHERE($objData->{'hierarchy'});
 $q->FILTERS($objData->{'filters'}, $objData->{'metrics'});
 $q->GROUPBY($objData->{'groupby'});
 
-//
-// $select = $q->SELECT($objData->{'columns'});
-// $from = $q->FROM($objData->{'from'});
-// $hierarchy = $q->WHERE($objData->{'hierarchy'});
-// $filters = $q->FILTERS($objData->{'filters'});
-// $metrics = $q->METRICS($objData->{'metrics'});
-// $groupBy = $q->GROUPBY($objData->{'groupby'});
-
 // echo $q->completeQuery();
-// TODO: creo la tabella base (senza metriche)
-
+// TODO: creo la tabella base, comprensivo di metriche che non hanno filtri
+echo $q->baseTable();
+// return;
 // $result = $q->baseTable();
 // var_dump($result);
 // if ($result) {
@@ -51,10 +43,10 @@ $q->GROUPBY($objData->{'groupby'});
       // echo 'numero filtri della metrica : '. count($param->filters);
       if (count($param->filters) >= 1) {
         // ci sono dei filtri su qeusta metrica
+        // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
         $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
         // echo $metric;
         echo $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
-
       }
     }
   }
