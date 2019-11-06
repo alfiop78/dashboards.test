@@ -235,10 +235,10 @@ var App = new Application();
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
-  document.getElementById('cubeTitle').oninput = function() {
+  document.getElementById('dimensionTitle').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
-      app.Cube.cubeName = this.value;
+      app.Cube.dimensionName = this.value;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
     }
@@ -263,13 +263,37 @@ var App = new Application();
         app.Cube.cube['from'] = from;
       }
     });
-    if (Object.keys(app.Cube.hierarchy).length > 0) {app.Cube.cube['hierarchy'] = app.Cube.hierarchy;}
-    if (Object.keys(app.Cube.columns).length > 0) {app.Cube.cube['columns'] = app.Cube.columns;}
+
+    if (Object.keys(app.Cube.hierarchy).length > 0) {
+      app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
+      // let hierarchies = Object.keys(app.Cube.hierarchy);
+      let dimensions = [];
+
+      Object.keys(app.Cube.hierarchy).forEach((rel) => {
+        // console.log(rel);
+        if (rel.substring(0, 5) === "hier_") {
+          // console.log('trovata hier : '+ rel);
+          // console.log(app.Cube.hierarchy[rel]);
+          app.Cube.dimension['dimName'] = 'NomeDimensione';
+          dimensions[rel] = app.Cube.hierarchy[rel];
+          // dimensions.push(app.Cube.hierarchy[rel]);
+        }
+      });
+      app.Cube.dimension['hierarchies'] = dimensions;
+      // console.log(app.Cube);
+    }
+
+    if (Object.keys(app.Cube.columns).length > 0) {
+      app.Cube.cube['columns'] = app.Cube.columns;
+      app.Cube.dimension['columns'] = app.Cube.columns;
+    }
+    console.log(app.Cube);
+    // return;
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
     // app.Cube.cubeName = "testName";
-    app.Cube.cube['name'] = app.Cube.cubeName;
+    // app.Cube.cube['name'] = app.Cube.cubeName;
     console.log(app.Cube.cube);
     // return;
 

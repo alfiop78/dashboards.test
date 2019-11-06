@@ -225,37 +225,6 @@ class Queries {
     return $l->insert($sql_createTable);
   }
 
-  public function completeQuery() {
-    // return 'complete query';
-    $this->_sql = $this->_select.", ".$this->_metrics."\n";
-    $this->_sql .= $this->_from."\n";
-    $this->_sql .= $this->_where."\n";
-    $this->_sql .= $this->_reportFilters."\n";
-    $this->_sql .= $this->_metricFilters."\n";
-    if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
-
-    // return $this->_sql;
-
-    $l = new ConnectDB("automotive_bi_data");
-    $lCache = new ConnectDB("decisyon_cache");
-
-    // $this->_result = $l->getResultAssoc($this->_sql);
-    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01_1 AS ".$this->_sql; // prima metrica
-    // TODO: $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_01_2 AS ".$this->_sql; // seconda metrica
-
-    // return $sql_createTable;
-    //
-    $l->insert($sql_createTable);
-    // // select sulla nuova tabella creata
-
-    $this->_result = $lCache->getResultAssoc("SELECT * FROM TEST_AP_01;");
-
-    return $this->_result;
-
-    // return $this->_sql;
-
-  }
-
   public function createDatamart($aliasMetric) {
     $alias = str_replace(" ", "_", $aliasMetric);
     $l = new ConnectDB("decisyon_cache");

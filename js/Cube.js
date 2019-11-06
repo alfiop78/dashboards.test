@@ -2,7 +2,8 @@ class Cube {
 
   constructor() {
     this.cube = new Object();
-    this.name = null;
+    this.dimension = new Object();
+    // this.dimName = null;
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.columns = new Array();
     this.cols = [];
@@ -18,11 +19,11 @@ class Cube {
 
   }
 
-  set cubeName(value) {
-    this.name = value;
-  }
-
-  get cubeName() {return this.name;}
+  // set dimensionName(value) {
+  //   this.dimName = value;
+  // }
+  //
+  // get dimensionName() {return this.dimName;}
 
   set table(value) {
     this.tableSelected = value;
