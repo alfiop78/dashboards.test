@@ -28,11 +28,10 @@ $q->WHERE($objData->{'hierarchy'});
 $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
 $q->GROUPBY($objData->{'groupby'});
 
-// echo $q->completeQuery();
-// TODO: creo la tabella base, comprensivo di metriche che non hanno filtri
-// echo $q->baseTable();
+// creo la tabella base, comprensivo di metriche che non hanno filtri
+echo $q->baseTable();
 // return;
-$insertBase = $q->baseTable();
+// $insertBase = $q->baseTable();
 // var_dump($result);
 // if ($result) {
   // la metrica contiene dei filtri ?
@@ -46,22 +45,19 @@ $insertBase = $q->baseTable();
         // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
         $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
         // echo $metric;
-        $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
-        // echo $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
+        // $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
+        echo $q->createMetricTable('TEST_AP_metric_'.$id, $metric); // TODO: da ciclare per ogni metrica
         // TODO: a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-        $q->createDatamart($param->aliasMetric);
+        echo $q->createDatamart($param->aliasMetric);
       }
     }
   }
-  var_dump($q->testProcedure());
-  return;
 
 // $result = $q->getDatamartData();
-
 
 
 // }
 // $result = $q->completeQuery();
 
-ob_clean();
-echo json_encode($result, JSON_FORCE_OBJECT);
+// ob_clean();
+// echo json_encode($result, JSON_FORCE_OBJECT);

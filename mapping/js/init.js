@@ -114,7 +114,7 @@ var App = new Application();
   };
 
   app.handlerCardSelected = function(e) {
-    console.log('handlerCardSelected');
+    // console.log('handlerCardSelected');
     // se il viene avviene sull'elemento h5 apro la dialog
     if (e.target.localName === "h5") {app.dialogTableList.showModal();}
     app.Cube.activeCard = this;
@@ -238,7 +238,7 @@ var App = new Application();
   document.getElementById('cubeTitle').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
-      app.Cube.title = this.value;
+      app.Cube.cubeName = this.value;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
     }
@@ -269,7 +269,9 @@ var App = new Application();
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
     // app.Cube.cubeName = "testName";
-    // app.Cube.cube['name'] = app.Cube.cubeName;
+    app.Cube.cube['name'] = app.Cube.cubeName;
+    console.log(app.Cube.cube);
+    // return;
 
     // console.log(Object.keys(app.Cube.cube).length);
     let data;
@@ -280,8 +282,13 @@ var App = new Application();
     } else {
       console.log(app.Cube.cube);
       data = JSON.stringify(app.Cube.cube);
-      window.localStorage.cube = data;
+      window.localStorage[app.Cube.cube.name] = data;
+      // window.localStorage.cube = data;
     }
+    return;
+
+    // TODO: inserire qui il nome del Cubo da mostrare nella pagina e associare a questo nome, in app.Cube anche il datamart che verrà creato in php
+
     // console.log(data);
 
     // var data = JSON.stringify(app.Cube.cube);

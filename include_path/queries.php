@@ -3,7 +3,6 @@ require_once 'ConnectDB.php';
 
 class Queries {
   private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql;
-  private $_procedure;
 
   function __construct() {}
 
@@ -133,9 +132,9 @@ class Queries {
               foreach ($filter as $param) {
                 if ($filterName != $param->filterName) {
                   // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters
-                  $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+                  $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
                 } else {
-                  $this->_metricFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+                  $this->_metricFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
                 }
 
               }
@@ -197,13 +196,13 @@ class Queries {
     $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    // return $this->_sql;
+    return $this->_sql;
 
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql.";";
-    $this->_procedure .= $sql_createTable;
+
 
     return $l->insert($sql_createTable);
   }
@@ -216,13 +215,12 @@ class Queries {
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    // return $this->_sql;
+    return $this->_sql;
 
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    $this->_procedure .= $sql_createTable;
 
     return $l->insert($sql_createTable);
   }
@@ -265,10 +263,9 @@ class Queries {
       (select base.*, metric.".$alias." AS '".$aliasMetric."' from TEST_AP_base_01 base
         LEFT JOIN TEST_AP_metric_1 metric
         ON base.codice=metric.codice);";
-    // return $sql;
-    $this->_procedure .= $sql;
+    return $sql;
 
-    return $l->insert($sql);
+    // return $l->insert($sql);
 
   }
 
@@ -276,8 +273,6 @@ class Queries {
     $l = new ConnectDB("decisyon_cache");
     return $l->getResultAssoc("SELECT * FROM TEST_AP_DATAMART;");
   }
-
-  public function testProcedure() {return $this->_procedure;}
 
 
 

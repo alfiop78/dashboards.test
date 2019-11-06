@@ -3,7 +3,6 @@ class Cube {
   constructor() {
     this.cube = new Object();
     this.name = null;
-    this.title = null;
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.columns = new Array();
     this.cols = [];
@@ -360,6 +359,7 @@ class Cube {
         }
       });
       delete this.hierarchy['hier_'+value];
+      delete this.hierarchy['fact_'+value];
     }
 
   }
@@ -381,7 +381,11 @@ class Cube {
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
         this.relationId++;
-        this.hierarchy['hier_'+this.relationId] = hier;
+        // TODO: se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
+        // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
+        console.log(card);
+        (card.hasAttribute('fact-table')) ? this.hierarchy['fact_'+this.relationId] = hier : this.hierarchy['hier_'+this.relationId] = hier;
+
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
           el.setAttribute('data-rel-'+this.relationId, this.relationId);
