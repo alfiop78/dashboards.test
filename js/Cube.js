@@ -19,11 +19,8 @@ class Cube {
 
   }
 
-  // set dimensionName(value) {
-  //   this.dimName = value;
-  // }
-  //
-  // get dimensionName() {return this.dimName;}
+  set cubeTitle(value) {this.cube_title = value;}
+  get cubeTitle() {return this.cube_title;}
 
   set table(value) {
     this.tableSelected = value;

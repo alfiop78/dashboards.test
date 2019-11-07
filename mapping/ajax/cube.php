@@ -54,7 +54,7 @@ echo $q->baseTable();
   }
 
 // $result = $q->getDatamartData();
-
+// TODO: in result restituisco il nome del datamart creato, in modo da poterlo associare al report
 
 // }
 // $result = $q->completeQuery();

@@ -11,13 +11,37 @@ var App = new Application();
     Draw : null,
     tableSelected : null,
     columnsSelected : [],
-    dialogTableList : document.getElementById('table-list')
+    dialogTableList : document.getElementById('table-list'),
+    report_id : 0,
+    reports : new Object()
 
   };
 
   // App.getSessionName();
 
   App.init();
+
+  app.getReportsList = function() {
+    /*recupero lista reports creati dal localStorage*/
+    console.log(window.localStorage);
+    let reports = Object.keys(window.localStorage);
+    // console.log(reports);
+    // console.log(reports.length);
+    app.report_id = reports.length+1;
+    // console.log(app.report_id);
+    let ulReportList = document.getElementById('reportsList');
+    reports.forEach((report) => {
+      // console.log(JSON.parse(window.localStorage.getItem(report)));
+      let cube = JSON.parse(window.localStorage.getItem(report));
+      let li = document.createElement('li');
+      li.id = cube.report_id;
+      li.innerHTML = report;
+      ulReportList.appendChild(li);
+    });
+
+    // data = window.localStorage.getItem('cube');
+
+  };
 
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
@@ -235,10 +259,10 @@ var App = new Application();
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
-  document.getElementById('dimensionTitle').oninput = function() {
+  document.getElementById('cubeTitle').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
-      app.Cube.dimensionName = this.value;
+      app.Cube.cubeTitle = this.value;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
     }
@@ -292,8 +316,10 @@ var App = new Application();
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
-    // app.Cube.cubeName = "testName";
-    // app.Cube.cube['name'] = app.Cube.cubeName;
+    app.Cube.cube['name'] = app.Cube.cubeTitle;
+
+    app.Cube.cube['report_id'] = app.report_id;
+
     console.log(app.Cube.cube);
     // return;
 
@@ -451,6 +477,8 @@ var App = new Application();
   };
 
   app.getDatabaseTable();
+
+  app.getReportsList();
 
   /**
   funzioni che facevano parte di /js/init.js
