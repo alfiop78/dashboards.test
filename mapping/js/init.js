@@ -51,7 +51,7 @@ var App = new Application();
 
   app.getReportsList = function() {
     /*recupero lista reports creati dal localStorage*/
-    console.log(window.localStorage);
+    // console.log(window.localStorage);
     let reports = Object.keys(window.localStorage);
     // console.log(reports);
     // console.log(reports.length);
@@ -347,7 +347,7 @@ var App = new Application();
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
 
-    console.log(app.Cube.cube);
+    // console.log(app.Cube.cube);
 
 
 
@@ -356,15 +356,14 @@ var App = new Application();
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('kpi glm sedi');
-      console.log(JSON.parse(data));
+      data = window.localStorage.getItem('esempio classico');
+      // console.log(JSON.parse(data));
     } else {
       console.log(app.Cube.cube);
-      data = JSON.stringify(app.Cube.cube);
-      window.localStorage[app.Cube.cube.name] = data;
-      // window.localStorage.cube = data;
       app.Cube.cube['name'] = app.Cube.cubeTitle;
       app.Cube.cube['report_id'] = app.report_id;
+      data = JSON.stringify(app.Cube.cube);
+      window.localStorage[app.Cube.cube.name] = data;
     }
 
 
@@ -534,7 +533,7 @@ var App = new Application();
         {'col': 3, 'attribute': 'hidden'}
       ],
       'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      'title' : 'Free Courtesy',
+      'title' : app.Cube.cube.name,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
     app.Draw = new Draw(table, options);

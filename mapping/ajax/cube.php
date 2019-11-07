@@ -32,17 +32,9 @@ $q->GROUPBY($objData->{'groupby'});
 
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
-// return;
-// return;
-// if ($result) {
+
+
 echo $q->createMetricDatamarts($objData->{'metrics'});
-
-
-// $result = $q->getDatamartData();
-// TODO: in result restituisco il nome del datamart creato, in modo da poterlo associare al report
-
-// }
-// $result = $q->completeQuery();
 
 // ob_clean();
 // echo json_encode($result, JSON_FORCE_OBJECT);

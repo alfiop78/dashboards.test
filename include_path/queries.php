@@ -216,10 +216,12 @@ class Queries {
 
   public function createMetricDatamarts($metricsObj) {
     /* creo i datamart necessari per le metriche che hanno filtri diversi da quelli del report*/
+    $metricFiltersFound = FALSE;
     foreach ($metricsObj as $table => $metrics) {
       foreach ($metrics as $param) {
         // echo 'numero filtri della metrica : '. count($param->filters);
         if (count($param->filters) >= 1) {
+          $metricFiltersFound = TRUE;
           // ci sono dei filtri su questa metrica
           // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
           $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
@@ -227,9 +229,13 @@ class Queries {
           echo $this->createMetricTable('TEST_AP_metric_'.$this->_reportId, $metric);
           // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
           echo $this->createDatamart($param->aliasMetric);
+        } else {
+          // non ci sono metriche filtrate, gli eventuali filtri sono stati creati tutti a livello di Report
+          $metricFiltersFound = TRUE;
         }
       }
     }
+    if ($metricFiltersFound) {echo $this->createDatamart($param->aliasMetric);}
   }
 
   private function createMetricTable($tableName, $metric) {
@@ -250,6 +256,19 @@ class Queries {
   }
 
   private function createDatamart($aliasMetric) {
+    // TODO: creazione datamart con tutte le metriche che hanno ReportFilters e non MetricFilters
+    $alias = str_replace(" ", "_", $aliasMetric);
+    $baseTableName = "TEST_AP_base_".$this->_reportId;
+
+    $datamartName = "FX".$this->_reportId;
+    $l = new ConnectDB("decisyon_cache");
+    $sql = "CREATE TABLE $datamartName AS
+      (SELECT * FROM $baseTableName);";
+    // return $sql;
+
+    return $l->insert($sql);
+
+
     $alias = str_replace(" ", "_", $aliasMetric);
     $baseTableName = "TEST_AP_base_".$this->_reportId;
     $metricTableName = "TEST_AP_metric_".$this->_reportId;
