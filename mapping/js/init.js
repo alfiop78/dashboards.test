@@ -21,6 +21,34 @@ var App = new Application();
 
   App.init();
 
+  app.handlerReportSelected = function(e) {
+    console.log(this);
+    console.log(this.id);
+    var url = "ajax/reports.php";
+    let params = "reportId="+this.id;
+    // console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          app.createReport(response);
+
+        } else {
+
+        }
+      } else {
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+  };
+
   app.getReportsList = function() {
     /*recupero lista reports creati dal localStorage*/
     console.log(window.localStorage);
@@ -37,6 +65,7 @@ var App = new Application();
       li.id = cube.report_id;
       li.innerHTML = report;
       ulReportList.appendChild(li);
+      li.onclick = app.handlerReportSelected;
     });
 
     // data = window.localStorage.getItem('cube');
@@ -282,11 +311,13 @@ var App = new Application();
 
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
+      console.log(card);
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
         app.Cube.cube['from'] = from;
       }
     });
+
 
     if (Object.keys(app.Cube.hierarchy).length > 0) {
       app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
@@ -311,31 +342,33 @@ var App = new Application();
       app.Cube.cube['columns'] = app.Cube.columns;
       app.Cube.dimension['columns'] = app.Cube.columns;
     }
-    console.log(app.Cube);
-    // return;
+
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
-    app.Cube.cube['name'] = app.Cube.cubeTitle;
-
-    app.Cube.cube['report_id'] = app.report_id;
 
     console.log(app.Cube.cube);
-    // return;
+
+
 
     // console.log(Object.keys(app.Cube.cube).length);
     let data;
+
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('cube');
+      data = window.localStorage.getItem('kpi glm sedi');
       console.log(JSON.parse(data));
     } else {
       console.log(app.Cube.cube);
       data = JSON.stringify(app.Cube.cube);
       window.localStorage[app.Cube.cube.name] = data;
       // window.localStorage.cube = data;
+      app.Cube.cube['name'] = app.Cube.cubeTitle;
+      app.Cube.cube['report_id'] = app.report_id;
     }
-    return;
+
+
+    // return;
 
     // TODO: inserire qui il nome del Cubo da mostrare nella pagina e associare a questo nome, in app.Cube anche il datamart che verrà creato in php
 
@@ -356,7 +389,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response);
+          // app.createReport(response);
 
         } else {
 

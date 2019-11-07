@@ -2,9 +2,15 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql;
+  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId;
 
-  function __construct() {}
+  function __construct() {
+
+  }
+
+  function setReportId($reportId) {$this->_reportId = $reportId;}
+
+  function getReportId() {return $this->_reportId;}
 
   public function dealers() {
     $l = new ConnectDB("automotive_bi_data"); // TODO: si potrebbe mettere come Proprietà della Classe
@@ -119,30 +125,33 @@ class Queries {
     // TODO: aggiungere gli altri operatori
     $metricsList = array();
 
-    foreach ($metrics as $table => $metric) {
+    foreach ($metrics as $metricTableName => $metric) {
+      // per ogni metrica...
       foreach ($metric as $param) {
-        // var_dump(isset($param->filters));
-        // var_dump(empty($param->filters));
+         // ... controllo se è presente un filtro
         if (!empty($param->filters) ) {
+          // filtro presente
           // echo "filtered : ". $param->fieldName."\n";
           foreach ($param->filters as $filterName) {
-            // i filtri trovati qui, all'interno della metrica non vanno a finire in _reportFilters
+            // per ogni filtro all'interno della metrica...
+            // i filtri trovati qui, all'interno della metrica, non vanno a finire in _reportFilters, i quali sono filtri da impostare su tutto il report
             // TODO: questo controllo potrei farlo anche in cube.php
-            foreach ($filters as $table => $filter) {
+            foreach ($filters as $filterTableName => $filter) {
+              // ... lo confronto con i filtri impostati in generale
               foreach ($filter as $param) {
                 if ($filterName != $param->filterName) {
                   // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters
-                  $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
+                  $this->_reportFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
                 } else {
-                  $this->_metricFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
+                  // questo filtro è presente nella metrica e quindi lo imposto "a livello di metrica" in _metricFilters
+                  $this->_metricFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
                 }
-
               }
             }
           }
         } else {
-          // echo "no filtered : ". $param->fieldName."\n";
-          $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+          // su questa metrica non è presente nessun filtro, per cui la aggiungo a _reportMetrics
+          $metricsList[] = $param->sqlFunction."(".$metricTableName.".".$param->fieldName.") AS '".$param->aliasMetric."'";
         }
       }
     }
@@ -158,25 +167,25 @@ class Queries {
     return $this->_reportFilters;
   }
 
-  // public function METRICS($metrics) {
-  //   /*es.:
-  //   metrics:
-  //     DocVenditaDettaglio: Array(1)
-  //     0:
-  //     aliasMetric: "costo"
-  //     distinct: false
-  //     fieldName: "PrzListino"
-  //     filters: []
-  //     sqlFunction: "SUM"
-  //   */
-  //   $metricsList = array();
-  //   foreach ($metrics as $table => $metric) {
-  //     foreach ($metric as $param) {
-  //       $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
-  //     }
-  //   }
-  //   return $this->_metrics = implode(", ", $metricsList);
-  // }
+  public function METRICS($metrics) {
+    /*es.:
+    metrics:
+      DocVenditaDettaglio: Array(1)
+      0:
+      aliasMetric: "costo"
+      distinct: false
+      fieldName: "PrzListino"
+      filters: []
+      sqlFunction: "SUM"
+    */
+    $metricsList = array();
+    foreach ($metrics as $table => $metric) {
+      foreach ($metric as $param) {
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+      }
+    }
+    return $this->_metrics = implode(", ", $metricsList);
+  }
 
   public function GROUPBY($groups) {
     // var_dump(is_array($groups));
@@ -196,18 +205,34 @@ class Queries {
     $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    return $this->_sql;
-
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
-    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_01 AS ".$this->_sql.";";
-
+    $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
+    // return $sql_createTable;
 
     return $l->insert($sql_createTable);
   }
 
-  public function createMetricTable($tableName, $metric) {
+  public function createMetricDatamarts($metricsObj) {
+    /* creo i datamart necessari per le metriche che hanno filtri diversi da quelli del report*/
+    foreach ($metricsObj as $table => $metrics) {
+      foreach ($metrics as $param) {
+        // echo 'numero filtri della metrica : '. count($param->filters);
+        if (count($param->filters) >= 1) {
+          // ci sono dei filtri su questa metrica
+          // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
+          $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
+          // return $metric;
+          echo $this->createMetricTable('TEST_AP_metric_'.$this->_reportId, $metric);
+          // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
+          echo $this->createDatamart($param->aliasMetric);
+        }
+      }
+    }
+  }
+
+  private function createMetricTable($tableName, $metric) {
     $this->_sql = $this->_select.", ".$metric."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
@@ -215,32 +240,35 @@ class Queries {
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    return $this->_sql;
-
     $l = new ConnectDB("automotive_bi_data");
     $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
+    // return $sql_createTable;
 
     return $l->insert($sql_createTable);
   }
 
-  public function createDatamart($aliasMetric) {
+  private function createDatamart($aliasMetric) {
     $alias = str_replace(" ", "_", $aliasMetric);
+    $baseTableName = "TEST_AP_base_".$this->_reportId;
+    $metricTableName = "TEST_AP_metric_".$this->_reportId;
+    $datamartName = "FX".$this->_reportId;
     $l = new ConnectDB("decisyon_cache");
-    $sql = "CREATE TABLE TEST_AP_DATAMART AS
-      (select base.*, metric.".$alias." AS '".$aliasMetric."' from TEST_AP_base_01 base
-        LEFT JOIN TEST_AP_metric_1 metric
-        ON base.codice=metric.codice);";
-    return $sql;
+    $sql = "CREATE TABLE $datamartName AS
+      (select $baseTableName.*, $metricTableName.".$alias." AS '".$aliasMetric."' from $baseTableName
+        LEFT JOIN $metricTableName
+        ON $baseTableName.codice = $metricTableName.codice);";
+    // return $sql;
 
-    // return $l->insert($sql);
+    return $l->insert($sql);
 
   }
 
-  public function getDatamartData() {
+  public function getDatamartData($reportId) {
     $l = new ConnectDB("decisyon_cache");
-    return $l->getResultAssoc("SELECT * FROM TEST_AP_DATAMART;");
+    $datamartName = "FX".$reportId;
+    return $l->getResultAssoc("SELECT * FROM $datamartName;");
   }
 
 
