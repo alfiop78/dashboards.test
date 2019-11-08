@@ -100,20 +100,7 @@ class Cube {
           btnColumn.onclick = this.handlerColumnSetting.bind(this);
           // let fieldName = e.target.getAttribute('label');
           if (!e.target.hasAttribute('columns')) {
-            console.log(Array.isArray(this.columns)); // object
-            console.log(Array.isArray(this.columns[tableName])); // array
-            console.log(Array.isArray(this.columns[tableName][0])); //  object
-            // delete this.columns[tableName][0];
-            for (let i in this.columns) {
-              console.log(this.columns[i]);
-              this.columns[i].forEach((field, index) => {
-                console.log(field);
-                if (field.fieldName === label) {
-                  console.log('elimino :'+label);
-                  delete this.columns[i][index];
-                }
-              });
-            }
+            delete this.columns[tableName][label];
           }
           console.log(this.columns);
           break;
@@ -241,24 +228,22 @@ class Cube {
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = this.dialogColumns.querySelector('#fieldName').innerText;
     let alias = document.getElementById('alias-column').value;
-    // se questa tabella non è presente in this.columns azzero this.cols
-    this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
-    console.log(this.cols);
-    let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
-    this.cols.forEach((col, index) => {
-      // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
-      console.log(col);
-      // objColumnsParam[col.fieldName] = col;
-      objColumnsParam[index] = col;
-    });
-    console.log(objColumnsParam);
 
-    // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}};
+    this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
+    // console.log(this.cols);
+    let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+    this.cols.forEach((col) => {
+      // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
+      // console.log(col);
+      // Inserisco come key il nome del campo, in modo da poter fare il delete this.columns[tablenName][fieldName] quando la colonna viene deselezionata
+      objColumnsParam[col.fieldName] = col;
+    });
+    // console.log(objColumnsParam);
+
+    // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}}; // TEST
     this.columns[tableName] = objColumnsParam;
 
     console.log(this.columns);
-
-    // delete this.columns[tableName].campo1;// ok
 
     this.dialogColumns.close();
 

@@ -74,12 +74,26 @@ class Queries {
     return $this->_result;
   }
 
-  public function SELECT($cols) {
+  public function SELECT($columns) {
     // TODO: verificare se sono presenti altrimenti inserire (*) che sta per SELECT *
-    $fieldList = array();
-    $fieldList = implode(", ", $cols); // aggiungo uno spazio, ogni elemento viene separato da una virgola
-    $this->_select = "SELECT ".$fieldList;
-    return $this->_select;
+    // $fieldList = array();
+    // $fieldList = implode(", ", $cols); // aggiungo uno spazio, ogni elemento viene separato da una virgola
+    // $this->_select = "SELECT ".$fieldList;
+
+    foreach ($columns as $table => $col) {
+      var_dump($table);
+      print_r($col);
+
+      foreach ($col as $param) {
+        echo $param->sqlFORMAT; // TODO : completare
+        echo $param->fieldName;
+        echo $param->alias;
+
+      }
+    }
+
+
+    // return $this->_select;
   }
 
   public function FROM($fields) {

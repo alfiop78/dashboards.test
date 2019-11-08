@@ -356,7 +356,8 @@ var App = new Application();
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('esempio classico');
+      data = window.localStorage.getItem('testColumns');
+      // data = window.localStorage.getItem('esempio classico');
       // console.log(JSON.parse(data));
     } else {
       console.log(app.Cube.cube);

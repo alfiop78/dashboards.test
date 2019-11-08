@@ -13,13 +13,13 @@ $objData = json_decode($_POST['data']); // object
 
 $q = new Queries();
 // $q->setReportId($objData->{'report_id'});
-print_r($objData->{'columns'});
-
-foreach ($objData->{'columns'} as $key => $value) {
-  var_dump($key);
-  var_dump($value);
-
-}
+// print_r($objData->{'columns'});
+var_dump($objData->{'columns'});
+$q->SELECT($objData->{'columns'});
+// foreach ($objData->{'columns'} as $key => $value) {
+//   var_dump($key);
+//   var_dump($value);
+// }
 return;
 
 
