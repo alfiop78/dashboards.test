@@ -206,10 +206,10 @@ class Queries {
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
-    $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     // return $sql_createTable;
+    var_dump($sql_createTable);
 
     return $l->insert($sql_createTable);
   }

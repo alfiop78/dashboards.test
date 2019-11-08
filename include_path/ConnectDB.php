@@ -190,13 +190,16 @@ class DBError extends Exception {
       case 1146:
         $msg = "Errore nella sintassi del nome campo ($this->code)";
         break;
-	  case 1136:
-		// in una insert le colonne non corrispondono ((1136, "Column count doesn't match value count at row 1")
-		$msg = "Il conteggio delle colonne non corrisponde al conteggio dei valori alla riga 1 ($this->code)";
-		break;
-	  case 1364:
-		$msg = "Il campo non ha un valore di default ($this->code)"; // (Field doesn't have a default value)
-		break;
+		  case 1136:
+				// in una insert le colonne non corrispondono ((1136, "Column count doesn't match value count at row 1")
+				$msg = "Il conteggio delle colonne non corrisponde al conteggio dei valori alla riga 1 ($this->code)";
+				break;
+		  case 1364:
+				$msg = "Il campo non ha un valore di default ($this->code)"; // (Field doesn't have a default value)
+				break;
+			case 1060:
+				$msg = "Nome di colonna duplicato ($this->code)";
+				break;
       default:
         $msg = "Errore generico: $this->code";
         break;

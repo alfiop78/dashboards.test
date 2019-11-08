@@ -3,9 +3,8 @@ class Cube {
   constructor() {
     this.cube = new Object();
     this.dimension = new Object();
-    // this.dimName = null;
     this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
-    this.columns = new Array();
+    this.columns = new Object();
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
@@ -16,6 +15,7 @@ class Cube {
     this.relationId = 0;
     this.dialogFilters = document.getElementById('filter-setting');
     this.dialogMetrics = document.getElementById('metric-setting');
+    this.dialogColumns = document.getElementById('column-setting');
 
   }
 
@@ -93,23 +93,29 @@ class Cube {
           this.createHierarchy();
           break;
         case 'columns':
-          console.log('columns');
+          // console.log('columns');
           e.target.toggleAttribute('columns');
+          let label = e.target.getAttribute('label');
+          let btnColumn = e.target.parentElement.querySelector('#columns-icon');
+          btnColumn.onclick = this.handlerColumnSetting.bind(this);
           // let fieldName = e.target.getAttribute('label');
-          if (e.target.hasAttribute('columns')) {
-            // console.log(this.cols);
-            if (this.cols.includes(tableName+"."+fieldName)) {
-              // console.log('presente');
-            } else {
-              // console.log('non presente');
-              this.cols.push(tableName+"."+fieldName);
+          if (!e.target.hasAttribute('columns')) {
+            console.log(Array.isArray(this.columns)); // object
+            console.log(Array.isArray(this.columns[tableName])); // array
+            console.log(Array.isArray(this.columns[tableName][0])); //  object
+            // delete this.columns[tableName][0];
+            for (let i in this.columns) {
+              console.log(this.columns[i]);
+              this.columns[i].forEach((field, index) => {
+                console.log(field);
+                if (field.fieldName === label) {
+                  console.log('elimino :'+label);
+                  delete this.columns[i][index];
+                }
+              });
             }
-          } else {
-            // ho deselezionato un elemento
-            // TODO: completare la parte dove elimino un elemento dall'array, se deselezionato
           }
-
-          this.columns = this.cols;
+          console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');
@@ -125,7 +131,6 @@ class Cube {
             if (!tableFound) {this.conditionsColName = [];}
             // riferimento all'icona filters-icon per poter aprire la dialog con textarea
             let btnFilter = e.target.parentElement.querySelector('#filters-icon');
-
             // imposto evento click sul tasto id="filters-icon"
             btnFilter.onclick = this.handlerFilterSetting.bind(this);
           } else {
@@ -151,18 +156,7 @@ class Cube {
           }
 
           this.groupBy = this.colsGroupBy;
-          //--------------------
-          // // if (!this.columns[tableName]) {this.cols = [];}
-          // this.colsGroupBy = [];
-          //
-          // this.activeCardRef.querySelectorAll('li[groupby]').forEach((li) => {
-          //   // console.log(li);
-          //   this.colsGroupBy.push(li.getAttribute('label'));
-          // });
-          // // console.log(this.cols);
-          // this.groupBy[tableName] = this.colsGroupBy;
-          // // console.log(this.groupBy);
-          // -----------------
+
           break;
         case 'metrics':
           console.log('metrics');
@@ -182,18 +176,27 @@ class Cube {
             // imposto evento click sul tasto id="metrics-icon"
             btn.onclick = this.handlerMetricSetting.bind(this);
           } else {
-            // elimino questo campo dall'oggetto this.filters
+            // elimino questo campo dall'oggetto this.metrics
             delete this.metrics[tableName][e.target.getAttribute('label')];
             // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
             if (Object.keys(this.metrics[tableName]).length === 0) {delete this.metrics[tableName];}
-            // console.log(this.metrics);
+            console.log(this.metrics);
           }
           break;
       }
 
     }
+  }
 
+  handlerColumnSetting(e) {
+    // apro la dialog column-setting
+    let fieldName = this.dialogColumns.querySelector('#fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
+    this.dialogColumns.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
+    this.dialogColumns.querySelector('#btnColumnCancel').onclick = this.handlerBtnColumnCancel.bind(this);
   }
 
   handlerFilterSetting(e) {
@@ -206,7 +209,6 @@ class Cube {
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
     this.dialogFilters.querySelector('#btnFilterCancel').onclick = this.handlerBtnFilterCancel.bind(this);
-
   }
 
   handlerMetricSetting(e) {
@@ -234,6 +236,36 @@ class Cube {
 
   }
 
+  handlerBtnColumnDone(e) {
+    // TODO: salvo l'alias per la colonna
+    let tableName = this.activeCardRef.getAttribute('name');
+    let fieldName = this.dialogColumns.querySelector('#fieldName').innerText;
+    let alias = document.getElementById('alias-column').value;
+    // se questa tabella non è presente in this.columns azzero this.cols
+    this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
+    console.log(this.cols);
+    let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+    this.cols.forEach((col, index) => {
+      // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
+      console.log(col);
+      // objColumnsParam[col.fieldName] = col;
+      objColumnsParam[index] = col;
+    });
+    console.log(objColumnsParam);
+
+    // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}};
+    this.columns[tableName] = objColumnsParam;
+
+    console.log(this.columns);
+
+    // delete this.columns[tableName].campo1;// ok
+
+    this.dialogColumns.close();
+
+  }
+
+  handlerBtnColumnCancel(e) {this.dialogColumns.close();}
+
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
@@ -242,11 +274,8 @@ class Cube {
     let filterName = document.getElementById('filter-name').value;
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
     this.filters[tableName] = this.conditionsColName;
-
     console.log(this.filters);
-
     this.dialogFilters.close();
-
   }
 
   createFiltersList() {
@@ -292,9 +321,7 @@ class Cube {
     this.toggleAttribute('selected');
   }
 
-  handlerBtnFilterCancel() {
-    this.dialogFilters.close();
-  }
+  handlerBtnFilterCancel() {this.dialogFilters.close();}
 
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
