@@ -12,23 +12,7 @@ $objData = json_decode($_POST['data']); // object
 // var_dump($objData->{'report_id'});
 
 $q = new Queries();
-// $q->setReportId($objData->{'report_id'});
-// print_r($objData->{'columns'});
-var_dump($objData->{'columns'});
-$q->SELECT($objData->{'columns'});
-// foreach ($objData->{'columns'} as $key => $value) {
-//   var_dump($key);
-//   var_dump($value);
-// }
-return;
-
-
-echo $q->SELECT($objData->{'columns'});
-return;
-// echo $q->FROM($objData->{'from'});
-// echo $q->WHERE($objData->{'hierarchy'});
-// echo $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
-// echo $q->GROUPBY($objData->{'groupby'});
+$q->setReportId($objData->{'report_id'});
 
 
 $q->SELECT($objData->{'columns'});
@@ -40,7 +24,6 @@ $q->GROUPBY($objData->{'groupby'});
 
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
-return;
 
 echo $q->createMetricDatamarts($objData->{'metrics'});
 

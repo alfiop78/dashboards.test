@@ -299,15 +299,6 @@ var App = new Application();
 
   document.getElementById('saveHierarchy').onclick = function(e) {
     // verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
-    // if (!app.Cube.title) {return;}
-    // if (Object.keys(app.Cube.hierarchy).length === 0) {
-    //   console.log('gerarchie non inserite');
-    //   return;
-    // }
-
-    // app.Cube.cube['title'] = app.Cube.title;
-    // recupero le tabelle per la clausola FROM
-    // console.log(app.Cube);
 
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
@@ -321,7 +312,6 @@ var App = new Application();
 
     if (Object.keys(app.Cube.hierarchy).length > 0) {
       app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
-      // let hierarchies = Object.keys(app.Cube.hierarchy);
       let dimensions = [];
 
       Object.keys(app.Cube.hierarchy).forEach((rel) => {
@@ -338,9 +328,10 @@ var App = new Application();
       // console.log(app.Cube);
     }
 
+
+
     if (Object.keys(app.Cube.columns).length > 0) {
       app.Cube.cube['columns'] = app.Cube.columns;
-      app.Cube.dimension['columns'] = app.Cube.columns;
     }
 
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
@@ -356,7 +347,7 @@ var App = new Application();
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('testColumns');
+      data = window.localStorage.getItem('kpi sedi');
       // data = window.localStorage.getItem('esempio classico');
       // console.log(JSON.parse(data));
     } else {

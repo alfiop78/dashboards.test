@@ -75,25 +75,24 @@ class Queries {
   }
 
   public function SELECT($columns) {
-    // TODO: verificare se sono presenti altrimenti inserire (*) che sta per SELECT *
-    // $fieldList = array();
-    // $fieldList = implode(", ", $cols); // aggiungo uno spazio, ogni elemento viene separato da una virgola
-    // $this->_select = "SELECT ".$fieldList;
+    $fieldList = array();
+    $this->_select = "SELECT ";
 
     foreach ($columns as $table => $col) {
-      var_dump($table);
-      print_r($col);
-
+      // var_dump($table);
+      // print_r($col);
       foreach ($col as $param) {
-        echo $param->sqlFORMAT; // TODO : completare
-        echo $param->fieldName;
-        echo $param->alias;
-
+        // echo $param->sqlFORMAT; // TODO : completare
+        // echo $param->fieldName;
+        // echo $param->alias;
+        $fieldList[] = $table.".".$param->fieldName." AS '".$param->alias."'";
       }
+
     }
+    // print_r($fieldList);
 
-
-    // return $this->_select;
+    $this->_select .= implode(", ", $fieldList);
+    return $this->_select;
   }
 
   public function FROM($fields) {
@@ -153,10 +152,7 @@ class Queries {
             foreach ($filters as $filterTableName => $filter) {
               // ... lo confronto con i filtri impostati in generale
               foreach ($filter as $param) {
-                if ($filterName != $param->filterName) {
-                  // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters
-                  $this->_reportFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
-                } else {
+                if ($filterName == $param->filterName) {
                   // questo filtro è presente nella metrica e quindi lo imposto "a livello di metrica" in _metricFilters
                   $this->_metricFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
                 }
@@ -172,11 +168,11 @@ class Queries {
 
     $this->_reportMetrics = implode(", ", $metricsList);
     // var_dump($this->_reportMetrics);
-    // foreach ($filters as $table => $filter) {
-    //   foreach ($filter as $param) {
-    //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
-    //   }
-    // }
+    foreach ($filters as $table => $filter) {
+      foreach ($filter as $param) {
+        $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+      }
+    }
 
     return $this->_reportFilters;
   }
@@ -216,14 +212,14 @@ class Queries {
     $this->_sql = $this->_select.", ".$this->_reportMetrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
-    $this->_sql .= $this->_reportFilters."\n";
+    $this->_sql .= $this->_reportFilters;
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     // return $sql_createTable;
-    var_dump($sql_createTable);
+    // var_dump($sql_createTable);
 
     return $l->insert($sql_createTable);
   }
