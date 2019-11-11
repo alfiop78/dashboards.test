@@ -16,10 +16,10 @@ $q->setReportId($objData->{'report_id'});
 
 
 echo $q->SELECT($objData->{'columns'});
-// echo $q->METRICS($objData->{'metrics'});
+echo $q->METRICS($objData->{'metrics'});
 echo $q->FROM($objData->{'from'});
 echo $q->WHERE($objData->{'hierarchy'});
-// echo $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
+echo $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
 echo $q->GROUPBY($objData->{'groupby'});
 return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri

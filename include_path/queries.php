@@ -160,16 +160,6 @@ class Queries {
   }
 
   public function METRICS($metrics) {
-    /*es.:
-    metrics:
-      DocVenditaDettaglio: Array(1)
-      0:
-      aliasMetric: "costo"
-      distinct: false
-      fieldName: "PrzListino"
-      filters: []
-      sqlFunction: "SUM"
-    */
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
@@ -204,7 +194,7 @@ class Queries {
     $l = new ConnectDB("automotive_bi_data");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    // return $sql_createTable;
+    return $sql_createTable;
     // var_dump($sql_createTable);
 
     return $l->insert($sql_createTable);

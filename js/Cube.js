@@ -125,27 +125,11 @@ class Cube {
         case 'metrics':
           console.log('metrics');
           e.target.toggleAttribute('metrics');
-          if (e.target.hasAttribute('metrics')) {
-            // verifico se questa tabellaè presente in this.metrics
-            let tableFound = false;
-            Array.from(Object.keys(this.metrics)).forEach((table) => {
-              if (table === tableName) {
-                tableFound = true;
-              }
-            });
-            if (!tableFound) {this.colsMetrics = [];}
-            // riferimento all'icona filters-icon per poter aprire la dialog con textarea
-            let btn = e.target.parentElement.querySelector('#metrics-icon');
-
-            // imposto evento click sul tasto id="metrics-icon"
-            btn.onclick = this.handlerMetricSetting.bind(this);
-          } else {
-            // elimino questo campo dall'oggetto this.metrics
-            delete this.metrics[tableName][e.target.getAttribute('label')];
-            // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
-            if (Object.keys(this.metrics[tableName]).length === 0) {delete this.metrics[tableName];}
-            console.log(this.metrics);
+          e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
+          if (!e.target.hasAttribute('metrics')) {
+            delete this.metrics[tableName][fieldName];
           }
+          console.log(this.metrics);
           break;
       }
 
@@ -276,10 +260,10 @@ class Cube {
     if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
 
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
-    let objFiltersParam = {};
-    this.conditionsColName.forEach((filter) => {objFiltersParam[filter.fieldName] = filter;});
+    let objParam = {};
+    this.conditionsColName.forEach((filter) => {objParam[filter.fieldName] = filter;});
 
-    this.filters[tableName] = objFiltersParam;
+    this.filters[tableName] = objParam;
     console.log(this.filters);
     this.dialogFilters.close();
   }
@@ -288,30 +272,31 @@ class Cube {
     // aggiungo il filtro creato alla dialog metric-setting in modo da poter associare i filtri a una determinata metrica
     // recupero l'elenco dei filtri già presenti in metric-filters, lo inserisco in un array per confrontarlo con this.filters
     let metricFiltersList = Array.from(this.dialogMetrics.querySelectorAll('#metric-filters > li'));
-    console.log(metricFiltersList);
+    // console.log(metricFiltersList);
     let arrMetricFilters = [];
-    metricFiltersList.forEach((filter) => {
-      arrMetricFilters.push(filter.getAttribute('filter-name'));
-    });
+    metricFiltersList.forEach((filter) => {arrMetricFilters.push(filter.getAttribute('filter-name'));});
     console.log(arrMetricFilters);
 
     if (Object.keys(this.filters).length > 0) {
       let metricFiltersUl = document.getElementById('metric-filters');
-      Object.keys(this.filters).forEach((table) => {
+      console.log(this.filters);
+
+      Array.from(Object.keys(this.filters)).forEach((table) => {
+        console.log(table);
+        // console.log(this.filters[table]);
         // per ogni tabella recupero i propri filtri per inserirli in un elenco
-        // console.log(table);
-        this.filters[table].forEach((filter) => {
+        Array.from(Object.keys(this.filters[table])).forEach((filter) => {
           console.log(filter);
-          // se questo filtro è già presente nell'elenco non lo inserisco
-          console.log((arrMetricFilters.includes(filter.filterName)));
-          if ( !arrMetricFilters.includes(filter.filterName) ) {
+          // verifico ogni filtro...
+          // ...se questo filtro è già presente nell'elenco non lo inserisco
+          if (!arrMetricFilters.includes(this.filters[table][filter].filterName) ) {
             let li = document.createElement('li');
-            li.innerText = filter.filterName;
-            li.setAttribute('filter-name', filter.filterName);
+            li.innerText = this.filters[table][filter].filterName;
+            li.setAttribute('filter-name', this.filters[table][filter].filterName);
             li.setAttribute('table-name', table);
-            li.setAttribute('field-name', filter.fieldName);
-            li.setAttribute('operator', filter.operator);
-            li.setAttribute('values', filter.values);
+            li.setAttribute('field-name', this.filters[table][filter].fieldName);
+            li.setAttribute('operator', this.filters[table][filter].operator);
+            li.setAttribute('values', this.filters[table][filter].values);
             metricFiltersUl.appendChild(li);
             li.onclick = this.handlerFilterMetric;
           }
@@ -335,14 +320,18 @@ class Cube {
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;
-    // aggiungo i filtri da associare a questa metrica
-    let filters = [];
-    document.querySelectorAll('#metric-filters > li[selected]').forEach((filter) => {
-      filters.push(filter.getAttribute('filter-name'));
-    });
+    let filters = []; // nomi dei filtri da applicare alla metrica
+    // TODO: recupero i filtri impostati per questa metrica e li inserisco nell'array
+    document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
 
-    this.colsMetrics.push({'sqlFunction': sqlFunction, 'fieldName': fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, 'filters' : filters});
-    this.metrics[tableName] = this.colsMetrics;
+    // aggiungo i filtri da associare a questa metrica
+    if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
+
+    this.colsMetrics.push({sqlFunction, fieldName, 'distinct' : distinctOption, alias, filters});
+    let objParam = {};
+    this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+    this.metrics[tableName] = objParam;
+
     console.log(this.metrics);
     this.dialogMetrics.close();
   }
