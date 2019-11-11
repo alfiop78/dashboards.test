@@ -2,7 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
+  private $_select, $_columns = array(), $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
 
   function __construct() {
 
@@ -86,6 +86,7 @@ class Queries {
         // echo $param->fieldName;
         // echo $param->alias;
         $fieldList[] = $table.".".$param->fieldName." AS '".$param->alias."'";
+        $this->_columns[] = $param->alias;
       }
 
     }
@@ -198,8 +199,6 @@ class Queries {
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     // return $sql_createTable;
-    // var_dump($sql_createTable);
-
     return $l->insert($sql_createTable);
   }
 
@@ -235,7 +234,6 @@ class Queries {
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
     // return $sql_createTable;
-
     return $l->insert($sql_createTable);
   }
 
@@ -244,14 +242,25 @@ class Queries {
     $alias = str_replace(" ", "_", $aliasMetric);
     $baseTableName = "TEST_AP_base_".$this->_reportId;
     $datamartName = "FX".$this->_reportId;
+    $ONClause = array();
     $l = new ConnectDB("decisyon_cache");
     // se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
     if (count($this->_metricTable) > 0) {
       $metricTableName = "TEST_AP_metric_".$this->_reportId;
+      // TODO: devo selezionare i campi in comune per fare la LEFT JOIN
+
+      foreach ($this->_columns as $columnAlias) {
+        $ONClause[] = "`".$baseTableName."`.`".$columnAlias."` = `".$metricTableName."`.`".$columnAlias."`"; // TODO: da rivedere l'utilizzo di questo carattere
+      }
       $sql = "CREATE TABLE $datamartName AS
         (select $baseTableName.*, $metricTableName.".$alias." AS '".$aliasMetric."' from $baseTableName
-          LEFT JOIN $metricTableName
-          ON $baseTableName.sede = $metricTableName.sede);"; // TODO: nome colonna dinamico, recuperato dalla basetable
+          LEFT JOIN $metricTableName ON ";
+
+      $onConditions = implode(" AND ", $ONClause);
+
+      $sql .= $onConditions;
+
+        $sql .= ");";
     } else {
       $sql = "CREATE TABLE $datamartName AS
         (SELECT * FROM $baseTableName);";
