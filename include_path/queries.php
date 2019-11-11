@@ -2,7 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId;
+  private $_select, $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
 
   function __construct() {
 
@@ -132,7 +132,10 @@ class Queries {
             foreach ($filters as $filterTableName => $filter) {
               // ... lo confronto con i filtri impostati in generale
               foreach ($filter as $param) {
-                if ($filterName == $param->filterName) {
+                if ($filterName != $param->filterName) {
+                  // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters
+                  $this->_reportFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
+                } else {
                   // questo filtro è presente nella metrica e quindi lo imposto "a livello di metrica" in _metricFilters
                   $this->_metricFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
                 }
@@ -148,11 +151,11 @@ class Queries {
 
     $this->_reportMetrics = implode(", ", $metricsList);
     // var_dump($this->_reportMetrics);
-    foreach ($filters as $table => $filter) {
-      foreach ($filter as $param) {
-        $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
-      }
-    }
+    // foreach ($filters as $table => $filter) {
+    //   foreach ($filter as $param) {
+    //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+    //   }
+    // }
     // echo $this->_reportFilters;
     // echo $this->_reportMetrics;
 
@@ -188,13 +191,13 @@ class Queries {
     $this->_sql = $this->_select.", ".$this->_reportMetrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
-    $this->_sql .= $this->_reportFilters;
+    $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.TEST_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    return $sql_createTable;
+    // return $sql_createTable;
     // var_dump($sql_createTable);
 
     return $l->insert($sql_createTable);
@@ -202,26 +205,21 @@ class Queries {
 
   public function createMetricDatamarts($metricsObj) {
     /* creo i datamart necessari per le metriche che hanno filtri diversi da quelli del report*/
-    $metricFiltersFound = FALSE;
     foreach ($metricsObj as $table => $metrics) {
       foreach ($metrics as $param) {
         // echo 'numero filtri della metrica : '. count($param->filters);
         if (count($param->filters) >= 1) {
-          $metricFiltersFound = TRUE;
-          // ci sono dei filtri su questa metrica
-          // TODO: qui dovrei ciclare anche i filtri impostati su questa metrica
+          // ci sono dei filtri su questa metrica, ciclo ogni metrica filtrata per creare il proprio datamart in createMetricTable
           $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
           // return $metric;
           echo $this->createMetricTable('TEST_AP_metric_'.$this->_reportId, $metric);
           // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-          echo $this->createDatamart($param->aliasMetric);
-        } else {
-          // non ci sono metriche filtrate, gli eventuali filtri sono stati creati tutti a livello di Report
-          $metricFiltersFound = TRUE;
+          $this->_metricTable[] = "TEST_AP_metric_".$this->_reportId; // memorizzo qui quante tabelle per metriche filtrate, sono state create
         }
       }
     }
-    if ($metricFiltersFound) {echo $this->createDatamart($param->aliasMetric);}
+    // ... infine vado ad unire tutti i datamart
+    if (count($this->_metricTable) > 0) {echo $this->createDatamart($param->aliasMetric);}
   }
 
   private function createMetricTable($tableName, $metric) {
@@ -245,29 +243,23 @@ class Queries {
     // TODO: creazione datamart con tutte le metriche che hanno ReportFilters e non MetricFilters
     $alias = str_replace(" ", "_", $aliasMetric);
     $baseTableName = "TEST_AP_base_".$this->_reportId;
-
     $datamartName = "FX".$this->_reportId;
     $l = new ConnectDB("decisyon_cache");
-    $sql = "CREATE TABLE $datamartName AS
-      (SELECT * FROM $baseTableName);";
+    // se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
+    if (count($this->_metricTable) > 0) {
+      $metricTableName = "TEST_AP_metric_".$this->_reportId;
+      $sql = "CREATE TABLE $datamartName AS
+        (select $baseTableName.*, $metricTableName.".$alias." AS '".$aliasMetric."' from $baseTableName
+          LEFT JOIN $metricTableName
+          ON $baseTableName.sede = $metricTableName.sede);"; // TODO: nome colonna dinamico, recuperato dalla basetable
+    } else {
+      $sql = "CREATE TABLE $datamartName AS
+        (SELECT * FROM $baseTableName);";
+    }
+
     // return $sql;
 
     return $l->insert($sql);
-
-
-    $alias = str_replace(" ", "_", $aliasMetric);
-    $baseTableName = "TEST_AP_base_".$this->_reportId;
-    $metricTableName = "TEST_AP_metric_".$this->_reportId;
-    $datamartName = "FX".$this->_reportId;
-    $l = new ConnectDB("decisyon_cache");
-    $sql = "CREATE TABLE $datamartName AS
-      (select $baseTableName.*, $metricTableName.".$alias." AS '".$aliasMetric."' from $baseTableName
-        LEFT JOIN $metricTableName
-        ON $baseTableName.codice = $metricTableName.codice);";
-    // return $sql;
-
-    return $l->insert($sql);
-
   }
 
   public function getDatamartData($reportId) {

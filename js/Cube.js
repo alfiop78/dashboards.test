@@ -327,7 +327,7 @@ class Cube {
     // aggiungo i filtri da associare a questa metrica
     if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
 
-    this.colsMetrics.push({sqlFunction, fieldName, 'distinct' : distinctOption, alias, filters});
+    this.colsMetrics.push({sqlFunction, fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
     let objParam = {};
     this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
     this.metrics[tableName] = objParam;
