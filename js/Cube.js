@@ -16,6 +16,7 @@ class Cube {
     this.dialogFilters = document.getElementById('filter-setting');
     this.dialogMetrics = document.getElementById('metric-setting');
     this.dialogColumns = document.getElementById('column-setting');
+    this.dialogGroupBy = document.getElementById('groupby-setting');
 
   }
 
@@ -40,6 +41,7 @@ class Cube {
     this.activeCard = e.path[3];
     // console.log(e.target);
     let tableName = this.activeCardRef.getAttribute('name');
+    let fieldName = e.target.getAttribute('label');
     // se la card/table [active] non ha gli attributi [hierarchies] oppure [filters] oppure [columns] disabilito la selezione delle righe
     // questo perchè, se non si specifica prima cosa si vuol fare con le colonne selezionate, non abilito la selezione
     // [hierarchies] : consente di inserire una relazione tra le due tabelle, selezionando una colonna per ciascuna tabella
@@ -51,7 +53,6 @@ class Cube {
     for (let i = 1; i < attributes.length; i++) {
       // i = 1 perchè il primo attributo è certamente [class]
       // console.log(attributes[i].name);
-      let fieldName = e.target.getAttribute('label');
       switch (attributes[i].name) {
         case 'hierarchies':
           // se è presente un altro elemento coon attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere [hierarchy]
@@ -95,55 +96,31 @@ class Cube {
         case 'columns':
           // console.log('columns');
           e.target.toggleAttribute('columns');
-          let label = e.target.getAttribute('label');
-          let btnColumn = e.target.parentElement.querySelector('#columns-icon');
-          btnColumn.onclick = this.handlerColumnSetting.bind(this);
-          // let fieldName = e.target.getAttribute('label');
+          e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
           if (!e.target.hasAttribute('columns')) {
-            delete this.columns[tableName][label];
+            delete this.columns[tableName][fieldName];
           }
           console.log(this.columns);
           break;
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
-          if (e.target.hasAttribute('filters')) {
-            // verifico se questa tabellaè presente in this.filters
-            let tableFound = false;
-            Array.from(Object.keys(this.filters)).forEach((table) => {
-              if (table === tableName) {
-                tableFound = true;
-              }
-            });
-            if (!tableFound) {this.conditionsColName = [];}
-            // riferimento all'icona filters-icon per poter aprire la dialog con textarea
-            let btnFilter = e.target.parentElement.querySelector('#filters-icon');
-            // imposto evento click sul tasto id="filters-icon"
-            btnFilter.onclick = this.handlerFilterSetting.bind(this);
-          } else {
-            // elimino questo campo dall'oggetto this.filters
-            delete this.filters[tableName][e.target.getAttribute('label')];
-            // se this.filters[nometabella] ora non continee nessun campo elimino anche this.filters[nometabella]
-            if (Object.keys(this.filters[tableName]).length === 0) {delete this.filters[tableName];}
-            // console.log(this.filters);
+          e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
+          if (!e.target.hasAttribute('filters')) {
+            // elimino il filtro impostato
+            delete this.filters[tableName][fieldName];
           }
+          console.log(this.filters);
           break;
         case 'groupby':
           console.log('groupby');
           e.target.toggleAttribute('groupby');
-          // let fieldName = e.target.getAttribute('label');
-          if (e.target.hasAttribute('groupby')) {
-            if (this.colsGroupBy.includes(tableName+"."+fieldName)) {
-            } else {
-              this.colsGroupBy.push(tableName+"."+fieldName);
-            }
-          } else {
-            // ho deselezionato un elemento
-            // TODO: completare la parte dove elimino un elemento dall'array, se deselezionato
+          e.target.parentElement.querySelector('#groupby-icon').onclick = this.handlerGroupBySetting.bind(this);
+          if (!e.target.hasAttribute('groupby')) {
+            // elimino la colonna selezionata per il groupby
+            delete this.groupBy[tableName][fieldName];
           }
-
-          this.groupBy = this.colsGroupBy;
-
+          console.log(this.groupBy);
           break;
         case 'metrics':
           console.log('metrics');
@@ -184,6 +161,17 @@ class Cube {
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
     this.dialogColumns.querySelector('#btnColumnCancel').onclick = this.handlerBtnColumnCancel.bind(this);
+  }
+
+  handlerGroupBySetting(e) {
+    // apro la dialog groupby-setting
+    let fieldName = this.dialogGroupBy.querySelector('#fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+
+    this.dialogGroupBy.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
+    this.dialogGroupBy.querySelector('#btnGroupByCancel').onclick = this.handlerBtnGroupByCancel.bind(this);
   }
 
   handlerFilterSetting(e) {
@@ -229,6 +217,13 @@ class Cube {
     let fieldName = this.dialogColumns.querySelector('#fieldName').innerText;
     let alias = document.getElementById('alias-column').value;
 
+    // quando viene selezionata un'altra tabella, rispetto a quella che è stata già inserita nell'Object, deve resettare this.cols
+    // ...altrimenti le colonne contentute in this.cols vengono aggiunte anche alla nuova tabella
+    // TODO: verifico se la tabella su cui si sta operando è già inserita nell'object
+    // console.log(this.columns[tableName]);
+    console.log(this.columns.hasOwnProperty(tableName));
+    if (!this.columns.hasOwnProperty(tableName)) {this.cols = [];}
+
     this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
     // console.log(this.cols);
     let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
@@ -241,15 +236,35 @@ class Cube {
     // console.log(objColumnsParam);
 
     // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}}; // TEST
+
     this.columns[tableName] = objColumnsParam;
-
     console.log(this.columns);
-
     this.dialogColumns.close();
+  }
 
+  handlerBtnGroupByDone(e) {
+    // TODO: salvo l'alias per il GroupBy
+    let tableName = this.activeCardRef.getAttribute('name');
+    let fieldName = this.dialogGroupBy.querySelector('#fieldName').innerText;
+
+    console.log(this.groupBy.hasOwnProperty(tableName));
+    if (!this.groupBy.hasOwnProperty(tableName)) {this.colsGroupBy = [];}
+
+    this.colsGroupBy.push({fieldName, 'sqlFORMAT': null});
+
+    let objParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+    this.colsGroupBy.forEach((col) => {
+      objParam[col.fieldName] = col;
+    });
+
+    this.groupBy[tableName] = objParam;
+    console.log(this.groupBy);
+    this.dialogGroupBy.close();
   }
 
   handlerBtnColumnCancel(e) {this.dialogColumns.close();}
+
+  handlerBtnGroupByCancel(e) {this.dialogGroupBy.close();}
 
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
@@ -257,8 +272,14 @@ class Cube {
     let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').innerText;
     let values = document.getElementById('filter-values').value;
     let filterName = document.getElementById('filter-name').value;
+
+    if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
+
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
-    this.filters[tableName] = this.conditionsColName;
+    let objFiltersParam = {};
+    this.conditionsColName.forEach((filter) => {objFiltersParam[filter.fieldName] = filter;});
+
+    this.filters[tableName] = objFiltersParam;
     console.log(this.filters);
     this.dialogFilters.close();
   }

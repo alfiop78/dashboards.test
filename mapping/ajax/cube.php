@@ -15,13 +15,13 @@ $q = new Queries();
 $q->setReportId($objData->{'report_id'});
 
 
-$q->SELECT($objData->{'columns'});
-// $q->METRICS($objData->{'metrics'});
-$q->FROM($objData->{'from'});
-$q->WHERE($objData->{'hierarchy'});
-$q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
-$q->GROUPBY($objData->{'groupby'});
-
+echo $q->SELECT($objData->{'columns'});
+// echo $q->METRICS($objData->{'metrics'});
+echo $q->FROM($objData->{'from'});
+echo $q->WHERE($objData->{'hierarchy'});
+// echo $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
+echo $q->GROUPBY($objData->{'groupby'});
+return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
 

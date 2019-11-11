@@ -114,25 +114,7 @@ class Queries {
   }
 
   public function FILTERS_METRICS($filters, $metrics) {
-    /*es.: object(stdClass)#4 (1) {
-    ["AggiornamentoDatiNote"]=>
-        array(1) {
-          [0]=>
-          object(stdClass)#3 (3) {
-            ["fieldName"]=>
-            string(10) "id_Azienda"
-            ["filterName"] =>
-            string(4) "test"
-            ["operator"]=>
-            string(1) "="
-            ["values"]=>
-            string(2) "12"
-          }
-        }
-    }*/
-
-    // $conditions = array();
-    // $condition = null;
+    // Verifico e imposto i filtri a livello metriche e quelli a livello reports
     $and = " AND ";
     $or = " OR ";
     // TODO: aggiungere gli altri operatori
@@ -141,14 +123,12 @@ class Queries {
     foreach ($metrics as $metricTableName => $metric) {
       // per ogni metrica...
       foreach ($metric as $param) {
-         // ... controllo se è presente un filtro
+         // ... controllo se è presente un filtro su questa metrica
         if (!empty($param->filters) ) {
           // filtro presente
           // echo "filtered : ". $param->fieldName."\n";
           foreach ($param->filters as $filterName) {
             // per ogni filtro all'interno della metrica...
-            // i filtri trovati qui, all'interno della metrica, non vanno a finire in _reportFilters, i quali sono filtri da impostare su tutto il report
-            // TODO: questo controllo potrei farlo anche in cube.php
             foreach ($filters as $filterTableName => $filter) {
               // ... lo confronto con i filtri impostati in generale
               foreach ($filter as $param) {
@@ -173,6 +153,8 @@ class Queries {
         $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
       }
     }
+    // echo $this->_reportFilters;
+    // echo $this->_reportMetrics;
 
     return $this->_reportFilters;
   }
@@ -198,12 +180,16 @@ class Queries {
   }
 
   public function GROUPBY($groups) {
-    // var_dump(is_array($groups));
-    if (is_array($groups)) {
-      $fieldList = array();
-      $fieldList = implode(", ", $groups);
-      $this->_groupBy = "GROUP BY ".$fieldList;
-    } else {$this->_groupBy = null;}
+    $fieldList = array();
+    $this->_groupBy = "GROUP BY ";
+
+    foreach ($groups as $table => $col) {
+      foreach ($col as $param) {
+        // TODO: aggiungere il format della colonna (es.: GROUP BY DATE_FORMAT(curdate(), '%Y%m'))
+        $fieldList[] = $table.".".$param->fieldName;
+      }
+    }
+    $this->_groupBy .= implode(", ", $fieldList);
     return $this->_groupBy;
   }
 
