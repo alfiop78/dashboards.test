@@ -23,7 +23,7 @@ $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
 $q->GROUPBY($objData->{'groupby'});
 // return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
-echo $q->baseTable();
+// echo $q->baseTable();
 
 return;
 echo $q->createMetricDatamarts($objData->{'metrics'});

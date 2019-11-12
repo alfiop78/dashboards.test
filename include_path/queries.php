@@ -115,66 +115,108 @@ class Queries {
   }
 
   public function FILTERS_METRICS($filters, $metrics) {
-    // Verifico e imposto i filtri a livello metriche e quelli a livello reports
-    // Se una metrica ha un filtro impostato (es.: RepartoOfficina), lo stesso filtro deve essere eliminato a "Livello di Report" ed inserirlo..
-    // ... quindi, al livello di Metrica
-    $and = " AND ";
-    $or = " OR ";
-    // TODO: aggiungere gli altri operatori
-    $metricsList = array();
+    // per ogni filtro presente nel cubo devo verificare se è presente anche in qualche metrica.
+    // ..Se presente anche in una delle metriche posso inserirle in _reportFilters, questi saranno i filtri impostati a livello di Report
+    // ... e il userò per creare la base table
 
-    foreach ($metrics as $metricTableName => $metric) {
-      // per ogni metrica...
-      foreach ($metric as $paramMetric) {
-        echo $paramMetric->fieldName."\n";
-         // ... controllo se è presente un filtro su questa metrica
-        if (!empty($paramMetric->filters) ) {
-          echo "Metrica {$paramMetric->fieldName} contiene dei filtri\n";
-          // filtro presente
-          foreach ($paramMetric->filters as $metricFilterName) {
-            echo "Filtro all'interno di {$paramMetric->fieldName} : {$metricFilterName}\n";
-            // per ogni filtro all'interno della metrica...
-            foreach ($filters as $filterTableName => $filter) {
-              // ... lo confronto con i filtri impostati in generale
-              foreach ($filter as $paramFilter) {
-                // echo $metricFilterName."\n";
-                // echo $paramFilter->filterName."\n";
-                // if ($metricFilterName == $paramFilter->filterName) {
-                //   echo "Filtro {$paramFilter->filterName} trovato sulla metrica {$param->fieldName}: ";
-                // }
-                //
-                // if ($metricFilterName != $param->filterName) {
-                //   // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters che andrà in W_AP_base...
-                //   $this->_reportFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
-                //   echo "Inserito in reportFilters : ".$this->_reportFilters."\n";
-                // } else {
-                //   // questo filtro è presente nella metrica e quindi lo imposto "a livello di metrica" in _metricFilters
-                //   $this->_metricFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
-                // }
+    $and = " AND ";$or = " OR ";
+    foreach ($filters as $f_table => $filter) {
+      $flag = FALSE;
+      echo "{$f_table}\n"; // tabelle in cui sono presenti dei filtri
+      // recupero i filtri impostati per la tabella in ciclo
+      foreach ($filter as $filterParam) {
+        echo "-----------------------";
+        echo "Filtro in esame : {$filterParam->filterName}\n";
+        // se il filtro in ciclo NON è presente all'interno di $metrics lo imposto come filtro del report
+        // verifico tutte le metriche impostate nel cubo
+        foreach ($metrics as $m_table => $metric) {
+          foreach ($metric as $metricParam) {
+            echo "Metrica in esame : {$metricParam->metricName}\n";
+            // verifico se l'array filter all'interno di metrics ha un valore (quindi se questa è una metrica filtrata)
+            if (count($metricParam->filters) > 0) {
+              print_r($metricParam->filters);
+              if (in_array($filterParam->filterName, $metricParam->filters)) {
+                echo "Il filtro {$filterParam->filterName} è presente nella metrica {$metricParam->metricName}\n";
+                $flag = TRUE;
               }
             }
           }
-        } else {
-          echo "Metrica {$paramMetric->fieldName} impostata a Livello Report\n";
-          // su questa metrica non è presente nessun filtro, per cui la aggiungo a _reportMetrics che andrà inserita in W_AP_base...
-          $metricsList[] = $paramMetric->sqlFunction."(".$metricTableName.".".$paramMetric->fieldName.") AS '".$paramMetric->aliasMetric."'";
         }
+        if (!$flag) {
+          echo "\nFiltro {$filterParam->filterName} NON PRESENTE IN NESSUNA METRICA\n\n";
+          $this->_reportFilters .= $and.$f_table.".".$filterParam->fieldName." ".$filterParam->operator." ".$filterParam->values;
+        }
+
       }
     }
 
-    $this->_reportMetrics = implode(", ", $metricsList);
-    // var_dump($this->_reportMetrics);
-    // foreach ($filters as $table => $filter) {
-    //   foreach ($filter as $param) {
-    //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
-    //   }
-    // }
-    echo 'ReportFilters : '.$this->_reportFilters."\n";
-    echo 'MetricFilters : '.$this->_metricFilters."\n\n";
-    echo 'ReportMetrics : '.$this->_reportMetrics."\n";
-
-    return $this->_reportFilters;
+    echo "FILTRI DEL REPORT : {$this->_reportFilters}\n";
   }
+  // public function FILTERS_METRICS($filters, $metrics) {
+  //   // Verifico e imposto i filtri a livello metriche e quelli a livello reports
+  //   // Se una metrica ha un filtro impostato (es.: RepartoOfficina), lo stesso filtro deve essere eliminato a "Livello di Report" ed inserirlo..
+  //   // ... quindi, al livello di Metrica
+  //   $and = " AND ";
+  //   $or = " OR ";
+  //   // TODO: aggiungere gli altri operatori
+  //   $metricsList = array();
+  //
+  //   foreach ($metrics as $metricTableName => $metric) {
+  //     // per ogni metrica...
+  //     foreach ($metric as $paramMetric) {
+  //       echo $paramMetric->fieldName."\n";
+  //        // ... controllo se è presente un filtro su questa metrica
+  //       if (!empty($paramMetric->filters) ) {
+  //         echo "Metrica {$paramMetric->fieldName} contiene dei filtri\n";
+  //         // filtro presente
+  //         foreach ($paramMetric->filters as $metricFilterName) {
+  //           echo "Filtro all'interno di {$paramMetric->fieldName} : {$metricFilterName}\n";
+  //           // per ogni filtro all'interno della metrica...
+  //           foreach ($filters as $filterTableName => $filter) {
+  //             // ... lo confronto con i filtri impostati in generale
+  //             foreach ($filter as $paramFilter) {
+  //               echo "\nFiltro metrica : {$metricFilterName}\n";
+  //               echo "\nFiltro in verifica nel ciclo : {$paramFilter->filterName}\n";
+  //               if ($metricFilterName == $paramFilter->filterName) {
+  //                 echo "Filtro {$paramFilter->filterName} trovato sulla metrica {$paramMetric->fieldName}\n";
+  //                 $this->_metricFilters .= $and.$filterTableName.".".$paramFilter->fieldName." ".$paramFilter->operator." ".$paramFilter->values;
+  //               } else {
+  //                 $this->_reportFilters .= $and.$filterTableName.".".$paramFilter->fieldName." ".$paramFilter->operator." ".$paramFilter->values;
+  //                 echo "Il filtro {$paramFilter->filterName} è stato impostato a livello Report : {$this->_reportFilters}\n";
+  //               }
+  //               //
+  //               // if ($metricFilterName != $param->filterName) {
+  //               //   // questo filtro non è presente nella metrica, quindi lo posso inserire in _reportFilters che andrà in W_AP_base...
+  //               //   $this->_reportFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
+  //               //   echo "Inserito in reportFilters : ".$this->_reportFilters."\n";
+  //               // } else {
+  //               //   // questo filtro è presente nella metrica e quindi lo imposto "a livello di metrica" in _metricFilters
+  //               //   $this->_metricFilters .= $and.$filterTableName.".".$param->fieldName." ".$param->operator." ".$param->values;
+  //               // }
+  //             }
+  //           }
+  //         }
+  //       } else {
+  //         echo "Metrica {$paramMetric->fieldName} impostata a Livello Report\n";
+  //         // su questa metrica non è presente nessun filtro, per cui la aggiungo a _reportMetrics che andrà inserita in W_AP_base...
+  //         $metricsList[] = $paramMetric->sqlFunction."(".$metricTableName.".".$paramMetric->fieldName.") AS '".$paramMetric->aliasMetric."'";
+  //       }
+  //     }
+  //   }
+  //
+  //   $this->_reportMetrics = implode(", ", $metricsList);
+  //   // var_dump($this->_reportMetrics);
+  //   // foreach ($filters as $table => $filter) {
+  //   //   foreach ($filter as $param) {
+  //   //     $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values."\n";
+  //   //   }
+  //   // }
+  //   echo 'ReportFilters : '.$this->_reportFilters."\n";
+  //   echo 'MetricFilters : '.$this->_metricFilters."\n\n";
+  //   // echo 'ReportMetrics : '.$this->_reportMetrics."\n";
+  //
+  //   return $this->_reportFilters;
+  // }
 
   public function METRICS($metrics) {
     $metricsList = array();
