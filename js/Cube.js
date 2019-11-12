@@ -316,6 +316,7 @@ class Cube {
 
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
+    let metricName = this.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
     let fieldName = this.dialogMetrics.querySelector('#fieldName').innerText;
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
@@ -327,7 +328,7 @@ class Cube {
     // aggiungo i filtri da associare a questa metrica
     if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
 
-    this.colsMetrics.push({sqlFunction, fieldName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
+    this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
     let objParam = {};
     this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
     this.metrics[tableName] = objParam;

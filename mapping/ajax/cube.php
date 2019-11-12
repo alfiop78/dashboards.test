@@ -16,7 +16,7 @@ $q->setReportId($objData->{'report_id'});
 
 
 $q->SELECT($objData->{'columns'});
-$q->METRICS($objData->{'metrics'});
+// $q->METRICS($objData->{'metrics'});
 $q->FROM($objData->{'from'});
 $q->WHERE($objData->{'hierarchy'});
 $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
@@ -25,7 +25,10 @@ $q->GROUPBY($objData->{'groupby'});
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
 
+return;
 echo $q->createMetricDatamarts($objData->{'metrics'});
+
+echo $q->createDatamart();
 
 // ob_clean();
 // echo json_encode($result, JSON_FORCE_OBJECT);
