@@ -114,44 +114,66 @@ class Queries {
     return $this->_where;
   }
 
-  public function FILTERS_METRICS($filters, $metrics) {
-    // per ogni filtro presente nel cubo devo verificare se è presente anche in qualche metrica.
-    // ..Se presente anche in una delle metriche posso inserirle in _reportFilters, questi saranno i filtri impostati a livello di Report
-    // ... e il userò per creare la base table
-
-    $and = " AND ";$or = " OR ";
-    foreach ($filters as $f_table => $filter) {
-      $flag = FALSE;
-      echo "{$f_table}\n"; // tabelle in cui sono presenti dei filtri
-      // recupero i filtri impostati per la tabella in ciclo
-      foreach ($filter as $filterParam) {
-        echo "-----------------------";
-        echo "Filtro in esame : {$filterParam->filterName}\n";
-        // se il filtro in ciclo NON è presente all'interno di $metrics lo imposto come filtro del report
-        // verifico tutte le metriche impostate nel cubo
-        foreach ($metrics as $m_table => $metric) {
-          foreach ($metric as $metricParam) {
-            echo "Metrica in esame : {$metricParam->metricName}\n";
-            // verifico se l'array filter all'interno di metrics ha un valore (quindi se questa è una metrica filtrata)
-            if (count($metricParam->filters) > 0) {
-              print_r($metricParam->filters);
-              if (in_array($filterParam->filterName, $metricParam->filters)) {
-                echo "Il filtro {$filterParam->filterName} è presente nella metrica {$metricParam->metricName}\n";
-                $flag = TRUE;
-              }
-            }
-          }
-        }
-        if (!$flag) {
-          echo "\nFiltro {$filterParam->filterName} NON PRESENTE IN NESSUNA METRICA\n\n";
-          $this->_reportFilters .= $and.$f_table.".".$filterParam->fieldName." ".$filterParam->operator." ".$filterParam->values;
-        }
-
+  public function FILTERS($filters) {
+    /* definisco i filtri del report*/
+    $and = " AND ";
+    $or = " OR ";
+    foreach ($filters as $table => $filter) {
+      foreach ($filter as $param) {
+        $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
       }
     }
 
-    echo "FILTRI DEL REPORT : {$this->_reportFilters}\n";
+    return $this->_reportFilters;
   }
+
+  // public function FILTERS_METRICS($filters, $metrics) {
+  //   // per ogni filtro presente nel cubo devo verificare se è presente anche in qualche metrica.
+  //   // ..Se presente anche in una delle metriche posso inserirle in _reportFilters, questi saranno i filtri impostati a livello di Report
+  //   // ... e il userò per creare la base table
+  //   $noFilteredMetrics = array();
+  //   $and = " AND ";$or = " OR ";
+  //   foreach ($filters as $f_table => $filter) {
+  //     $filterFounded = FALSE;
+  //     // echo "{$f_table}\n"; // tabelle in cui sono presenti dei filtri
+  //     // recupero i filtri impostati per la tabella in ciclo
+  //     foreach ($filter as $filterParam) {
+  //       echo "Filtro in esame : {$filterParam->filterName}\n";
+  //       // se il filtro in ciclo NON è presente all'interno di $metrics lo imposto come filtro del report
+  //       // verifico tutte le metriche impostate nel cubo
+  //       foreach ($metrics as $m_table => $metric) {
+  //         foreach ($metric as $metricParam) {
+  //           echo "Metrica in esame : {$metricParam->metricName}\n";
+  //           // verifico se l'array filter all'interno di metrics ha un valore (quindi se questa è una metrica filtrata)
+  //           if (count($metricParam->filters) > 0) {
+  //             print_r($metricParam->filters);
+  //             if (in_array($filterParam->filterName, $metricParam->filters)) {
+  //               echo "Il filtro {$filterParam->filterName} è presente nella metrica {$metricParam->metricName}\n";
+  //               $filterFounded = TRUE;
+  //             }
+  //           } else {
+  //             echo "La metrica {$metricParam->metricName} non ha filtri impostati\n";
+  //             if (!array_key_exists($metricParam->metricName, $noFilteredMetrics)) {
+  //               $noFilteredMetrics[$metricParam->metricName] = $metricParam->sqlFunction."(".$m_table.".".$metricParam->fieldName.") AS '".$metricParam->aliasMetric."'";
+  //             }
+  //
+  //           }
+  //         }
+  //       }
+  //       if (!$filterFounded) {
+  //         echo "\nFiltro {$filterParam->filterName} NON PRESENTE IN NESSUNA METRICA\n\n";
+  //         $this->_reportFilters .= $and.$f_table.".".$filterParam->fieldName." ".$filterParam->operator." ".$filterParam->values;
+  //       }
+  //
+  //     }
+  //   }
+  //
+  //   echo "FILTRI DEL REPORT : {$this->_reportFilters}\n";
+  //
+  //   $this->_reportMetrics = implode(", ", $noFilteredMetrics);
+  //   echo $this->_reportMetrics;
+  //
+  // }
   // public function FILTERS_METRICS($filters, $metrics) {
   //   // Verifico e imposto i filtri a livello metriche e quelli a livello reports
   //   // Se una metrica ha un filtro impostato (es.: RepartoOfficina), lo stesso filtro deve essere eliminato a "Livello di Report" ed inserirlo..
@@ -222,7 +244,10 @@ class Queries {
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+        // inserisco qui solo le metriche che vanno nella W_AP_base e non quelle filtrate
+        if (count($param->filters) === 0) {
+          $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+        }
       }
     }
     return $this->_metrics = implode(", ", $metricsList);
@@ -244,7 +269,7 @@ class Queries {
 
   public function baseTable() {
     // TODO: creo una VIEW/TABLE senza metriche su cui, dopo, andrò a fare una left join con le VIEW/TABLE che contengono le metriche
-    $this->_sql = $this->_select.", ".$this->_reportMetrics."\n";
+    $this->_sql = $this->_select.", ".$this->_metrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
     $this->_sql .= $this->_reportFilters."\n";
@@ -265,11 +290,11 @@ class Queries {
 
       foreach ($metrics as $param) {
         // echo 'numero filtri della metrica : '. count($param->filters);
-        if (count($param->filters) >= 1) {
+        if (count($param->filters) > 0) {
           // ci sono dei filtri su questa metrica, ciclo ogni metrica filtrata per creare il proprio datamart in createMetricTable
-          $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'";
+          $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'"; // TODO: provare con backtick
           // return $metric;
-          echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric);
+          echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
           // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
           $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->aliasMetric; // memorizzo qui quante tabelle per metriche filtrate sono state create
           $i++;
@@ -280,11 +305,23 @@ class Queries {
     // if (count($this->_metricTable) > 0) {echo $this->createDatamart($param->aliasMetric);}
   }
 
-  private function createMetricTable($tableName, $metric) {
+  private function createMetricTable($tableName, $metric, $filters) {
+    var_dump($filters);
+
     $this->_sql = $this->_select.", ".$metric."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
     $this->_sql .= $this->_reportFilters."\n";
+
+    $and = " AND ";
+    $or = " OR ";
+    foreach ($filters as $table => $filter) {
+      foreach ($filter as $param) {
+        echo $param->fieldName;
+        // $this->_metricFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
+      }
+    }
+
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 

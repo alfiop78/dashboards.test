@@ -321,9 +321,32 @@ class Cube {
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;
-    let filters = []; // nomi dei filtri da applicare alla metrica
+    let arrFilters = [];
+    let filters = {};
     // TODO: recupero i filtri impostati per questa metrica e li inserisco nell'array
-    document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
+    // document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
+    document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {
+      // inserisco in filters l'object del filtro selezionato (e non solo il nome), successivamente elimino questo filtro dall'object filters di origine
+      // quindi il filtro sarà applicato a livello metrica e non Report
+      // recupero da this.filters il filtro selezionato
+      console.log(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+
+      arrFilters.push(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+
+      arrFilters.forEach((filter) => {
+        filters[li.getAttribute('table-name')] = filter;
+      });
+      console.log(filters);
+
+      // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
+      if (Object.keys(this.filters[li.getAttribute('table-name')]).length === 0) {
+        delete this.filters[li.getAttribute('table-name')];
+      } else {
+        delete this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
+      }
+
+    });
+
 
     // aggiungo i filtri da associare a questa metrica
     if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}

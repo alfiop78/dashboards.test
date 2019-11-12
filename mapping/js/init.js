@@ -347,7 +347,7 @@ var App = new Application();
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('kpi3metric');
+      data = window.localStorage.getItem('kpi3metric_2');
       // data = window.localStorage.getItem('esempio classico');
       // console.log(JSON.parse(data));
     } else {
