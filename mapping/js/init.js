@@ -336,6 +336,7 @@ var App = new Application();
 
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
+    if (Object.keys(app.Cube.filteredMetrics).length > 0) {app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
 
     // console.log(app.Cube.cube);

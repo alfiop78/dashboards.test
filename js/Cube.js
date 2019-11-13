@@ -8,8 +8,10 @@ class Cube {
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
     this.conditionsColName = [];
-    this.metrics = new Object();
+    this.metrics = new Object(); // metriche non filtrate
+    this.filteredMetrics = new Object(); // metriche filtrate
     this.colsMetrics = [];
+    this.colsFilteredMetrics = [];
     this.groupBy = new Object();
     this.colsGroupBy = [];
     this.relationId = 0;
@@ -350,13 +352,21 @@ class Cube {
 
     // aggiungo i filtri da associare a questa metrica
     if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
-
-    this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
     let objParam = {};
-    this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
-    this.metrics[tableName] = objParam;
+    if (Object.keys(filters).length > 0) {
+      // questa è una metrica filtrata
+      this.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
+      this.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+      this.filteredMetrics[tableName] = objParam;
+    } else {
+      this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias});
+      this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+      this.metrics[tableName] = objParam;
+    }
+
 
     console.log(this.metrics);
+    console.log(this.filteredMetrics);
     this.dialogMetrics.close();
   }
 

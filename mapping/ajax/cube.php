@@ -20,14 +20,13 @@ $q->METRICS($objData->{'metrics'});
 $q->FROM($objData->{'from'});
 $q->WHERE($objData->{'hierarchy'});
 $q->FILTERS($objData->{'filters'});
-// $q->FILTERS_METRICS($objData->{'filters'}, $objData->{'metrics'});
 $q->GROUPBY($objData->{'groupby'});
 // return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
 
-echo $q->createMetricDatamarts($objData->{'metrics'});
-return;
+echo $q->createMetricDatamarts($objData->{'filteredMetrics'});
+
 echo $q->createDatamart();
 
 // ob_clean();
