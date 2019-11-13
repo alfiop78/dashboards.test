@@ -263,37 +263,7 @@ class Queries {
 
     return $lCache->insert($sql);
   }
-  // private function createDatamart($aliasMetric) {
-  //   // TODO: creazione datamart con tutte le metriche che hanno ReportFilters e non MetricFilters
-  //   $alias = str_replace(" ", "_", $aliasMetric); // TODO: provare ad utilizzare il backtick al posto di fare il replace
-  //   $baseTableName = "AP_base_".$this->_reportId;
-  //   $datamartName = "FX".$this->_reportId;
-  //   $ONClause = array();
-  //   $ONConditions = NULL;
-  //   $l = new ConnectDB("decisyon_cache");
-  //   // se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
-  //   if (count($this->_metricTable) > 0) {
-  //     $metricTableName = "AP_metric_".$this->_reportId;
-  //     // TODO: devo selezionare i campi in comune per fare la LEFT JOIN
-  //
-  //     foreach ($this->_columns as $columnAlias) {
-  //       // carattere backtick con ALTGR+'
-  //       $ONClause[] = "`".$baseTableName."`.`".$columnAlias."` = `".$metricTableName."`.`".$columnAlias."`";
-  //     }
-  //     $ONConditions = implode(" AND ", $ONClause);
-  //
-  //     $sql = "CREATE TABLE $datamartName AS
-  //       (select $baseTableName.*, $metricTableName.".$alias." AS '".$aliasMetric."' from $baseTableName
-  //         LEFT JOIN $metricTableName ON $ONConditions );";
-  //   } else {
-  //     $sql = "CREATE TABLE $datamartName AS (SELECT * FROM $baseTableName);";
-  //   }
-  //
-  //   return $sql;
-  //
-  //   return $l->insert($sql);
-  // }
-
+  
   public function getDatamartData($reportId) {
     $l = new ConnectDB("decisyon_cache");
     $datamartName = "FX".$reportId;

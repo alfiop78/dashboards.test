@@ -22,6 +22,7 @@ var App = new Application();
   App.init();
 
   app.handlerReportSelected = function(e) {
+    // recupero i dati dal dataamart finale "FX"+reportId
     console.log(this);
     console.log(this.id);
     var url = "ajax/reports.php";
@@ -298,11 +299,11 @@ var App = new Application();
   };
 
   document.getElementById('saveHierarchy').onclick = function(e) {
-    // verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
+    // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
 
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
-      console.log(card);
+      // console.log(card);
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
         app.Cube.cube['from'] = from;
@@ -327,21 +328,29 @@ var App = new Application();
       app.Cube.dimension['hierarchies'] = dimensions;
       // console.log(app.Cube);
     }
+    let cols = new Object();
 
 
+    app.Cube.cube['columns'] = app.Cube.columns;
+    // console.log(app.Cube.columns);
+    // console.log(app.Cube.cube.columns);
 
-    if (Object.keys(app.Cube.columns).length > 0) {
-      app.Cube.cube['columns'] = app.Cube.columns;
-    }
+    Object.keys(app.Cube.cube.columns).forEach((table) => {
+      // console.log(table);
+      console.log(app.Cube.cube.columns[table]);
+    });
+    return;
+
 
     if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
     if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
     if (Object.keys(app.Cube.filteredMetrics).length > 0) {app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;}
     if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
+    // TODO: inserire alcuni parametri per il report, ad esempio quali sono le colonne che contengono metriche, per essere formattate in modo diverso dalle colonne
+    app.Cube.cube['columnsOption'] = {};
+    app.Cube.cube['metricsOption'] = {};
 
     // console.log(app.Cube.cube);
-
-
 
     // console.log(Object.keys(app.Cube.cube).length);
     let data;
@@ -512,6 +521,9 @@ var App = new Application();
     console.log('create report');
 
     let table = document.getElementById('table-01');
+
+    console.log(response);
+    return;
 
     let options =
       {
