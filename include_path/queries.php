@@ -164,7 +164,7 @@ class Queries {
 
     $sql_createTable = "CREATE TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     // return $sql_createTable;
-    // return $l->insert($sql_createTable);
+    return $l->insert($sql_createTable);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -206,46 +206,54 @@ class Queries {
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
     // return $sql_createTable;
-    // return $l->insert($sql_createTable);
+    return $l->insert($sql_createTable);
   }
 
   public function createDatamart() {
     $baseTableName = "W_AP_base_".$this->_reportId;
     $datamartName = "FX".$this->_reportId;
-    $ONClause = array();
-    $ONConditions = NULL;
-    $l = new ConnectDB("decisyon_cache");
+    $lCache = new ConnectDB("decisyon_cache");
     // se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
     // var_dump($this->_metricTable);
 
+    $sql = "CREATE TABLE $datamartName AS ";
+    $sql .= "(SELECT $baseTableName.*, ";
+
     if (count($this->_metricTable) > 0) {
+      $table_and_metric = array();
+      $leftJoin = null;
+      $ONClause = array();
+      $ONConditions = NULL;
+
+      // var_dump($this->_columns);
 
       foreach ($this->_metricTable as $metricTableName => $aliasMetric) {
-        $sql = NULL;
+        $table_and_metric[] = "`$metricTableName`.`$aliasMetric`";
+        $leftJoin .= "\nLEFT JOIN `$metricTableName` ON ";
 
-        unset($ONClause);
-        echo "\n{TABELLA :  $metricTableName}\n";
-        echo "{METRICA : $aliasMetric}\n";
         foreach ($this->_columns as $columnAlias) {
           // carattere backtick con ALTGR+'
           $ONClause[] = "`".$baseTableName."`.`".$columnAlias."` = `".$metricTableName."`.`".$columnAlias."`";
         }
         $ONConditions = implode(" AND ", $ONClause);
-
-        /* DATAMART DA GENERARE */
-        /*
-        select W_AP_base_3.*, `W_AP_metric_3_1`.`Listino`, `W_AP_metric_3_2`.`sconto` FROM W_AP_base_3
-                            LEFT JOIN W_AP_metric_3_1 ON `W_AP_base_3`.`Cod.Sede` = `W_AP_metric_3_1`.`Cod.Sede` AND `W_AP_base_3`.`Sede` = `W_AP_metric_3_1`.`Sede`
-                            LEFT JOIN W_AP_metric_3_2 ON `W_AP_base_3`.`Cod.Sede` = `W_AP_metric_3_2`.`Cod.Sede` AND `W_AP_base_3`.`Sede` = `W_AP_metric_3_2`.`Sede`
-        */
-
-        $sql = "CREATE TABLE $datamartName AS
-          (select $baseTableName.*, `$metricTableName`.`$aliasMetric` FROM $baseTableName
-            LEFT JOIN $metricTableName ON $ONConditions );";
-        var_dump($sql);
-
+        unset($ONClause);
+        // var_dump($ONConditions);
+        $leftJoin .= "$ONConditions";
       }
+      // echo $leftJoin;
 
+      /*
+      DATAMART DA GENERARE
+      select W_AP_base_3.*, `W_AP_metric_3_1`.`Listino`, `W_AP_metric_3_2`.`sconto` FROM W_AP_base_3
+                          LEFT JOIN W_AP_metric_3_1 ON `W_AP_base_3`.`Cod.Sede` = `W_AP_metric_3_1`.`Cod.Sede` AND `W_AP_base_3`.`Sede` = `W_AP_metric_3_1`.`Sede`
+                          LEFT JOIN W_AP_metric_3_2 ON `W_AP_base_3`.`Cod.Sede` = `W_AP_metric_3_2`.`Cod.Sede` AND `W_AP_base_3`.`Sede` = `W_AP_metric_3_2`.`Sede`
+      */
+
+      $tables = implode(", ", $table_and_metric); //`W_AP_metric_3_1`.`sconto`, `W_AP_metric_3_2`.`listino`
+
+      $sql .= $tables;
+      $sql .= "\nFROM `$baseTableName`";
+      $sql .= $leftJoin.");";
 
     } else {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM $baseTableName);";
@@ -253,7 +261,7 @@ class Queries {
 
     // return $sql;
 
-    // return $l->insert($sql);
+    return $lCache->insert($sql);
   }
   // private function createDatamart($aliasMetric) {
   //   // TODO: creazione datamart con tutte le metriche che hanno ReportFilters e non MetricFilters
