@@ -132,7 +132,7 @@ var App = new Application();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
 
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
@@ -189,9 +189,9 @@ var App = new Application();
     let tmplContent = tmplCard.content.cloneNode(true);
     let card = tmplContent.querySelector('.card');
     let parentElement = document.getElementById('containerCards');
-    let factTable = document.getElementById('fact-card');
-    parentElement.insertBefore(card, factTable);
-    // parentElement.appendChild(card);
+    // let factTable = document.getElementById('fact-card');
+    // parentElement.insertBefore(card, factTable);
+    parentElement.appendChild(card);
     // lego evento click sulla card
     card.querySelector('.card-table').onclick = app.handlerCardSelected;
     card.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
@@ -211,7 +211,12 @@ var App = new Application();
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
     app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    let downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
+    console.log(upCard);
+    let downCard;
+    downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
+    // console.log(document.getElementById('fact'));
+    // downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
+    console.log(downCard);
     let arrCards = [upCard, downCard];
     arrCards.forEach((card) => {
       let help = card.querySelector('.help');
@@ -225,7 +230,7 @@ var App = new Application();
         help.innerText = "Seleziona le colonne da mettere in relazione";
       }
     });
-    // REVIEW: probabilmente questo non serve più perchè lo faccio in app.Cube.changeMode
+    // NOTE: Utilizzo di for...of in una Collection
     // for (let name of upCard.getAttributeNames()) {
     //   if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
     // }
@@ -280,8 +285,17 @@ var App = new Application();
 
   // evento su icona per aggiungere una tabella alla gerarchia
   document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
-  document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
-  document.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerRemoveHierarchy;
+  // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
+  Array.from(document.querySelectorAll('.icon-relation > i[hierarchies]')).forEach((btnHierarchies) => {
+    // console.log(btnHierarchies);
+    btnHierarchies.onclick = app.handlerAddHierarchy;
+  });
+  Array.from(document.querySelectorAll('.icon-relation > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
+    // console.log(btnHierarchiesRemove);
+    btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
+  });
+  // document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
+  // document.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerRemoveHierarchy;
   // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
   document.querySelector('section[options] > i[columns]').onclick = app.handlerAddColumns;
   document.querySelector('section[options] > i[filters]').onclick = app.handlerAddFilters;
@@ -299,9 +313,19 @@ var App = new Application();
 
   app.test = function() {
     console.log('test');
-    // TODO: prendo l'ultima tabella della gerarchia per legarla alla FACT
-    let lastTable = document.querySelector('.hierarchies .card:last-child');
-    console.log(lastTable);
+    // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
+    // ultima card nella gerarchia
+    let lastTableInHierarchy = document.querySelector('.hierarchies .card:last-child .card-table');
+    let lastCardRef = document.getElementById('last-card');
+
+    let card = document.createElement('div');
+    let cardLayout = document.createElement('div');
+    card.classList.add("card");
+    lastCardRef.appendChild(card);
+    cardLayout.classList.add("card-layout");
+    card.appendChild(cardLayout);
+    let newCard = lastTableInHierarchy.cloneNode(true);
+    cardLayout.appendChild(newCard);
   };
 
   document.getElementById('saveHierarchy').onclick = function(e) {
