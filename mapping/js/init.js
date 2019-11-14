@@ -326,6 +326,11 @@ var App = new Application();
     card.appendChild(cardLayout);
     let newCard = lastTableInHierarchy.cloneNode(true);
     cardLayout.appendChild(newCard);
+    // aggiungo eventi per la selezione delle colonne
+    newCard.querySelectorAll('li').forEach((li) => {
+      li.onclick = app.Cube.handlerColumns.bind(app.Cube);
+    });
+
   };
 
   document.getElementById('saveHierarchy').onclick = function(e) {
