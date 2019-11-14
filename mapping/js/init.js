@@ -297,8 +297,18 @@ var App = new Application();
     }
   };
 
+  app.test = function() {
+    console.log('test');
+    // TODO: prendo l'ultima tabella della gerarchia per legarla alla FACT
+    let lastTable = document.querySelector('.hierarchies .card:last-child');
+    console.log(lastTable);
+  };
+
   document.getElementById('saveHierarchy').onclick = function(e) {
     // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
+
+    app.test();
+    return;
 
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {

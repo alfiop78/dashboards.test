@@ -362,23 +362,77 @@
               </section>
               <section class="page" data-step="2">
                 <h2>Tabella FACT</h2>
+                <div class="structure">
 
-                <div class="card" id="fact-card">
-                  <div class="card-layout">
-                    <section id="fact" class="card-table" fact-table>
-                      <div class="help">Aggiungi la Fact Table</div>
-                      <h5>FACT TABLE</h5>
-                      <ul id="columns"></ul>
-                    </section>
-                    <section options>
-                      <i class="material-icons md-18" metrics>show_chart</i>
-                      <i class="material-icons md-18" columns>view_list</i>
-                      <i class="material-icons md-18" filters>filter_list</i>
-                      <i class="material-icons md-18" groupby>dynamic_feed</i>
-                    </section>
+                  <div class="factHierarchies">
+                    <div class="dimensionsList">
+                      <p>lista dimensioni</p>
+                    </div>
+
+                    <div class="factContainerCards" id="factContainerCards">
+
+                      <div class="dimensionHierarchy">
+                        <div class="miniCard">
+                          <p>minicard 1</p>
+                          <p>minicard 2</p>
+                          <p>minicard 3</p>
+                        </div>
+                        <div class="card">
+                          <div class="card-layout">
+                            <section class="card-table" active="true" name="">
+                              <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
+                              <ul id="columns">
+                                <template id="template-list-columns">
+                                  <div class="element">
+                                    <li></li>
+                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                  </div>
+                                </template>
+                              </ul>
+                            </section>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+                      <div class="relation">
+                        <div class="icon-relation">
+                          <i class="material-icons md-24" add>add</i>
+                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
+                          <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                        </div>
+                      </div>
+
+                      <div class="card" id="fact-card">
+                        <div class="card-layout">
+                          <section id="fact" class="card-table" fact-table>
+                            <div class="help">Aggiungi la Fact Table</div>
+                            <h5>FACT TABLE</h5>
+                            <ul id="columns"></ul>
+                          </section>
+                          <section options>
+                            <i class="material-icons md-18" metrics>show_chart</i>
+                            <i class="material-icons md-18" columns>view_list</i>
+                            <i class="material-icons md-18" filters>filter_list</i>
+                            <i class="material-icons md-18" groupby>dynamic_feed</i>
+                          </section>
+                        </div>
+
+                      </div>
+
+
+                    </div>
+
+
                   </div>
 
+
                 </div>
+
+
 
               </section>
               <section class="page" data-step="3">
