@@ -25,6 +25,9 @@ class Cube {
   set cubeTitle(value) {this.cube_title = value;}
   get cubeTitle() {return this.cube_title;}
 
+  set dimensionTitle(value) {this.dimension_title = value;}
+  get dimensionTitle() {return this.dimension_title;}
+
   set table(value) {
     this.tableSelected = value;
     // console.log(this.tableSelected);
@@ -207,7 +210,7 @@ class Cube {
     // ...altrimenti le colonne contentute in this.cols vengono aggiunte anche alla nuova tabella
     // TODO: verifico se la tabella su cui si sta operando è già inserita nell'object
     // console.log(this.columns[tableName]);
-    console.log(this.columns.hasOwnProperty(tableName));
+    // console.log(this.columns.hasOwnProperty(tableName));
     if (!this.columns.hasOwnProperty(tableName)) {this.cols = [];}
 
     this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
@@ -419,12 +422,11 @@ class Cube {
   }
 
   createHierarchy() {
-    console.log('createHierarchy');
+    // console.log('createHierarchy');
     let hier = [];
     this.colSelected = [];
     document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
       let tableName = card.getAttribute('name');
-
       // let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
       let liRef = card.querySelector('li[hierarchy][selected]');
       if (liRef) {
@@ -437,7 +439,7 @@ class Cube {
         this.relationId++;
         // TODO: se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
         // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
-        console.log(card);
+        // console.log(card);
         (card.hasAttribute('fact-table')) ? this.hierarchy['fact_'+this.relationId] = hier : this.hierarchy['hier_'+this.relationId] = hier;
 
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne

@@ -110,7 +110,7 @@ var App = new Application();
   };
 
   app.handlerTableSelected = function(e) {
-    console.log('handlerTableSelected');
+    // console.log('handlerTableSelected');
     this.toggleAttribute('selected');
     // app.Cube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
@@ -203,7 +203,7 @@ var App = new Application();
   };
 
   app.handlerAddHierarchy = function(e) {
-    console.log(this);
+    // console.log(this);
     // console.log(e.path);
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
@@ -211,12 +211,7 @@ var App = new Application();
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
     app.Cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    console.log(upCard);
-    let downCard;
-    downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
-    // console.log(document.getElementById('fact'));
-    // downCard = e.path[3].nextElementSibling.querySelector('section.card-table');
-    console.log(downCard);
+    let downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
     let arrCards = [upCard, downCard];
     arrCards.forEach((card) => {
       let help = card.querySelector('.help');
@@ -294,25 +289,35 @@ var App = new Application();
     // console.log(btnHierarchiesRemove);
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
   });
-  // document.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
-  // document.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerRemoveHierarchy;
   // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
   document.querySelector('section[options] > i[columns]').onclick = app.handlerAddColumns;
   document.querySelector('section[options] > i[filters]').onclick = app.handlerAddFilters;
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
-  document.getElementById('cubeTitle').oninput = function() {
+  document.getElementById('cubeName').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
       app.Cube.cubeTitle = this.value;
+      document.getElementById('saveCube').disabled = false;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
+      document.getElementById('saveCube').disabled = true;
     }
   };
 
-  app.test = function() {
-    console.log('test');
+  document.getElementById('dimensionName').oninput = function() {
+    if (this.value.length > 0) {
+      this.parentElement.querySelector('label').classList.add('has-content');
+      app.Cube.dimensionTitle = this.value;
+      document.getElementById('saveDimension').disabled = false;
+    } else {
+      this.parentElement.querySelector('label').classList.remove('has-content');
+      document.getElementById('saveDimension').disabled = true;
+    }
+  };
+
+  app.cloneLastTable = function() {
     // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
     // ultima card nella gerarchia
     let lastTableInHierarchy = document.querySelector('.hierarchies .card:last-child .card-table');
@@ -333,48 +338,45 @@ var App = new Application();
 
   };
 
-  document.getElementById('saveHierarchy').onclick = function(e) {
-    // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
-
-    app.test();
-    return;
+  document.getElementById('saveDimension').onclick = function(e) {
+    /*
+      Salvo la dimensione, senza il legame con la FACT.
+      Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
+      Salvo in localStorage la dimensione creata
+      Il tasto mdc-next si trasforma in FACT TABLE
+    */
 
     let from = [];
     document.querySelectorAll('.card-table').forEach((card) => {
       // console.log(card);
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
-        app.Cube.cube['from'] = from;
+        app.Cube.dimension['from'] = from;
       }
     });
 
+    // recupero solo le gerarchie delle tabelle e non quella con l'associazione alla FACT, gerarchie 'hier_n' e non 'fact_n'
+    app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
+    let dimensions = {};
+    Object.keys(app.Cube.hierarchy).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {dimensions[rel] = app.Cube.hierarchy[rel];}});
+    app.Cube.dimension['hierarchy'] = dimensions;
 
-    if (Object.keys(app.Cube.hierarchy).length > 0) {
-      app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
-      let dimensions = [];
-
-      Object.keys(app.Cube.hierarchy).forEach((rel) => {
-        // console.log(rel);
-        if (rel.substring(0, 5) === "hier_") {
-          // console.log('trovata hier : '+ rel);
-          // console.log(app.Cube.hierarchy[rel]);
-          app.Cube.dimension['dimName'] = 'NomeDimensione';
-          dimensions[rel] = app.Cube.hierarchy[rel];
-          // dimensions.push(app.Cube.hierarchy[rel]);
-        }
-      });
-      app.Cube.dimension['hierarchies'] = dimensions;
-      // console.log(app.Cube);
-    }
+    app.Cube.dimension['dimension'] = app.Cube.dimensionTitle;
     app.Cube.cube['columns'] = app.Cube.columns;
     app.Cube.cube['filters'] = app.Cube.filters;
     app.Cube.cube['metrics'] = app.Cube.metrics;
     app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
     app.Cube.cube['groupby'] = app.Cube.groupBy;
 
-    // console.log(app.Cube.cube);
+    console.log(app.Cube.dimension);
+    console.log(app.Cube.cube);
 
-    // console.log(Object.keys(app.Cube.cube).length);
+    window.localStorage[app.Cube.dimension.dimension] = JSON.stringify(app.Cube.dimension)
+
+    app.cloneLastTable();
+  };
+
+  document.getElementById('saveCube').onclick = function() {
     let data;
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
@@ -384,27 +386,19 @@ var App = new Application();
       // console.log(JSON.parse(data));
     } else {
       console.log(app.Cube.cube);
-      app.Cube.cube['name'] = app.Cube.cubeTitle;
+      app.Cube.cube['cube'] = app.Cube.cubeTitle;
       app.Cube.cube['report_id'] = app.report_id;
       data = JSON.stringify(app.Cube.cube);
       window.localStorage[app.Cube.cube.name] = data;
     }
-
-
-    // return;
-
-    // TODO: inserire qui il nome del Cubo da mostrare nella pagina e associare a questo nome, in app.Cube anche il datamart che verrà creato in php
-
-    // console.log(data);
 
     // var data = JSON.stringify(app.Cube.cube);
     // window.localStorage.cube = data;
     // ...oppure
     // window.localStorage.setItem("cube",data);
 
-
     var url = "ajax/cube.php";
-    let params = "data="+data;
+    let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -426,6 +420,17 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+
+
+
+
+  };
+
+  document.getElementById('saveHierarchy').onclick = function(e) {
+    // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
+
+
+
 
   };
 

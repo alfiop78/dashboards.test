@@ -6,26 +6,27 @@ session_regenerate_id();
 require_once 'queries.php';
 setlocale (LC_TIME, "it_IT");
 
-$objData = json_decode($_POST['data']); // object
-// var_dump($objData);
+$cube = json_decode($_POST['cube']); // object
+$dimension = json_decode($_POST['dimension']); // object
+var_dump($cube);
+var_dump($dimension);
 // $arrData = json_decode($_POST['data'], true); // array
-// var_dump($objData->{'report_id'});
 
 $q = new Queries();
-$q->setReportId($objData->{'report_id'});
+$q->setReportId($cube->{'report_id'});
 
 
-$q->SELECT($objData->{'columns'});
-$q->METRICS($objData->{'metrics'});
-$q->FROM($objData->{'from'});
-$q->WHERE($objData->{'hierarchy'});
-$q->FILTERS($objData->{'filters'});
-$q->GROUPBY($objData->{'groupby'});
+$q->SELECT($cube->{'columns'});
+$q->METRICS($cube->{'metrics'});
+$q->FROM($dimension->{'from'});
+$q->WHERE($cube->{'hierarchy'});
+$q->FILTERS($cube->{'filters'});
+$q->GROUPBY($cube->{'groupby'});
 // return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
 
-echo $q->createMetricDatamarts($objData->{'filteredMetrics'});
+echo $q->createMetricDatamarts($cube->{'filteredMetrics'});
 
 echo $q->createDatamart();
 

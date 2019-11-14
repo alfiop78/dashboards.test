@@ -262,10 +262,12 @@
                     </div>
 
                     <div class="hierarchies">
+
                       <div class="md-field">
-                        <input type="text" id="cubeTitle" value=""/>
-                        <label for="cubeTitle" class="">Titolo</label>
+                        <input type="text" id="dimensionName" value=""/>
+                        <label for="dimensionTitle" class="">Dimensione</label>
                       </div>
+
                       <template id="template-card-table">
 
                         <div class="card">
@@ -351,8 +353,9 @@
 
                       </div>
 
-                      <button type="button" class="md-button" name="addHierarchy" id="addHierarchy">Nuova gerarchia</button>
-                      <button type="button" class="md-button" name="saveHierarchy" id="saveHierarchy">Salva Dimensione</button>
+                      <button type="button" class="md-button" id="addHierarchy">Nuova gerarchia</button>
+                      <button type="button" class="md-button" id="saveHierarchy">Salva Gerarchia</button>
+                      <button type="button" class="md-button" id="saveDimension" disabled>Salva Dimensione</button>
 
                     </div>
 
@@ -363,6 +366,10 @@
               <section class="page" data-step="2">
                 <h2>Tabella FACT</h2>
                 <div class="structure">
+                  <div class="md-field">
+                    <input type="text" id="cubeName" value=""/>
+                    <label for="cubeName" class="">Nome Cubo</label>
+                  </div>
 
                   <div class="factHierarchies">
                     <div class="dimensionsList">
@@ -411,6 +418,8 @@
 
 
                     </div>
+
+                    <button type="button" class="md-button" id="saveCube">Creazione CUBO</button>
 
 
                   </div>
