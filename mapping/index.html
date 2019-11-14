@@ -240,24 +240,6 @@
         <div id="content">
           <div id="body" hidden>
 
-            <!-- <div id="structure-test">
-              <div class="steps" active-step="0">
-                <div class="first">
-
-                </div>
-                <div class="second">
-
-                </div>
-                <div class="third">
-
-                </div>
-                <div class="fourth">
-                  test 4
-                </div>
-              </div>
-            </div> -->
-
-
             <!-- Creazione gerarchie -->
             <div id="pages" data-step="1">
               <section class="page" selected data-step="1">
@@ -280,8 +262,6 @@
                     </div>
 
                     <div class="hierarchies">
-                      <!-- <h6>Inserisci un titolo per questa gerarchia</h6> -->
-                      <!-- <input type="text" name="title" value="" placeholder="Inserisci il titolo del Cubo" readonly/> -->
                       <div class="md-field">
                         <input type="text" id="cubeTitle" value=""/>
                         <label for="cubeTitle" class="">Titolo</label>
@@ -301,18 +281,18 @@
                                     <i id="columns-icon" class="material-icons md-18">view_list</i>
                                     <i id="filters-icon" class="material-icons md-18">filter_list</i>
                                     <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                    <i id="metrics-icon" class="material-icons md-18">show_chart</i>
                                   </div>
                                 </template>
                               </ul>
                             </section>
                             <section options>
-                              <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
                               <i class="material-icons md-18" columns>view_list</i>
                               <i class="material-icons md-18" filters>filter_list</i>
                               <i class="material-icons md-18" groupby>dynamic_feed</i>
+                              <i class="material-icons md-18" metrics>show_chart</i>
                             </section>
                           </div>
-
 
                           <div class="relation">
                             <div class="line"></div>
@@ -321,7 +301,6 @@
                               <i class="material-icons md-24 anim" hierarchies>insert_link</i>
                               <i class="material-icons md-24 anim" hierarchies-left>flip</i>
                               <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-
                               <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
                             </div>
                           </div>
@@ -343,25 +322,16 @@
                                     <i id="columns-icon" class="material-icons md-18">view_list</i>
                                     <i id="filters-icon" class="material-icons md-18">filter_list</i>
                                     <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                                  </div>
-                                </template>
-                                <template id="template-list-fact-columns">
-                                  <div class="element">
-                                    <li></li>
-                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
                                     <i id="metrics-icon" class="material-icons md-18">show_chart</i>
                                   </div>
                                 </template>
                               </ul>
                             </section>
                             <section options>
-                              <!-- <i class="material-icons md-18" metrics>show_chart</i> NOTE: in futuro può servire per impostare una metrica che non è sulla fact -->
                               <i class="material-icons md-18" columns>view_list</i>
                               <i class="material-icons md-18" filters>filter_list</i>
                               <i class="material-icons md-18" groupby>dynamic_feed</i>
+                              <i class="material-icons md-18" metrics>show_chart</i>
                             </section>
                           </div>
 
@@ -378,7 +348,7 @@
                           </div>
                         </div>
 
-                        <div class="card" id="fact-card">
+                        <!-- <div class="card" id="fact-card">
                           <div class="card-layout">
                             <section id="fact" class="card-table" fact-table>
                               <div class="help">Aggiungi la Fact Table</div>
@@ -393,7 +363,7 @@
                             </section>
                           </div>
 
-                        </div>
+                        </div> -->
 
 
                       </div>
@@ -409,12 +379,21 @@
               </section>
               <section class="page" data-step="2">
                 <h2>Tabella FACT</h2>
-                <div class="layout" lyt-col="1" lyt-row="1">
-                  <section title>
-                    <h3>Page Title</h3>
-                    <h5>Page Subtitle</h5>
-                  </section>
-
+                
+                <div class="card" id="fact-card">
+                  <div class="card-layout">
+                    <section id="fact" class="card-table" fact-table>
+                      <div class="help">Aggiungi la Fact Table</div>
+                      <h5>FACT TABLE</h5>
+                      <ul id="columns"></ul>
+                    </section>
+                    <section options>
+                      <i class="material-icons md-18" metrics>show_chart</i>
+                      <i class="material-icons md-18" columns>view_list</i>
+                      <i class="material-icons md-18" filters>filter_list</i>
+                      <i class="material-icons md-18" groupby>dynamic_feed</i>
+                    </section>
+                  </div>
 
                 </div>
 

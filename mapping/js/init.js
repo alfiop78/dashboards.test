@@ -115,10 +115,8 @@ var App = new Application();
     // app.Cube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
     app.Cube.table = this.getAttribute('label');
-    let tmplList;
-    // se è stata selezionata la fact-table aggiungo il template che ha, al suo interno, anche le metrics
-    (app.Cube.activeCardRef.getAttribute('fact-table') !== null) ? tmplList = document.getElementById('template-list-fact-columns') :
-      tmplList = document.getElementById('template-list-columns');
+
+    let tmplList = document.getElementById('template-list-columns');
 
 
     // let ulContainer = document.getElementById('columns');
@@ -134,7 +132,7 @@ var App = new Application();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          // console.table(response);
+          console.table(response);
 
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
@@ -147,11 +145,12 @@ var App = new Application();
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
-          // TODO: lego eventi ai tasti i[....] nascosti
+          // lego eventi ai tasti i[....] nascosti
 
           app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
           app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
           app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          app.Cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
 
@@ -328,27 +327,11 @@ var App = new Application();
       app.Cube.dimension['hierarchies'] = dimensions;
       // console.log(app.Cube);
     }
-    let cols = new Object();
-
-
     app.Cube.cube['columns'] = app.Cube.columns;
-    // console.log(app.Cube.columns);
-    // console.log(app.Cube.cube.columns);
-
-    Object.keys(app.Cube.cube.columns).forEach((table) => {
-      // console.log(table);
-      console.log(app.Cube.cube.columns[table]);
-    });
-    return;
-
-
-    if (Object.keys(app.Cube.filters).length > 0) {app.Cube.cube['filters'] = app.Cube.filters;}
-    if (Object.keys(app.Cube.metrics).length > 0) {app.Cube.cube['metrics'] = app.Cube.metrics;}
-    if (Object.keys(app.Cube.filteredMetrics).length > 0) {app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;}
-    if (Object.keys(app.Cube.groupBy).length > 0) {app.Cube.cube['groupby'] = app.Cube.groupBy;}
-    // TODO: inserire alcuni parametri per il report, ad esempio quali sono le colonne che contengono metriche, per essere formattate in modo diverso dalle colonne
-    app.Cube.cube['columnsOption'] = {};
-    app.Cube.cube['metricsOption'] = {};
+    app.Cube.cube['filters'] = app.Cube.filters;
+    app.Cube.cube['metrics'] = app.Cube.metrics;
+    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
+    app.Cube.cube['groupby'] = app.Cube.groupBy;
 
     // console.log(app.Cube.cube);
 
@@ -523,7 +506,7 @@ var App = new Application();
     let table = document.getElementById('table-01');
 
     console.log(response);
-    return;
+    // return;
 
     let options =
       {
@@ -537,7 +520,7 @@ var App = new Application();
         {'col': 1, 'attribute': 'multi'},
         {'col': 3, 'attribute': 'hidden'}
       ],
-      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : [2,3,4], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : app.Cube.cube.name,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
