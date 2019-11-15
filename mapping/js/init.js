@@ -347,29 +347,25 @@ var App = new Application();
     */
 
     let from = [];
+    let objDimension = {};
     document.querySelectorAll('.card-table').forEach((card) => {
       // console.log(card);
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
-        app.Cube.dimension['from'] = from;
+        objDimension.from = from;
       }
     });
 
     // recupero solo le gerarchie delle tabelle e non quella con l'associazione alla FACT, gerarchie 'hier_n' e non 'fact_n'
     app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
-    let dimensions = {};
-    Object.keys(app.Cube.hierarchy).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {dimensions[rel] = app.Cube.hierarchy[rel];}});
-    app.Cube.dimension['hierarchy'] = dimensions;
-
-    app.Cube.dimension['dimension'] = app.Cube.dimensionTitle;
-    app.Cube.cube['columns'] = app.Cube.columns;
-    app.Cube.cube['filters'] = app.Cube.filters;
-    app.Cube.cube['metrics'] = app.Cube.metrics;
-    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
-    app.Cube.cube['groupby'] = app.Cube.groupBy;
-
+    let hierarchies = {};
+    Object.keys(app.Cube.hierarchy).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchy[rel];}});
+    objDimension.hierachy = hierarchies;
+    objDimension.type = "DIMENSION";
+    app.Cube.dimension[app.Cube.dimensionTitle] = objDimension
     console.log(app.Cube.dimension);
-    console.log(app.Cube.cube);
+    return;
+    // console.log(app.Cube.cube);
 
     window.localStorage[app.Cube.dimension.dimension] = JSON.stringify(app.Cube.dimension)
 
@@ -377,6 +373,15 @@ var App = new Application();
   };
 
   document.getElementById('saveCube').onclick = function() {
+
+    app.Cube.cube.dimensions = app.Cube.dimension;
+    app.Cube.cube['columns'] = app.Cube.columns;
+    app.Cube.cube['filters'] = app.Cube.filters;
+    app.Cube.cube['metrics'] = app.Cube.metrics;
+    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
+    app.Cube.cube['groupby'] = app.Cube.groupBy;
+    console.log(app.Cube.cube);
+
     let data;
 
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
@@ -385,12 +390,13 @@ var App = new Application();
       // data = window.localStorage.getItem('esempio classico');
       // console.log(JSON.parse(data));
     } else {
-      console.log(app.Cube.cube);
+      // console.log(app.Cube.cube);
       app.Cube.cube['cube'] = app.Cube.cubeTitle;
       app.Cube.cube['report_id'] = app.report_id;
       data = JSON.stringify(app.Cube.cube);
       window.localStorage[app.Cube.cube.name] = data;
     }
+    return;
 
     // var data = JSON.stringify(app.Cube.cube);
     // window.localStorage.cube = data;

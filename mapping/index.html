@@ -38,13 +38,9 @@
           <section class="formula">
             <textarea name="columnFormat" rows="8" cols="80"></textarea>
 
-
-
           </section>
 
         </div>
-
-
 
         <div class="dialog-buttons">
           <button id="btnColumnCancel" type="button" name="cancel" class="md-button">annulla</button>
@@ -366,14 +362,19 @@
               <section class="page" data-step="2">
                 <h2>Tabella FACT</h2>
                 <div class="structure">
-                  <div class="md-field">
-                    <input type="text" id="cubeName" value=""/>
-                    <label for="cubeName" class="">Nome Cubo</label>
-                  </div>
 
-                  <div class="factHierarchies">
+                  <div class="lists">
                     <div class="dimensionsList">
                       <p>lista dimensioni</p>
+                    </div>
+
+                  </div>
+
+                  <div class="hierarchies">
+
+                    <div class="md-field">
+                      <input type="text" id="cubeName" value=""/>
+                      <label for="cubeName" class="">Nome Cubo</label>
                     </div>
 
                     <div class="factContainerCards" id="factContainerCards">
@@ -391,11 +392,10 @@
 
                       <div class="relation">
                         <div class="icon-relation">
-                          <i class="material-icons md-24" add>add</i>
-                          <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                          <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                          <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                          <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                          <i class="material-icons md-24" hierarchies>insert_link</i>
+                          <i class="material-icons md-24 vertical-anim" hierarchies-left>flip</i>
+                          <i class="material-icons md-24 vertical-anim" hierarchies-right>flip</i>
+                          <i class="material-icons md-24 vertical-anim" hierarchies-remove>link_off</i>
                         </div>
                       </div>
 
@@ -416,14 +416,10 @@
 
                       </div>
 
-
                     </div>
-
                     <button type="button" class="md-button" id="saveCube">Creazione CUBO</button>
 
-
                   </div>
-
 
                 </div>
 
