@@ -374,7 +374,7 @@ var App = new Application();
   };
 
   document.getElementById('test').onclick = function() {
-    let data = window.localStorage.getItem('frrr');
+    let data = window.localStorage.getItem('kpi GLM');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;
@@ -411,6 +411,8 @@ var App = new Application();
     app.Cube.cube['metrics'] = app.Cube.metrics;
     app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
     app.Cube.cube['groupby'] = app.Cube.groupBy;
+    let factTable = document.querySelector('#fact').getAttribute('name');
+    app.Cube.cube['FACT'] = factTable;
     console.log(app.Cube.cube);
 
     let data;

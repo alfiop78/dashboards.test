@@ -4,8 +4,8 @@ require_once 'ConnectDB.php';
 class Queries {
   private $_select, $_columns = array(), $_from, $_and, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
 
-  function __construct() {
-
+  function __construct($fact_table) {
+    $this->fact = $fact_table;
   }
 
   function setReportId($reportId) {$this->_reportId = $reportId;}
@@ -98,7 +98,7 @@ class Queries {
 
   public function FROM($dimensions) {
     // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
-    $this->_from = " FROM ";
+    $this->_from = " FROM $this->fact_table";
     foreach ($dimensions as $dimension) {
       // var_dump($clause);
       // var_dump($dimension);
@@ -224,8 +224,8 @@ class Queries {
     $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    // return $sql_createTable;
-    return $l->insert($sql_createTable);
+    return $sql_createTable;
+    // return $l->insert($sql_createTable);
   }
 
   public function createDatamart() {
