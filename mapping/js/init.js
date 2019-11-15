@@ -350,19 +350,18 @@ var App = new Application();
     let from = [];
     let objDimension = {};
     document.querySelectorAll('.card-table').forEach((card) => {
-      // console.log(card);
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
         objDimension.from = from;
       }
     });
 
-    // recupero solo le gerarchie delle tabelle e non quella con l'associazione alla FACT, gerarchie 'hier_n' e non 'fact_n'
-    app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
+    // in app.Cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
+    app.Cube.cube['hierarchies'] = app.Cube.hierarchyFact;
     let hierarchies = {};
-    /// TODO: le hierarchy che aggiungo a app.Cube.dimension le devo eliminare da app.Cube.cube.hierarchy, altrimenti sono duplicate
-    Object.keys(app.Cube.hierarchy).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchy[rel];}});
-    objDimension.hierarchy = hierarchies;
+    Object.keys(app.Cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchyTable[rel];}});
+    // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
+    objDimension.hierarchies = hierarchies;
     objDimension.type = "DIMENSION";
     app.Cube.dimension[app.Cube.dimensionTitle] = objDimension
     console.log(app.Cube.dimension);
@@ -375,7 +374,7 @@ var App = new Application();
   };
 
   document.getElementById('test').onclick = function() {
-    let data = window.localStorage.getItem('Analisi sedi GLM');
+    let data = window.localStorage.getItem('frrr');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;

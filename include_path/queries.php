@@ -2,7 +2,7 @@
 require_once 'ConnectDB.php';
 
 class Queries {
-  private $_select, $_columns = array(), $_from, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
+  private $_select, $_columns = array(), $_from, $_and, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
 
   function __construct() {
 
@@ -107,7 +107,19 @@ class Queries {
     }
     return $this->_from;
   }
-  
+
+  public function AND($dimensions) {
+    $this->_and = " AND ";
+    foreach ($dimensions as $dimension) {
+
+      foreach ($dimension->hierarchies as $value) {
+
+        $this->_and .= implode(" = ", $value);
+      }
+    }
+    return $this->_and;
+  }
+
   public function WHERE($hierarchy) {
     $i = 0;
     foreach ($hierarchy as $hierarchies) {
@@ -162,14 +174,15 @@ class Queries {
     $this->_sql = $this->_select.", ".$this->_metrics."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
+    $this->_sql .= $this->_and."\n";
     $this->_sql .= $this->_reportFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    // return $sql_createTable;
-    return $l->insert($sql_createTable);
+    return $sql_createTable;
+    // return $l->insert($sql_createTable);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -194,6 +207,7 @@ class Queries {
     $this->_sql = $this->_select.", ".$metric."\n";
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
+    $this->_sql .= $this->_and."\n";
     $this->_sql .= $this->_reportFilters."\n";
 
     $and = " AND ";

@@ -17,13 +17,16 @@ $q->setReportId($cube->{'report_id'});
 
 $q->SELECT($cube->{'columns'});
 $q->METRICS($cube->{'metrics'});
-echo $q->FROM($cube->{'dimensions'});
-$q->WHERE($cube->{'hierarchy'});
+$q->FROM($cube->{'dimensions'});
+$q->AND($cube->{'dimensions'}); // gerarchie associazione con la FACT table
+$q->WHERE($cube->{'hierarchies'}); // gerarchie della dimensione (non contiene l'associazione con la FACT)
+
 $q->FILTERS($cube->{'filters'});
 $q->GROUPBY($cube->{'groupby'});
-return;
+// return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
+return;
 
 echo $q->createMetricDatamarts($cube->{'filteredMetrics'});
 

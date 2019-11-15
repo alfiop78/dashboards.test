@@ -3,7 +3,8 @@ class Cube {
   constructor() {
     this.cube = new Object();
     this.dimension = new Object();
-    this.hierarchy = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
+    this.hierarchyFact = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
+    this.hierarchyTable = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
     this.columns = new Object();
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
@@ -415,8 +416,8 @@ class Cube {
           li.removeAttribute('hierarchy');
         }
       });
-      delete this.hierarchy['hier_'+value];
-      delete this.hierarchy['fact_'+value];
+      delete this.hierarchyFact['hier_'+value];
+      delete this.hierarchyTable['hier_'+value];
     }
 
   }
@@ -437,10 +438,13 @@ class Cube {
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
         this.relationId++;
-        // TODO: se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
+        // se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
         // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
+
+        // 15.11 - Le relazioni tra tabelle hier_n le inserisco direttamente in this.dimension
         // console.log(card);
-        (card.hasAttribute('fact-table')) ? this.hierarchy['fact_'+this.relationId] = hier : this.hierarchy['hier_'+this.relationId] = hier;
+        (card.hasAttribute('fact-table')) ? this.hierarchyFact['hier_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
+        // (card.hasAttribute('fact-table')) ? this.hierarchyFact['fact_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
 
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
         this.colSelected.forEach((el) => {
@@ -450,7 +454,8 @@ class Cube {
           // la relazione è stata creata, posso eliminare [selected]
           el.removeAttribute('selected');
         });
-        console.log(this.hierarchy);
+        console.log(this.hierarchyFact);
+        console.log(this.hierarchyTable);
       }
     });
   }
