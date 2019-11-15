@@ -7,22 +7,21 @@ require_once 'queries.php';
 setlocale (LC_TIME, "it_IT");
 
 $cube = json_decode($_POST['cube']); // object
-$dimension = json_decode($_POST['dimension']); // object
-var_dump($cube);
-var_dump($dimension);
+// $dimension = json_decode($_POST['dimension']); // object
+// var_dump($cube);
+// var_dump($dimension);
 // $arrData = json_decode($_POST['data'], true); // array
 
 $q = new Queries();
 $q->setReportId($cube->{'report_id'});
 
-
 $q->SELECT($cube->{'columns'});
 $q->METRICS($cube->{'metrics'});
-$q->FROM($dimension->{'from'});
+echo $q->FROM($cube->{'dimensions'});
 $q->WHERE($cube->{'hierarchy'});
 $q->FILTERS($cube->{'filters'});
 $q->GROUPBY($cube->{'groupby'});
-// return;
+return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 echo $q->baseTable();
 

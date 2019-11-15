@@ -344,6 +344,7 @@ var App = new Application();
       Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
       Salvo in localStorage la dimensione creata
       Il tasto mdc-next si trasforma in FACT TABLE
+      // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
 
     let from = [];
@@ -359,52 +360,25 @@ var App = new Application();
     // recupero solo le gerarchie delle tabelle e non quella con l'associazione alla FACT, gerarchie 'hier_n' e non 'fact_n'
     app.Cube.cube['hierarchy'] = app.Cube.hierarchy;
     let hierarchies = {};
+    /// TODO: le hierarchy che aggiungo a app.Cube.dimension le devo eliminare da app.Cube.cube.hierarchy, altrimenti sono duplicate
     Object.keys(app.Cube.hierarchy).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchy[rel];}});
-    objDimension.hierachy = hierarchies;
+    objDimension.hierarchy = hierarchies;
     objDimension.type = "DIMENSION";
     app.Cube.dimension[app.Cube.dimensionTitle] = objDimension
     console.log(app.Cube.dimension);
-    return;
+
     // console.log(app.Cube.cube);
 
-    window.localStorage[app.Cube.dimension.dimension] = JSON.stringify(app.Cube.dimension)
+    window.localStorage[app.Cube.dimensionTitle] = JSON.stringify(app.Cube.dimension)
 
     app.cloneLastTable();
   };
 
-  document.getElementById('saveCube').onclick = function() {
-
-    app.Cube.cube.dimensions = app.Cube.dimension;
-    app.Cube.cube['columns'] = app.Cube.columns;
-    app.Cube.cube['filters'] = app.Cube.filters;
-    app.Cube.cube['metrics'] = app.Cube.metrics;
-    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
-    app.Cube.cube['groupby'] = app.Cube.groupBy;
-    console.log(app.Cube.cube);
-
-    let data;
-
-    // per il momento, se non ci sono cubi creati, prendo quello in localStorage
-    if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('kpi3metric_2');
-      // data = window.localStorage.getItem('esempio classico');
-      // console.log(JSON.parse(data));
-    } else {
-      // console.log(app.Cube.cube);
-      app.Cube.cube['cube'] = app.Cube.cubeTitle;
-      app.Cube.cube['report_id'] = app.report_id;
-      data = JSON.stringify(app.Cube.cube);
-      window.localStorage[app.Cube.cube.name] = data;
-    }
-    return;
-
-    // var data = JSON.stringify(app.Cube.cube);
-    // window.localStorage.cube = data;
-    // ...oppure
-    // window.localStorage.setItem("cube",data);
-
+  document.getElementById('test').onclick = function() {
+    let data = window.localStorage.getItem('Analisi sedi GLM');
     var url = "ajax/cube.php";
-    let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    let params = "cube="+data;
     // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -426,9 +400,63 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+  };
+
+  document.getElementById('saveCube').onclick = function() {
 
 
+    app.Cube.cube.dimensions = app.Cube.dimension;
+    app.Cube.cube.type = "CUBE";
+    app.Cube.cube['columns'] = app.Cube.columns;
+    app.Cube.cube['filters'] = app.Cube.filters;
+    app.Cube.cube['metrics'] = app.Cube.metrics;
+    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
+    app.Cube.cube['groupby'] = app.Cube.groupBy;
+    console.log(app.Cube.cube);
 
+    let data;
+    // per il momento, se non ci sono cubi creati, prendo quello in localStorage
+    if (Object.keys(app.Cube.cube).length === 0) {
+      data = window.localStorage.getItem('Analisi sedi GLM');
+      console.log(data);
+      // data = window.localStorage.getItem('esempio classico');
+      // console.log(JSON.parse(data));
+    } else {
+      // console.log(app.Cube.cube);
+      app.Cube.cube['report_id'] = app.report_id;
+      data = JSON.stringify(app.Cube.cube);
+      window.localStorage[app.Cube.cubeTitle] = data;
+    }
+
+    // var data = JSON.stringify(app.Cube.cube);
+    // window.localStorage.cube = data;
+    // ...oppure
+    // window.localStorage.setItem("cube",data);
+
+    var url = "ajax/cube.php";
+    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    let params = "cube="+data;
+    // console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          // app.createReport(response);
+
+        } else {
+
+        }
+      } else {
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
 
   };
 

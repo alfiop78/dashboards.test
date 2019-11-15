@@ -96,13 +96,18 @@ class Queries {
     return $this->_select;
   }
 
-  public function FROM($fields) {
-    $fieldList = array();
-    $fieldList = implode(", ", $fields);
-    $this->_from = " FROM ".$fieldList;
+  public function FROM($dimensions) {
+    // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
+    $this->_from = " FROM ";
+    foreach ($dimensions as $dimension) {
+      // var_dump($clause);
+      // var_dump($dimension);
+      // var_dump($dimension->from);
+      $this->_from .= implode(", ", $dimension->from);
+    }
     return $this->_from;
   }
-
+  
   public function WHERE($hierarchy) {
     $i = 0;
     foreach ($hierarchy as $hierarchies) {
@@ -263,7 +268,7 @@ class Queries {
 
     return $lCache->insert($sql);
   }
-  
+
   public function getDatamartData($reportId) {
     $l = new ConnectDB("decisyon_cache");
     $datamartName = "FX".$reportId;
