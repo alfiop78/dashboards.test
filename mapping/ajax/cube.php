@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 set_include_path($_SERVER["DOCUMENT_ROOT"].'/include_path');
 session_start();
 session_regenerate_id();
-require_once 'queries.php';
+require_once 'Cube.php';
 setlocale (LC_TIME, "it_IT");
 
 $cube = json_decode($_POST['cube']); // object
