@@ -109,6 +109,20 @@ var App = new Application();
     request.send();
   };
 
+  app.handlerSearchColumns = function(e) {
+    // Ricerca delle colonne in una tabella selezionata
+    (this.value.lenth > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
+
+    let listElement = Array.from(document.querySelectorAll('#columns > .element > li'));
+
+  	for (let i in listElement) {
+  	  let li = listElement[i];
+  	  (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
+        li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
+
+  	}
+  };
+
   app.handlerTableSelected = function(e) {
     // console.log('handlerTableSelected');
     this.toggleAttribute('selected');
@@ -145,6 +159,8 @@ var App = new Application();
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
+          // event #searchColumns
+          app.Cube.activeCardRef.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
           // lego eventi ai tasti i[....] nascosti
 
           app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;

@@ -397,7 +397,7 @@ input:invalid ~ label.has-content ~ span{visibility: visible;}
 @media screen and (min-device-width: 769px)  {
   .button.raised{padding: 8px 16px;}
   .button.raised:hover{cursor: pointer;}
-  input{padding:18px 8px 4px;font-size: .75rem;height: 42px;}
+  input{padding:18px 8px 4px;font-size: .75rem;height: 42px;width: 100%;}
   input:focus ~ label:not(has-content),
     input:valid ~ label.has-content,
     input:read-only ~ label.has-content {font-size:.7rem;top: 4px;}

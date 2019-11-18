@@ -31,7 +31,8 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.card-table ul > .element{display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
+.card-table ul > .element:not([hide]){display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
+.card-table ul > .element[hide] {display: none;}
 .card-table > h5:hover{text-decoration: underline;}
 .card-table ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
 .card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;padding: 0 6px;}
@@ -55,6 +56,9 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border
 .card-table ul > .element li[metrics] ~ #metrics-icon{visibility: visible;color: #587850;}
 .card-table ul > .element li:not([groupby]) ~ #groupby-icon{visibility: hidden;}
 .card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;}
+
+
+
 
 .help[alert]{content: 'test';}
 
