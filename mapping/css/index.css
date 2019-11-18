@@ -5,6 +5,7 @@
 #pages[data-step="1"]{transform: translateX(0px);}
 #pages[data-step="2"]{transform: translateX(-1000px);}
 #pages[data-step="3"]{transform: translateX(-2000px);}
+#pages[data-step="4"]{transform: translateX(-3000px);}
 
 .highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
 /*pages*/
@@ -142,7 +143,6 @@ section[options] > i[groupby]{color: #c7b198;}
 /* #structure-test > .steps{display: grid;grid-template-columns: repeat(4, 50%);transition: all 250ms;width: calc(100% / 4);} */
 #structure-test > .steps > div{width: 50%;min-width: 50%;}
 
-
 /* dialog */
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
 dialog h4{font-size: .9rem;}
@@ -162,3 +162,15 @@ dialog .formula{padding: 16px;}
 dialog h6{font-size: .85rem;font-weight: normal;padding: 4px;margin: 0;color: #52524e}
 dialog small{font-weight: lighter;padding: 4px;}
 /* end dialog */
+
+/*grid*/
+.grid-2-2{display: grid; grid-template-columns: auto auto;width: 100%;}
+.preview-layout{display: grid;grid-template-areas: "page-by" "body";}
+.lyt-page-by{grid-area: page-by;display: grid; grid-template-columns: auto auto auto;justify-content: space-evenly;}
+.lyt-body{grid-area: body;}
+.lyt-page-by > div{width: 50px;height: 20px;background-color: red;}
+.lyt-report{display: flex;justify-content: center;}
+.lyt-report > div{width: 80%;height: 200px;background: grey;margin: 16px;}
+
+
+/*grid*/

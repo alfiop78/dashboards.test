@@ -357,6 +357,8 @@ var App = new Application();
     newCard.querySelectorAll('li').forEach((li) => {
       li.onclick = app.Cube.handlerColumns.bind(app.Cube);
     });
+    // evento oninput sulla searchColumns
+    newCard.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
 
   };
 
@@ -395,7 +397,8 @@ var App = new Application();
     app.cloneLastTable();
   };
 
-  document.getElementById('test').onclick = function() {
+  document.getElementById('test').onclick = function(e) {
+    // test per la creazione del datamart, prendendo un Cubo in localStorage
     let data = window.localStorage.getItem('KPI Sedi GLM');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);

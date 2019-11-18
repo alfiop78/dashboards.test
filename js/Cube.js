@@ -103,8 +103,9 @@ class Cube {
           // console.log('columns');
           e.target.toggleAttribute('columns');
           e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
-          if (!e.target.hasAttribute('columns')) {
+          if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
             delete this.columns[tableName][fieldName];
+            if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
           }
           console.log(this.columns);
           break;
