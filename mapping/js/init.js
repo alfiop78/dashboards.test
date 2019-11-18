@@ -110,10 +110,11 @@ var App = new Application();
   };
 
   app.handlerSearchColumns = function(e) {
+    console.log(e.path);
     // Ricerca delle colonne in una tabella selezionata
     (this.value.lenth > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
-    let listElement = Array.from(document.querySelectorAll('#columns > .element > li'));
+    let listElement = Array.from(e.path[2].querySelectorAll('#columns > .element > li'));
 
   	for (let i in listElement) {
   	  let li = listElement[i];
@@ -159,9 +160,14 @@ var App = new Application();
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
-          // event #searchColumns
-          app.Cube.activeCardRef.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
-          // lego eventi ai tasti i[....] nascosti
+          // se ci sono poche colonne in questa tabella non attiva la input search
+          if (Object.keys(response).length > 10) {
+            // event #searchColumns
+            app.Cube.activeCardRef.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
+            // visualizzo la input #searchColumns
+            app.Cube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
+            // lego eventi ai tasti i[....] nascosti
+          }
 
           app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
           app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
@@ -390,7 +396,7 @@ var App = new Application();
   };
 
   document.getElementById('test').onclick = function() {
-    let data = window.localStorage.getItem('kpi GLM');
+    let data = window.localStorage.getItem('KPI Sedi GLM');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;
@@ -434,7 +440,7 @@ var App = new Application();
     let data;
     // per il momento, se non ci sono cubi creati, prendo quello in localStorage
     if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('Analisi sedi GLM');
+      data = window.localStorage.getItem('ccc');
       console.log(data);
       // data = window.localStorage.getItem('esempio classico');
       // console.log(JSON.parse(data));
@@ -607,7 +613,7 @@ var App = new Application();
       {
       'cols' : [
         // {'col': 3, 'attribute': 'hidden'},
-        {'col': 5, 'attribute': 'hidden'}
+        // {'col': 5, 'attribute': 'hidden'}
 
       ],
       'filters' : [
@@ -615,7 +621,7 @@ var App = new Application();
         {'col': 1, 'attribute': 'multi'},
         {'col': 3, 'attribute': 'hidden'}
       ],
-      'metrics' : [2,3,4], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : app.Cube.cube.name,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };

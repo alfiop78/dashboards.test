@@ -271,7 +271,7 @@
                             <section class="card-table" active="true" name="">
                               <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
                               <h5>SELEZIONA TABELLA</h5>
-                              <div class="md-field">
+                              <div class="md-field" hidden>
                                 <input type="text" id="searchColumns" value=""/>
                                 <label for="searchColumns" class="">Ricerca</label>
                               </div>
@@ -316,7 +316,7 @@
                             <section class="card-table" active="true" name="">
                               <div class="help">Inserisci la prima tabella in ordine gerarchico dall'elenco a sinistra</div>
                               <h5>SELEZIONA TABELLA</h5>
-                              <div class="md-field">
+                              <div class="md-field" hidden>
                                 <input type="text" id="searchColumns" value=""/>
                                 <label for="searchColumns" class="">Ricerca</label>
                               </div>
@@ -367,7 +367,7 @@
                   </div>
                 </section>
               </section>
-              
+
               <section class="page" data-step="2">
                 <h2>Tabella FACT</h2>
                 <div class="structure">
@@ -413,6 +413,10 @@
                           <section id="fact" class="card-table" fact-table>
                             <div class="help">Aggiungi la Fact Table</div>
                             <h5>FACT TABLE</h5>
+                            <div class="md-field" hidden>
+                              <input type="text" id="searchColumns" value=""/>
+                              <label for="searchColumns" class="">Ricerca</label>
+                            </div>
                             <ul id="columns"></ul>
                           </section>
                           <section options>

@@ -36,7 +36,7 @@ class Cube {
 
   public function FROM($dimensions) {
     // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
-    $this->_from = " FROM $this->fact_table";
+    $this->_from = " FROM $this->fact, ";
     foreach ($dimensions as $dimension) {
       // var_dump($clause);
       // var_dump($dimension);
@@ -113,14 +113,15 @@ class Cube {
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
     $this->_sql .= $this->_and."\n";
-    $this->_sql .= $this->_reportFilters."\n";
+    if (isset($this->_reportFilters)) {$this->_sql .= $this->_reportFilters."\n";}
+
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $l = new ConnectDB("automotive_bi_data");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    return $sql_createTable;
-    // return $l->insert($sql_createTable);
+    // return $sql_createTable;
+    return $l->insert($sql_createTable);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -162,8 +163,8 @@ class Cube {
     $lCache = new ConnectDB("decisyon_cache");
 
     $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    return $sql_createTable;
-    // return $l->insert($sql_createTable);
+    // return $sql_createTable;
+    return $l->insert($sql_createTable);
   }
 
   public function createDatamart() {
@@ -220,13 +221,5 @@ class Cube {
 
     return $lCache->insert($sql);
   }
-
-  public function getDatamartData($reportId) {
-    $l = new ConnectDB("decisyon_cache");
-    $datamartName = "FX".$reportId;
-    return $l->getResultAssoc("SELECT * FROM $datamartName;");
-  }
-
-
 
 } // End Class

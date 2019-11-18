@@ -67,6 +67,12 @@ class Queries {
     return $this->_result;
   }
 
+  public function getDatamartData($reportId) {
+    $l = new ConnectDB("decisyon_cache");
+    $datamartName = "FX".$reportId;
+    return $l->getResultAssoc("SELECT * FROM $datamartName;");
+  }
+
 
 
 
