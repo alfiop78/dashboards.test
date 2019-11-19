@@ -47,7 +47,7 @@ class Draw {
     this.options = options;
     this.table = table;
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    this.paramsParent = document.querySelector('section[params] > div.params');
+    this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
   }
 
   set title(value) {
@@ -71,6 +71,7 @@ class Draw {
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div[data-param-id]');
+    // console.log(this.params);
     this.params.setAttribute('col', id);
     this.params.setAttribute('data-param-id', id);
     this.params.querySelector('ul').id = "datalist-"+id;
@@ -80,7 +81,7 @@ class Draw {
     this.params.querySelector('input').setAttribute('data-param-id', id);
     this.params.querySelector('.elements').setAttribute('col', id);
 
-    this.paramsParent.appendChild(this.params);
+    this.paramsRef.appendChild(this.params);
   }
 
   showFilters(e) {
@@ -90,10 +91,11 @@ class Draw {
     });
     // apro la dropdown
     e.path[1].querySelector('div.elements').toggleAttribute('show');
-    this.setAttribute('placeholder', 'Search...');
+    e.target.setAttribute('placeholder', 'Search...');
   }
 
-  handlerSelectMulti(e) {
+  handlerSelectMulti() {
+    // this = element
     this.parentElement.toggleAttribute('selected');
   }
 
@@ -144,6 +146,26 @@ class Draw {
       let elementContent = el.parentElement.parentElement;
       (label.indexOf(e.target.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
     });
+  }
+
+  handlerSelect(e) {
+    console.log(this);
+    // this = Draw
+    console.log('handlerSelect');
+
+    let parent = e.path[5]; // md-field
+    let liElement = e.path[1].querySelector('li');
+    let input = parent.querySelector('input');
+    let label = parent.querySelector('label');
+    input.value = liElement.getAttribute('label');
+    if (input.value.length > 0) {
+      parent.setAttribute('activated', true);
+      input.setAttribute('activated', true);
+      label.classList.add('has-content');
+    } else {
+      label.classList.remove('has-content');
+    }
+    this.search();
   }
 
   createDatalist() {
@@ -202,7 +224,24 @@ class Draw {
         element.appendChild(iconDone);
       });
     }
+
   }
+
+  eventParams() {
+    this.paramsRef.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
+      console.log(this); // Draw
+      el.oninput = this.handlerInput.bind(this);
+      el.onclick = this.showFilters.bind(this);
+      el.onblur = function(e) {e.target.removeAttribute('placeholder');};
+      // elementi presenti nei Filtri standard
+      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = this.handlerSelect.bind(this);});
+      // elementi presenti nei Filtri Multiselect
+      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = this.handlerSelectMulti.bind(liElement);});
+      // tasto OK all'interno dei params in multiselect
+      el.parentElement.querySelector('section > button').onclick = this.handlerMultiBtn.bind(this);
+    });
+  }
+
 
   addRow(rowValues) {
     // console.log(rowValues);
@@ -340,6 +379,9 @@ class Draw {
   draw() {
     // TODO: qui si dovrebbe impostare una class che applica una transition per visualizzare la table
     this.option();
+    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
+    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
+    this.eventParams();
     this.info();
   }
 
@@ -359,7 +401,7 @@ class Draw {
     let arrProperties = Object.keys(this.options);
     // console.log(arrProperties);
     if (arrProperties.includes('title')) {this.title = this.options.title;}
-    console.log(this.options.metrics);
+    // console.log(this.options.metrics);
     if (arrProperties.includes('metrics')) {
       this.options.metrics.forEach((col) => {
         // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
@@ -368,7 +410,7 @@ class Draw {
         this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {cols.classList.add('metrics');});
       });
     }
-    console.log(this.options.inputSearch);
+    // console.log(this.options.inputSearch);
     if (arrProperties.includes('inputSearch') && this.options.inputSearch) {
       // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
       document.getElementById('search').oninput = this.searchInput.bind(this);
@@ -379,9 +421,9 @@ class Draw {
 
 
     arrProperties.forEach((property) => {
-      console.log(property); // cols, filters, ecc...
+      // console.log(property); // cols, filters, ecc...
       if (Array.isArray(this.options[property])) {
-        console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
+        // console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
         this.options[property].forEach((prop) => {
           // console.log(prop); // {col: 1, attribute: "hidden"}
           let propertyRef = Object.keys(prop)[0]; // col

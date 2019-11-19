@@ -164,7 +164,7 @@ var App = new Application();
       ],
       'filters' : [
         {'col': 0, 'attribute': 'multi'},
-        {'col': 1, 'attribute': 'multi'},
+        // {'col': 1, 'attribute': 'multi'},
         {'col': 3, 'attribute': 'hidden'}
       ],
       'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
@@ -199,16 +199,6 @@ var App = new Application();
     // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
     app.Draw.draw();
 
-    document.querySelectorAll('section[params] input[type="search"]:not([id="search"])').forEach((el) => {
-      el.oninput = app.Draw.handlerInput.bind(app.Draw);
-      el.onclick = app.Draw.showFilters.bind(el);
-      el.onblur = function(e) {this.removeAttribute('placeholder');};
-      // let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
-      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
-      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.Draw.handlerSelectMulti.bind(liElement);});
-      // cerco il tasto OK per legare l'evento click
-      el.parentElement.querySelector('section > button').onclick = app.Draw.handlerMultiBtn.bind(app.Draw);
-    });
   };
 
 })();
