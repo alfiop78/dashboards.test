@@ -762,62 +762,63 @@ var App = new Application();
   };
 
   // TODO: QUESTE FUNZIONI LE DOVRO' AGGIUNGERE ALLA CLASSE COME METODI
-  app.handlerInput = function(e) {
-    // console.log('input');
-    // console.log(this);
-    let parentElement = e.path[1];
-    let label = parentElement.querySelector('label');
-    if (this.value.length > 0) {
-      parentElement.setAttribute('activated', true);
-      this.setAttribute('activated', true);
-      label.classList.add('has-content');
-    } else {
-      this.removeAttribute('activated');
-      parentElement.removeAttribute('activated');
-      label.classList.remove('has-content');
-      app.Draw.search();
-    }
-
-    // mentre digito filtro l'elenco degli elementi <li>
-    let liElement = parentElement.querySelectorAll('ul > .elementContent li');
-    liElement.forEach((el) => {
-      let label = el.getAttribute('label');
-      // imposto hidden su elementContent e non su li
-      let elementContent = el.parentElement.parentElement;
-      (label.indexOf(this.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
-    });
-
-  };
-
-  app.handlerSelectMulti = function(e) {
-    let elements = e.path[4];
-    this.parentElement.toggleAttribute('selected');
-    // cerco il tasto OK per legare l'evento click
-    let btnOk = elements.querySelector('section > button');
-    btnOk.onclick = app.handlerMultiBtn;
-  };
-
-  app.handlerMultiBtn = function(e) {
-    // console.log(this);
-    // console.log(e.path);
-    // console.log(e.path[2]);
-    let parentElement = e.path[3]; // md-field
-    let elements = parentElement.querySelector('.elements[show]');
-    let input = parentElement.querySelector('input');
-    let label = parentElement.querySelector('label');
-    let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
-    if (liSelected.length > 0) {
-      parentElement.setAttribute('activated', true);
-      input.setAttribute('activated', true);
-      label.classList.add('has-content');
-      input.value = "[MULTISELECT]";
-    } else {
-      label.classList.remove('has-content');
-    }
-    app.Draw.search();
-    elements.removeAttribute('show');
-
-  };
+  // app.handlerInput = function(e) {
+  //   // console.log('input');
+  //   // console.log(this);
+  //   let parentElement = e.path[1];
+  //   let label = parentElement.querySelector('label');
+  //   if (this.value.length > 0) {
+  //     parentElement.setAttribute('activated', true);
+  //     this.setAttribute('activated', true);
+  //     label.classList.add('has-content');
+  //   } else {
+  //     this.removeAttribute('activated');
+  //     parentElement.removeAttribute('activated');
+  //     label.classList.remove('has-content');
+  //     app.Draw.search();
+  //   }
+  //
+  //   // mentre digito filtro l'elenco degli elementi <li>
+  //   let liElement = parentElement.querySelectorAll('ul > .elementContent li');
+  //   liElement.forEach((el) => {
+  //     let label = el.getAttribute('label');
+  //     // imposto hidden su elementContent e non su li
+  //     let elementContent = el.parentElement.parentElement;
+  //     (label.indexOf(this.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
+  //   });
+  //
+  // };
+  //
+  // app.handlerSelectMulti = function(e) {
+  //   let elements = e.path[4];
+  //   this.parentElement.toggleAttribute('selected');
+  //   // cerco il tasto OK per legare l'evento click
+  //   let btnOk = elements.querySelector('section > button');
+  //   btnOk.onclick = app.handlerMultiBtn;
+  // };
+  //
+  // app.handlerMultiBtn = function(e) {
+  //   // BUG: spostato in Draw
+  //   // console.log(this);
+  //   // console.log(e.path);
+  //   // console.log(e.path[2]);
+  //   let parentElement = e.path[3]; // md-field
+  //   let elements = parentElement.querySelector('.elements[show]');
+  //   let input = parentElement.querySelector('input');
+  //   let label = parentElement.querySelector('label');
+  //   let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
+  //   if (liSelected.length > 0) {
+  //     parentElement.setAttribute('activated', true);
+  //     input.setAttribute('activated', true);
+  //     label.classList.add('has-content');
+  //     input.value = "[MULTISELECT]";
+  //   } else {
+  //     label.classList.remove('has-content');
+  //   }
+  //   app.Draw.search();
+  //   elements.removeAttribute('show');
+  //
+  // };
 
   app.handlerSelect = function(e) {
     console.log('handlerSelect');
@@ -838,16 +839,16 @@ var App = new Application();
     app.Draw.search();
   };
 
-  app.showFilters = function(e) {
-    // BUG: spostato nella Classe Draw
-    // verifico prima se ci sono altre dropdown aperte, le chiudo.
-    document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
-      elementsShow.removeAttribute('show');
-    });
-    // apro la dropdown
-    e.path[1].querySelector('div.elements').toggleAttribute('show');
-    this.setAttribute('placeholder', 'Search...');
-  };
+  // app.showFilters = function(e) {
+  //   // BUG: spostato nella Classe Draw
+  //   // verifico prima se ci sono altre dropdown aperte, le chiudo.
+  //   document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
+  //     elementsShow.removeAttribute('show');
+  //   });
+  //   // apro la dropdown
+  //   e.path[1].querySelector('div.elements').toggleAttribute('show');
+  //   this.setAttribute('placeholder', 'Search...');
+  // };
   /**
   funzioni che facevano parte di /js/init.js
   */
