@@ -14,12 +14,32 @@
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
-    <script src="/js/Cube.js"></script>
+    <!-- <script src="/js/Cube.js"></script> -->
     <script src="/js/Draw.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>Layout Page</title>
   </head>
   <body>
+
+    <dialog>
+
+      <div class="lists">
+        <div class="list">
+          <div class="md-field">
+            <input type="search" id="datamartSearch" name="datamartSearch" value=""/>
+            <label for="datamartSearch" class="">Ricerca</label>
+          </div>
+
+          <ul id="datamartList"></ul>
+        </div>
+      </div>
+
+
+      <div class="dialog-buttons">
+        <button id="btnColumnCancel" type="button" name="cancel" class="md-button">annulla</button>
+        <button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
+      </div>
+    </dialog>
 
     <main>
       <div id="drawer">
@@ -79,6 +99,7 @@
                       <div class="lyt-body">
 
                         <div class="lyt-report">
+
                         </div>
 
                       </div>
@@ -129,13 +150,21 @@
 
                       <div class="lyt-body">
 
-                        <div class="lyt-mini-report"></div>
+                        <div class="lyt-mini-report">
 
-                        <div class="lyt-mini-chart"></div>
+                        </div>
 
-                        <div class="lyt-mini-report"></div>
+                        <div class="lyt-mini-chart">
 
-                        <div class="lyt-mini-chart"></div>
+                        </div>
+
+                        <div class="lyt-mini-report">
+
+                        </div>
+
+                        <div class="lyt-mini-chart">
+
+                        </div>
 
 
                       </div>
@@ -157,12 +186,18 @@
 
                       <div class="lyt-body">
 
-                        <div class="lyt-report"></div>
+                        <div class="lyt-report">
+
+                        </div>
 
                         <section right-side>
-                          <div class="lyt-mini-chart"></div>
+                          <div class="lyt-mini-chart">
 
-                          <div class="lyt-mini-chart"></div>
+                          </div>
+
+                          <div class="lyt-mini-chart">
+
+                          </div>
                         </section>
 
                       </div>
@@ -173,7 +208,202 @@
               </section>
 
               <section class="page" data-step="2">
-                <h2>Tabella FACT</h2>
+                <!--
+                  <div class="layout" lyt-col="1" lyt-row="1">
+                    <section title>
+                      <h3>Page Title</h3>
+                      <h5>Page Subtitle</h5>
+                    </section>
+                    <section params>
+                      <div class="params column">
+                        <template id="params">
+                          <div class="cell-full md-field" data-param-id="" options='filters'>
+                            <input type="search" id="" value="" onclick="this.select()"/>
+                            <label for=""></label>
+                            <div class="elements" options="filters" col="">
+                              <ul class="filters" id=""></ul>
+                              <section>
+                                <button class="button dense raised">ok</button>
+                              </section>
+                            </div>
+
+                          </div>
+                        </template>
+
+                      </div>
+
+                    </section>
+                    <section body>
+                      <section table>
+                        <table id="table-01" header-fixed>
+                          <caption>caption table</caption>
+                          <thead>
+                            <tr></tr>
+                          </thead>
+
+                          <tbody></tbody>
+
+                          <tfoot>
+                            <tr><td>Total</td></tr>
+                            <tr>
+                              <td>
+                                <div class="cell-full md-field">
+                                  <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                  <label for="search">Ricerca</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="tr-right">
+                              <td>
+                                <div info>
+                                  <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                                </div>
+                              </td>
+
+                            </tr>
+                          </tfoot>
+
+                        </table>
+
+                      </section>
+                    </section>
+
+                  </div>
+              -->
+
+                <template id="layout-0">
+
+                  <div class="preview-layout" data-id="layout-0">
+
+                    <section title>
+                      <h3>Page Title</h3>
+                      <h5>Page Subtitle</h5>
+                    </section>
+
+                    <div class="lyt-page-by">
+                      <div></div><div></div><div></div><div></div>
+                    </div>
+
+                    <div class="lyt-body">
+
+                      <div class="lyt-report">
+                        <div class="addObjectIcon">
+                          <i class="material-icons md-36">add</i>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                </template>
+
+                <div class="view-layout" data-id="layout-0">
+
+                  <section title>
+                    <h3>Page Title</h3>
+                    <h5>Page Subtitle</h5>
+                  </section>
+
+                  <div class="lyt-page-by">
+                    <div></div><div></div><div></div><div></div>
+                  </div>
+
+                  <div class="lyt-body">
+
+                    <div class="lyt-report">
+                      <h5></h5>
+                      <div class="addObjectIcon">
+                        <i class="material-icons md-36">add</i>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+
+              </section>
+
+              <section class="page" data-step="3">
+
+                <!-- <template id="layout-0"> -->
+                  <div class="layout" id="layout-0">
+                    <section title>
+                      <h3>Page Title</h3>
+                      <h5>Page Subtitle</h5>
+                    </section>
+                    <section params>
+                      <div class="params column">
+                        <template id="params">
+                          <div class="cell-full md-field" data-param-id="" options='filters'>
+                            <input type="search" id="" value="" onclick="this.select()"/>
+                            <label for=""></label>
+                            <div class="elements" options="filters" col="">
+                              <ul class="filters" id=""></ul>
+                              <section>
+                                <button class="button dense raised">ok</button>
+                              </section>
+                            </div>
+
+                          </div>
+                        </template>
+
+                      </div>
+
+                    </section>
+
+                    <section body>
+                      <section table>
+                        <table id="table-01" header-fixed>
+                          <caption>caption table</caption>
+                          <thead>
+                            <tr></tr>
+                          </thead>
+
+                          <tbody></tbody>
+
+                          <tfoot>
+                            <tr><td>Total</td></tr>
+                            <tr>
+                              <td>
+                                <div class="cell-full md-field">
+                                  <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                  <label for="search">Ricerca</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="tr-right">
+                              <td>
+                                <div info>
+                                  <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                                </div>
+                              </td>
+
+                            </tr>
+                          </tfoot>
+
+                        </table>
+
+                      </section>
+                    </section>
+
+                  </div>
+                <!-- </template> -->
+
+                <template id="layout-1">
+
+                </template>
+
+                <template id="layout-2">
+
+                </template>
+
+                <template id="layout-3">
+
+                </template>
 
               </section>
             </div>
