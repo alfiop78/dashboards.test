@@ -839,6 +839,7 @@ var App = new Application();
   };
 
   app.showFilters = function(e) {
+    // BUG: spostato nella Classe Draw
     // verifico prima se ci sono altre dropdown aperte, le chiudo.
     document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
       elementsShow.removeAttribute('show');

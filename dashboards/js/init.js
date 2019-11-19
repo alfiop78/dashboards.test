@@ -199,17 +199,15 @@ var App = new Application();
     // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
     app.Draw.draw();
 
-    document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
-      el.oninput = app.handlerInput;
-      el.onclick = app.showFilters;
-      el.onblur = function(e) {
-        // console.log(e);
-        this.removeAttribute('placeholder');
-      };
-      let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
-
+    document.querySelectorAll('section[params] input[type="search"]:not([id="search"])').forEach((el) => {
+      el.oninput = app.Draw.handlerInput.bind(app.Draw);
+      el.onclick = app.Draw.showFilters.bind(el);
+      el.onblur = function(e) {this.removeAttribute('placeholder');};
+      // let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
       el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
-      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
+      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.Draw.handlerSelectMulti.bind(liElement);});
+      // cerco il tasto OK per legare l'evento click
+      el.parentElement.querySelector('section > button').onclick = app.Draw.handlerMultiBtn.bind(app.Draw);
     });
   };
 

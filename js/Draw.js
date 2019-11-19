@@ -83,6 +83,69 @@ class Draw {
     this.paramsParent.appendChild(this.params);
   }
 
+  showFilters(e) {
+    // verifico prima se ci sono altre dropdown aperte, le chiudo.
+    document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
+      elementsShow.removeAttribute('show');
+    });
+    // apro la dropdown
+    e.path[1].querySelector('div.elements').toggleAttribute('show');
+    this.setAttribute('placeholder', 'Search...');
+  }
+
+  handlerSelectMulti(e) {
+    this.parentElement.toggleAttribute('selected');
+  }
+
+  handlerMultiBtn(e) {
+    // this passato come bind(Draw)
+    // console.log(this);
+    // console.log(e.path);
+    // console.log(e.path[2]);
+    let parentElement = e.path[3]; // md-field
+    let elements = parentElement.querySelector('.elements[show]');
+    let input = parentElement.querySelector('input');
+    let label = parentElement.querySelector('label');
+    let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
+    if (liSelected.length > 0) {
+      parentElement.setAttribute('activated', true);
+      input.setAttribute('activated', true);
+      label.classList.add('has-content');
+      input.value = "[MULTISELECT]";
+    } else {
+      label.classList.remove('has-content');
+    }
+    this.search();
+    elements.removeAttribute('show');
+  }
+
+  handlerInput(e) {
+    // this = Draw
+    console.log(e.target);
+    console.log(this);
+    let parentElement = e.path[1];
+    let label = parentElement.querySelector('label');
+    if (e.target.value.length > 0) {
+      parentElement.setAttribute('activated', true);
+      e.target.setAttribute('activated', true);
+      label.classList.add('has-content');
+    } else {
+      e.target.removeAttribute('activated');
+      parentElement.removeAttribute('activated');
+      label.classList.remove('has-content');
+      this.search();
+    }
+
+    // mentre digito filtro l'elenco degli elementi <li>
+    let liElement = parentElement.querySelectorAll('ul > .elementContent li');
+    liElement.forEach((el) => {
+      let label = el.getAttribute('label');
+      // imposto hidden su elementContent e non su li
+      let elementContent = el.parentElement.parentElement;
+      (label.indexOf(e.target.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
+    });
+  }
+
   createDatalist() {
     // console.log(this.table.cols.length);
     // creo le option nella datalist in base a quello che 'vedo' nella table
