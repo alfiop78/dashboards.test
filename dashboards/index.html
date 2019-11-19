@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/images/favicon.png" type="image/png" />
+    <meta name="theme-color" content="#70b1bb">
+    <meta name="author" content="Pietrantuono Alfio">
+    <link rel="stylesheet" type="text/css" href="/css/md-layout.css" />
+    <link rel="stylesheet" type="text/css" href="/css/material-icons.css" />
+    <link rel="stylesheet" type="text/css" href="/css/md-loader.css" />
+    <link rel="stylesheet" type="text/css" href="/css/md-controls.css" />
+    <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
+    <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/js/Application.js"></script>
+    <script src="/js/Cube.js"></script>
+    <script src="/js/Draw.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>Layout Page</title>
+  </head>
+  <body>
+
+    <main>
+      <div id="drawer">
+
+        <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
+
+        <nav>
+          <a href="#" title="Il mio Profilo" onclick="App.menuOpen('profile/')"><i class="material-icons md-18">person</i><span>elem 1</span></a>
+
+          <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a>
+
+          <!-- <a href="" title="Logout"><i class="material-icons md-18">power_settings_new</i><span>Logout</span></a> -->
+
+        </nav>
+
+      </div>
+
+      <header>
+        <div class="nav-button"> <!-- codelab-nav-button-->
+          <a href="/" id="arrow-back"><i class="material-icons md-light">close</i></a>
+          <a href="#" id="menu" onclick="App.menu()"><i class="material-icons md-light">menu</i></a>
+
+        </div>
+
+        <h1 class="title"></h1>
+      </header>
+
+      <div id="container">
+
+        <div id="content">
+          <div id="body" hidden>
+
+            <!-- Creazione gerarchie -->
+            <div id="pages" data-step="1">
+
+              <section class="page" selected data-step="1">
+                <section title>
+                  <h3>Layout pagina</h3>
+                  <h5>Scelta del layout della pagina</h5>
+                </section>
+
+                <div class="grid-2-2">
+
+                  <div class="pageLayout">Layout 1 (report)
+
+                    <div class="preview-layout" data-id="layout-0"> <!-- TODO:  queste saranno pagine html -->
+
+                      <section title>
+                        <h3>Page Title</h3>
+                        <h5>Page Subtitle</h5>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-report">
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                  </div>
+                  <div class="pageLayout">
+                    Layout 2 (report & chart)
+                    <div class="preview-layout" data-id="layout-1">
+
+                      <section title>
+                        <h3>Page Title</h3>
+                        <h5>Page Subtitle</h5>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-report">
+
+                        </div>
+
+                        <div class="lyt-chart">
+
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="pageLayout">
+                    Layout 3
+                    <div class="preview-layout" data-id="layout-2">
+
+                      <section title>
+                        <h3>Page Title</h3>
+                        <h5>Page Subtitle</h5>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-mini-report"></div>
+
+                        <div class="lyt-mini-chart"></div>
+
+                        <div class="lyt-mini-report"></div>
+
+                        <div class="lyt-mini-chart"></div>
+
+
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="pageLayout">
+                    Layout 4
+                    <div class="preview-layout" data-id="layout-3">
+
+                      <section title>
+                        <h3>Page Title</h3>
+                        <h5>Page Subtitle</h5>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-report"></div>
+
+                        <section right-side>
+                          <div class="lyt-mini-chart"></div>
+
+                          <div class="lyt-mini-chart"></div>
+                        </section>
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="page" data-step="2">
+                <h2>Tabella FACT</h2>
+
+              </section>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="controls">
+          <div id="fabs">
+            <!-- <a href="#" id="previous-step" title="Previous step">logout</a> -->
+            <button id="mdc-back" class="button dense raised">back</button>
+            <div class="spacer"></div>
+            <button id="mdc-next" class="button dense raised">next</button>
+            <!-- <button id="mdc-next" class="button dense raised" disabled>next</button> -->
+          </div>
+        </div>
+
+        <div id="console">
+          <div id="fabsConsole">
+            <i class="material-icons md-18">info</i>
+            <p></p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <div class="loader">
+      <svg viewBox="0 0 32 32" width="32" height="32">
+        <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>
+      </svg>
+    </div>
+
+    <script type="text/javascript" src="js/init.js" async></script>
+  </body>
+</html>
