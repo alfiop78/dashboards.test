@@ -123,8 +123,8 @@ class Draw {
 
   handlerInput(e) {
     // this = Draw
-    console.log(e.target);
-    console.log(this);
+    // console.log(e.target);
+    // console.log(this);
     let parentElement = e.path[1];
     let label = parentElement.querySelector('label');
     if (e.target.value.length > 0) {
@@ -149,9 +149,9 @@ class Draw {
   }
 
   handlerSelect(e) {
-    console.log(this);
-    // this = Draw
-    console.log('handlerSelect');
+    // console.log(this);
+    // // this = Draw
+    // console.log('handlerSelect');
 
     let parent = e.path[5]; // md-field
     let liElement = e.path[1].querySelector('li');

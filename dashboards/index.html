@@ -85,7 +85,7 @@
 
                   <div class="pageLayout">Layout 1 (report)
 
-                    <div class="preview-layout" data-id="layout-0"> <!-- TODO:  queste saranno pagine html -->
+                    <div class="preview-layout" data-preview-layout-id="0"> <!-- TODO:  queste saranno pagine html -->
 
                       <section title>
                         <h3>Page Title</h3>
@@ -110,7 +110,7 @@
                   </div>
                   <div class="pageLayout">
                     Layout 2 (report & chart)
-                    <div class="preview-layout" data-id="layout-1">
+                    <div class="preview-layout" data-preview-layout-id="1">
 
                       <section title>
                         <h3>Page Title</h3>
@@ -137,7 +137,7 @@
                   </div>
                   <div class="pageLayout">
                     Layout 3
-                    <div class="preview-layout" data-id="layout-2">
+                    <div class="preview-layout" data-preview-layout-id="2">
 
                       <section title>
                         <h3>Page Title</h3>
@@ -173,7 +173,7 @@
                   </div>
                   <div class="pageLayout">
                     Layout 4
-                    <div class="preview-layout" data-id="layout-3">
+                    <div class="preview-layout" data-preview-layout-id="3">
 
                       <section title>
                         <h3>Page Title</h3>
@@ -208,72 +208,10 @@
               </section>
 
               <section class="page" data-step="2">
-                <!--
-                  <div class="layout" lyt-col="1" lyt-row="1">
-                    <section title>
-                      <h3>Page Title</h3>
-                      <h5>Page Subtitle</h5>
-                    </section>
-                    <section params>
-                      <div class="params column">
-                        <template id="params">
-                          <div class="cell-full md-field" data-param-id="" options='filters'>
-                            <input type="search" id="" value="" onclick="this.select()"/>
-                            <label for=""></label>
-                            <div class="elements" options="filters" col="">
-                              <ul class="filters" id=""></ul>
-                              <section>
-                                <button class="button dense raised">ok</button>
-                              </section>
-                            </div>
 
-                          </div>
-                        </template>
+                <template id="view-layout-0" data-view-layout-id="0">
 
-                      </div>
-
-                    </section>
-                    <section body>
-                      <section table>
-                        <table id="table-01" header-fixed>
-                          <caption>caption table</caption>
-                          <thead>
-                            <tr></tr>
-                          </thead>
-
-                          <tbody></tbody>
-
-                          <tfoot>
-                            <tr><td>Total</td></tr>
-                            <tr>
-                              <td>
-                                <div class="cell-full md-field">
-                                  <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
-                                  <label for="search">Ricerca</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr class="tr-right">
-                              <td>
-                                <div info>
-                                  <span>Elementi presenti</span>&nbsp;<span row-number></span>
-                                </div>
-                              </td>
-
-                            </tr>
-                          </tfoot>
-
-                        </table>
-
-                      </section>
-                    </section>
-
-                  </div>
-              -->
-
-                <template id="layout-0">
-
-                  <div class="preview-layout" data-id="layout-0">
+                  <div class="view-layout" data-view-layout-id="0">
 
                     <section title>
                       <h3>Page Title</h3>
@@ -287,6 +225,7 @@
                     <div class="lyt-body">
 
                       <div class="lyt-report">
+                        <h5></h5>
                         <div class="addObjectIcon">
                           <i class="material-icons md-36">add</i>
                         </div>
@@ -296,10 +235,9 @@
 
                   </div>
 
-
                 </template>
 
-                <div class="view-layout" data-id="layout-0">
+                <!-- <div class="view-layout" data-id="layout-0">
 
                   <section title>
                     <h3>Page Title</h3>
@@ -321,7 +259,7 @@
 
                   </div>
 
-                </div>
+                </div> -->
 
 
 
@@ -329,7 +267,7 @@
 
               <section class="page" data-step="3">
 
-                <!-- <template id="layout-0"> -->
+                <template id="layout-0">
                   <div class="layout" id="layout-0">
                     <section title>
                       <h3>Page Title</h3>
@@ -391,7 +329,7 @@
                     </section>
 
                   </div>
-                <!-- </template> -->
+                </template>
 
                 <template id="layout-1">
 

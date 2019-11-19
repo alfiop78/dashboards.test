@@ -12,7 +12,7 @@ var App = new Application();
     report_id : 0,
     reports : new Object(),
     dialog : document.getElementsByTagName('dialog')[0],
-    activeSection : null // indica la sezione dove si è cliccato per l'inserimento di un oggetto
+    activeSection : null // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
 
   };
 
@@ -63,7 +63,6 @@ var App = new Application();
     */
     console.log(this);
     app.activeSection = e.path[2];
-
     app.dialog.showModal();
   };
 
@@ -104,7 +103,6 @@ var App = new Application();
     request.send(params);
   };
 
-
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento
     let selectedPage = document.querySelector('.page[selected]');
@@ -138,8 +136,19 @@ var App = new Application();
   };
 
   app.handlerPreviewLayoutSelected = function(e) {
+    /* Layout selezionato (1 pagina) */
     console.log(e.target);
     console.log(this);
+    let layoutId = +this.getAttribute("data-preview-layout-id");
+    console.log(layoutId);
+    // TODO: visualizzo (dal template), nel secondo step, il layout che è stato scelto in modalità "edit" per poter definire la posizione di ogni report/chart/indicator/ecc...
+    let tmplViewLayout = document.getElementById('view-'+layoutId);
+    console.log(tmplViewLayout);
+    let viewLayoutContent = tmplViewLayout.content.cloneNode(true);
+    let viewLayout = viewLayoutContent.querySelector("div.view-layout[data-id='"+layoutId+"']");
+    document.querySelector(".page[data-step='2']").appendChild(viewLayout);
+
+
   };
 
   // event click supreview-layout
@@ -172,7 +181,7 @@ var App = new Application();
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
     app.Draw = new Draw(table, options);
-    console.log(app.Draw);
+    // console.log(app.Draw);
     // Opzione 1 - aggiungo tutte le colonne della query
     Object.keys(response[0]).forEach((el, i) => {
       // console.log('col:'+el);
@@ -196,7 +205,7 @@ var App = new Application();
     }
 
     app.Draw.createDatalist();
-    // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
+    // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
     app.Draw.draw();
 
   };
