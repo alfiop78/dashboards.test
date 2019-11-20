@@ -392,7 +392,7 @@ var App = new Application();
 
     // console.log(app.Cube.cube);
 
-    window.localStorage[app.Cube.dimensionTitle] = JSON.stringify(app.Cube.dimension)
+    window.localStorage[app.Cube.dimensionTitle] = JSON.stringify(app.Cube.dimension);
 
     app.cloneLastTable();
   };

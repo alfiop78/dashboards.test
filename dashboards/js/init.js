@@ -12,7 +12,8 @@ var App = new Application();
     report_id : 0,
     reports : new Object(),
     dialog : document.getElementsByTagName('dialog')[0],
-    activeSection : null // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
+    activeSection : null, // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
+    layoutId : null
 
   };
 
@@ -76,31 +77,34 @@ var App = new Application();
       reportId = +datamart.getAttribute('associated-datamart-id');
     });
     console.log(reportId);
+    // TODO: apro la pagina con il layout definito e carico il datamart in quella pagina
+
+    location.href = "../layouts/layout_0.html?reportId="+reportId;
 
 
-    var url = "ajax/reports.php";
-    let params = "reportId="+reportId;
-    // console.log(params);
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          console.table(response);
-          app.createReport(response);
-
-        } else {
-
-        }
-      } else {
-
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
+    // var url = "ajax/reports.php";
+    // let params = "reportId="+reportId;
+    // // console.log(params);
+    // var request = new XMLHttpRequest();
+    // request.onreadystatechange = function() {
+    //   if (request.readyState === XMLHttpRequest.DONE) {
+    //     if (request.status === 200) {
+    //       var response = JSON.parse(request.response);
+    //       console.table(response);
+    //       app.createReport(response);
+    //
+    //     } else {
+    //
+    //     }
+    //   } else {
+    //
+    //   }
+    // };
+    //
+    // request.open('POST', url);
+    // // request.setRequestHeader('Content-Type','application/json');
+    // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    // request.send(params);
   };
 
   document.getElementById('mdc-next').onclick = function(e) {
@@ -115,13 +119,66 @@ var App = new Application();
     // app.getData();
     // event su addObjectIcon nelle preview del dashboard
     document.querySelectorAll('.page[selected] .addObjectIcon > i').forEach((btnAdd) => {btnAdd.onclick = app.handlerAddObject;});
+    // verifico in quale step sono per svolegere alcune operazioni in un particolare step
+    app.checkStep();
 
-    if (+page.getAttribute('data-step') === 3 && page.hasAttribute('selected')) {
-      console.log('getDatamart');
-      // mi sto spostando sulla pagina dell'anteprima dashboard, recupero i datamart per questa pagina
-      app.getDatamart();
+  };
+
+  document.getElementById('mdc-create-page').onclick = function(e) {
+    /*
+    1 - Memorizzo in localStorage un id per la pagina con all'interno i reports in essa contenuti
+    */
+    let o = {};
+    let pageTitle = document.getElementById('pageTitle').value;
+    o.pageId = "10";
+    let reportId;
+    document.querySelectorAll('div[associated-datamart]').forEach((datamart) => {
+      console.log(datamart);
+      // TODO: implementare un'object json con la lista dei datamart da recuperare
+      // ... utilizzo un solo reportId per Test
+      reportId = +datamart.getAttribute('associated-datamart-id');
+    });
+    console.log(reportId);
+    o.reportsId = reportId;
+
+    window.localStorage[pageTitle] = JSON.stringify(o);
+
+  };
+
+  app.checkStep = function() {
+    let page = document.querySelector('.page[selected]');
+    let stepActive = +page.getAttribute('data-step');
+
+    switch (stepActive) {
+      case 2:
+        // nascondo mdc-next e visualizzo mdc-create-page disabilitato
+        document.getElementById('mdc-next').hidden = true;
+        document.getElementById('mdc-create-page').hidden = false;
+        // event su pageTitle e pageSubtitle
+        document.getElementById('pageTitle').oninput = function(e) {
+          if (this.value.length > 0) {
+            this.parentElement.querySelector('label').classList.add('has-content');
+            document.getElementById('mdc-create-page').disabled = false;
+          } else {
+            this.parentElement.querySelector('label').classList.remove('has-content');
+            document.getElementById('mdc-create-page').disabled = true;
+          }
+        };
+        document.getElementById('pageSubtitle').oninput = function(e) {
+          (this.value.length > 0) ?
+            this.parentElement.querySelector('label').classList.add('has-content') :
+            this.parentElement.querySelector('label').classList.remove('has-content');
+        };
+        break;
+      default:
+
     }
-
+    //
+    // if (+page.getAttribute('data-step') === 3 && page.hasAttribute('selected')) {
+    //   console.log('getDatamart');
+    //   // mi sto spostando sulla pagina dell'anteprima dashboard, recupero i datamart per questa pagina
+    //   app.getDatamart();
+    // }
   };
 
   document.getElementById('mdc-back').onclick = function(e) {
@@ -139,16 +196,20 @@ var App = new Application();
     /* Layout selezionato (1 pagina) */
     console.log(e.target);
     console.log(this);
-    let layoutId = +this.getAttribute("data-preview-layout-id");
-    console.log(layoutId);
+    app.layoutId = +this.getAttribute("data-preview-layout-id");
+    console.log(app.layoutId);
     // TODO: visualizzo (dal template), nel secondo step, il layout che è stato scelto in modalità "edit" per poter definire la posizione di ogni report/chart/indicator/ecc...
-    let tmplViewLayout = document.getElementById('view-'+layoutId);
+    let tmplViewLayout = document.getElementById('view-layout-'+app.layoutId);
     console.log(tmplViewLayout);
     let viewLayoutContent = tmplViewLayout.content.cloneNode(true);
-    let viewLayout = viewLayoutContent.querySelector("div.view-layout[data-id='"+layoutId+"']");
+    let viewLayout = viewLayoutContent.querySelector("div.view-layout[data-view-layout-id='"+app.layoutId+"']");
     document.querySelector(".page[data-step='2']").appendChild(viewLayout);
-
-
+    //
+    // // creo anche il layout dello step 3
+    // let tmplLayout = document.getElementById('layout-'+app.layoutId);
+    // let layoutContent = tmplLayout.content.cloneNode(true);
+    // let layout = layoutContent.querySelector("div.layout[data-layout-id='"+app.layoutId+"']");
+    // document.querySelector(".page[data-step='3']").appendChild(layout);
   };
 
   // event click supreview-layout

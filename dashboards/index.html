@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/layouts.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
     <!-- <script src="/js/Cube.js"></script> -->
@@ -78,14 +79,14 @@
               <section class="page" selected data-step="1">
                 <section title>
                   <h3>Layout pagina</h3>
-                  <h5>Scelta del layout della pagina</h5>
+                  <h5>Seleziona il Layout per la pagina da creare</h5>
                 </section>
 
                 <div class="grid-2-2">
 
                   <div class="pageLayout">Layout 1 (report)
 
-                    <div class="preview-layout" data-preview-layout-id="0"> <!-- TODO:  queste saranno pagine html -->
+                    <div class="preview-layout" data-preview-layout-id="0">
 
                       <section title>
                         <h3>Page Title</h3>
@@ -106,8 +107,8 @@
 
                     </div>
 
-
                   </div>
+
                   <div class="pageLayout">
                     Layout 2 (report & chart)
                     <div class="preview-layout" data-preview-layout-id="1">
@@ -135,6 +136,7 @@
 
                     </div>
                   </div>
+
                   <div class="pageLayout">
                     Layout 3
                     <div class="preview-layout" data-preview-layout-id="2">
@@ -171,6 +173,7 @@
 
                     </div>
                   </div>
+
                   <div class="pageLayout">
                     Layout 4
                     <div class="preview-layout" data-preview-layout-id="3">
@@ -204,6 +207,7 @@
 
                     </div>
                   </div>
+
                 </div>
               </section>
 
@@ -214,8 +218,14 @@
                   <div class="view-layout" data-view-layout-id="0">
 
                     <section title>
-                      <h3>Page Title</h3>
-                      <h5>Page Subtitle</h5>
+                      <div class="md-field">
+                        <input type="text" id="pageTitle" value=""/>
+                        <label for="pageTitle" class="pageSubtitle">Titolo pagina</label>
+                      </div>
+                      <div class="md-field">
+                        <input type="text" id="pageSubtitle" value=""/>
+                        <label for="pageSubtitle" class="">Descrizione</label>
+                      </div>
                     </section>
 
                     <div class="lyt-page-by">
@@ -237,38 +247,54 @@
 
                 </template>
 
-                <!-- <div class="view-layout" data-id="layout-0">
+                <template id="view-layout-1" data-view-layout-id="1">
 
-                  <section title>
-                    <h3>Page Title</h3>
-                    <h5>Page Subtitle</h5>
-                  </section>
+                  <div class="view-layout" data-view-layout-id="1">
 
-                  <div class="lyt-page-by">
-                    <div></div><div></div><div></div><div></div>
-                  </div>
-
-                  <div class="lyt-body">
-
-                    <div class="lyt-report">
-                      <h5></h5>
-                      <div class="addObjectIcon">
-                        <i class="material-icons md-36">add</i>
+                    <section title>
+                      <div class="md-field">
+                        <input type="text" id="pageTitle" value=""/>
+                        <label for="pageTitle" class="pageSubtitle">Titolo pagina</label>
                       </div>
+                      <div class="md-field">
+                        <input type="text" id="pageSubtitle" value=""/>
+                        <label for="pageSubtitle" class="">Descrizione</label>
+                      </div>
+                    </section>
+
+                    <div class="lyt-page-by">
+                      <div></div><div></div><div></div><div></div>
+                    </div>
+
+                    <div class="lyt-body">
+
+                      <div class="lyt-report">
+                        <h5></h5>
+                        <div class="addObjectIcon">
+                          <i class="material-icons md-36">add</i>
+                        </div>
+                      </div>
+
+                      <div class="lyt-chart">
+                        <h5></h5>
+                        <div class="addObjectIcon">
+                          <i class="material-icons md-36">add</i>
+                        </div>
+                      </div>
+
                     </div>
 
                   </div>
 
-                </div> -->
-
-
+                </template>
 
               </section>
 
               <section class="page" data-step="3">
 
-                <template id="layout-0">
-                  <div class="layout" id="layout-0">
+                <template id="layout-0" data-layout-id="0">
+
+                  <div class="layout" data-layout-id="0">
                     <section title>
                       <h3>Page Title</h3>
                       <h5>Page Subtitle</h5>
@@ -331,15 +357,82 @@
                   </div>
                 </template>
 
-                <template id="layout-1">
+                <template id="layout-1" data-layout-id="1">
+
+                  <div class="layout" data-layout-id="1">
+                    <section title>
+                      <h3>Page Title</h3>
+                      <h5>Page Subtitle</h5>
+                    </section>
+                    <section params>
+                      <div class="params column">
+                        <template id="params">
+                          <div class="cell-full md-field" data-param-id="" options='filters'>
+                            <input type="search" id="" value="" onclick="this.select()"/>
+                            <label for=""></label>
+                            <div class="elements" options="filters" col="">
+                              <ul class="filters" id=""></ul>
+                              <section>
+                                <button class="button dense raised">ok</button>
+                              </section>
+                            </div>
+
+                          </div>
+                        </template>
+
+                      </div>
+
+                    </section>
+
+                    <section body>
+
+                      <section table>
+                        <table id="table-01" header-fixed>
+                          <caption>caption table</caption>
+                          <thead>
+                            <tr></tr>
+                          </thead>
+
+                          <tbody></tbody>
+
+                          <tfoot>
+                            <tr><td>Total</td></tr>
+                            <tr>
+                              <td>
+                                <div class="cell-full md-field">
+                                  <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                  <label for="search">Ricerca</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="tr-right">
+                              <td>
+                                <div info>
+                                  <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                                </div>
+                              </td>
+
+                            </tr>
+                          </tfoot>
+
+                        </table>
+
+                      </section>
+
+                      <section chart>
+                        chart
+                      </section>
+
+                    </section>
+
+                  </div>
+                </template>
+
+                <template id="layout-2" data-layout-id="2">
 
                 </template>
 
-                <template id="layout-2">
-
-                </template>
-
-                <template id="layout-3">
+                <template id="layout-3" data-layout-id="2">
 
                 </template>
 
@@ -356,7 +449,7 @@
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
             <button id="mdc-next" class="button dense raised">next</button>
-            <!-- <button id="mdc-next" class="button dense raised" disabled>next</button> -->
+            <button id="mdc-create-page" class="button dense raised" disabled hidden>crea pagina</button>
           </div>
         </div>
 
