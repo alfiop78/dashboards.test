@@ -399,7 +399,7 @@ var App = new Application();
 
   document.getElementById('test').onclick = function(e) {
     // test per la creazione del datamart, prendendo un Cubo in localStorage
-    let data = window.localStorage.getItem('KPI Sedi GLM');
+    let data = window.localStorage.getItem('kpi agnorelli per sede');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;

@@ -36,7 +36,7 @@ var App = new Application();
       let cube = JSON.parse(window.localStorage.getItem(report));
       let li = document.createElement('li');
       console.log(cube.type);
-      // BUG: type="CUBE"
+      // TODO: type="CUBE"
       if (cube.type) {
         li.id = cube.report_id;
         li.innerHTML = report;
@@ -113,19 +113,23 @@ var App = new Application();
     1 - Memorizzo in localStorage un id per la pagina con all'interno i reports in essa contenuti
     */
     let pageTitle = document.getElementById('pageTitle').value;
-    app.pageParams.pageId = "10";
+    let pageId;
+    // TODO: verifico quante pagina ci sono in localStorage ed assegno l'id successivo a quest a pagina
+    // console.log(window.localStorage);
+    // recupero i nomi degli oggetti contenuto nello storage
+    let objStorage = Object.keys(window.localStorage);
+    objStorage.forEach((item) => {
+      // verifico, per ogni oggetto se è presente il type : "PAGE"
+      // console.log(item);
+      // ottengo un JSON dallo storage
+      let storageItem = JSON.parse(window.localStorage.getItem(item));
+      // console.log(storageItem.type);
+      if (storageItem.page) {pageId = storageItem.pageId+1;}
+    });
+
+    app.pageParams.pageId = pageId;
     app.pageParams.layoutId = app.layoutId;
     app.pageParams.type = "PAGE";
-    // let reportId;
-    // document.querySelectorAll('div[associated-datamart]').forEach((datamart) => {
-    //   console.log(datamart);
-    //   // TODO: implementare un'object json con la lista dei datamart da recuperare
-    //   // ... utilizzo un solo reportId per Test
-    //   reportId = +datamart.getAttribute('associated-datamart-id');
-    // });
-    // console.log(reportId);
-    // app.pageParams.reportsId = reportId;
-
     window.localStorage[pageTitle] = JSON.stringify(app.pageParams);
     // apro la pagina del dashboard finale
     window.location.href = "../pages/";
@@ -193,7 +197,7 @@ var App = new Application();
     document.querySelector(".page[data-step='2']").appendChild(viewLayout);
   };
 
-  // event click supreview-layout
+  // event click su preview-layout
   document.querySelectorAll('.preview-layout').forEach((layout) => {layout.onclick = app.handlerPreviewLayoutSelected;});
 
   app.getDatamarts();
