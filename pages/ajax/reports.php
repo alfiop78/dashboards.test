@@ -7,9 +7,7 @@ require_once 'queries.php';
 setlocale (LC_TIME, "it_IT");
 
 $q = new Queries();
-
-// $reportId = filter_input(REQ, 'reportId');
-$reportId = filter_input(INPUT_REQUEST, 'reportId');
+$reportId = filter_input(INPUT_POST, 'reportId');
 $result = $q->getDatamartData($reportId);
 
 ob_clean();

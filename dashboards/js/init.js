@@ -13,7 +13,8 @@ var App = new Application();
     reports : new Object(),
     dialog : document.getElementsByTagName('dialog')[0],
     activeSection : null, // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
-    layoutId : null
+    layoutId : null,
+    pageParams : new Object()
 
   };
 
@@ -35,6 +36,7 @@ var App = new Application();
       let cube = JSON.parse(window.localStorage.getItem(report));
       let li = document.createElement('li');
       console.log(cube.type);
+      // BUG: type="CUBE"
       if (cube.type) {
         li.id = cube.report_id;
         li.innerHTML = report;
@@ -46,15 +48,21 @@ var App = new Application();
           app.activeSection.querySelector('h5').innerText = li.innerHTML;
           app.dialog.close();
           // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
-          app.activeSection.setAttribute('associated-datamart', li.innerText);
+          // app.activeSection.setAttribute('associated-datamart', li.innerText);
           app.activeSection.setAttribute('associated-datamart-id', li.id);
+
+          // definisco le data-section per ogni oggetto inserito nella pagina
+          // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
+          // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
+          let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'reportId' : +li.id}];
+          let report_section_association = arrSections;
+          app.pageParams.layoutParams = report_section_association;
         };
       }
 
 
     });
 
-    // data = window.localStorage.getItem('cube');
 
   };
 
@@ -70,7 +78,7 @@ var App = new Application();
   app.getDatamart = function() {
     /* Lista dei reportId (FXn) da recuperare*/
     let reportId;
-    document.querySelectorAll('div[associated-datamart]').forEach((datamart) => {
+    document.querySelectorAll('div[associated-datamart-id]').forEach((datamart) => {
       console.log(datamart);
       // TODO: implementare un'object json con la lista dei datamart da recuperare
       // ... utilizzo un solo reportId per Test
@@ -81,30 +89,6 @@ var App = new Application();
 
     location.href = "../layouts/layout_0.html?reportId="+reportId;
 
-
-    // var url = "ajax/reports.php";
-    // let params = "reportId="+reportId;
-    // // console.log(params);
-    // var request = new XMLHttpRequest();
-    // request.onreadystatechange = function() {
-    //   if (request.readyState === XMLHttpRequest.DONE) {
-    //     if (request.status === 200) {
-    //       var response = JSON.parse(request.response);
-    //       console.table(response);
-    //       app.createReport(response);
-    //
-    //     } else {
-    //
-    //     }
-    //   } else {
-    //
-    //   }
-    // };
-    //
-    // request.open('POST', url);
-    // // request.setRequestHeader('Content-Type','application/json');
-    // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    // request.send(params);
   };
 
   document.getElementById('mdc-next').onclick = function(e) {
@@ -128,20 +112,23 @@ var App = new Application();
     /*
     1 - Memorizzo in localStorage un id per la pagina con all'interno i reports in essa contenuti
     */
-    let o = {};
     let pageTitle = document.getElementById('pageTitle').value;
-    o.pageId = "10";
-    let reportId;
-    document.querySelectorAll('div[associated-datamart]').forEach((datamart) => {
-      console.log(datamart);
-      // TODO: implementare un'object json con la lista dei datamart da recuperare
-      // ... utilizzo un solo reportId per Test
-      reportId = +datamart.getAttribute('associated-datamart-id');
-    });
-    console.log(reportId);
-    o.reportsId = reportId;
+    app.pageParams.pageId = "10";
+    app.pageParams.layoutId = app.layoutId;
+    app.pageParams.type = "PAGE";
+    // let reportId;
+    // document.querySelectorAll('div[associated-datamart]').forEach((datamart) => {
+    //   console.log(datamart);
+    //   // TODO: implementare un'object json con la lista dei datamart da recuperare
+    //   // ... utilizzo un solo reportId per Test
+    //   reportId = +datamart.getAttribute('associated-datamart-id');
+    // });
+    // console.log(reportId);
+    // app.pageParams.reportsId = reportId;
 
-    window.localStorage[pageTitle] = JSON.stringify(o);
+    window.localStorage[pageTitle] = JSON.stringify(app.pageParams);
+    // apro la pagina del dashboard finale
+    window.location.href = "../pages/";
 
   };
 
@@ -204,12 +191,6 @@ var App = new Application();
     let viewLayoutContent = tmplViewLayout.content.cloneNode(true);
     let viewLayout = viewLayoutContent.querySelector("div.view-layout[data-view-layout-id='"+app.layoutId+"']");
     document.querySelector(".page[data-step='2']").appendChild(viewLayout);
-    //
-    // // creo anche il layout dello step 3
-    // let tmplLayout = document.getElementById('layout-'+app.layoutId);
-    // let layoutContent = tmplLayout.content.cloneNode(true);
-    // let layout = layoutContent.querySelector("div.layout[data-layout-id='"+app.layoutId+"']");
-    // document.querySelector(".page[data-step='3']").appendChild(layout);
   };
 
   // event click supreview-layout

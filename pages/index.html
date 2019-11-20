@@ -11,7 +11,8 @@
     <link rel="stylesheet" type="text/css" href="/css/md-controls.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/layouts.css" />
+    <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
     <script src="/js/Application.js"></script>
     <script src="/js/Draw.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
@@ -25,9 +26,13 @@
         <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
 
         <nav>
+          <template id="menuElement">
+            <a href="#" title=""><i class="material-icons md-18">info</i><span></span></a>
+          </template>
+          <!--
           <a href="#" title="Il mio Profilo" onclick="App.menuOpen('profile/')"><i class="material-icons md-18">person</i><span>elem 1</span></a>
 
-          <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a>
+          <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a> -->
 
           <!-- <a href="" title="Logout"><i class="material-icons md-18">power_settings_new</i><span>Logout</span></a> -->
 
@@ -56,6 +61,10 @@
         <div id="content">
 
           <div id="body" hidden>
+
+            <ul id="pages">
+
+            </ul>
 
             <template id="layout-0" data-layout-id="0">
 
@@ -155,6 +164,6 @@
       </svg>
     </div>
 
-    <script type="text/javascript" src="/js/init.js" async></script>
+    <script type="text/javascript" src="js/init.js" async></script>
   </body>
 </html>
