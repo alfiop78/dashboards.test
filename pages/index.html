@@ -27,14 +27,8 @@
 
         <nav>
           <template id="menuElement">
-            <a href="#" title=""><i class="material-icons md-18">info</i><span></span></a>
+            <a href="" title=""><i class="material-icons md-18">view_list</i><span></span></a>
           </template>
-          <!--
-          <a href="#" title="Il mio Profilo" onclick="App.menuOpen('profile/')"><i class="material-icons md-18">person</i><span>elem 1</span></a>
-
-          <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a> -->
-
-          <!-- <a href="" title="Logout"><i class="material-icons md-18">power_settings_new</i><span>Logout</span></a> -->
 
         </nav>
 
@@ -62,75 +56,82 @@
 
           <div id="body" hidden>
 
-            <ul id="pages">
+            <div class="page" id="page">
 
-            </ul>
+              <!-- <div class="list">
 
-            <template id="layout-0" data-layout-id="0">
+                <ul id="pages">
 
-              <div class="layout" data-layout-id="0">
-                <section title>
-                  <h3>Page Title</h3>
-                  <h5>Page Subtitle</h5>
-                </section>
-                <section params>
-                  <div class="params column">
-                    <template id="params">
-                      <div class="cell-full md-field" data-param-id="" options='filters'>
-                        <input type="search" id="" value="" onclick="this.select()"/>
-                        <label for=""></label>
-                        <div class="elements" options="filters" col="">
-                          <ul class="filters" id=""></ul>
-                          <section>
-                            <button class="button dense raised">ok</button>
-                          </section>
+                </ul>
+
+              </div> -->
+
+
+              <template id="layout-0" data-layout-id="0">
+
+                <div class="layout" data-layout-id="0">
+                  <section title>
+                    <h3>Page Title</h3>
+                    <h5>Page Subtitle</h5>
+                  </section>
+                  <section params>
+                    <div class="params column">
+                      <template id="params">
+                        <div class="cell-full md-field" data-param-id="" options='filters'>
+                          <input type="search" id="" value="" onclick="this.select()"/>
+                          <label for=""></label>
+                          <div class="elements" options="filters" col="">
+                            <ul class="filters" id=""></ul>
+                            <section>
+                              <button class="button dense raised">ok</button>
+                            </section>
+                          </div>
+
                         </div>
+                      </template>
 
-                      </div>
-                    </template>
-
-                  </div>
-
-                </section>
-
-                <section body>
-                  <section table>
-                    <table id="table-01" header-fixed>
-                      <caption>caption table</caption>
-                      <thead>
-                        <tr></tr>
-                      </thead>
-
-                      <tbody></tbody>
-
-                      <tfoot>
-                        <tr><td>Total</td></tr>
-                        <tr>
-                          <td>
-                            <div class="cell-full md-field">
-                              <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
-                              <label for="search">Ricerca</label>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr class="tr-right">
-                          <td>
-                            <div info>
-                              <span>Elementi presenti</span>&nbsp;<span row-number></span>
-                            </div>
-                          </td>
-
-                        </tr>
-                      </tfoot>
-
-                    </table>
+                    </div>
 
                   </section>
-                </section>
 
-              </div>
-            </template>
+                  <section body>
+                    <section table>
+                      <table id="table-01" header-fixed>
+                        <caption>caption table</caption>
+                        <thead>
+                          <tr></tr>
+                        </thead>
 
+                        <tbody></tbody>
+
+                        <tfoot>
+                          <tr><td>Total</td></tr>
+                          <tr>
+                            <td>
+                              <div class="cell-full md-field">
+                                <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                <label for="search">Ricerca</label>
+                              </div>
+                            </td>
+                          </tr>
+                          <tr class="tr-right">
+                            <td>
+                              <div info>
+                                <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                              </div>
+                            </td>
+
+                          </tr>
+                        </tfoot>
+
+                      </table>
+
+                    </section>
+                  </section>
+
+                </div>
+              </template>
+            </div>
 
           </div>
 

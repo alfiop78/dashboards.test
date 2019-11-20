@@ -8,18 +8,23 @@ var App = new Application();
 (() => {
   var app = {
     Draw : null,
-    pageParams : Object.keys(window.localStorage)
+    pageParams : Object.keys(window.localStorage),
+    pageSelectedTitle : null
   };
   // console.log(app.pageParams);
 
   app.handlerPageSelect = function(e) {
+    e.preventDefault();
+    let layout = app.loadLayoutTemplate(this.getAttribute('data-layout-id'));
+    layout.querySelector('h3').innerText = this.querySelector('span').innerText;
+    app.pageSelectedTitle = this.querySelector('span').innerText;
+
     var url = "ajax/reports.php";
-    console.log(this.getAttribute('data-layout-reportid-id'));
     let reportId = this.getAttribute('data-layout-reportid-id');
     let params = "reportId="+reportId;
     // visualizzo il template relativo al layout selezionato
     console.log(this);
-    app.loadLayoutTemplate(this.getAttribute('data-layout-id'));
+
     // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -50,6 +55,7 @@ var App = new Application();
     let storageObject = JSON.parse(window.localStorage.getItem(item));
     // console.log(storageObject.type);
     if (storageObject.type === "PAGE") {
+      /* inserimento pages nel drawer */
       let tmplMenuElement = document.getElementById('menuElement');
       let menuElement = tmplMenuElement.content.cloneNode(true);
       let element = menuElement.querySelector('a');
@@ -69,9 +75,9 @@ var App = new Application();
       nav.appendChild(element);
       element.onclick = app.handlerPageSelect;
 
+      /* inserimento pages nel drawer */
 
-
-
+      /* inserimento al fianco del layout */
       // let li = document.createElement('li');
       // li.innerText = item;
       // li.id = storageObject.pageId;
@@ -87,6 +93,7 @@ var App = new Application();
       //
       // ulPages.appendChild(li);
       // li.onclick = app.handlerPageSelect;
+      /* inserimento al fianco del layout */
     }
 
   });
@@ -97,7 +104,9 @@ var App = new Application();
     let tmplLayout = document.getElementById('layout-'+layoutId);
     let layoutContent = tmplLayout.content.cloneNode(true);
     let layout = layoutContent.querySelector("div.layout[data-layout-id='"+layoutId+"']");
-    document.getElementById('body').appendChild(layout);
+    document.getElementById('page').appendChild(layout);
+    // document.getElementById('body').appendChild(layout);
+    return layout;
   };
 
   app.createReport = function(response) {
@@ -121,7 +130,7 @@ var App = new Application();
         {'col': 3, 'attribute': 'hidden'}
       ],
       'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      // 'title' : app.Cube.cube.name,
+      'title' : app.pageSelectedTitle,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
     app.Draw = new Draw(table, options);
