@@ -5,7 +5,7 @@ session_start();
 session_regenerate_id();
 require_once 'Cube.php';
 setlocale (LC_TIME, "it_IT");
-
+// TODO: queste le posso spostaare tutte nella Classe Cube passando al Costruttore tutto il JSON
 $cube = json_decode($_POST['cube']); // object
 // $dimension = json_decode($_POST['dimension']); // object
 // var_dump($cube);

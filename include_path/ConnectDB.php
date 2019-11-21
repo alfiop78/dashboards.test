@@ -5,6 +5,7 @@ class ConnectDB {
 
 	private $_host, $_u, $_p, $_schema, $_document_root;
     protected $link;
+		private $_link;
     // db_1 Sql644100_1  - db_2 Sql644100_2
     protected $_db_1; // questa viene usata nella subClass
 
@@ -21,8 +22,13 @@ class ConnectDB {
 
 	// Metodo Connect
 	protected function connect() {
-      $this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
-      return $this->link;
+    $this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
+    return $this->link;
+	}
+
+	public function openConnection() {
+		$this->_link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
+    return $this->_link;
 	}
 
   function getResultRow($query) {
@@ -56,7 +62,7 @@ class ConnectDB {
       if ($stmt->prepare($query)){
         if (!$stmt->execute()) {
           //throw new Exception("Errore nell'esecuzione della query");
-		  throw new DBError("Err.",$this->link->errno);
+		  		throw new DBError("Err.",$this->link->errno);
         }
         $affectedRow = $stmt->affected_rows;
         $stmt->close();
@@ -69,8 +75,35 @@ class ConnectDB {
     } catch (DBError $exc) {
       echo $exc->getDetailError();
     } catch (Exception $e) {
-	  echo $e->getMessage();
-	}
+		  echo $e->getMessage();
+		}
+
+  }
+
+  function multiInsert($query) {
+		/* Metodo creato per NON chiudere la connessione al DB perchè vengono create delle TEMPORARY TABLE*/
+    $affectedRow = 0;
+    $stmt = $this->_link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
+
+    try {
+      if ($stmt->prepare($query)){
+        if (!$stmt->execute()) {
+          //throw new Exception("Errore nell'esecuzione della query");
+		  		throw new Exception("ERRORE : ");
+		  		// throw new DBError("Err.",$this->_link->errno);
+        }
+        $affectedRow = $stmt->affected_rows;
+        $stmt->close();
+        return $affectedRow;
+      } else {
+        throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
+        //return FALSE;
+      }
+    } catch (Exception $e) {
+			// TODO: Perfezionare la gestione dei messaggi d'errore
+		  echo $e->getMessage()."\n";
+		  echo "CODICE MYSQL : ".$e->getCode();
+		}
 
   }
 
@@ -94,9 +127,8 @@ class ConnectDB {
     } catch (DBError $exc) {
       echo $exc->getDetailError();
     } catch (Exception $e) {
-	  echo $e->getMessage();
-	}
-
+		  echo $e->getMessage();
+		}
   }
 
   function getResultArray($query) {
@@ -166,8 +198,6 @@ class ConnectDB {
     }
   }
 
-
-
 }
 
 // gestire gli errori più specifici
@@ -188,7 +218,7 @@ class DBError extends Exception {
         $msg = "Sintassi della query errata ($this->code)";
         break;
       case 1146:
-        $msg = "Errore nella sintassi del nome campo ($this->code)";
+        $msg = "Errore nella sintassi del / nome tabella sconosciuta / (msg da completare) nome campo ($this->code)";
         break;
 		  case 1136:
 				// in una insert le colonne non corrispondono ((1136, "Column count doesn't match value count at row 1")

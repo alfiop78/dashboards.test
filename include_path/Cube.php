@@ -6,6 +6,8 @@ class Cube {
 
   function __construct($fact_table) {
     $this->fact = $fact_table;
+    $this->connect = new ConnectDB('automotive_bi_data');
+    $this->connect->openConnection();
   }
 
   function setReportId($reportId) {$this->_reportId = $reportId;}
@@ -109,7 +111,9 @@ class Cube {
 
   public function baseTable() {
     // TODO: creo una VIEW/TABLE senza metriche su cui, dopo, andrò a fare una left join con le VIEW/TABLE che contengono le metriche
-    $this->_sql = $this->_select.", ".$this->_metrics."\n";
+    $this->_sql = $this->_select; //.", ".$this->_metrics."\n";
+    // se ci sono metriche a livello di report le aggiungo
+    if ($this->_metrics) {$this->_sql .= ", $this->_metrics\n";}
     $this->_sql .= $this->_from."\n";
     $this->_sql .= $this->_where."\n";
     $this->_sql .= $this->_and."\n";
@@ -117,11 +121,11 @@ class Cube {
 
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    $l = new ConnectDB("automotive_bi_data");
+    // $this->connect->openConnection();
 
-    $sql_createTable = "CREATE TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
+    $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     // return $sql_createTable;
-    return $l->insert($sql_createTable);
+    return $this->connect->multiInsert($sql_createTable);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -159,20 +163,15 @@ class Cube {
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    $l = new ConnectDB("automotive_bi_data");
-    $lCache = new ConnectDB("decisyon_cache");
-
-    $sql_createTable = "CREATE TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
+    $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
     // return $sql_createTable;
-    return $l->insert($sql_createTable);
+    return $this->connect->multiInsert($sql_createTable);
   }
 
   public function createDatamart() {
     $baseTableName = "W_AP_base_".$this->_reportId;
-    $datamartName = "FX".$this->_reportId;
-    $lCache = new ConnectDB("decisyon_cache");
+    $datamartName = "decisyon_cache.FX".$this->_reportId;
     // se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
-    // var_dump($this->_metricTable);
 
     $sql = "CREATE TABLE $datamartName AS ";
     $sql .= "(SELECT $baseTableName.*, ";
@@ -182,12 +181,10 @@ class Cube {
       $leftJoin = null;
       $ONClause = array();
       $ONConditions = NULL;
-
       // var_dump($this->_columns);
-
       foreach ($this->_metricTable as $metricTableName => $aliasMetric) {
         $table_and_metric[] = "`$metricTableName`.`$aliasMetric`";
-        $leftJoin .= "\nLEFT JOIN `$metricTableName` ON ";
+        $leftJoin .= "\nLEFT JOIN `decisyon_cache`.`$metricTableName` ON ";
 
         foreach ($this->_columns as $columnAlias) {
           // carattere backtick con ALTGR+'
@@ -210,16 +207,16 @@ class Cube {
       $tables = implode(", ", $table_and_metric); //`W_AP_metric_3_1`.`sconto`, `W_AP_metric_3_2`.`listino`
 
       $sql .= $tables;
-      $sql .= "\nFROM `$baseTableName`";
+      $sql .= "\nFROM `decisyon_cache`.`$baseTableName`";
       $sql .= $leftJoin.");";
 
     } else {
-      $sql = "CREATE TABLE $datamartName AS (SELECT * FROM $baseTableName);";
+      $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
+    // var_dump($sql);
 
-    // return $sql;
 
-    return $lCache->insert($sql);
+    return $this->connect->multiInsert($sql);
   }
 
 } // End Class

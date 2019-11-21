@@ -14,7 +14,6 @@ var App = new Application();
     dialogTableList : document.getElementById('table-list'),
     report_id : 0,
     reports : new Object()
-
   };
 
   // App.getSessionName();
@@ -399,7 +398,7 @@ var App = new Application();
 
   document.getElementById('test').onclick = function(e) {
     // test per la creazione del datamart, prendendo un Cubo in localStorage
-    let data = window.localStorage.getItem('kpi agnorelli per sede');
+    let data = window.localStorage.getItem('KPI Sedi GLM');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;
