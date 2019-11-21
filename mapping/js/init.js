@@ -51,7 +51,8 @@ var App = new Application();
   };
 
   app.getReportsList = function() {
-    app.Storage.getCube();
+    // app.Storage.getCube();
+    app.Storage.getDimension();
 
     return;
     /*recupero lista reports creati dal localStorage*/
@@ -390,6 +391,7 @@ var App = new Application();
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
     objDimension.type = "DIMENSION";
+    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da app.Cube.dimension
 
     app.Cube.dimension[app.Cube.dimensionTitle] = objDimension;
     console.log(app.Cube.dimension);
@@ -431,14 +433,21 @@ var App = new Application();
   };
 
   document.getElementById('saveCube').onclick = function() {
+    // NOTE: non posso procedere in questo modo altrimenti l'elemento CUBES in localStorage viene sovrascritto ad ogni  nuovo cubo inserito
     // let objCube = {};
+    // objCube.dimensions = app.Cube.dimension;
     // objCube.columns = app.Cube.columns;
+    // objCube.filters = app.Cube.filters;
     // objCube.metrics = app.Cube.metrics;
+    // objCube.filteredMetrics = app.Cube.filteredMetrics;
+    // objCube.groupby = app.Cube.groupBy;
+    // objCube.FACT = document.querySelector('#fact').getAttribute('name');
     // objCube.hierarchies = app.Cube.hierarchyFact;
+    // objCube.reportId = app.report_id;
     // console.log(objCube);
     // app.Cube.cube[app.Cube.cubeTitle] = objCube;
     // console.log(app.Cube.cube);
-    // // window.localStorage['CUBES'] = JSON.stringify(app.Cube.cube);
+    // window.localStorage['CUBES'] = JSON.stringify(app.Cube.cube);
     // return;
 
 

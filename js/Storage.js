@@ -22,4 +22,21 @@ class Storage {
     });
 
   }
+
+  getDimension() {
+    // this.storageKeys = Object.keys(this.storage);
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "DIMENSION") {
+        console.log("Dimensione : "+key);
+
+      }
+    });
+
+  }
+
+  getReportId() {
+    // TODO: verifico il reportId inserito nello storage ed assegno un nuovo reportID al prossimo Cube/report
+  }
 }
