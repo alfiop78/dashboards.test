@@ -8,6 +8,7 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
+    Storage : new Storage(),
     Draw : null,
     tableSelected : null,
     columnsSelected : [],
@@ -50,6 +51,9 @@ var App = new Application();
   };
 
   app.getReportsList = function() {
+    app.Storage.getCube();
+
+    return;
     /*recupero lista reports creati dal localStorage*/
     // console.log(window.localStorage);
     let reports = Object.keys(window.localStorage);
@@ -386,7 +390,8 @@ var App = new Application();
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
     objDimension.type = "DIMENSION";
-    app.Cube.dimension[app.Cube.dimensionTitle] = objDimension
+
+    app.Cube.dimension[app.Cube.dimensionTitle] = objDimension;
     console.log(app.Cube.dimension);
 
     // console.log(app.Cube.cube);
@@ -398,7 +403,7 @@ var App = new Application();
 
   document.getElementById('test').onclick = function(e) {
     // test per la creazione del datamart, prendendo un Cubo in localStorage
-    let data = window.localStorage.getItem('KPI Sedi GLM');
+    let data = window.localStorage.getItem('cube_kpiGLM');
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;
@@ -426,6 +431,15 @@ var App = new Application();
   };
 
   document.getElementById('saveCube').onclick = function() {
+    // let objCube = {};
+    // objCube.columns = app.Cube.columns;
+    // objCube.metrics = app.Cube.metrics;
+    // objCube.hierarchies = app.Cube.hierarchyFact;
+    // console.log(objCube);
+    // app.Cube.cube[app.Cube.cubeTitle] = objCube;
+    // console.log(app.Cube.cube);
+    // // window.localStorage['CUBES'] = JSON.stringify(app.Cube.cube);
+    // return;
 
 
     app.Cube.cube.dimensions = app.Cube.dimension;
@@ -439,19 +453,9 @@ var App = new Application();
     app.Cube.cube['FACT'] = factTable;
     console.log(app.Cube.cube);
 
-    let data;
-    // per il momento, se non ci sono cubi creati, prendo quello in localStorage
-    if (Object.keys(app.Cube.cube).length === 0) {
-      data = window.localStorage.getItem('ccc');
-      console.log(data);
-      // data = window.localStorage.getItem('esempio classico');
-      // console.log(JSON.parse(data));
-    } else {
-      // console.log(app.Cube.cube);
-      app.Cube.cube['report_id'] = app.report_id;
-      data = JSON.stringify(app.Cube.cube);
-      window.localStorage[app.Cube.cubeTitle] = data;
-    }
+    app.Cube.cube['report_id'] = app.report_id;
+    let data = JSON.stringify(app.Cube.cube);
+    window.localStorage[app.Cube.cubeTitle] = data;
 
     // var data = JSON.stringify(app.Cube.cube);
     // window.localStorage.cube = data;

@@ -69,13 +69,15 @@ class ConnectDB {
         $this->link->close();
         return $affectedRow;
       } else {
-        throw new DBError("Error : ",$this->link->errno);
+        // throw new DBError("Error : ",$this->link->errno);
+				throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
         //return FALSE;
       }
     } catch (DBError $exc) {
       echo $exc->getDetailError();
     } catch (Exception $e) {
-		  echo $e->getMessage();
+			echo $e->getMessage()."\n";
+		  echo "CODICE MYSQL : ".$e->getCode();
 		}
 
   }

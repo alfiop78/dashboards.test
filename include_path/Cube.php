@@ -124,7 +124,7 @@ class Cube {
     // $this->connect->openConnection();
 
     $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    // return $sql_createTable;
+    var_dump($sql_createTable);
     return $this->connect->multiInsert($sql_createTable);
   }
 
@@ -164,7 +164,7 @@ class Cube {
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    // return $sql_createTable;
+    var_dump($sql_createTable);
     return $this->connect->multiInsert($sql_createTable);
   }
 
@@ -213,7 +213,7 @@ class Cube {
     } else {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
-    // var_dump($sql);
+    var_dump($sql);
 
 
     return $this->connect->multiInsert($sql);
