@@ -52,26 +52,39 @@ var App = new Application();
 
   app.getReportsList = function() {
     // app.Storage.getCube();
-    app.Storage.getDimension();
+    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
+    let ulReportList = document.getElementById('reportsList'); // TODO: modificare in dimensionsList
 
-    return;
-    /*recupero lista reports creati dal localStorage*/
-    // console.log(window.localStorage);
-    let reports = Object.keys(window.localStorage);
-    // console.log(reports);
-    // console.log(reports.length);
-    app.report_id = reports.length+1;
-    // console.log(app.report_id);
-    let ulReportList = document.getElementById('reportsList');
-    reports.forEach((report) => {
-      // console.log(JSON.parse(window.localStorage.getItem(report)));
-      let cube = JSON.parse(window.localStorage.getItem(report));
+    app.Storage.getDimension().forEach((name) => {
+      // console.log(name);
       let li = document.createElement('li');
-      li.id = cube.report_id;
-      li.innerHTML = report;
+      li.innerText = name;
       ulReportList.appendChild(li);
-      li.onclick = app.handlerReportSelected;
+      // TODO: legare evento onclick
+
     });
+
+    console.log(app.Storage.reportId);
+    return;
+
+    //
+    // /*recupero lista reports creati dal localStorage*/
+    // // console.log(window.localStorage);
+    // let reports = Object.keys(window.localStorage);
+    // // console.log(reports);
+    // // console.log(reports.length);
+    // app.report_id = reports.length+1;
+    // // console.log(app.report_id);
+    // let ulReportList = document.getElementById('reportsList');
+    // reports.forEach((report) => {
+    //   // console.log(JSON.parse(window.localStorage.getItem(report)));
+    //   let cube = JSON.parse(window.localStorage.getItem(report));
+    //   let li = document.createElement('li');
+    //   li.id = cube.report_id;
+    //   li.innerHTML = report;
+    //   ulReportList.appendChild(li);
+    //   li.onclick = app.handlerReportSelected;
+    // });
 
     // data = window.localStorage.getItem('cube');
 
@@ -394,6 +407,7 @@ var App = new Application();
     // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da app.Cube.dimension
 
     app.Cube.dimension[app.Cube.dimensionTitle] = objDimension;
+    // app.Cube.dimension.type = "DIMENSION";
     console.log(app.Cube.dimension);
 
     // console.log(app.Cube.cube);
@@ -433,23 +447,6 @@ var App = new Application();
   };
 
   document.getElementById('saveCube').onclick = function() {
-    // NOTE: non posso procedere in questo modo altrimenti l'elemento CUBES in localStorage viene sovrascritto ad ogni  nuovo cubo inserito
-    // let objCube = {};
-    // objCube.dimensions = app.Cube.dimension;
-    // objCube.columns = app.Cube.columns;
-    // objCube.filters = app.Cube.filters;
-    // objCube.metrics = app.Cube.metrics;
-    // objCube.filteredMetrics = app.Cube.filteredMetrics;
-    // objCube.groupby = app.Cube.groupBy;
-    // objCube.FACT = document.querySelector('#fact').getAttribute('name');
-    // objCube.hierarchies = app.Cube.hierarchyFact;
-    // objCube.reportId = app.report_id;
-    // console.log(objCube);
-    // app.Cube.cube[app.Cube.cubeTitle] = objCube;
-    // console.log(app.Cube.cube);
-    // window.localStorage['CUBES'] = JSON.stringify(app.Cube.cube);
-    // return;
-
 
     app.Cube.cube.dimensions = app.Cube.dimension;
     app.Cube.cube.type = "CUBE";
@@ -462,7 +459,7 @@ var App = new Application();
     app.Cube.cube['FACT'] = factTable;
     console.log(app.Cube.cube);
 
-    app.Cube.cube['report_id'] = app.report_id;
+    app.Cube.cube['report_id'] = app.Storage.reportId;
     let data = JSON.stringify(app.Cube.cube);
     window.localStorage[app.Cube.cubeTitle] = data;
 

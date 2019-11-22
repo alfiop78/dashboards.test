@@ -121,11 +121,9 @@ class Cube {
 
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    // $this->connect->openConnection();
-
     $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
     var_dump($sql_createTable);
-    return $this->connect->multiInsert($sql_createTable);
+    // return $this->connect->multiInsert($sql_createTable);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -165,7 +163,7 @@ class Cube {
 
     $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
     var_dump($sql_createTable);
-    return $this->connect->multiInsert($sql_createTable);
+    // return $this->connect->multiInsert($sql_createTable);
   }
 
   public function createDatamart() {
@@ -216,7 +214,7 @@ class Cube {
     var_dump($sql);
 
 
-    return $this->connect->multiInsert($sql);
+    // return $this->connect->multiInsert($sql);
   }
 
 } // End Class
