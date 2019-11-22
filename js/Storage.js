@@ -6,7 +6,6 @@ class Storage {
   constructor() {
     this.storage = window.localStorage;
     this.storageKeys = Object.keys(window.localStorage);
-    console.log(this.storage);
     this.report_id = 0;
     this.reportId = this.report_id;
     this.JSONData = null;
@@ -26,18 +25,23 @@ class Storage {
 
   get reportId() {return this.report_id;}
 
-  set cube(cube) {
-    console.log('saveCube');
+  set cube(value) {
     // inserisco il cube creato in localStorage (utilizzare setItem)
     // console.log(cubeObj.name);
-    window.localStorage.setItem(cube.name, JSON.stringify(cube));
-    this.cubeData = JSON.stringify(cube);
-    this.storage = window.localStorage;
-    this.storageKeys = Object.keys(window.localStorage);
+    window.localStorage.setItem(value.name, JSON.stringify(value));
+    this.cubeStringify = JSON.stringify(value);
   }
 
   // restituisco il cubo in JSON.stringify per inviarlo alla richiesta ajax
-  get cube() {return this.cubeData;}
+  get cube() {return this.cubeStringify;}
+
+  set dimension(value) {
+    window.localStorage.setItem(Object.keys(value), JSON.stringify(value));
+    this.dimensionName = Object.keys(value);
+  }
+
+  // restituisco il nome della dimensione
+  get dimension() {return this.dimensionName;}
 
   getJSONCube(name) {
     // restituisco un object del cube convertito in json, questo mi servirà per ricostruire la struttura

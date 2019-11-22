@@ -34,7 +34,6 @@ var App = new Application();
   // };
 
   app.handlerCubeSelected = function(e) {
-
     let data = window.localStorage.getItem(this.getAttribute('name'));
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
@@ -414,12 +413,9 @@ var App = new Application();
     // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da app.Cube.dimension
 
     app.Cube.dimension[app.Cube.dimensionTitle] = objDimension;
-    // app.Cube.dimension.type = "DIMENSION";
     console.log(app.Cube.dimension);
 
-    // console.log(app.Cube.cube);
-
-    window.localStorage[app.Cube.dimensionTitle] = JSON.stringify(app.Cube.dimension);
+    app.Storage.dimension = app.Cube.dimension;
 
     app.cloneLastTable();
   };
@@ -439,6 +435,7 @@ var App = new Application();
     console.log(app.Cube.cube);
     // salvo il cubo in localStorage
     app.Storage.cube = app.Cube.cube;
+    // app.Storage.cube = app.Cube.cube;
 
     var url = "ajax/cube.php";
     let params = "cube="+app.Storage.cube;

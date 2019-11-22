@@ -121,9 +121,9 @@ class Cube {
 
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    var_dump($sql_createTable);
-    return $this->connect->multiInsert($sql_createTable);
+    $sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
+    // return $sql;
+    return $this->connect->multiInsert($sql);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
@@ -133,7 +133,7 @@ class Cube {
       foreach ($metrics as $param) {
         unset($this->_sql);
 
-        $metric = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".str_replace(" ", "_", $param->aliasMetric)."'"; // TODO: provare con backtick
+        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->aliasMetric`"; // TODO: provare con backtick
         echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
         // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
         $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->aliasMetric; // memorizzo qui quante tabelle per metriche filtrate sono state create
@@ -161,9 +161,9 @@ class Cube {
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-    $sql_createTable = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    var_dump($sql_createTable);
-    return $this->connect->multiInsert($sql_createTable);
+    $sql = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
+    // return $sql;
+    return $this->connect->multiInsert($sql);
   }
 
   public function createDatamart() {
@@ -211,8 +211,7 @@ class Cube {
     } else {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
-    var_dump($sql);
-
+    // return $sql;
 
     return $this->connect->multiInsert($sql);
   }
