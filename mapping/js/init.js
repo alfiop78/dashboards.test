@@ -9,24 +9,36 @@ var App = new Application();
   var app = {
     Cube : new Cube(),
     Storage : new Storage(),
-    Draw : null,
-    tableSelected : null,
-    columnsSelected : [],
-    dialogTableList : document.getElementById('table-list'),
-    report_id : 0,
-    reports : new Object()
+    dialogTableList : document.getElementById('table-list')
   };
 
   // App.getSessionName();
 
   App.init();
 
-  app.handlerReportSelected = function(e) {
-    // recupero i dati dal dataamart finale "FX"+reportId
-    console.log(this);
-    console.log(this.id);
-    var url = "ajax/reports.php";
-    let params = "reportId="+this.id;
+  app.getDimensionsList = function() {
+    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
+    let ul = document.getElementById('dimensionsList');
+    app.Storage.getDimensionsList().forEach((name) => {
+      // console.log(name);
+      let li = document.createElement('li');
+      li.innerText = name;
+      ul.appendChild(li);
+      // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
+    });
+  };
+
+  // app.handlerCubeSelected = function(e) {
+  // restituisco il JSON.parse il cubo selezionato per ricrearlo nella gerarchia
+  //   console.log(app.Storage.getJSONCube(this.getAttribute('name')));
+  // };
+
+  app.handlerCubeSelected = function(e) {
+
+    let data = window.localStorage.getItem(this.getAttribute('name'));
+    var url = "ajax/cube.php";
+    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    let params = "cube="+data;
     // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -34,7 +46,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response);
+          // app.createReport(response);
 
         } else {
 
@@ -50,44 +62,19 @@ var App = new Application();
     request.send(params);
   };
 
-  app.getReportsList = function() {
-    // app.Storage.getCube();
-    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
-    let ulReportList = document.getElementById('reportsList'); // TODO: modificare in dimensionsList
+  app.getCubeList = function() {
 
-    app.Storage.getDimension().forEach((name) => {
+    let ul = document.getElementById('cubesList');
+    app.Storage.getCubesList().forEach((name) => {
       // console.log(name);
       let li = document.createElement('li');
       li.innerText = name;
-      ulReportList.appendChild(li);
-      // TODO: legare evento onclick
-
+      li.setAttribute('name', name);
+      ul.appendChild(li);
+      li.onclick = app.handlerCubeSelected;
+      // li.onclick = app.handlerCubeSelected;
+      // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
     });
-
-    console.log(app.Storage.reportId);
-    return;
-
-    //
-    // /*recupero lista reports creati dal localStorage*/
-    // // console.log(window.localStorage);
-    // let reports = Object.keys(window.localStorage);
-    // // console.log(reports);
-    // // console.log(reports.length);
-    // app.report_id = reports.length+1;
-    // // console.log(app.report_id);
-    // let ulReportList = document.getElementById('reportsList');
-    // reports.forEach((report) => {
-    //   // console.log(JSON.parse(window.localStorage.getItem(report)));
-    //   let cube = JSON.parse(window.localStorage.getItem(report));
-    //   let li = document.createElement('li');
-    //   li.id = cube.report_id;
-    //   li.innerHTML = report;
-    //   ulReportList.appendChild(li);
-    //   li.onclick = app.handlerReportSelected;
-    // });
-
-    // data = window.localStorage.getItem('cube');
-
   };
 
   app.getDatabaseTable = function() {
@@ -216,11 +203,6 @@ var App = new Application();
     this.setAttribute('active', true);
   };
 
-  document.querySelectorAll('.card-table').forEach((card) => {
-    // console.log(card);
-    card.onclick = app.handlerCardSelected;
-  });
-
   app.handlerAddTable = function(e) {
     // console.log(this);
     // aggiungo un'altra tabella alla gerarchia
@@ -317,6 +299,54 @@ var App = new Application();
     upCard.setAttribute('metrics', true);
   };
 
+  app.cloneLastTable = function() {
+    // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
+    // ultima card nella gerarchia
+    let lastTableInHierarchy = document.querySelector('.hierarchies .card:last-child .card-table');
+    let lastCardRef = document.getElementById('last-card');
+
+    let card = document.createElement('div');
+    let cardLayout = document.createElement('div');
+    card.classList.add("card");
+    lastCardRef.appendChild(card);
+    cardLayout.classList.add("card-layout");
+    card.appendChild(cardLayout);
+    let newCard = lastTableInHierarchy.cloneNode(true);
+    cardLayout.appendChild(newCard);
+    // aggiungo eventi per la selezione delle colonne
+    newCard.querySelectorAll('li').forEach((li) => {
+      li.onclick = app.Cube.handlerColumns.bind(app.Cube);
+    });
+    // evento oninput sulla searchColumns
+    newCard.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
+
+  };
+
+  app.handlerFunctionMetricList = function(e) {
+    // console.log(this);
+    // questo elenco deve avere sempre almeno un elemento selezionato
+    if (this.hasAttribute('selected')) {return;}
+    document.querySelectorAll('#function-list li').forEach((li) => {li.removeAttribute('selected');});
+    this.toggleAttribute('selected');
+  };
+
+  document.querySelectorAll('#function-list li').forEach((li) => {
+    li.onclick = app.handlerFunctionMetricList;
+  });
+
+  app.handlerFunctionOperatorList = function(e) {
+    // console.log(this);
+    // questo elenco deve avere sempre almeno un elemento selezionato
+    if (this.hasAttribute('selected')) {return;}
+    document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
+    this.toggleAttribute('selected');
+  };
+
+  /*events */
+  document.querySelectorAll('.card-table').forEach((card) => {
+    // console.log(card);
+    card.onclick = app.handlerCardSelected;
+  });
   // evento su icona per aggiungere una tabella alla gerarchia
   document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
@@ -354,29 +384,6 @@ var App = new Application();
       this.parentElement.querySelector('label').classList.remove('has-content');
       document.getElementById('saveDimension').disabled = true;
     }
-  };
-
-  app.cloneLastTable = function() {
-    // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
-    // ultima card nella gerarchia
-    let lastTableInHierarchy = document.querySelector('.hierarchies .card:last-child .card-table');
-    let lastCardRef = document.getElementById('last-card');
-
-    let card = document.createElement('div');
-    let cardLayout = document.createElement('div');
-    card.classList.add("card");
-    lastCardRef.appendChild(card);
-    cardLayout.classList.add("card-layout");
-    card.appendChild(cardLayout);
-    let newCard = lastTableInHierarchy.cloneNode(true);
-    cardLayout.appendChild(newCard);
-    // aggiungo eventi per la selezione delle colonne
-    newCard.querySelectorAll('li').forEach((li) => {
-      li.onclick = app.Cube.handlerColumns.bind(app.Cube);
-    });
-    // evento oninput sulla searchColumns
-    newCard.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
-
   };
 
   document.getElementById('saveDimension').onclick = function(e) {
@@ -417,35 +424,6 @@ var App = new Application();
     app.cloneLastTable();
   };
 
-  document.getElementById('test').onclick = function(e) {
-    // test per la creazione del datamart, prendendo un Cubo in localStorage
-    let data = window.localStorage.getItem('cube_kpiGLM');
-    var url = "ajax/cube.php";
-    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
-    let params = "cube="+data;
-    // console.log(params);
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          console.table(response);
-          // app.createReport(response);
-
-        } else {
-
-        }
-      } else {
-
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  };
-
   document.getElementById('saveCube').onclick = function() {
 
     app.Cube.cube.dimensions = app.Cube.dimension;
@@ -455,23 +433,16 @@ var App = new Application();
     app.Cube.cube['metrics'] = app.Cube.metrics;
     app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
     app.Cube.cube['groupby'] = app.Cube.groupBy;
-    let factTable = document.querySelector('#fact').getAttribute('name');
-    app.Cube.cube['FACT'] = factTable;
-    console.log(app.Cube.cube);
-
+    app.Cube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
+    app.Cube.cube.name = app.Cube.cubeTitle;
     app.Cube.cube['report_id'] = app.Storage.reportId;
-    let data = JSON.stringify(app.Cube.cube);
-    window.localStorage[app.Cube.cubeTitle] = data;
-
-    // var data = JSON.stringify(app.Cube.cube);
-    // window.localStorage.cube = data;
-    // ...oppure
-    // window.localStorage.setItem("cube",data);
+    console.log(app.Cube.cube);
+    // salvo il cubo in localStorage
+    app.Storage.cube = app.Cube.cube;
 
     var url = "ajax/cube.php";
-    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
-    let params = "cube="+data;
-    // console.log(params);
+    let params = "cube="+app.Storage.cube;
+    console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -498,74 +469,12 @@ var App = new Application();
   document.getElementById('saveHierarchy').onclick = function(e) {
     // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
 
-
-
-
-  };
-
-  app.handlerFunctionMetricList = function(e) {
-    // console.log(this);
-    // questo elenco deve avere sempre almeno un elemento selezionato
-    if (this.hasAttribute('selected')) {return;}
-    document.querySelectorAll('#function-list li').forEach((li) => {li.removeAttribute('selected');});
-    this.toggleAttribute('selected');
-  };
-
-  document.querySelectorAll('#function-list li').forEach((li) => {
-    li.onclick = app.handlerFunctionMetricList;
-  });
-
-  app.handlerFunctionOperatorList = function(e) {
-    // console.log(this);
-    // questo elenco deve avere sempre almeno un elemento selezionato
-    if (this.hasAttribute('selected')) {return;}
-    document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
-    this.toggleAttribute('selected');
   };
 
   document.querySelectorAll('#operator-list li').forEach((li) => {
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  /* gestione scorrimento layout orizzontale
-
-    // document.getElementById('mdc-next').onclick = function(e) {
-    //   // recupero la left dello step successivo
-    //   let structure = document.getElementById('structure-test');
-    //   let step = structure.querySelector('.steps');
-    //   let steps = Array.from(step.querySelectorAll(':scope > div:not(:last-child)'));
-    //   console.log(steps);
-    //   let left = [];
-    //   let activeStep = +step.getAttribute('active-step');
-    //   // inserisco in un array tutte le posizioni degli elementi che dovrò translare
-    //   steps.forEach((content) => {
-    //     left.push(-content.offsetLeft+"px");
-    //   });
-    //   // se non ci sono più elementi da translare non faccio il translalte
-    //   if (activeStep < left.length-1) {
-    //     step.style.transform = "translateX("+left[activeStep+1]+")";
-    //     step.setAttribute('active-step', activeStep+1);
-    //   }
-    // };
-    //
-    // document.getElementById('mdc-back').onclick = function(e) {
-    //   let structure = document.getElementById('structure-test');
-    //   let step = structure.querySelector('.steps');
-    //   let steps = Array.from(step.querySelectorAll('div:not(:last-child)'));
-    //
-    //   let left = [];
-    //   let activeStep = +step.getAttribute('active-step');
-    //
-    //   steps.forEach((content) => {
-    //     left.push(-content.offsetLeft+"px");
-    //   });
-    //   // se non ci sono più elementi da translare non faccio il translalte
-    //   if (activeStep > 0) {
-    //     step.style.transform = "translateX("+left[activeStep-1]+")";
-    //     step.setAttribute('active-step', activeStep-1);
-    //   }
-    // };
-  */
   document.getElementById('mdc-next').onclick = function(e) {
     // pagina attiva in questo momento
     let selectedPage = document.querySelector('.page[selected]');
@@ -594,274 +503,24 @@ var App = new Application();
     (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
     let listElement = Array.from(document.querySelectorAll('#tables > li'));
 
-  	for (let i in listElement) {
-  	  let li = listElement[i];
-  	  // reset eventuali selezioni precedenti
-  	  li.removeAttribute('filtered');
-  	  if (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) {
+    for (let i in listElement) {
+      let li = listElement[i];
+      // reset eventuali selezioni precedenti
+      li.removeAttribute('filtered');
+      if (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) {
         li.setAttribute('hidden', '');
-  	  } else {
+      } else {
         li.removeAttribute('hidden');
-  	  }
-  	}
+      }
+    }
   };
+  /*events */
 
   app.getDatabaseTable();
 
-  app.getReportsList();
+  app.getDimensionsList();
 
-  /**
-  funzioni che facevano parte di /js/init.js
-  */
-  app.createReport = function(response) {
-    console.log('create report');
-
-    let table = document.getElementById('table-01');
-
-    console.log(response);
-    // return;
-
-    let options =
-      {
-      'cols' : [
-        // {'col': 3, 'attribute': 'hidden'},
-        // {'col': 5, 'attribute': 'hidden'}
-
-      ],
-      'filters' : [
-        {'col': 0, 'attribute': 'multi'},
-        {'col': 1, 'attribute': 'multi'},
-        {'col': 3, 'attribute': 'hidden'}
-      ],
-      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      'title' : app.Cube.cube.name,
-      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-      };
-    app.Draw = new Draw(table, options);
-    console.log(app.Draw);
-    // Opzione 1 - aggiungo tutte le colonne della query
-    Object.keys(response[0]).forEach((el, i) => {
-      // console.log('col:'+el);
-      app.Draw.addColumn(el, i);
-      // aggiungo un filtro per ogni colonna della tabella
-      app.Draw.addParams(el, i);
-    });
-    // Opzione 2 - aggiungo manualmetne le colonne
-    // app.Draw.addColumn('ID');
-    // app.Draw.addColumn('Dealer');
-
-    // aggiungo le righe
-    let arrParams = [];
-    for (let i in response) {
-      // console.log(Object.values(response[i]));
-      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      app.Draw.addRow(Object.values(response[i]));
-      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-      // Opzione 2 - Aggiunta colonne manualmente
-      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
-    }
-
-    app.Draw.createDatalist();
-    // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
-    app.Draw.draw();
-
-    document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
-      el.oninput = app.handlerInput;
-      el.onclick = app.showFilters;
-      el.onblur = function(e) {
-        // console.log(e);
-        this.removeAttribute('placeholder');
-      };
-      let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
-
-      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
-      el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
-    });
-  };
-
-  app.getData = function() {
-    // TODO: utilizzare le promise
-    var url = "/ajax/table.php";
-    console.log('getData');
-
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          // console.log(request.response);
-
-          var response = JSON.parse(request.response);
-          // console.table(response);
-          // console.log(Object.keys(response[0]).length); // quante colonne ci sono
-          // console.log(Object.keys(response[0])); // colonne estratte dalla query
-
-          // console.log(Object.keys(response[0])[0]); // nome colonna
-          // console.log(Object.keys(response[0])[1]); // nome colonna
-          // aggiungo le colonne
-          let table = document.getElementById('table-01');
-
-          let options =
-            {
-            'cols' : [
-              {'col': 3, 'attribute': 'hidden'},
-              {'col': 5, 'attribute': 'hidden'}
-
-            ],
-            'filters' : [
-              {'col': 0, 'attribute': 'multi'},
-              {'col': 1, 'attribute': 'multi'},
-              {'col': 3, 'attribute': 'hidden'}
-            ],
-            'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-            'title' : 'Free Courtesy',
-            'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-            };
-          app.Draw = new Draw(table, options);
-          console.log(app.Draw);
-          // Opzione 1 - aggiungo tutte le colonne della query
-          Object.keys(response[0]).forEach((el, i) => {
-            // console.log('col:'+el);
-            app.Draw.addColumn(el, i);
-            // aggiungo un filtro per ogni colonna della tabella
-            app.Draw.addParams(el, i);
-          });
-          // Opzione 2 - aggiungo manualmetne le colonne
-          // app.Draw.addColumn('ID');
-          // app.Draw.addColumn('Dealer');
-
-          // aggiungo le righe
-          let arrParams = [];
-          for (let i in response) {
-            // console.log(Object.values(response[i]));
-            // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-            app.Draw.addRow(Object.values(response[i]));
-            // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-            // Opzione 2 - Aggiunta colonne manualmente
-            // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
-          }
-
-          app.Draw.createDatalist();
-          // imposto, nel metodo draw, anche le options, per cui questa riga deve essere messa prima dell'aggancio degli eventi sulle input (sotto)
-          app.Draw.draw();
-          App.init();
-
-          document.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
-            el.oninput = app.handlerInput;
-            el.onclick = app.showFilters;
-            el.onblur = function(e) {
-              // console.log(e);
-              this.removeAttribute('placeholder');
-            };
-            let elementsSelected = Array.from(el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element'));
-
-            el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelect;});
-            el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = app.handlerSelectMulti;});
-          });
-        } else {
-
-        }
-      } else {
-
-      }
-    };
-
-    request.open('POST', url);
-    request.setRequestHeader('Content-Type','application/json');
-    request.send();
-  };
-
-  // TODO: QUESTE FUNZIONI LE DOVRO' AGGIUNGERE ALLA CLASSE COME METODI
-  // app.handlerInput = function(e) {
-  //   // console.log('input');
-  //   // console.log(this);
-  //   let parentElement = e.path[1];
-  //   let label = parentElement.querySelector('label');
-  //   if (this.value.length > 0) {
-  //     parentElement.setAttribute('activated', true);
-  //     this.setAttribute('activated', true);
-  //     label.classList.add('has-content');
-  //   } else {
-  //     this.removeAttribute('activated');
-  //     parentElement.removeAttribute('activated');
-  //     label.classList.remove('has-content');
-  //     app.Draw.search();
-  //   }
-  //
-  //   // mentre digito filtro l'elenco degli elementi <li>
-  //   let liElement = parentElement.querySelectorAll('ul > .elementContent li');
-  //   liElement.forEach((el) => {
-  //     let label = el.getAttribute('label');
-  //     // imposto hidden su elementContent e non su li
-  //     let elementContent = el.parentElement.parentElement;
-  //     (label.indexOf(this.value.toUpperCase()) !== -1) ? elementContent.removeAttribute('hidden') : elementContent.hidden = true;
-  //   });
-  //
-  // };
-  //
-  // app.handlerSelectMulti = function(e) {
-  //   let elements = e.path[4];
-  //   this.parentElement.toggleAttribute('selected');
-  //   // cerco il tasto OK per legare l'evento click
-  //   let btnOk = elements.querySelector('section > button');
-  //   btnOk.onclick = app.handlerMultiBtn;
-  // };
-  //
-  // app.handlerMultiBtn = function(e) {
-  //   // BUG: spostato in Draw
-  //   // console.log(this);
-  //   // console.log(e.path);
-  //   // console.log(e.path[2]);
-  //   let parentElement = e.path[3]; // md-field
-  //   let elements = parentElement.querySelector('.elements[show]');
-  //   let input = parentElement.querySelector('input');
-  //   let label = parentElement.querySelector('label');
-  //   let liSelected = Array.from(parentElement.querySelectorAll('.elementContent[selected] > .element > li'));
-  //   if (liSelected.length > 0) {
-  //     parentElement.setAttribute('activated', true);
-  //     input.setAttribute('activated', true);
-  //     label.classList.add('has-content');
-  //     input.value = "[MULTISELECT]";
-  //   } else {
-  //     label.classList.remove('has-content');
-  //   }
-  //   app.Draw.search();
-  //   elements.removeAttribute('show');
-  //
-  // };
-
-  app.handlerSelect = function(e) {
-    console.log('handlerSelect');
-    console.log(this);
-    let parent = e.path[5]; // md-field
-    let liElement = e.path[1].querySelector('li');
-    let input = parent.querySelector('input');
-    let label = parent.querySelector('label');
-    input.value = liElement.getAttribute('label');
-    if (input.value.length > 0) {
-      parent.setAttribute('activated', true);
-      input.setAttribute('activated', true);
-      label.classList.add('has-content');
-    } else {
-      label.classList.remove('has-content');
-    }
-
-    app.Draw.search();
-  };
-
-  // app.showFilters = function(e) {
-  //   // BUG: spostato nella Classe Draw
-  //   // verifico prima se ci sono altre dropdown aperte, le chiudo.
-  //   document.querySelectorAll('div.elements[show]').forEach((elementsShow) => {
-  //     elementsShow.removeAttribute('show');
-  //   });
-  //   // apro la dropdown
-  //   e.path[1].querySelector('div.elements').toggleAttribute('show');
-  //   this.setAttribute('placeholder', 'Search...');
-  // };
-  /**
-  funzioni che facevano parte di /js/init.js
-  */
-
+  app.getCubeList();
 
 
 })();

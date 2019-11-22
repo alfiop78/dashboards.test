@@ -9,6 +9,7 @@ class Storage {
     console.log(this.storage);
     this.report_id = 0;
     this.reportId = this.report_id;
+    this.JSONData = null;
   }
 
   set reportId(report_id) {
@@ -25,20 +26,40 @@ class Storage {
 
   get reportId() {return this.report_id;}
 
-  getCube() {
+  set cube(cube) {
+    console.log('saveCube');
+    // inserisco il cube creato in localStorage (utilizzare setItem)
+    // console.log(cubeObj.name);
+    window.localStorage.setItem(cube.name, JSON.stringify(cube));
+    this.cubeData = JSON.stringify(cube);
+    this.storage = window.localStorage;
+    this.storageKeys = Object.keys(window.localStorage);
+  }
+
+  // restituisco il cubo in JSON.stringify per inviarlo alla richiesta ajax
+  get cube() {return this.cubeData;}
+
+  getJSONCube(name) {
+    // restituisco un object del cube convertito in json, questo mi servirà per ricostruire la struttura
+    return JSON.parse(window.localStorage.getItem(name));
+  }
+
+  getCubesList() {
     // this.storageKeys = Object.keys(this.storage);
+    let cubes = [];
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
       if (jsonStorage.type === "CUBE") {
-        console.log("cubo : "+key);
-
+        // console.log("cubo : "+key);
+        cubes.push(key);
       }
     });
+    return cubes;
 
   }
 
-  getDimension() {
+  getDimensionsList() {
     // this.storageKeys = Object.keys(this.storage);
     let dimensions = [];
     this.storageKeys.forEach((key) => {
@@ -52,7 +73,4 @@ class Storage {
     return dimensions;
   }
 
-  getReportId() {
-    // TODO: verifico il reportId inserito nello storage ed assegno un nuovo reportID al prossimo Cube/report
-  }
 }
