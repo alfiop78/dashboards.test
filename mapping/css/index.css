@@ -24,9 +24,8 @@ dialog{border: none;box-shadow: 0 2px 5px 1px rgba(10,10,10,.35);border-radius: 
 ul{padding-inline-start: 0;font-size: .75rem;border-radius: 4px;}
 .card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
 .list ul{margin: 8px;max-height: 400px;overflow-y: auto;}
-ul > li{list-style: none;padding: 6px;margin: 2px 8px;}
-ul > li:hover{list-style: none;padding: 6px;background-color: #d4d6c8;border-radius: 4px;cursor: pointer;}
-ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border-radius: 4px;cursor: pointer;}
+ul li{list-style: none;padding: 6px;margin: 2px 8px;}
+ul li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var(--main-primary-color);border-radius: 4px;cursor: pointer;}
 .lists > .list{align-items: center;width: 100%;}
 .table-selected{background: #dbd7cb;padding: 8px;border-radius: 4px;margin: 1em;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -34,8 +33,7 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border
 
 ul > .element:not([hide]){display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
 ul > .element[hide] {display: none;}
-ul > .element li[selected]{background: var(--main-primary-color);}
-ul > .element li:hover{background: var(--main-primary-color);cursor: pointer;}
+
 ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;align-items: center;padding: 0 6px;}
 
 .card-table > h5:hover{text-decoration: underline;}
@@ -62,17 +60,12 @@ ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;al
 .card-table ul > .element li:not([groupby]) ~ #groupby-icon{visibility: hidden;}
 .card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;}
 
-
-
-.help[alert]{content: 'test';}
-
-
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
 #hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
 
 .lists{display: flex;}
-
+dialog .lists{min-width: 300px;}
 
 .structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 20% 80%;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);

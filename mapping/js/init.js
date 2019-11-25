@@ -123,7 +123,6 @@ var App = new Application();
 
     let tmplList = document.getElementById('template-list-columns');
 
-
     // let ulContainer = document.getElementById('columns');
     let ulContainer = app.Cube.activeCard.querySelector('#columns');
     // pulisco l'elenco delle colonne in base alla selezione della tabella
@@ -181,7 +180,11 @@ var App = new Application();
   app.handlerCardSelected = function(e) {
     // console.log('handlerCardSelected');
     // se il viene avviene sull'elemento h5 apro la dialog
-    if (e.target.localName === "h5") {app.dialogTableList.showModal();}
+    if (e.target.localName === "h5") {
+      document.getElementById('tableSearch').value = "";
+      app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
+      app.dialogTableList.showModal();
+    }
     app.Cube.activeCard = this;
     // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
@@ -489,6 +492,7 @@ var App = new Application();
   document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
+
   /*events */
 
   app.getDatabaseTable();
