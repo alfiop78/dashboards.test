@@ -21,17 +21,31 @@ var App = new Application();
     let ul = document.getElementById('dimensionsList');
     app.Storage.getDimensionsList().forEach((name) => {
       // console.log(name);
+      let element = document.createElement('div');
+      element.classList.add('element');
       let li = document.createElement('li');
       li.innerText = name;
-      ul.appendChild(li);
+      li.setAttribute('label', name);
+      ul.appendChild(element);
+      element.appendChild(li);
       // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
     });
   };
 
-  // app.handlerCubeSelected = function(e) {
-  // restituisco il JSON.parse il cubo selezionato per ricrearlo nella gerarchia
-  //   console.log(app.Storage.getJSONCube(this.getAttribute('name')));
-  // };
+  app.getCubeList = function() {
+    let ul = document.getElementById('cubesList');
+    app.Storage.getCubesList().forEach((name) => {
+      // console.log(name);
+      let element = document.createElement('div');
+      element.classList.add('element');
+      let li = document.createElement('li');
+      li.innerText = name;
+      li.setAttribute('label', name);
+      ul.appendChild(element);
+      element.appendChild(li);
+      li.onclick = app.handlerCubeSelected;
+    });
+  };
 
   app.handlerCubeSelected = function(e) {
     let data = window.localStorage.getItem(this.getAttribute('name'));
@@ -61,21 +75,6 @@ var App = new Application();
     request.send(params);
   };
 
-  app.getCubeList = function() {
-
-    let ul = document.getElementById('cubesList');
-    app.Storage.getCubesList().forEach((name) => {
-      // console.log(name);
-      let li = document.createElement('li');
-      li.innerText = name;
-      li.setAttribute('name', name);
-      ul.appendChild(li);
-      li.onclick = app.handlerCubeSelected;
-      // li.onclick = app.handlerCubeSelected;
-      // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
-    });
-  };
-
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
     var url = "ajax/database.php";
@@ -87,15 +86,18 @@ var App = new Application();
           var response = JSON.parse(request.response);
           // console.table(response);
 
-          let ulContainer = document.getElementById('tables');
+          let ul = document.getElementById('tables');
           // console.log(ulContainer);
 
           for (let i in response) {
+            let element = document.createElement('div');
+            element.classList.add('element');
             let li = document.createElement('li');
             li.setAttribute('label', response[i][0]);
             li.innerText = response[i][0];
             li.id = i;
-            ulContainer.appendChild(li);
+            ul.appendChild(element);
+            element.appendChild(li);
             li.onclick = app.handlerTableSelected;
           }
 
@@ -110,21 +112,6 @@ var App = new Application();
     request.open('POST', url);
     request.setRequestHeader('Content-Type','application/json');
     request.send();
-  };
-
-  app.handlerSearchColumns = function(e) {
-    console.log(e.path);
-    // Ricerca delle colonne in una tabella selezionata
-    (this.value.lenth > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
-
-    let listElement = Array.from(e.path[2].querySelectorAll('#columns > .element > li'));
-
-  	for (let i in listElement) {
-  	  let li = listElement[i];
-  	  (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
-        li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
-
-  	}
   };
 
   app.handlerTableSelected = function(e) {
@@ -166,7 +153,7 @@ var App = new Application();
           // se ci sono poche colonne in questa tabella non attiva la input search
           if (Object.keys(response).length > 10) {
             // event #searchColumns
-            app.Cube.activeCardRef.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
+            app.Cube.activeCardRef.querySelector('#searchColumns').oninput = App.searchInList;
             // visualizzo la input #searchColumns
             app.Cube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
             // lego eventi ai tasti i[....] nascosti
@@ -317,7 +304,8 @@ var App = new Application();
       li.onclick = app.Cube.handlerColumns.bind(app.Cube);
     });
     // evento oninput sulla searchColumns
-    newCard.querySelector('#searchColumns').oninput = app.handlerSearchColumns;
+
+    newCard.querySelector('#searchColumns').oninput = App.searchInList;
 
   };
 
@@ -495,22 +483,12 @@ var App = new Application();
     pages.setAttribute('data-step', page.getAttribute('data-step'));
   };
 
-  document.getElementById('tableSearch').oninput = function(e) {
-    // console.log(this.value);
-    (this.value.length > 0) ? e.path[1].querySelector('label').classList.add('has-content') : e.path[1].querySelector('label').classList.remove('has-content');
-    let listElement = Array.from(document.querySelectorAll('#tables > li'));
-
-    for (let i in listElement) {
-      let li = listElement[i];
-      // reset eventuali selezioni precedenti
-      li.removeAttribute('filtered');
-      if (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) {
-        li.setAttribute('hidden', '');
-      } else {
-        li.removeAttribute('hidden');
-      }
-    }
-  };
+  /*ricerca dimensioni in elenco di sinistra*/
+  document.getElementById('dimensionSearch').oninput = App.searchInList;
+  /* ricerca cubi in elenco di sinitra*/
+  document.getElementById('cubeSearch').oninput = App.searchInList;
+  /* ricerca in lista tabelle */
+  document.getElementById('tableSearch').oninput = App.searchInList;
   /*events */
 
   app.getDatabaseTable();

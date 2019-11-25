@@ -256,61 +256,6 @@ class Application {
     }, time+1000);
   }
 
-  mySelectToggle(select) {
-    // IDEA: Provare a creare un customElement (da googleDeveloper)
-    /* select con elenco a discesa personale, questo metodo viene chiamato dagli eventi onclick (open) e onblur (close), oppure dalla selezione
-    di un elemento nella lista, che successivamente chiude la select*/
-
-    select.classList.toggle('show');
-  }
-
-  mySelectSelection(thisElement, targetElement, inputElement) {
-    /* thisElement corrisponde al div che contiene la ul
-     * targetElement è l'elemento su cui si è fatto click quindi la li
-     * inputElement è la input dove verrà inserito il testo selezionato dalla select */
-
-     // deseleziono l'elemento attualmente selezionato
-    let lis = thisElement.querySelectorAll('li');
-    for (var i = 0; i < lis.length; i++) {
-      //console.log(li.classList.contains('selected'));
-      if (lis[i].classList.contains('selected')) {
-        lis[i].classList.remove('selected');
-      }
-    }
-    targetElement.classList.add('selected');
-    // inserisco il valore selezionato nella input
-    inputElement.value = targetElement.innerText;
-    // inserisco anche has-content sulla label
-    thisElement.parentElement.querySelector('label').classList.add('has-content');
-  }
-
-  mySelectSetDefault(thisElement, targetElement, inputElement) {
-    /* thisElement corrisponde al div che contiene la ul
-     * targetElement è l'elemento su cui si è fatto click quindi la li
-     * inputElement è la input dove verrà inserito il testo selezionato dalla select */
-
-    targetElement.classList.add('selected');
-    // inserisco il valore selezionato nella input
-    inputElement.value = targetElement.innerText;
-    // inserisco anche has-content sulla label
-    thisElement.parentElement.querySelector('label').classList.add('has-content');
-  }
-
-  getMySelectSelection(thisElement) {
-    /* thisElement corrisponde al div che contiene la ul*/
-    // restituisco l'elemento selezionato nella custom list
-
-    let liSelected = thisElement.querySelector('ul > li.selected');
-    if (liSelected) {return parseInt(liSelected.id);}
-  }
-
-  getNoteMySelectSelection(thisElement) {
-    /* thisElement corrisponde al div che contiene la ul*/
-    // restituisco le Note dell'elemento selezionato nella custom list
-
-    let liSelected = thisElement.querySelector('ul > li.selected');
-    if (liSelected) {return liSelected.getAttribute('label');}
-  }
 
   validityForm(inputs) {
     // inputs deve essere inviato come Array.from()
@@ -326,199 +271,21 @@ class Application {
     }
     return this.fieldError;
   }
-}
 
-var menuTouch = document.getElementById("menu");
-// console.log(menuTouch);
-var xStart, move, offsetWidthMenu, touch;
-var swipe = false;
-if (menuTouch) {
-    menuTouch.addEventListener("touchstart", menuTouchStart, false);
-    menuTouch.addEventListener("touchend", menuTouchEnd, false);
-    menuTouch.addEventListener("touchmove", menuTouchMove, false);
-    offsetWidthMenu = menuTouch.offsetWidth;
-}
+  searchInList(e) {
+    console.log(e.path);
+    // Ricerca in una lista
+    (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
-function menuTouchStart(e) {
-  xStart = e.touches[0].clientX;
-  //console.log("menuTouchStart : " +xStart);
-}
+    let listElement = Array.from(e.path[2].querySelectorAll('.element > li'));
 
-function menuTouchEnd(e) {
-  if (swipe) {
-      menuTouch.classList.toggle("show");
-      document.getElementById("submain").classList.toggle("action");
-      document.getElementById("butMenu").classList.toggle("active");
+  	for (let i in listElement) {
+  	  let li = listElement[i];
+  	  (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
+        li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
+
+  	}
   }
-}
-
-function menuTouchMove(e) {
-  var clientX;
-  clientX = e.touches[0].clientX;
-  //console.log("menuTouchMove : "+clientX);
-  if (clientX < xStart) {((clientX-xStart) < -30) ? swipe = true : swipe = false;}
-}
-
-var timeout;
 
 
-var setIconClass = function(iconType){
-    switch (iconType){
-      case "done":
-        return {classList: "done",icon: "&#xE876;"};
-        break;
-      case "error":
-        return {classList: "error",icon: "&#xE000;"};
-        break;
-      case "warning":
-        return {classList: "warning",icon: "&#xE002;"};
-        break;
-      case "info":
-        return {classList: "info",icon: "&#xE88E;"};
-        break;
-    }
-  };
-
-var setIconButton = function(iconName) {
-    switch (iconName) {
-      case "navigate_before":
-        return {icon: "&#xE408;"};
-        break;
-      case "add":
-        return {icon: "&#xE145;"};
-        break;
-      case "multiline_chart":
-        return {icon: "&#xE6DF;"};
-        break;
-      case "date_range":
-        return {icon: "&#xE916;"};
-        break;
-      case "delete":
-        return {icon: "&#xE872;"};
-        break;
-      case "done":
-        return {icon: "&#xE876;"};
-        break;
-      case "edit":
-        return {icon: "&#xE254;"};
-        break;
-      case "save":
-        return {icon: ""};
-        break;
-    }
-    //TODO da inserire anche in altre pagine (pagina nuova operazione)
-  };
-
-function daysInMonth(iMonth, iYear) {
-  'use strict';
-  // Subtract the overflow from 32
-  return 32 - new Date(iYear, iMonth, 32).getDate();
-}
-
-function CheckInput(){
-    'use strict';
-    console.log("function CheckInput");
-    var nome = document.getElementById('id-nome');
-    var cognome = document.getElementById('id-cognome');
-    var email = document.getElementById('id-email');
-    var email_check = document.getElementById('id-email-check');
-
-    if (nome.value.length != 0 && cognome.value.length != 0 && email.value.length != 0 && email_check.value.length != 0){
-        //console.log("E' diverso da 0");
-	//verifico il pattern per l'e-mail
-	var regexp = /^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/;
-	//verifico se le email inserite corrispondono
-	if (email.value == email_check.value){
-	    if (regexp.test(email.value)) {
-		//e-mail corretta
-		//verifico (AJAX) se è già presente nel DB
-		check_email(email.value);
-		$("#id-aj-msg").text("");
-		document.getElementById("id-aj-msg").style.opacity="0";
-	    } else {
-	    	console.log("Formato e-mail errato");
-			//Formato email errato
-			document.getElementById("id-aj-msg").style.opacity="1";
-			$("#id-aj-msg").text("Formato e-mail non corretto!");
-			$("#id-email").focus();
-			$("#id-email").select();
-			window.setTimeout(function(){
-            	document.getElementById("id-aj-msg").style.opacity="0";
-            	$("#id-aj-msg").text("");
-            }, 6000);
-	    }
-	} else {
-	    //email non coincidono
-		document.getElementById("id-aj-msg").style.opacity="1";
-	    $("#id-aj-msg").text("L'e-mail non coincidono");
-	    $("#id-email").focus();
-	    $("#id-email").select();
-	    window.setTimeout(function(){
-        	document.getElementById("id-aj-msg").style.opacity="0";
-        	$("#id-aj-msg").text("");
-        }, 6000);
-	}
-    }
-}
-
-function check_email(email){
-    'use strict';
-    var url="../aj/check_user.php?email="+email;
-    http.open("GET", url , true);
-    document.getElementById("id-aj-msg").style.opacity="1";
-    document.getElementById("id-aj-msg").innerHTML="<div id=\"ajax_wait\"><img src=\"../gif/spinner.gif\"><p>...retrieving data</p></div>";
-    http.onreadystatechange=function(){
-	if (http.readyState === 4 || http.readyState === "complete"){
-	    //console.log('check_email : stato 4 passato');
-	    if (http.status === 200){
-		//console.log("check_email : stato 200 OK");
-		//console.log(xmlhttp.responseText);
-		if (http.responseText === 1){
-			// email già presente nel sistema
-				document.getElementById("id-aj-msg").style.opacity="1";
-	    		document.getElementById("id-aj-msg").innerHTML= "e-mail già presente nel sistema !";
-	    		document.getElementById("id-btn-register").disabled = true;
-	    		document.getElementById("id-btn-register").style.backgroundColor="#EFEFEF";
-	    		document.getElementById("id-btn-register").style.color="#697278";
-	    		window.setTimeout(function(){
-	    			document.getElementById("id-aj-msg").style.opacity="0";
-	    		}, 8000);
-	    	} else {
-	    		document.getElementById("id-btn-register").disabled = false;
-	    		document.getElementById("id-btn-register").style.backgroundColor="#DE864C";
-	    		document.getElementById("id-btn-register").style.color="#dedede";
-	    	}
-
-	    } else {
-		document.getElementById("AJAX_response").innerHTML="<p>ERRORE "+http.status+"</p>";
-	    } //if
-	} //if
-    } ; //function
-    http.send(null);
-}
-
-function checkBrowser(){
-	'use strict';
-	//console.log(checkBrowser);
-	http.open("POST", "w/aj/browser.php", true);
-
-    http.onreadystatechange=function(){
-	if (http.readyState==4 || http.readyState=="complete"){
-	    //console.log('Function: checkBrowser() - readyState');
-	    if (http.status == 200){
-	    	var arr = http.responseText.split(",");
-	    	if (arr[2] == 'mobile') {
-	    		var meta = document.getElementById("id-meta-viewport");
-	    		meta.setAttribute("name", "viewport");
-	    		meta.setAttribute("content", "width=device-width, initial-scale=1,user-scalable=0");
-	    	}
-
-			document.getElementById("id-aj-header-test").innerHTML=  http.responseText;
-	    } else {
-    		document.getElementById("id-aj-header-test").innerHTML="<p>ERRORE "+http.status+"</p>";
-    	}
-	} // if
-    } ; // function
-    http.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    http.send(null);
-}
+} // end Class
