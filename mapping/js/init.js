@@ -9,7 +9,8 @@ var App = new Application();
   var app = {
     Cube : new Cube(),
     Storage : new Storage(),
-    dialogTableList : document.getElementById('table-list')
+    dialogTableList : document.getElementById('table-list'),
+    dialogNameSave : document.getElementById('name-save')
   };
 
   // App.getSessionName();
@@ -369,14 +370,15 @@ var App = new Application();
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
       app.Cube.dimensionTitle = this.value;
-      document.getElementById('saveDimension').disabled = false;
+      // document.getElementById('saveDimension').disabled = false;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
-      document.getElementById('saveDimension').disabled = true;
+      // document.getElementById('saveDimension').disabled = true;
     }
   };
 
-  document.getElementById('saveDimension').onclick = function(e) {
+  /* tasto OK nella dialog per il salvataggio di un titolo*/
+  document.getElementById('btnSaveName').onclick = function(e) {
     /*
       Salvo la dimensione, senza il legame con la FACT.
       Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
@@ -384,6 +386,7 @@ var App = new Application();
       Il tasto mdc-next si trasforma in FACT TABLE
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
+    // TODO: definisco se salvare una hierarchy, una dimension oppure un cube, in base alla input visualizzata
 
     let from = [];
     let objDimension = {};
@@ -411,7 +414,27 @@ var App = new Application();
     app.cloneLastTable();
   };
 
+  /* tasto cancel nelle dialog*/
+  document.querySelectorAll('button[btnDialogCancel]').forEach((btn) => {
+    btn.onclick = function() {
+      document.querySelector('dialog[open]').close();
+      app.dialogNameSave.querySelector('div[dimension]').setAttribute('hidden', true);
+      app.dialogNameSave.querySelector('div[cube]').setAttribute('hidden', true);
+      app.dialogNameSave.querySelector('div[hierarchy]').setAttribute('hidden', true);
+
+    }
+  });
+
+  document.getElementById('saveDimension').onclick = function(e) {
+    app.dialogNameSave.querySelector('div[dimension]').removeAttribute('hidden');
+    app.dialogNameSave.showModal();
+  };
+
   document.getElementById('saveCube').onclick = function() {
+
+    app.dialogNameSave.querySelector('div[cube]').removeAttribute('hidden');
+    app.dialogNameSave.showModal();
+    return;
 
     app.Cube.cube.dimensions = app.Cube.dimension;
     app.Cube.cube.type = "CUBE";

@@ -47,8 +47,16 @@ ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;al
 .card-table[groupby] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;padding: 0 6px;color: white;}
 .card-table[metrics] ul > .element li:hover{background-color: #587850;border-radius: 4px;padding: 0 6px;color: white;}
 
+.card-table ul > .element li ~ i{color: grey;visibility: hidden;}
+.card-table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
+.card-table ul > .element li[columns] ~ #columns-icon{visibility: visible;}
+.card-table ul > .element li[filters] ~ #filters-icon{visibility: visible;}
+.card-table ul > .element li[metrics] ~ #metrics-icon{visibility: visible;}
+.card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;}
 
-.card-table ul > .element li:not([hierarchy]) ~ #hierarchy-icon{visibility: hidden;}
+
+
+/* .card-table ul > .element li:not([hierarchy]) ~ #hierarchy-icon{visibility: hidden;}
 .card-table ul > .element li[hierarchy]:not([data-relation-id]) ~ #hierarchy-icon{visibility: visible;}
 .card-table ul > .element li[hierarchy][data-relation-id] ~ #hierarchy-icon{visibility: visible;color: #99b19c;}
 .card-table ul > .element li:not([columns]) ~ #columns-icon{visibility: hidden;}
@@ -58,7 +66,7 @@ ul > .element li{width: 100%;list-style-type: none;height: 30px;display: flex;al
 .card-table ul > .element li:not([metrics]) ~ #metrics-icon{visibility: hidden;}
 .card-table ul > .element li[metrics] ~ #metrics-icon{visibility: visible;color: #587850;}
 .card-table ul > .element li:not([groupby]) ~ #groupby-icon{visibility: hidden;}
-.card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;}
+.card-table ul > .element li[groupby] ~ #groupby-icon{visibility: visible;color: #c7b198;} */
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
@@ -67,7 +75,7 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 .lists{display: flex;}
 dialog .lists{min-width: 300px;}
 
-.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: 20% 80%;}
+.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: auto 65% auto;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 8px;opacity: .6;position: relative;max-width: 300px;width: 300px;min-width: 300px;}
 .structure .card-table[fact-table]{background: var(--main-third-color);}
@@ -88,6 +96,10 @@ dialog .lists{min-width: 300px;}
 .structure .factContainerCards .relation{justify-content: center;}
 .structure .relation > .line{background: grey;width: 1px;height: 40px;}
 .structure .icon-relation{display: flex;justify-self: center;/*direction: rtl;*/position: relative;margin-top: 4px;margin-bottom: 4px;}
+
+/*actions*/
+.actions{display: flex; flex-flow: column;}
+/*actions*/
 
 /* page 2*/
 .page[data-step="2"] .structure{}
@@ -126,12 +138,20 @@ dialog .lists{min-width: 300px;}
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}
-.card-layout > section[options]{position: absolute;display: flex;padding: 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
+.card-layout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
 .card-layout:hover section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
-section[options] > i[metrics]{color: #587850;}
-section[options] > i[columns]{color: #9a6a6a;}
-section[options] > i[filters]{color: #3b7096;}
-section[options] > i[groupby]{color: #c7b198;}
+section[options] i{color: dimgrey;}
+section[options] > span > i[metrics]{color: #587850;}
+section[options] > span > i[columns]{color: #9a6a6a;}
+section[options] > span > i[filters]{color: #3b7096;}
+section[options] > span > i[groupby]{color: #c7b198;}
+
+section[options] > span{margin: 2px 0;}
+
+section[options] i ~ small{visibility: hidden;}
+section[options] i:hover ~ small{visibility: visible;}
+
+section[options] > span > small{padding: 8px;background: #444;color: white;border-radius: 4px;position: absolute; left: 46px;font-size: .7rem;}
 
 
 #structure-test{/*width: 400%;*/overflow-x: hidden;position: relative;}

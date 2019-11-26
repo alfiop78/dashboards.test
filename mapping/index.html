@@ -22,6 +22,41 @@
   </head>
   <body>
 
+    <dialog id="name-save">
+      <div class="dialog-save-name" dimension hidden>
+
+        <div class="md-field">
+          <input type="text" id="dimensionName" value=""/>
+          <label for="dimensionName" class="">Titolo dimensione</label>
+        </div>
+
+      </div>
+
+      <div class="dialog-save-name" cube hidden>
+
+        <div class="md-field">
+          <input type="text" id="cubeName" value=""/>
+          <label for="cubeName" class="">Titolo Cubo</label>
+        </div>
+
+      </div>
+
+      <div class="dialog-save-name" hierarchy hidden>
+
+        <div class="md-field">
+          <input type="text" id="hierarchyName" value=""/>
+          <label for="hierarchyName" class="">Titolo Gerarchia</label>
+        </div>
+
+      </div>
+
+      <div class="dialog-buttons">
+        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button id="btnSaveName" type="button" name="done" class="md-button">Salva</button>
+      </div>
+
+    </dialog>
+
     <dialog id="column-setting" class="dialog-columns">
       <section>
         <h4>Formattazione e alias di colonna <span id="fieldName" class="highlight"></span></h4>
@@ -44,7 +79,7 @@
         </div>
 
         <div class="dialog-buttons">
-          <button id="btnColumnCancel" type="button" name="cancel" class="md-button">annulla</button>
+          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
           <button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -67,7 +102,7 @@
 
 
         <div class="dialog-buttons">
-          <button id="btnGroupByCancel" type="button" name="cancel" class="md-button">annulla</button>
+          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
           <button id="btnGroupByDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -116,7 +151,7 @@
         </div>
 
         <div class="dialog-buttons">
-          <button id="btnFilterCancel" type="button" name="cancel" class="md-button">annulla</button>
+          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
           <button id="btnFilterDone" type="button" name="done" class="md-button">ok</button>
         </div>
       </section>
@@ -176,7 +211,7 @@
 
 
         <div class="dialog-buttons">
-          <button id="btnMetricCancel" type="button" name="cancel" class="md-button">annulla</button>
+          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
           <button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -202,7 +237,7 @@
       </div>
 
       <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button" onclick="document.getElementById('table-list').close();">annulla</button>
+        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
       </div>
     </dialog>
 
@@ -259,11 +294,6 @@
                     </div>
 
                     <div class="hierarchies">
-
-                      <div class="md-field">
-                        <input type="text" id="dimensionName" value=""/>
-                        <label for="dimensionTitle" class="">Dimensione</label>
-                      </div>
 
                       <template id="template-card-table">
 
@@ -335,10 +365,10 @@
                               </ul>
                             </section>
                             <section options>
-                              <i class="material-icons md-18" columns>view_list</i>
-                              <i class="material-icons md-18" filters>filter_list</i>
-                              <i class="material-icons md-18" groupby>dynamic_feed</i>
-                              <i class="material-icons md-18" metrics>show_chart</i>
+                              <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
+                              <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
+                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
+                              <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
                             </section>
                           </div>
 
@@ -358,9 +388,14 @@
 
                       </div>
 
+
+
+                    </div>
+
+                    <div class="actions">
                       <button type="button" class="md-button" id="addHierarchy">Nuova gerarchia</button>
                       <button type="button" class="md-button" id="saveHierarchy">Salva Gerarchia</button>
-                      <button type="button" class="md-button" id="saveDimension" disabled>Salva Dimensione</button>
+                      <button type="button" class="md-button" id="saveDimension">Salva Dimensione</button>
 
                     </div>
 
@@ -435,7 +470,7 @@
                       </div>
 
                     </div>
-                    <button type="button" class="md-button" id="saveCube" disabled>Creazione CUBO</button>
+                    <button type="button" class="md-button" id="saveCube">Creazione CUBO</button>
                   </div>
 
                 </div>

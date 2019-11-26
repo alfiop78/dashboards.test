@@ -20,6 +20,7 @@ class Cube {
     this.dialogMetrics = document.getElementById('metric-setting');
     this.dialogColumns = document.getElementById('column-setting');
     this.dialogGroupBy = document.getElementById('groupby-setting');
+    this.currentFieldSetting = null;
 
   }
 
@@ -108,6 +109,7 @@ class Cube {
             if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
           }
           console.log(this.columns);
+          console.log(Object.keys(this.columns).length);
           break;
         case 'filters':
           console.log('filters');
@@ -145,13 +147,15 @@ class Cube {
 
   handlerColumnSetting(e) {
     // apro la dialog column-setting
+    console.log(e.target);
+    this.currentFieldSetting = e.target;
     let fieldName = this.dialogColumns.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogColumns.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
-    this.dialogColumns.querySelector('#btnColumnCancel').onclick = this.handlerBtnColumnCancel.bind(this);
+
   }
 
   handlerGroupBySetting(e) {
@@ -162,7 +166,6 @@ class Cube {
     this.dialogGroupBy.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
-    this.dialogGroupBy.querySelector('#btnGroupByCancel').onclick = this.handlerBtnGroupByCancel.bind(this);
   }
 
   handlerFilterSetting(e) {
@@ -174,7 +177,6 @@ class Cube {
     this.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
-    this.dialogFilters.querySelector('#btnFilterCancel').onclick = this.handlerBtnFilterCancel.bind(this);
   }
 
   handlerMetricSetting(e) {
@@ -198,7 +200,6 @@ class Cube {
     });
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
-    this.dialogMetrics.querySelector('#btnMetricCancel').onclick = this.handlerBtnMetricCancel.bind(this);
 
   }
 
@@ -230,6 +231,7 @@ class Cube {
 
     this.columns[tableName] = objColumnsParam;
     console.log(this.columns);
+    this.currentFieldSetting.setAttribute('test', true);
     this.dialogColumns.close();
   }
 
@@ -252,10 +254,6 @@ class Cube {
     console.log(this.groupBy);
     this.dialogGroupBy.close();
   }
-
-  handlerBtnColumnCancel(e) {this.dialogColumns.close();}
-
-  handlerBtnGroupByCancel(e) {this.dialogGroupBy.close();}
 
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
@@ -319,8 +317,6 @@ class Cube {
     this.toggleAttribute('selected');
   }
 
-  handlerBtnFilterCancel() {this.dialogFilters.close();}
-
   handlerBtnMetricDone() {
     let tableName = this.activeCardRef.getAttribute('name');
     let metricName = this.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
@@ -372,10 +368,6 @@ class Cube {
 
     console.log(this.metrics);
     console.log(this.filteredMetrics);
-    this.dialogMetrics.close();
-  }
-
-  handlerBtnMetricCancel() {
     this.dialogMetrics.close();
   }
 
