@@ -106,10 +106,11 @@ class Cube {
           e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
           if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
             delete this.columns[tableName][fieldName];
+            // elimino l'attributo defined utile a colorare l'icona
+            e.target.parentElement.querySelector('#columns-icon').removeAttribute('defined');
             if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
           }
           console.log(this.columns);
-          console.log(Object.keys(this.columns).length);
           break;
         case 'filters':
           console.log('filters');
@@ -118,6 +119,9 @@ class Cube {
           if (!e.target.hasAttribute('filters')) {
             // elimino il filtro impostato
             delete this.filters[tableName][fieldName];
+            // elimino l'attributo defined utile a colorare l'icona
+            e.target.parentElement.querySelector('#filters-icon').removeAttribute('defined');
+            // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
           }
           console.log(this.filters);
           break;
@@ -128,6 +132,9 @@ class Cube {
           if (!e.target.hasAttribute('groupby')) {
             // elimino la colonna selezionata per il groupby
             delete this.groupBy[tableName][fieldName];
+            // elimino l'attributo defined utile a colorare l'icona
+            e.target.parentElement.querySelector('#groupby-icon').removeAttribute('defined');
+            if (Object.keys(this.groupBy[tableName]).length === 0) {delete this.groupBy[tableName];}
           }
           console.log(this.groupBy);
           break;
@@ -136,7 +143,10 @@ class Cube {
           e.target.toggleAttribute('metrics');
           e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
           if (!e.target.hasAttribute('metrics')) {
+            // elimino l'attributo defined utile a colorare l'icona
+            e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
             delete this.metrics[tableName][fieldName];
+            // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
           }
           console.log(this.metrics);
           break;
@@ -161,6 +171,7 @@ class Cube {
   handlerGroupBySetting(e) {
     // apro la dialog groupby-setting
     let fieldName = this.dialogGroupBy.querySelector('#fieldName');
+    this.currentFieldSetting = e.target;
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogGroupBy.showModal();
@@ -172,6 +183,7 @@ class Cube {
     // console.log(e);
     // appro la dialog per filters
     let fieldName = this.dialogFilters.querySelector('#fieldName');
+    this.currentFieldSetting = e.target;
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogFilters.showModal();
@@ -184,7 +196,7 @@ class Cube {
     // console.log(e);
     // visualizzo la lista dei filtri creati, per poterli associare alla metrica
     this.createFiltersList();
-
+    this.currentFieldSetting = e.target;
     let fieldName = this.dialogMetrics.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
@@ -231,7 +243,7 @@ class Cube {
 
     this.columns[tableName] = objColumnsParam;
     console.log(this.columns);
-    this.currentFieldSetting.setAttribute('test', true);
+    this.currentFieldSetting.setAttribute('defined', true);
     this.dialogColumns.close();
   }
 
@@ -252,6 +264,7 @@ class Cube {
 
     this.groupBy[tableName] = objParam;
     console.log(this.groupBy);
+    this.currentFieldSetting.setAttribute('defined', true);
     this.dialogGroupBy.close();
   }
 
@@ -270,6 +283,7 @@ class Cube {
 
     this.filters[tableName] = objParam;
     console.log(this.filters);
+    this.currentFieldSetting.setAttribute('defined', true);
     this.dialogFilters.close();
   }
 
@@ -368,6 +382,7 @@ class Cube {
 
     console.log(this.metrics);
     console.log(this.filteredMetrics);
+    this.currentFieldSetting.setAttribute('defined', true);
     this.dialogMetrics.close();
   }
 
