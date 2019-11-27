@@ -25,46 +25,32 @@ var App = new Application();
 
   app.getDatamarts = function() {
     /*recupero lista reports creati dal localStorage*/
-    // console.log(window.localStorage);
-    let reports = Object.keys(window.localStorage);
-    // console.log(reports);
-    // console.log(reports.length);
-    app.report_id = reports.length+1;
-    // console.log(app.report_id);
-    let ulDatamartList = document.getElementById('datamartList');
-    reports.forEach((report) => {
-      // console.log(JSON.parse(window.localStorage.getItem(report)));
-      let cube = JSON.parse(window.localStorage.getItem(report));
+    let ul = document.getElementById('datamartList');
+
+    app.Storage.getCubesList().forEach((cube) => {
+      // console.log(cube);
       let li = document.createElement('li');
-      console.log(cube.type);
-      // TODO: type="CUBE"
-      if (cube.type) {
-        li.id = cube.report_id;
-        li.innerHTML = report;
-        ulDatamartList.appendChild(li);
-        li.onclick = function(e) {
-          /*
-          1- Inserisco il nome del datamart(Report) selezionato in lyt-report
-          */
-          app.activeSection.querySelector('h5').innerText = li.innerHTML;
-          app.dialog.close();
-          // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
-          // app.activeSection.setAttribute('associated-datamart', li.innerText);
-          app.activeSection.setAttribute('associated-datamart-id', li.id);
+      li.id = cube.report_id;
+      li.innerHTML = cube.key;
+      ul.appendChild(li);
+      li.onclick = function(e) {
+        /*
+        1- Inserisco il nome del datamart(Report) selezionato in lyt-report
+        */
+        app.activeSection.querySelector('h5').innerText = li.innerHTML;
+        app.dialog.close();
+        // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
+        // app.activeSection.setAttribute('associated-datamart', li.innerText);
+        app.activeSection.setAttribute('associated-datamart-id', li.id);
 
-          // definisco le data-section per ogni oggetto inserito nella pagina
-          // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
-          // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
-          let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'reportId' : +li.id}];
-          let report_section_association = arrSections;
-          app.pageParams.layoutParams = report_section_association;
-        };
+        // definisco le data-section per ogni oggetto inserito nella pagina
+        // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
+        // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
+        let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'reportId' : +li.id}];
+        let report_section_association = arrSections;
+        app.pageParams.layoutParams = report_section_association;
       }
-
-
     });
-
-
   };
 
   app.handlerAddObject = function(e) {

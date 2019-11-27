@@ -8,9 +8,14 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
+    // passo al Costruttore il contenitore di tutte le page
+    Page : new Page(document.getElementById('pages')),
     Storage : new Storage(),
     dialogTableList : document.getElementById('table-list'),
-    dialogNameSave : document.getElementById('name-save')
+    dialogNameSave : document.getElementById('name-save'),
+    btnFact : document.getElementById('mdc-next'),
+    btnBack : document.getElementById('mdc-back'),
+    btnPreviewReport : document.getElementById('mdc-preview-report')
   };
 
   // App.getSessionName();
@@ -35,13 +40,14 @@ var App = new Application();
 
   app.getCubeList = function() {
     let ul = document.getElementById('cubesList');
-    app.Storage.getCubesList().forEach((name) => {
+    app.Storage.getCubesList().forEach((cube) => {
       // console.log(name);
       let element = document.createElement('div');
       element.classList.add('element');
       let li = document.createElement('li');
-      li.innerText = name;
-      li.setAttribute('label', name);
+      li.innerText = cube.key;
+      li.id = cube.report_id;
+      li.setAttribute('label', cube.key);
       ul.appendChild(element);
       element.appendChild(li);
       li.onclick = app.handlerCubeSelected;
@@ -61,6 +67,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
+          // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
           // app.createReport(response);
 
         } else {
@@ -483,27 +490,36 @@ var App = new Application();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  document.getElementById('mdc-next').onclick = function(e) {
-    // pagina attiva in questo momento
+  app.checkStep = function() {
+    // page attuale
     let selectedPage = document.querySelector('.page[selected]');
-    selectedPage.removeAttribute('selected');
-    // pagina da attivare
-    let page = selectedPage.nextElementSibling;
-    page.setAttribute('selected', true);
-    let pages = document.getElementById('pages');
-    pages.setAttribute('data-step', page.getAttribute('data-step'));
-    // app.getData();
+    let step = +selectedPage.getAttribute('data-step');
+    switch (step) {
+      case 1:
+        app.btnFact.hidden = false;
+        app.btnPreviewReport.hidden = true;
+        break;
+      case 2:
+        app.btnFact.hidden = true;
+        app.btnPreviewReport.hidden = false;
+        break;
+      default:
+
+    }
   };
 
-  document.getElementById('mdc-back').onclick = function(e) {
-    // pagina attiva in questo momento
-    let selectedPage = document.querySelector('.page[selected]');
-    selectedPage.removeAttribute('selected');
-    // pagina da attivare
-    let page = selectedPage.previousElementSibling;
-    page.setAttribute('selected', true);
-    let pages = document.getElementById('pages');
-    pages.setAttribute('data-step', page.getAttribute('data-step'));
+  app.btnFact.onclick = function(e) {
+    app.Page.next();
+    app.checkStep();
+  };
+
+  app.btnPreviewReport.onclick = function(e) {
+    app.Page.next();
+  };
+
+  app.btnBack.onclick = function(e) {
+    app.Page.back();
+    app.checkStep();
   };
 
   /*ricerca dimensioni in elenco di sinistra*/

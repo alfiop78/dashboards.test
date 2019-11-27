@@ -56,7 +56,8 @@ class Storage {
       // console.log(key);
       if (jsonStorage.type === "CUBE") {
         // console.log("cubo : "+key);
-        cubes.push(key);
+        let cubeProperties = {key, 'report_id' : jsonStorage.report_id};
+        cubes.push(cubeProperties);
       }
     });
     return cubes;

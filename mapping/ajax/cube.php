@@ -23,11 +23,12 @@ $q->FILTERS($cube->{'filters'});
 $q->GROUPBY($cube->{'groupby'});
 // return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
-echo $q->baseTable();
-// return;
-echo $q->createMetricDatamarts($cube->{'filteredMetrics'});
+$baseTable = $q->baseTable();
+if ($baseTable > 0) {
+  $metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
+  
+  $result = $q->createDatamart();
+}
 
-echo $q->createDatamart();
-
-// ob_clean();
-// echo json_encode($result, JSON_FORCE_OBJECT);
+ob_clean();
+echo json_encode($result, JSON_FORCE_OBJECT);
