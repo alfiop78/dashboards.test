@@ -9,6 +9,7 @@ var App = new Application();
   var app = {
     // Cube : new Cube(),
     Draw : null,
+    Storage : new Storage(),
     report_id : 0,
     reports : new Object(),
     dialog : document.getElementsByTagName('dialog')[0],

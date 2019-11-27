@@ -49,11 +49,12 @@ var App = new Application();
   };
 
   app.handlerCubeSelected = function(e) {
-    let data = window.localStorage.getItem(this.getAttribute('name'));
+    let data = window.localStorage.getItem(this.getAttribute('label'));
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
     let params = "cube="+data;
     // console.log(params);
+    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -359,10 +360,8 @@ var App = new Application();
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
       app.Cube.cubeTitle = this.value;
-      document.getElementById('saveCube').disabled = false;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
-      document.getElementById('saveCube').disabled = true;
     }
   };
 
@@ -370,10 +369,8 @@ var App = new Application();
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
       app.Cube.dimensionTitle = this.value;
-      // document.getElementById('saveDimension').disabled = false;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
-      // document.getElementById('saveDimension').disabled = true;
     }
   };
 
