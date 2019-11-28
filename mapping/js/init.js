@@ -16,12 +16,7 @@ var App = new Application();
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
-    btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
-    btnDefinePage : document.getElementById('mdc-define-page'),
-    btnDone : document.getElementById('mdc-done'),
-    dialogReports : document.getElementById('dialog-reports'),
-    pageParams : new Object(),
-    activeSection : null // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina (step 5)
+    btnDashboardLayout : document.getElementById('mdc-dashboard-layout')
   };
 
   // App.getSessionName();
@@ -57,35 +52,6 @@ var App = new Application();
       ul.appendChild(element);
       element.appendChild(li);
       li.onclick = app.handlerCubeSelected;
-    });
-  };
-
-  app.getDatamarts = function() {
-    /*recupero lista reports creati dal localStorage*/
-    let ul = document.getElementById('datamartList');
-
-    app.Storage.getCubesList().forEach((cube) => {
-      // console.log(cube);
-      let li = document.createElement('li');
-      li.id = cube.report_id;
-      li.innerHTML = cube.key;
-      ul.appendChild(li);
-      li.onclick = function(e) {
-        /*
-        1- Inserisco il nome del datamart(Report) selezionato in lyt-report
-        */
-        app.activeSection.querySelector('h5').innerText = li.innerHTML;
-        app.dialogReports.close();
-        // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
-        // app.activeSection.setAttribute('associated-datamart', li.innerText);
-        app.activeSection.setAttribute('associated-datamart-id', li.id);
-        // definisco le data-section per ogni oggetto inserito nella pagina
-        // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
-        // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
-        let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'reportId' : +li.id}];
-        let report_section_association = arrSections;
-        app.pageParams.layoutParams = report_section_association;
-      }
     });
   };
 
@@ -376,29 +342,6 @@ var App = new Application();
     this.toggleAttribute('selected');
   };
 
-  app.handlerPreviewLayoutSelected = function(e) {
-    /* Layout selezionato (1 pagina) */
-    console.log(e.target);
-    console.log(this);
-    app.layoutId = +this.getAttribute("data-preview-layout-id");
-    console.log(app.layoutId);
-    // TODO: visualizzo (dal template), nel secondo step, il layout che è stato scelto in modalità "edit" per poter definire la posizione di ogni report/chart/indicator/ecc...
-    let tmplViewLayout = document.getElementById('view-layout-'+app.layoutId);
-    console.log(tmplViewLayout);
-    let viewLayoutContent = tmplViewLayout.content.cloneNode(true);
-    let viewLayout = viewLayoutContent.querySelector("div.view-layout[data-view-layout-id='"+app.layoutId+"']");
-    document.querySelector(".page[data-step='5']").appendChild(viewLayout);
-  };
-
-  app.handlerAddObject = function(e) {
-    /*
-    Apro la dialog per selezionare l'oggetto (report o grafico, indicatori, ecc...) da incorporare nella pagina
-    */
-    console.log(this);
-    app.activeSection = e.path[2];
-    app.dialogReports.showModal();
-  };
-
   /*events */
   document.querySelectorAll('.card-table').forEach((card) => {
     // console.log(card);
@@ -552,44 +495,7 @@ var App = new Application();
 
   app.btnPreviewReport.onclick = function(e) {app.Page.next();};
 
-  app.btnDefinePage.onclick = function(e) {
-    app.Page.next();
-    // event su addObjectIcon nelle preview del dashboard
-    document.querySelectorAll('.page[selected] .addObjectIcon > i').forEach((btnAdd) => {btnAdd.onclick = app.handlerAddObject;});
-  };
-
-  app.btnDone.onclick = function(e) {
-    /*
-    1 - Memorizzo in localStorage un id per la pagina con all'interno i reports in essa contenuti
-    */
-    let pageTitle = document.getElementById('pageTitle').value;
-    let pageId;
-    // TODO: verifico quante pagina ci sono in localStorage ed assegno l'id successivo a questa pagina
-    // console.log(window.localStorage);
-    // recupero i nomi degli oggetti contenuto nello storage
-    let objStorage = Object.keys(window.localStorage);
-    objStorage.forEach((item) => {
-      // verifico, per ogni oggetto se è presente il type : "PAGE"
-      // console.log(item);
-      // ottengo un JSON dallo storage
-      let storageItem = JSON.parse(window.localStorage.getItem(item));
-      // console.log(storageItem.type);
-      if (storageItem.page) {pageId = storageItem.pageId+1;}
-    });
-
-    app.pageParams.pageId = pageId;
-    app.pageParams.layoutId = app.layoutId;
-    app.pageParams.type = "PAGE";
-    window.localStorage[pageTitle] = JSON.stringify(app.pageParams);
-    // apro la pagina del dashboard finale
-    console.log('APRO LA PAGINA pages/');
-    return;
-    window.location.href = "../pages/";
-  };
-
   app.btnBack.onclick = function(e) {app.Page.previous();};
-
-  app.btnDashboardLayout.onclick = function(e) {app.Page.next();};
 
   /*ricerca dimensioni in elenco di sinistra*/
   document.getElementById('dimensionSearch').oninput = App.searchInList;
@@ -598,9 +504,6 @@ var App = new Application();
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
 
-  // event click su preview-layout
-  document.querySelectorAll('.preview-layout').forEach((layout) => {layout.onclick = app.handlerPreviewLayoutSelected;});
-
   /*events */
 
   app.getDatabaseTable();
@@ -608,8 +511,4 @@ var App = new Application();
   app.getDimensionsList();
 
   app.getDatamartList();
-
-  app.getDatamarts();
-
-
 })();

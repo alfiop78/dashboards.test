@@ -5,16 +5,14 @@
 #pages[data-step="1"]{transform: translateX(0px);}
 #pages[data-step="2"]{transform: translateX(-1000px);}
 #pages[data-step="3"]{transform: translateX(-2000px);}
-#pages[data-step="4"]{transform: translateX(-3000px);}
-#pages[data-step="5"]{transform: translateX(-4000px);}
+
 .page > section{width: 100%;}
 
 /* associo il tasto con attributo data-associated-page alla pagina corrente*/
 #container[data-page="1"] > #controls button[data-associated-page="1"]{visibility: visible;display: inline-flex;}
 #container[data-page="2"] > #controls button[data-associated-page="2"]{visibility: visible;display: inline-flex;}
 #container[data-page="3"] > #controls button[data-associated-page="3"]{visibility: visible;display: inline-flex;}
-#container[data-page="4"] > #controls button[data-associated-page="4"]{visibility: visible;display: inline-flex;}
-#container[data-page="5"] > #controls button[data-associated-page="5"]{visibility: visible;display: inline-flex;}
+
 
 .highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
 /*pages*/

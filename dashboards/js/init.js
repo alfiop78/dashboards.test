@@ -12,7 +12,7 @@ var App = new Application();
     Storage : new Storage(),
     report_id : 0,
     reports : new Object(),
-    dialog : document.getElementsByTagName('dialog')[0],
+    dialogReports : document.getElementById('dialog-reports'),
     activeSection : null, // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
     layoutId : null,
     pageParams : new Object()
