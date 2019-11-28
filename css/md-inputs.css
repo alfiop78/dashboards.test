@@ -231,7 +231,7 @@ label[for]{color:#999; left: 4px; margin:0;font-weight:normal;position:absolute;
   transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);padding: 0 16px 0 16px;background: var(--main-secondary-color);}
 
 #mdc-logout{background: #fff;color: var(--main-secondary-color);}
-#mdc-dashboard-layout{background: var(--main-primary-color);color: dimgrey;}
+#mdc-dashboard-layout{background: var(--main-primary-color);color: black;}
 
 .button.raised.highlighted{background: transparent;}
 .button.flat{background-color: transparent;color: #845e48;}

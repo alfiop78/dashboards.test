@@ -8,6 +8,7 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
+    Draw : null,
     // passo al Costruttore il contenitore di tutte le page
     Page : new Page(document.getElementById('pages')),
     Storage : new Storage(),
@@ -56,20 +57,49 @@ var App = new Application();
   };
 
   app.handlerCubeSelected = function(e) {
-    let data = window.localStorage.getItem(this.getAttribute('label'));
-    var url = "ajax/cube.php";
-    // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
-    let params = "cube="+data;
+    // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
+    // ricreo un datamart
+    // let data = window.localStorage.getItem(this.getAttribute('label'));
+    // var url = "ajax/cube.php";
+    // // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    // let params = "cube="+data;
     // console.log(params);
-    // return;
+    // // return;
+    // var request = new XMLHttpRequest();
+    // request.onreadystatechange = function() {
+    //   if (request.readyState === XMLHttpRequest.DONE) {
+    //     if (request.status === 200) {
+    //       var response = JSON.parse(request.response);
+    //       console.table(response);
+    //       // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
+    //       app.createReport(response);
+    //
+    //     } else {
+    //
+    //     }
+    //   } else {
+    //
+    //   }
+    // };
+    //
+    // request.open('POST', url);
+    // // request.setRequestHeader('Content-Type','application/json');
+    // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    // request.send(params);
+
+    // recupero un datamart FX... già creato
+    var url = "ajax/reports.php";
+    let reportId = this.getAttribute('id');
+    let params = "reportId="+reportId;
+
+    // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
-          // app.createReport(response);
+          app.createReport(response);
 
         } else {
 
@@ -435,11 +465,10 @@ var App = new Application();
     app.dialogNameSave.showModal();
   };
 
-  document.getElementById('saveCube').onclick = function() {
+  document.getElementById('saveReport').onclick = function() {
 
     app.dialogNameSave.querySelector('div[cube]').removeAttribute('hidden');
     app.dialogNameSave.showModal();
-    return;
 
     app.Cube.cube.dimensions = app.Cube.dimension;
     app.Cube.cube.type = "CUBE";
@@ -454,18 +483,18 @@ var App = new Application();
     console.log(app.Cube.cube);
     // salvo il cubo in localStorage
     app.Storage.cube = app.Cube.cube;
-    // app.Storage.cube = app.Cube.cube;
 
     var url = "ajax/cube.php";
     let params = "cube="+app.Storage.cube;
     console.log(params);
+    return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // app.createReport(response);
+          app.createReport(response);
 
         } else {
 
@@ -503,8 +532,61 @@ var App = new Application();
   document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
-
   /*events */
+
+  app.createReport = function(response) {
+    console.log('create report');
+
+    let table = document.getElementById('table-01');
+
+    console.log(response);
+    // return;
+
+    let options =
+      {
+      'cols' : [
+        // {'col': 3, 'attribute': 'hidden'},
+        // {'col': 5, 'attribute': 'hidden'}
+
+      ],
+      'filters' : [
+        {'col': 0, 'attribute': 'multi'}
+        // {'col': 1, 'attribute': 'multi'},
+        // {'col': 3, 'attribute': 'hidden'}
+      ],
+      'metrics' : [2], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'title' : app.pageSelectedTitle,
+      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
+      };
+    app.Draw = new Draw(table, options);
+    // console.log(app.Draw);
+    // Opzione 1 - aggiungo tutte le colonne della query
+    Object.keys(response[0]).forEach((el, i) => {
+      // console.log('col:'+el);
+      app.Draw.addColumn(el, i);
+      // aggiungo un filtro per ogni colonna della tabella
+      app.Draw.addParams(el, i);
+    });
+    // Opzione 2 - aggiungo manualmetne le colonne
+    // app.Draw.addColumn('ID');
+    // app.Draw.addColumn('Dealer');
+
+    // aggiungo le righe
+    let arrParams = [];
+    for (let i in response) {
+      // console.log(Object.values(response[i]));
+      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
+      app.Draw.addRow(Object.values(response[i]));
+      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
+      // Opzione 2 - Aggiunta colonne manualmente
+      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
+    }
+
+    app.Draw.createDatalist();
+    // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
+    app.Draw.draw();
+
+  };
 
   app.getDatabaseTable();
 
