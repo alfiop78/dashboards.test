@@ -7,6 +7,7 @@
 #pages[data-step="3"]{transform: translateX(-2000px);}
 #pages[data-step="4"]{transform: translateX(-3000px);}
 #pages[data-step="5"]{transform: translateX(-4000px);}
+.page > section{width: 100%;}
 
 /* associo il tasto con attributo data-associated-page alla pagina corrente*/
 #container[data-page="1"] > #controls button[data-associated-page="1"]{visibility: visible;display: inline-flex;}
