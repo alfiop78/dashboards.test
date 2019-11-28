@@ -16,7 +16,8 @@ var App = new Application();
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
-    btnDashboardLayout : document.getElementById('mdc-dashboard-layout')
+    btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
+    btnDefinePage : document.getElementById('mdc-define-page')
   };
 
   // App.getSessionName();
@@ -491,41 +492,15 @@ var App = new Application();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  app.checkStep = function() {
-    // page attuale
-    let selectedPage = document.querySelector('.page[selected]');
-    let step = +selectedPage.getAttribute('data-step');
-    switch (step) {
-      case 1:
-        app.btnFact.hidden = false;
-        app.btnPreviewReport.hidden = true;
-        break;
-      case 2:
-        app.btnFact.hidden = true;
-        app.btnPreviewReport.hidden = false;
-        break;
-      case 3:
-        app.btnPreviewReport.hidden = true;
-        app.btnPreviewReport.hidden = false;
-        break;
-      default:
+  app.btnFact.onclick = function(e) {app.Page.next();};
 
-    }
-  };
+  app.btnPreviewReport.onclick = function(e) {app.Page.next();};
 
-  app.btnFact.onclick = function(e) {
-    app.Page.next();
-    // app.checkStep();
-  };
+  app.btnDefinePage.onclick = function(e) {app.Page.next();};
 
-  app.btnPreviewReport.onclick = function(e) {
-    app.Page.next();
-  };
+  app.btnBack.onclick = function(e) {app.Page.previous();};
 
-  app.btnBack.onclick = function(e) {
-    app.Page.previous();
-    // app.checkStep();
-  };
+  app.btnDashboardLayout.onclick = function(e) {app.Page.next();};
 
   /*ricerca dimensioni in elenco di sinistra*/
   document.getElementById('dimensionSearch').oninput = App.searchInList;

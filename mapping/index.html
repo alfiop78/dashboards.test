@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/css/md-drawer.css" />
     <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/layouts.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
     <script src="/js/Storage.js"></script>
@@ -485,8 +486,8 @@
               <section class="page" data-step="3">
                 <h2>Anteprima Report</h2>
                 <section>
-                  <h3>Creazione della struttura gerarchica</h3>
-                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
+                  <h3>Impostazione Report</h3>
+                  <h5>descrizione</h5>
 
                   <div class="layout" lyt-col="1" lyt-row="1">
                     <section title>
@@ -556,7 +557,7 @@
               <section class="page" data-step="4">
                 <h2>Layout Dashboard</h2>
                 <section>
-                  <h3>Layout Pagina</h3><h5>Selezione del layout del Dashboard</h5>
+                  <h3>Layout Pagina</h3><h5>Seleziona il Layout per la pagina da creare</h5>
 
                   <div class="grid-2-2">
 
@@ -687,6 +688,89 @@
                   </div>
                 </section>
               </section>
+
+              <section class="page" data-step="5">
+                <h2>title</h2>
+                <section>
+                  <h3>subtitle</h3><h5>description</h5>
+                  <template id="view-layout-0" data-view-layout-id="0">
+
+                    <div class="view-layout" data-view-layout-id="0">
+
+                      <section title>
+                        <div class="md-field">
+                          <input type="text" id="pageTitle" value=""/>
+                          <label for="pageTitle" class="pageSubtitle">Titolo pagina</label>
+                        </div>
+                        <div class="md-field">
+                          <input type="text" id="pageSubtitle" value=""/>
+                          <label for="pageSubtitle" class="">Descrizione</label>
+                        </div>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-report" data-section="1">
+                          <h5></h5>
+                          <div class="addObjectIcon">
+                            <i class="material-icons md-36">add</i>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </template>
+
+                  <template id="view-layout-1" data-view-layout-id="1">
+
+                    <div class="view-layout" data-view-layout-id="1">
+
+                      <section title>
+                        <div class="md-field">
+                          <input type="text" id="pageTitle" value=""/>
+                          <label for="pageTitle" class="pageSubtitle">Titolo pagina</label>
+                        </div>
+                        <div class="md-field">
+                          <input type="text" id="pageSubtitle" value=""/>
+                          <label for="pageSubtitle" class="">Descrizione</label>
+                        </div>
+                      </section>
+
+                      <div class="lyt-page-by">
+                        <div></div><div></div><div></div><div></div>
+                      </div>
+
+                      <div class="lyt-body">
+
+                        <div class="lyt-report" data-section="1">
+                          <h5></h5>
+                          <div class="addObjectIcon">
+                            <i class="material-icons md-36">add</i>
+                          </div>
+                        </div>
+
+                        <div class="lyt-chart" data-section="2">
+                          <h5></h5>
+                          <div class="addObjectIcon">
+                            <i class="material-icons md-36">add</i>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </template>
+                </section>
+              </section>
+
+
             </div>
 
           </div>
@@ -695,12 +779,13 @@
 
         <div id="controls">
           <div id="fabs">
-            <!-- <a href="#" id="previous-step" title="Previous step">logout</a> -->
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
             <button id="mdc-next" class="button dense raised" hidden data-associated-page="1">FACT</button>
             <button id="mdc-preview-report" class="button dense raised" hidden data-associated-page="2">report preview</button>
             <button id="mdc-dashboard-layout" class="button dense raised" hidden data-associated-page="3">Dashboard Layout</button>
+            <button id="mdc-define-page" class="button dense raised" hidden data-associated-page="4">definizione oggetti</button>
+            <button id="mdc-done" class="button dense raised" hidden data-associated-page="5">completato</button>
           </div>
         </div>
 

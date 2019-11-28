@@ -33,9 +33,9 @@ class Page {
     // set lo step corrente
     this.currentStep = this.nextPage.getAttribute('data-step');
     // imposto, sul container delle pagine il data-step attivo in questo momento, dopo il next
-    this.containerPages.setAttribute('data-step', +this.nextPage.getAttribute('data-step'));
+    this.containerPages.setAttribute('data-step', this.currentStep);
     // imposto il data-page attuale anche sul container, questo mi servirà per gestire i tasti da visualizzare/nascondere in #controls, in base alla pagina visualizzata
-    this.container.setAttribute('data-page', +this.nextPage.getAttribute('data-step'));
+    this.container.setAttribute('data-page', this.currentStep);
   }
 
   previous() {
@@ -54,7 +54,7 @@ class Page {
     // imposto, sul container delle pagine il data-step attivo in questo momento, dopo il next
     this.containerPages.setAttribute('data-step', this.currentStep);
     // imposto il data-page attuale anche sul container, questo mi servirà per gestire i tasti da visualizzare/nascondere in #controls, in base alla pagina visualizzata
-    this.container.setAttribute('data-page', +this.previousPage.getAttribute('data-step'));
+    this.container.setAttribute('data-page', this.currentStep);
   }
 
 }
