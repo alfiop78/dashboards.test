@@ -15,7 +15,8 @@ var App = new Application();
     dialogNameSave : document.getElementById('name-save'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
-    btnPreviewReport : document.getElementById('mdc-preview-report')
+    btnPreviewReport : document.getElementById('mdc-preview-report'),
+    btnDashboardLayout : document.getElementById('mdc-dashboard-layout')
   };
 
   // App.getSessionName();
@@ -503,6 +504,10 @@ var App = new Application();
         app.btnFact.hidden = true;
         app.btnPreviewReport.hidden = false;
         break;
+      case 3:
+        app.btnPreviewReport.hidden = true;
+        app.btnPreviewReport.hidden = false;
+        break;
       default:
 
     }
@@ -510,7 +515,7 @@ var App = new Application();
 
   app.btnFact.onclick = function(e) {
     app.Page.next();
-    app.checkStep();
+    // app.checkStep();
   };
 
   app.btnPreviewReport.onclick = function(e) {
@@ -518,8 +523,8 @@ var App = new Application();
   };
 
   app.btnBack.onclick = function(e) {
-    app.Page.back();
-    app.checkStep();
+    app.Page.previous();
+    // app.checkStep();
   };
 
   /*ricerca dimensioni in elenco di sinistra*/

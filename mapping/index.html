@@ -268,7 +268,7 @@
         <h1 class="title"></h1>
       </header>
 
-      <div id="container">
+      <div id="container" data-page="1">
 
         <div id="content">
           <div id="body" hidden>
@@ -407,256 +407,286 @@
 
               <section class="page" data-step="2">
                 <h2>Step 2 - Tabella FACT</h2>
-                <div class="structure">
+                <section>
+                  <h3>Creazione della struttura gerarchica</h3>
+                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
 
-                  <div class="lists">
-                    <div class="list">
-                      <div class="md-field">
-                        <input type="search" id="cubeSearch" value=""/>
-                        <label for="cubeSearch" class="">Ricerca</label>
-                      </div>
+                  <div class="structure">
 
-                      <ul id="cubesList"></ul>
-                    </div>
-                  </div>
-
-                  <div class="hierarchies">
-
-                    <div class="factContainerCards" id="factContainerCards">
-
-                      <div class="dimensionHierarchy" id="last-card">
-                        <div class="miniCard">
-                          <p>minicard 1</p>
-                          <p>minicard 2</p>
-                          <p>minicard 3</p>
-                        </div>
-                        <!-- qui verrà aggiunta l'ultima tabella della gerarchia -->
-
-                      </div>
-
-
-                      <div class="relation">
-                        <div class="icon-relation">
-                          <i class="material-icons md-24" hierarchies>insert_link</i>
-                          <i class="material-icons md-24 vertical-anim" hierarchies-left>flip</i>
-                          <i class="material-icons md-24 vertical-anim" hierarchies-right>flip</i>
-                          <i class="material-icons md-24 vertical-anim" hierarchies-remove>link_off</i>
-                        </div>
-                      </div>
-
-                      <div class="card" id="fact-card">
-                        <div class="card-layout">
-                          <section id="fact" class="card-table" fact-table>
-                            <div class="help">Aggiungi la Fact Table</div>
-                            <h5>FACT TABLE</h5>
-                            <div class="md-field" hidden>
-                              <input type="text" id="searchColumns" value=""/>
-                              <label for="searchColumns" class="">Ricerca</label>
-                            </div>
-                            <ul id="columns"></ul>
-                          </section>
-                          <section options>
-                            <i class="material-icons md-18" metrics>show_chart</i>
-                            <i class="material-icons md-18" columns>view_list</i>
-                            <i class="material-icons md-18" filters>filter_list</i>
-                            <i class="material-icons md-18" groupby>dynamic_feed</i>
-                          </section>
+                    <div class="lists">
+                      <div class="list">
+                        <div class="md-field">
+                          <input type="search" id="cubeSearch" value=""/>
+                          <label for="cubeSearch" class="">Ricerca</label>
                         </div>
 
+                        <ul id="cubesList"></ul>
                       </div>
-
                     </div>
 
-                  </div>
+                    <div class="hierarchies">
 
-                  <div class="actions">
-                    <button type="button" class="md-button" id="saveCube">Creazione CUBO</button>
-                  </div>
+                      <div class="factContainerCards" id="factContainerCards">
 
-                </div>
+                        <div class="dimensionHierarchy" id="last-card">
+                          <div class="miniCard">
+                            <p>minicard 1</p>
+                            <p>minicard 2</p>
+                            <p>minicard 3</p>
+                          </div>
+                          <!-- qui verrà aggiunta l'ultima tabella della gerarchia -->
+
+                        </div>
 
 
+                        <div class="relation">
+                          <div class="icon-relation">
+                            <i class="material-icons md-24" hierarchies>insert_link</i>
+                            <i class="material-icons md-24 vertical-anim" hierarchies-left>flip</i>
+                            <i class="material-icons md-24 vertical-anim" hierarchies-right>flip</i>
+                            <i class="material-icons md-24 vertical-anim" hierarchies-remove>link_off</i>
+                          </div>
+                        </div>
 
-              </section>
-              <section class="page" data-step="3">
-                <h2>Creazione Report</h2>
-                <div class="layout" lyt-col="1" lyt-row="1">
-                  <section title>
-                    <h3>Layout pagina</h3>
-                    <h5>Scelta del layout della pagina</h5>
-                  </section>
-                  <section params>
-                    <div class="params column">
-                      <template id="params">
-                        <div class="cell-full md-field" data-param-id="" options='filters'>
-                          <input type="search" id="" value="" onclick="this.select()"/>
-                          <label for=""></label>
-                          <div class="elements" options="filters" col="">
-                            <ul class="filters" id=""></ul>
-                            <section>
-                              <button class="button dense raised">ok</button>
+                        <div class="card" id="fact-card">
+                          <div class="card-layout">
+                            <section id="fact" class="card-table" fact-table>
+                              <div class="help">Aggiungi la Fact Table</div>
+                              <h5>FACT TABLE</h5>
+                              <div class="md-field" hidden>
+                                <input type="text" id="searchColumns" value=""/>
+                                <label for="searchColumns" class="">Ricerca</label>
+                              </div>
+                              <ul id="columns"></ul>
+                            </section>
+                            <section options>
+                              <i class="material-icons md-18" metrics>show_chart</i>
+                              <i class="material-icons md-18" columns>view_list</i>
+                              <i class="material-icons md-18" filters>filter_list</i>
+                              <i class="material-icons md-18" groupby>dynamic_feed</i>
                             </section>
                           </div>
 
                         </div>
-                      </template>
+
+                      </div>
 
                     </div>
 
-                  </section>
-                  <section body>
-                    <section table>
-                      <table id="table-01" header-fixed>
-                        <caption>caption table</caption>
-                        <thead>
-                          <tr></tr>
-                        </thead>
+                    <div class="actions">
+                      <button type="button" class="md-button" id="saveCube">Creazione CUBO</button>
+                    </div>
 
-                        <tbody></tbody>
-
-                        <tfoot>
-                          <tr><td>Total</td></tr>
-                          <tr>
-                            <td>
-                              <div class="cell-full md-field">
-                                <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
-                                <label for="search">Ricerca</label>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr class="tr-right">
-                            <td>
-                              <div info>
-                                <span>Elementi presenti</span>&nbsp;<span row-number></span>
-                              </div>
-                            </td>
-
-                          </tr>
-                        </tfoot>
-
-                      </table>
-
-                    </section>
-                  </section>
-
-                </div>
-              </section>
-              <!-- <section class="page" data-step="4">
-                <section title>
-                  <h3>Layout pagina</h3>
-                  <h5>Scelta del layout della pagina</h5>
+                  </div>
                 </section>
 
-                <div class="grid-2-2">
+              </section>
 
-                  <div class="pageLayout">Layout 1 (report)
+              <section class="page" data-step="3">
+                <h2>Anteprima Report</h2>
+                <section>
+                  <h3>Creazione della struttura gerarchica</h3>
+                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
 
-                    <div class="preview-layout" data-id="layout-0"> <!-- TODO:  queste saranno pagine html --><!--
+                  <div class="layout" lyt-col="1" lyt-row="1">
+                    <section title>
+                      <h3>Layout pagina</h3>
+                      <h5>Scelta del layout della pagina</h5>
+                    </section>
+                    <section params>
+                      <div class="params column">
+                        <template id="params">
+                          <div class="cell-full md-field" data-param-id="" options='filters'>
+                            <input type="search" id="" value="" onclick="this.select()"/>
+                            <label for=""></label>
+                            <div class="elements" options="filters" col="">
+                              <ul class="filters" id=""></ul>
+                              <section>
+                                <button class="button dense raised">ok</button>
+                              </section>
+                            </div>
 
-                      <section title>
-                        <h3>Page Title</h3>
-                        <h5>Page Subtitle</h5>
+                          </div>
+                        </template>
+
+                      </div>
+
+                    </section>
+                    <section body>
+                      <section table>
+                        <table id="table-01" header-fixed>
+                          <caption>caption table</caption>
+                          <thead>
+                            <tr></tr>
+                          </thead>
+
+                          <tbody></tbody>
+
+                          <tfoot>
+                            <tr><td>Total</td></tr>
+                            <tr>
+                              <td>
+                                <div class="cell-full md-field">
+                                  <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                                  <label for="search">Ricerca</label>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="tr-right">
+                              <td>
+                                <div info>
+                                  <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                                </div>
+                              </td>
+
+                            </tr>
+                          </tfoot>
+
+                        </table>
+
                       </section>
-
-                      <div class="lyt-page-by">
-                        <div></div><div></div><div></div><div></div>
-                      </div>
-
-                      <div class="lyt-body">
-
-                        <div class="lyt-report">
-                        </div>
-
-                      </div>
-
-                    </div>
-
+                    </section>
 
                   </div>
-                  <div class="pageLayout">
-                    Layout 2 (report & chart)
-                    <div class="preview-layout" data-id="layout-1">
 
-                      <section title>
-                        <h3>Page Title</h3>
-                        <h5>Page Subtitle</h5>
-                      </section>
+                </section>
 
-                      <div class="lyt-page-by">
-                        <div></div><div></div><div></div><div></div>
-                      </div>
+              </section>
 
-                      <div class="lyt-body">
+              <section class="page" data-step="4">
+                <h2>Layout Dashboard</h2>
+                <section>
+                  <h3>Layout Pagina</h3><h5>Selezione del layout del Dashboard</h5>
 
-                        <div class="lyt-report">
+                  <div class="grid-2-2">
 
-                        </div>
+                    <div class="pageLayout">Layout 1 (report)
 
-                        <div class="lyt-chart">
+                      <div class="preview-layout" data-preview-layout-id="0">
 
-                        </div>
-
-                      </div>
-
-                    </div>
-                  </div>
-                  <div class="pageLayout">
-                    Layout 3
-                    <div class="preview-layout" data-id="layout-2">
-
-                      <section title>
-                        <h3>Page Title</h3>
-                        <h5>Page Subtitle</h5>
-                      </section>
-
-                      <div class="lyt-page-by">
-                        <div></div><div></div><div></div><div></div>
-                      </div>
-
-                      <div class="lyt-body">
-
-                        <div class="lyt-mini-report"></div>
-
-                        <div class="lyt-mini-chart"></div>
-
-                        <div class="lyt-mini-report"></div>
-
-                        <div class="lyt-mini-chart"></div>
-
-
-                      </div>
-
-                    </div>
-                  </div>
-                  <div class="pageLayout">
-                    Layout 4
-                    <div class="preview-layout" data-id="layout-3">
-
-                      <section title>
-                        <h3>Page Title</h3>
-                        <h5>Page Subtitle</h5>
-                      </section>
-
-                      <div class="lyt-page-by">
-                        <div></div><div></div><div></div><div></div>
-                      </div>
-
-                      <div class="lyt-body">
-
-                        <div class="lyt-report"></div>
-
-                        <section right-side>
-                          <div class="lyt-mini-chart"></div>
-
-                          <div class="lyt-mini-chart"></div>
+                        <section title>
+                          <h3>Page Title</h3>
+                          <h5>Page Subtitle</h5>
                         </section>
 
+                        <div class="lyt-page-by">
+                          <div></div><div></div><div></div><div></div>
+                        </div>
+
+                        <div class="lyt-body">
+
+                          <div class="lyt-report">
+
+                          </div>
+
+                        </div>
+
                       </div>
 
                     </div>
+
+                    <div class="pageLayout">
+                      Layout 2 (report & chart)
+                      <div class="preview-layout" data-preview-layout-id="1">
+
+                        <section title>
+                          <h3>Page Title</h3>
+                          <h5>Page Subtitle</h5>
+                        </section>
+
+                        <div class="lyt-page-by">
+                          <div></div><div></div><div></div><div></div>
+                        </div>
+
+                        <div class="lyt-body">
+
+                          <div class="lyt-report">
+
+                          </div>
+
+                          <div class="lyt-chart">
+
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="pageLayout">
+                      Layout 3
+                      <div class="preview-layout" data-preview-layout-id="2">
+
+                        <section title>
+                          <h3>Page Title</h3>
+                          <h5>Page Subtitle</h5>
+                        </section>
+
+                        <div class="lyt-page-by">
+                          <div></div><div></div><div></div><div></div>
+                        </div>
+
+                        <div class="lyt-body">
+
+                          <div class="lyt-mini-report">
+
+                          </div>
+
+                          <div class="lyt-mini-chart">
+
+                          </div>
+
+                          <div class="lyt-mini-report">
+
+                          </div>
+
+                          <div class="lyt-mini-chart">
+
+                          </div>
+
+
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="pageLayout">
+                      Layout 4
+                      <div class="preview-layout" data-preview-layout-id="3">
+
+                        <section title>
+                          <h3>Page Title</h3>
+                          <h5>Page Subtitle</h5>
+                        </section>
+
+                        <div class="lyt-page-by">
+                          <div></div><div></div><div></div><div></div>
+                        </div>
+
+                        <div class="lyt-body">
+
+                          <div class="lyt-report">
+
+                          </div>
+
+                          <section right-side>
+                            <div class="lyt-mini-chart">
+
+                            </div>
+
+                            <div class="lyt-mini-chart">
+
+                            </div>
+                          </section>
+
+                        </div>
+
+                      </div>
+                    </div>
+
                   </div>
-                </div>
-              </section> -->
+                </section>
+              </section>
             </div>
 
           </div>
@@ -668,8 +698,9 @@
             <!-- <a href="#" id="previous-step" title="Previous step">logout</a> -->
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
-            <button id="mdc-next" class="button dense raised">FACT</button>
-            <button id="mdc-preview-report" class="button dense raised" hidden>report preview</button>
+            <button id="mdc-next" class="button dense raised" hidden data-associated-page="1">FACT</button>
+            <button id="mdc-preview-report" class="button dense raised" hidden data-associated-page="2">report preview</button>
+            <button id="mdc-dashboard-layout" class="button dense raised" hidden data-associated-page="3">Dashboard Layout</button>
           </div>
         </div>
 

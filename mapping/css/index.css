@@ -7,6 +7,11 @@
 #pages[data-step="3"]{transform: translateX(-2000px);}
 #pages[data-step="4"]{transform: translateX(-3000px);}
 
+/* associo il tasto con attributo data-associated-page alla pagina corrente*/
+#container[data-page="1"] > #controls button[data-associated-page="1"]{visibility: visible;display: inline-flex;}
+#container[data-page="2"] > #controls button[data-associated-page="2"]{visibility: visible;display: inline-flex;}
+#container[data-page="3"] > #controls button[data-associated-page="3"]{visibility: visible;display: inline-flex;}
+
 .highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
 /*pages*/
 
@@ -142,9 +147,10 @@ section[options] > span > i[groupby]{color: #c7b198;}
 section[options] > span{margin: 2px 0;}
 
 section[options] i ~ small{visibility: hidden;}
-section[options] i:hover ~ small{visibility: visible;}
+section[options] i:hover ~ small{visibility: visible;transform: scale(1);}
 
-section[options] > span > small{padding: 8px;background: #444;color: white;border-radius: 4px;position: absolute; left: 46px;font-size: .7rem;}
+section[options] > span > small{padding: 8px;background: #444;color: white;border-radius: 4px;position: absolute; left: 46px;font-size: .7rem;
+  transition: transform 100ms;transform: scale(.25);}
 
 
 #structure-test{/*width: 400%;*/overflow-x: hidden;position: relative;}
