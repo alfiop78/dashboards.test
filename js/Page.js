@@ -4,6 +4,7 @@ class Page {
   constructor(container) {
     this.containerPages = container;
     this.container = document.getElementById('container');
+    this.startPage = document.querySelector(".page[data-step='1']");
 
   }
 
@@ -51,6 +52,21 @@ class Page {
     this.currentStep = this.previousPage.getAttribute('data-step');
     // la imposto come [selected]
     this.previousPage.setAttribute('selected', true);
+    // imposto, sul container delle pagine il data-step attivo in questo momento, dopo il next
+    this.containerPages.setAttribute('data-step', this.currentStep);
+    // imposto il data-page attuale anche sul container, questo mi servirà per gestire i tasti da visualizzare/nascondere in #controls, in base alla pagina visualizzata
+    this.container.setAttribute('data-page', this.currentStep);
+  }
+
+  restart() {
+    // riporto la page al primo step
+    // ottengo la pagina corrente
+    this.currentPage = document.querySelector('.page[selected]');
+    // rimuovo [selected] dalla pagina corrente
+    this.page.removeAttribute('selected');
+    // set lo step corrente
+    this.currentStep = this.startPage.getAttribute('data-step');
+    this.startPage.setAttribute('selected', true);
     // imposto, sul container delle pagine il data-step attivo in questo momento, dopo il next
     this.containerPages.setAttribute('data-step', this.currentStep);
     // imposto il data-page attuale anche sul container, questo mi servirà per gestire i tasti da visualizzare/nascondere in #controls, in base alla pagina visualizzata

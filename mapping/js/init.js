@@ -13,11 +13,14 @@ var App = new Application();
     Page : new Page(document.getElementById('pages')),
     Storage : new Storage(),
     dialogTableList : document.getElementById('table-list'),
-    dialogNameSave : document.getElementById('name-save'),
+    dialogCubeName : document.getElementById('cube-name'),
+    dialogDimensionName : document.getElementById('dimension-name'),
+    dialogHierarchyName : document.getElementById('hierarchy-name'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
-    btnDashboardLayout : document.getElementById('mdc-dashboard-layout')
+    btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
+    btnNewReport : document.getElementById('mdc-new-report')
   };
 
   // App.getSessionName();
@@ -413,7 +416,7 @@ var App = new Application();
   };
 
   /* tasto OK nella dialog per il salvataggio di un titolo*/
-  document.getElementById('btnSaveName').onclick = function(e) {
+  document.getElementById('btnDimensionSaveName').onclick = function(e) {
     /*
       Salvo la dimensione, senza il legame con la FACT.
       Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
@@ -421,7 +424,7 @@ var App = new Application();
       Il tasto mdc-next si trasforma in FACT TABLE
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
-    // TODO: definisco se salvare una hierarchy, una dimension oppure un cube, in base alla input visualizzata
+
 
     let from = [];
     let objDimension = {};
@@ -451,25 +454,13 @@ var App = new Application();
 
   /* tasto cancel nelle dialog*/
   document.querySelectorAll('button[btnDialogCancel]').forEach((btn) => {
-    btn.onclick = function() {
-      document.querySelector('dialog[open]').close();
-      app.dialogNameSave.querySelector('div[dimension]').setAttribute('hidden', true);
-      app.dialogNameSave.querySelector('div[cube]').setAttribute('hidden', true);
-      app.dialogNameSave.querySelector('div[hierarchy]').setAttribute('hidden', true);
-
-    }
+    btn.onclick = function() {document.querySelector('dialog[open]').close();}
   });
 
-  document.getElementById('saveDimension').onclick = function(e) {
-    app.dialogNameSave.querySelector('div[dimension]').removeAttribute('hidden');
-    app.dialogNameSave.showModal();
-  };
+  document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
 
-  document.getElementById('saveReport').onclick = function() {
-
-    app.dialogNameSave.querySelector('div[cube]').removeAttribute('hidden');
-    app.dialogNameSave.showModal();
-
+  /* tasto OK nella dialog per il salvataggio di un titolo*/
+  document.getElementById('btnCubeSaveName').onclick = function(e) {
     app.Cube.cube.dimensions = app.Cube.dimension;
     app.Cube.cube.type = "CUBE";
     app.Cube.cube['columns'] = app.Cube.columns;
@@ -481,6 +472,7 @@ var App = new Application();
     app.Cube.cube.name = app.Cube.cubeTitle;
     app.Cube.cube['report_id'] = app.Storage.reportId;
     console.log(app.Cube.cube);
+    return;
     // salvo il cubo in localStorage
     app.Storage.cube = app.Cube.cube;
 
@@ -494,8 +486,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response);
-
+          
         } else {
 
         }
@@ -508,8 +499,9 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
-
   };
+
+  document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
 
   document.getElementById('saveHierarchy').onclick = function(e) {
     // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
@@ -525,6 +517,15 @@ var App = new Application();
   app.btnPreviewReport.onclick = function(e) {app.Page.next();};
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
+
+  app.btnDashboardLayout.onclick = function(e) {
+    window.location.href = "/dashboards/";
+  };
+
+  app.btnNewReport.onclick = function(e) {
+    // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
+    app.Page.restart();
+  };
 
   /*ricerca dimensioni in elenco di sinistra*/
   document.getElementById('dimensionSearch').oninput = App.searchInList;

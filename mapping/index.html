@@ -25,17 +25,8 @@
   </head>
   <body>
 
-    <dialog id="name-save">
-      <div class="dialog-save-name" dimension hidden>
-
-        <div class="md-field">
-          <input type="text" id="dimensionName" value=""/>
-          <label for="dimensionName" class="">Titolo dimensione</label>
-        </div>
-
-      </div>
-
-      <div class="dialog-save-name" cube hidden>
+    <dialog id="cube-name">
+      <div class="dialog-save-name">
 
         <div class="md-field">
           <input type="text" id="cubeName" value=""/>
@@ -44,7 +35,32 @@
 
       </div>
 
-      <div class="dialog-save-name" hierarchy hidden>
+      <div class="dialog-buttons">
+        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button id="btnCubeSaveName" type="button" name="done" class="md-button">Salva</button>
+      </div>
+
+    </dialog>
+
+    <dialog id="dimension-name">
+      <div class="dialog-save-name">
+
+        <div class="md-field">
+          <input type="text" id="dimensionName" value=""/>
+          <label for="dimensionName" class="">Titolo dimensione</label>
+        </div>
+
+      </div>
+
+      <div class="dialog-buttons">
+        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button id="btnDimensionSaveName" type="button" name="done" class="md-button">Salva</button>
+      </div>
+
+    </dialog>
+
+    <dialog id="hierarchy-name">
+      <div class="dialog-save-name">
 
         <div class="md-field">
           <input type="text" id="hierarchyName" value=""/>
@@ -55,9 +71,8 @@
 
       <div class="dialog-buttons">
         <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
-        <button id="btnSaveName" type="button" name="done" class="md-button">Salva</button>
+        <button id="btnHierarchySaveName" type="button" name="done" class="md-button">Salva</button>
       </div>
-
     </dialog>
 
     <dialog id="column-setting" class="dialog-columns">
@@ -568,6 +583,7 @@
             <div class="spacer"></div>
             <button id="mdc-next" class="button dense raised" hidden data-associated-page="1">FACT</button>
             <button id="mdc-preview-report" class="button dense raised" hidden data-associated-page="2">report preview</button>
+            <button id="mdc-new-report" class="button dense raised" hidden data-associated-page="3">nuovo report</button>
             <button id="mdc-dashboard-layout" class="button dense raised done" hidden data-associated-page="3">CREA LAYOUT</button>
 
           </div>
