@@ -350,7 +350,6 @@ var App = new Application();
       li.onclick = app.Cube.handlerColumns.bind(app.Cube);
     });
     // evento oninput sulla searchColumns
-
     newCard.querySelector('#searchColumns').oninput = App.searchInList;
 
   };
@@ -400,7 +399,6 @@ var App = new Application();
   document.getElementById('cubeName').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
-      app.Cube.cubeTitle = this.value;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
     }
@@ -409,7 +407,6 @@ var App = new Application();
   document.getElementById('dimensionName').oninput = function() {
     if (this.value.length > 0) {
       this.parentElement.querySelector('label').classList.add('has-content');
-      app.Cube.dimensionTitle = this.value;
     } else {
       this.parentElement.querySelector('label').classList.remove('has-content');
     }
@@ -486,7 +483,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          
+
         } else {
 
         }
