@@ -223,7 +223,7 @@ var App = new Application();
   app.handlerCardSelected = function(e) {
     // console.log('handlerCardSelected');
     // se il viene avviene sull'elemento h5 apro la dialog
-    if (e.target.localName === "h5") {
+    if (e.target.localName === "h6") {
       document.getElementById('tableSearch').value = "";
       app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
       app.dialogTableList.showModal();
@@ -396,33 +396,15 @@ var App = new Application();
   document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
   document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
 
-  document.getElementById('cubeName').oninput = function() {
-    if (this.value.length > 0) {
-      this.parentElement.querySelector('label').classList.add('has-content');
-    } else {
-      this.parentElement.querySelector('label').classList.remove('has-content');
-    }
-  };
-
-  document.getElementById('dimensionName').oninput = function() {
-    if (this.value.length > 0) {
-      this.parentElement.querySelector('label').classList.add('has-content');
-    } else {
-      this.parentElement.querySelector('label').classList.remove('has-content');
-    }
-  };
-
-  /* tasto OK nella dialog per il salvataggio di un titolo*/
+  /* tasto OK nella dialog*/
   document.getElementById('btnDimensionSaveName').onclick = function(e) {
     /*
       Salvo la dimensione, senza il legame con la FACT.
       Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
       Salvo in localStorage la dimensione creata
-      Il tasto mdc-next si trasforma in FACT TABLE
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
-
-
+    app.Cube.dimensionTitle = document.getElementById('dimensionName').value;
     let from = [];
     let objDimension = {};
     document.querySelectorAll('.card-table').forEach((card) => {
@@ -435,6 +417,7 @@ var App = new Application();
     // in app.Cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
     app.Cube.cube['hierarchies'] = app.Cube.hierarchyFact;
     let hierarchies = {};
+    // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
     Object.keys(app.Cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchyTable[rel];}});
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
@@ -447,17 +430,14 @@ var App = new Application();
     app.Storage.dimension = app.Cube.dimension;
 
     app.cloneLastTable();
+    app.dialogDimensionName.close();
   };
-
-  /* tasto cancel nelle dialog*/
-  document.querySelectorAll('button[btnDialogCancel]').forEach((btn) => {
-    btn.onclick = function() {document.querySelector('dialog[open]').close();}
-  });
 
   document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un titolo*/
   document.getElementById('btnCubeSaveName').onclick = function(e) {
+    app.Cube.cubeTitle = document.getElementById('cubeName').value;
     app.Cube.cube.dimensions = app.Cube.dimension;
     app.Cube.cube.type = "CUBE";
     app.Cube.cube['columns'] = app.Cube.columns;

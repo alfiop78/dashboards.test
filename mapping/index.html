@@ -37,7 +37,7 @@
       </div>
 
       <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button type="button" name="cancel" class="md-button">annulla</button>
         <button id="btnCubeSaveName" type="button" name="done" class="md-button">Salva</button>
       </div>
 
@@ -54,7 +54,7 @@
       </div>
 
       <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button type="button" name="cancel" class="md-button">annulla</button>
         <button id="btnDimensionSaveName" type="button" name="done" class="md-button">Salva</button>
       </div>
 
@@ -71,7 +71,7 @@
       </div>
 
       <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button type="button" name="cancel" class="md-button">annulla</button>
         <button id="btnHierarchySaveName" type="button" name="done" class="md-button">Salva</button>
       </div>
     </dialog>
@@ -98,7 +98,7 @@
         </div>
 
         <div class="dialog-buttons">
-          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+          <button type="button" name="cancel" class="md-button">annulla</button>
           <button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -121,7 +121,7 @@
 
 
         <div class="dialog-buttons">
-          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+          <button type="button" name="cancel" class="md-button">annulla</button>
           <button id="btnGroupByDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -170,7 +170,7 @@
         </div>
 
         <div class="dialog-buttons">
-          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+          <button type="button" name="cancel" class="md-button">annulla</button>
           <button id="btnFilterDone" type="button" name="done" class="md-button">ok</button>
         </div>
       </section>
@@ -230,7 +230,7 @@
 
 
         <div class="dialog-buttons">
-          <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+          <button type="button" name="cancel" class="md-button">annulla</button>
           <button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>
         </div>
 
@@ -256,7 +256,7 @@
       </div>
 
       <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button" btnDialogCancel>annulla</button>
+        <button type="button" name="cancel" class="md-button">annulla</button>
       </div>
     </dialog>
 
@@ -320,8 +320,8 @@
                         <div class="card">
                           <div class="card-layout">
                             <section class="card-table" active="true" name="">
-                              <div class="help">Seleziona una tabella</div>
-                              <h5>SELEZIONA TABELLA</h5>
+                              <div class="help" hidden></div>
+                              <h6>SELEZIONA TABELLA</h6>
                               <div class="md-field" hidden>
                                 <input type="text" id="searchColumns" value=""/>
                                 <label for="searchColumns" class="">Ricerca</label>
@@ -340,10 +340,10 @@
                               </ul>
                             </section>
                             <section options>
-                              <i class="material-icons md-18" columns>view_list</i>
-                              <i class="material-icons md-18" filters>filter_list</i>
-                              <i class="material-icons md-18" groupby>dynamic_feed</i>
-                              <i class="material-icons md-18" metrics>show_chart</i>
+                              <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
+                              <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
+                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
+                              <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
                             </section>
                           </div>
 
@@ -366,7 +366,7 @@
                           <div class="card-layout">
                             <section class="card-table" active="true" name="">
                               <div class="help">Seleziona una tabella per iniziare</div>
-                              <h5>SELEZIONA TABELLA</h5>
+                              <h6>SELEZIONA TABELLA</h6>
                               <div class="md-field" hidden>
                                 <input type="text" id="searchColumns" value=""/>
                                 <label for="searchColumns" class="">Ricerca</label>

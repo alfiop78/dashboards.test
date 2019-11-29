@@ -9,5 +9,11 @@ window.onload = function() {
         e.target.parentElement.querySelector('label').classList.add('has-content') :
         e.target.parentElement.querySelector('label').classList.remove('has-content');
     }, true);
+
+    input.onfocus = function(e) {this.select();}});
+
+  /* tasto cancel nelle dialog*/
+  document.querySelectorAll("button[name='cancel']").forEach((btn) => {
+    btn.onclick = function() {document.querySelector('dialog[open]').close();}
   });
 };

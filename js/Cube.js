@@ -34,7 +34,7 @@ class Cube {
     this.tableSelected = value;
     // console.log(this.tableSelected);
     this.activeCardRef.setAttribute('name', this.tableSelected);
-    this.activeCardRef.querySelector('h5').innerText = this.tableSelected;
+    this.activeCardRef.querySelector('h6').innerText = this.tableSelected;
   }
 
   get table() {return this.tableSelected;}
@@ -161,6 +161,8 @@ class Cube {
     this.currentFieldSetting = e.target;
     let fieldName = this.dialogColumns.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+    // reset della dialog
+    document.getElementById('alias-column').value = '';
 
     this.dialogColumns.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
