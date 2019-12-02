@@ -391,10 +391,10 @@ var App = new Application();
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
   });
   // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
-  document.querySelector('section[options] > i[columns]').onclick = app.handlerAddColumns;
-  document.querySelector('section[options] > i[filters]').onclick = app.handlerAddFilters;
-  document.querySelector('section[options] > i[groupby]').onclick = app.handlerAddGroupBy;
-  document.querySelector('#fact-card section[options] > i[metrics]').onclick = app.handlerAddMetrics;
+  document.querySelector('section[options] > span > i[columns]').onclick = app.handlerAddColumns;
+  document.querySelector('section[options] > span > i[filters]').onclick = app.handlerAddFilters;
+  document.querySelector('section[options] > span > i[groupby]').onclick = app.handlerAddGroupBy;
+  document.querySelector('#fact-card section[options] > span > i[metrics]').onclick = app.handlerAddMetrics;
 
   /* tasto OK nella dialog*/
   document.getElementById('btnDimensionSaveName').onclick = function(e) {

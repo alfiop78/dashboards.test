@@ -71,6 +71,7 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 dialog .lists{min-width: 300px;}
 
 .structure{width: 100%;justify-content: center;display: grid;grid-template-columns: auto 65% auto;}
+.structure.fact{grid-template-columns: auto 80%;}
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 4px;opacity: .6;position: relative;max-width: 300px;width: 300px;min-width: 300px;transition: height 1s;}
 .structure .card-table[fact-table]{background: var(--main-third-color);}
