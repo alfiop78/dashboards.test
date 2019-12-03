@@ -74,11 +74,11 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 dialog .lists{min-width: 300px;}
 
 .structure{width: 100%;justify-content: center;display: grid;grid-template-columns: auto 65% auto;}
-.structure.fact{grid-template-columns: auto 80%;}
+
 .structure .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 4px;opacity: .6;position: relative;max-width: 300px;width: 300px;min-width: 300px;transition: height 1s;}
 .structure .card-table[fact-table]{background: var(--main-third-color);}
-#fact-card{display: flex;align-items: flex-end;}
+#fact-card{display: flex;align-items: flex-end;padding: 2em 0;}
 .structure .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;border-radius: 3px; box-shadow: 0 2px 6px -2px #757575;background: var(--main-primary-color);}
 .structure .card-table > .help[alert]{background: indianred;color: white;}
 .structure .card-table[hierarchies] > .help{background: #99b19c;color: white;}
@@ -94,7 +94,7 @@ dialog .lists{min-width: 300px;}
 .structure .card-table:hover{cursor: pointer;opacity: 1;}
 
 .structure .relation{align-items: center;display: flex;flex-direction: column;margin: 8px 0;}
-.structure .factContainerCards .relation{justify-content: center;}
+
 .structure .relation > .line{background: grey;width: 1px;height: 40px;}
 .structure .icon-relation{display: flex;justify-self: center;/*direction: rtl;*/position: relative;margin-top: 4px;margin-bottom: 4px;}
 
@@ -105,23 +105,23 @@ dialog .lists{min-width: 300px;}
 .icon-relation:hover i:first-child{opacity: 1;}
 .icon-relation i:first-child{opacity: .7;}
 .icon-relation i.anim{position: absolute;top: auto;visibility: hidden;transition: left 300ms;left: 0;}
-.icon-relation i.vertical-anim{position: absolute;top: 0; visibility: hidden;transition: top 250ms; left: auto;}
+/* .icon-relation i.vertical-anim{position: absolute;top: 0; visibility: hidden;transition: top 250ms; left: auto;} */
 
 .icon-relation:hover i.anim:nth-child(2){color: #99b19c;left: calc(36px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
 .icon-relation:hover i.anim:nth-child(2):hover{opacity: 1;}
-.icon-relation:hover i.vertical-anim:nth-child(2){color: #99b19c;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: 36px;}
-.icon-relation:hover i.vertical-anim:nth-child(2):hover{opacity: 1;}
+/* .icon-relation:hover i.vertical-anim:nth-child(2){color: #99b19c;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: 36px;}
+.icon-relation:hover i.vertical-anim:nth-child(2):hover{opacity: 1;} */
 /*left join ;*/
 .icon-relation:hover i.anim:nth-child(3){color: #99b19c;left: calc(-56px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
 .icon-relation:hover i.anim:nth-child(3):hover{opacity: 1;}
-.icon-relation:hover i.vertical-anim:nth-child(3){color: #99b19c;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: -56px;}
-.icon-relation:hover i.vertical-anim:nth-child(3):hover{opacity: 1;}
+/* .icon-relation:hover i.vertical-anim:nth-child(3){color: #99b19c;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: -56px;}
+.icon-relation:hover i.vertical-anim:nth-child(3):hover{opacity: 1;} */
 /*right join */
 .icon-relation:hover i.anim:nth-child(4){color: #99b19c;left: calc(36px + 56px);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
 .icon-relation:hover i.anim:nth-child(4):hover{opacity: 1;}
 /*remove hierarchies*/
-.icon-relation:hover i.vertical-anim:nth-child(4){color: #3b7096;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: calc(36px + 56px);}
-.icon-relation:hover i.vertical-anim:nth-child(4):hover{opacity: 1;}
+/* .icon-relation:hover i.vertical-anim:nth-child(4){color: #3b7096;left: auto;visibility: visible;opacity: .7;padding-top: 16px;padding-bottom: 16px;top: calc(36px + 56px);}
+.icon-relation:hover i.vertical-anim:nth-child(4):hover{opacity: 1;} */
 /*remove hierarchies*/
 .icon-relation:hover i.anim:nth-child(5){color: #3b7096;left: calc(36px + (56px * 2));visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
 .icon-relation:hover i.anim:nth-child(5):hover{opacity: 1;}
@@ -129,9 +129,7 @@ dialog .lists{min-width: 300px;}
 
 /* .structure .containerCards{width: 60%;} */
 .structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;width: 100%;padding: 1em;}
-.structure .factHierarchies{display: grid; grid-template-columns: auto auto;width: 100%;}
 .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
-.structure .factContainerCards{display: grid;grid-template-columns: auto auto auto;grid-gap: 16px;justify-content: space-between;margin: 1em;}
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}
