@@ -38,7 +38,8 @@ ul li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var
 ul > .element:not([hide]){display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;}
 ul > .element[hide] {display: none;}
 
-.card-table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.card-table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
+  white-space: nowrap;}
 ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: center;padding: 6px;}
 
 .card-table > h5:hover{text-decoration: underline;}
@@ -62,6 +63,8 @@ ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: ce
 .card-table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
 .card-table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
 .card-table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
+
+.card-table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
@@ -125,10 +128,10 @@ dialog .lists{min-width: 300px;}
 
 
 /* .structure .containerCards{width: 60%;} */
-.structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;width: 100%;}
+.structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;width: 100%;padding: 1em;}
 .structure .factHierarchies{display: grid; grid-template-columns: auto auto;width: 100%;}
 .structure .containerCards > .card{display: flex;flex-direction: column;align-items: center;}
-.structure .factContainerCards{display: grid;grid-template-columns: auto auto auto;grid-gap: 16px;justify-content: space-between;margin: 2em;}
+.structure .factContainerCards{display: grid;grid-template-columns: auto auto auto;grid-gap: 16px;justify-content: space-between;margin: 1em;}
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}

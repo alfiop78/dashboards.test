@@ -62,8 +62,8 @@ class Cube {
       // console.log(attributes[i].name);
       switch (attributes[i].name) {
         case 'hierarchies':
-          // se è presente un altro elemento coon attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere [hierarchy]
-          // ...a quello appena selezionato, in questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
+          // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
+          // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
           // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
           // ...entrambe le tabelle tramite un identificatifo di relazione
 
@@ -96,7 +96,6 @@ class Cube {
               liRelationSelected.toggleAttribute('hierarchy');
               liRelationSelected.toggleAttribute('selected');
             }
-
           }
           this.createHierarchy();
           break;
@@ -395,14 +394,14 @@ class Cube {
     /* prima di eliminare la gerarchia devo stabilire se le due card, in questo momento, sono in modalità hierarchies
     // ...(questo lo vedo dall'attributo presente su card-table)
     // elimino la gerarchia solo se la relazione tra le due tabelle riguarda le due tabelle attualmente impostate in modalità [hierarchies]
-    // se la relazione riguarda le tabelle A e B e attualmente la modalità = A e B allora elimino la gerarchia
+    // se la relazione riguarda le tabelle A e B e attualmente la modalità impostata è A e B allora elimino la gerarchia
     // altrimenti se la relazione riguarda A e B e attualmente la modalità impostata [hierarchies] riguarda B e C aggiungo la relazione e non la elimino
     */
     // elementi li che hanno la relazione relationId
     let liElementsRelated = document.querySelectorAll('.card-table[hierarchies] li[data-relation-id]['+relationId+']').length;
 
     if (liElementsRelated === 2) {
-      // tra le due tabelle attualmente .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
+      // tra le due tabelle .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
       // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
       document.querySelectorAll('.card-table[hierarchies] ul > .element > li[data-relation-id]['+relationId+']').forEach((li) => {
         console.log('elimino li :'+li.innerText);
@@ -428,6 +427,7 @@ class Cube {
       });
       delete this.hierarchyFact['hier_'+value];
       delete this.hierarchyTable['hier_'+value];
+      console.log(this.hierarchyTable);
     }
 
   }
