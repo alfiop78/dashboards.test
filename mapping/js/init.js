@@ -8,6 +8,7 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
+    Timeline : new Timeline('layout-timeline-0'),
     Draw : null,
     // passo al Costruttore il contenitore di tutte le page
     Page : new Page(document.getElementById('pages')),
@@ -505,7 +506,7 @@ var App = new Application();
   };
 
   /*ricerca dimensioni in elenco di sinistra*/
-  document.getElementById('dimensionSearch').oninput = App.searchInList;
+  // document.getElementById('dimensionSearch').oninput = App.searchInList;
   /* ricerca cubi in elenco di sinitra*/
   document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
@@ -568,7 +569,7 @@ var App = new Application();
 
   app.getDatabaseTable();
 
-  app.getDimensionsList();
+  // app.getDimensionsList();
 
   app.getDatamartList();
 })();

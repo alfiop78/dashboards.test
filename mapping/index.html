@@ -14,8 +14,10 @@
     <link rel="stylesheet" type="text/css" href="/css/report-layout.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <link rel="stylesheet" type="text/css" href="css/layouts.css" />
+    <link rel="stylesheet" type="text/css" href="css/timeline.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
+    <script src="/js/Timeline.js"></script>
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
     <script src="/js/Page.js"></script>
@@ -300,9 +302,64 @@
                   <h3>Creazione della struttura gerarchica</h3>
                   <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
 
+                  <div class="timelineContent" id="layout-timeline-0">
+
+                    <div class="timelineContainer">
+                      <template id="circle-timeline">
+                        <span id=""></span>
+                      </template>
+                      <div class="timeline"></div>
+
+                      <div class="timelineOverflow" data-elements="1" active="1">
+                        <template id="template-element">
+                          <div class="" data-id="" element>
+                            <div class="" sub-element>
+                              <div class="card">
+                                <div class="card-layout">
+                                  <section class="card-table" active="true" name="">
+                                    <div class="help">Seleziona una tabella per iniziare</div>
+                                    <h6>SELEZIONA TABELLA</h6>
+                                    <div class="md-field" hidden>
+                                      <input type="text" id="searchColumns" value=""/>
+                                      <label for="searchColumns" class="">Ricerca</label>
+                                    </div>
+                                  </section>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                        <div class="timelineTranslate" data-x="0">
+                          <div class="" data-id="1" element>
+                            <div class="" sub-element>
+                              <div class="card">
+                                <div class="card-layout">
+                                  <section class="card-table" active="true" name="">
+                                    <div class="help">Seleziona una tabella per iniziare</div>
+                                    <h6>SELEZIONA TABELLA</h6>
+                                    <div class="md-field" hidden>
+                                      <input type="text" id="searchColumns" value=""/>
+                                      <label for="searchColumns" class="">Ricerca</label>
+                                    </div>
+                                  </section>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                    <div class="button">
+                      <button id="add" type="button" name="button">add</button>
+                    </div>
+
+                  </div>
+
                   <div class="structure">
 
-                    <div class="lists">
+                    <!-- <div class="lists">
                       <div class="list">
                         <div class="md-field">
                           <input type="search" id="dimensionSearch" value=""/>
@@ -311,7 +368,7 @@
 
                         <ul id="dimensionsList"></ul>
                       </div>
-                    </div>
+                    </div> -->
 
                     <div class="hierarchies">
 
@@ -371,7 +428,7 @@
                                 <input type="text" id="searchColumns" value=""/>
                                 <label for="searchColumns" class="">Ricerca</label>
                               </div>
-                              
+
                               <ul id="columns">
                                 <template id="template-list-columns">
                                   <div class="element">
