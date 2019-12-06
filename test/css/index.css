@@ -3,7 +3,7 @@
 .timeline{display: flex;justify-content: center;margin: 16px;}
 .timeline span{margin: 16px;display: flex;align-items: center;padding: 8px;width: 8px; height: 8px;border-radius: 16px;background: tan;}
 .timeline span[active]{background: red;}
-.overflow{display: flex;overflow: hidden;transition: width 150ms;position: relative;width: calc(364px * 2);}
+.overflow{display: flex;overflow: hidden;transition: width 150ms;position: relative;/*width: calc(364px * 2);*/}
 .overflow[data-cards="1"]{width: 364px;}
 .translate{display: flex; transition: transform 400ms;}
 .container .card{min-width: 300px;display: flex;justify-content: center;color: white;padding: 0 32px;}

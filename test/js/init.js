@@ -25,17 +25,20 @@
     // .overflow[data-cards="1"] ha una larghezza di 300px metre se ha più di un elemento ha un width = 600px
     app.overflowRef.setAttribute('data-cards', app.totalCards);
     // TODO: recupero le dimensioni delle cards ed imposto .overflow sulla width risultante
+    let widthOverflow = 0;
     document.querySelectorAll('.card').forEach((card) => {
       // recupero la timeline attiva
       let step = +document.querySelector('.timeline span[active]').getAttribute('id');
       console.log(step); // es.: step attivo 4, recupero la larghezza delle card 4 e 5
       console.log(card);
-      let widthOverflow;
+      console.log(card.clientWidth);
+
       if (+card.getAttribute('data-id') === step || +card.getAttribute('data-id') === step+1) {
-        widthOverflow += card.offsetWidth;
+        widthOverflow += card.clientWidth;
+        // console.log(typeof widthOverflow);
+        // console.log(widthOverflow);
       }
       console.log(widthOverflow);
-      console.log(card.offsetWidth);
       app.overflowRef.style.width = widthOverflow+"px";
 
     });
