@@ -381,7 +381,7 @@ var App = new Application();
     card.onclick = app.handlerCardSelected;
   });
   // evento su icona per aggiungere una tabella alla gerarchia
-  document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
+  // document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
   Array.from(document.querySelectorAll('.icon-relation > i[hierarchies]')).forEach((btnHierarchies) => {
     // console.log(btnHierarchies);
