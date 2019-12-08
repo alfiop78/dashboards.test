@@ -323,12 +323,33 @@
                                       <input type="text" id="searchColumns" value=""/>
                                       <label for="searchColumns" class="">Ricerca</label>
                                     </div>
+
+                                    <ul id="columns">
+                                      <template id="template-list-columns">
+                                        <div class="element">
+                                          <li></li>
+                                          <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                          <i id="columns-icon" class="material-icons md-18">view_list</i>
+                                          <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                                          <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                          <i id="metrics-icon" class="material-icons md-18">show_chart</i>
+                                        </div>
+                                      </template>
+                                    </ul>
+                                  </section>
+
+                                  <section options>
+                                    <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
+                                    <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
+                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
+                                    <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
                                   </section>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </template>
+
                         <div class="timelineTranslate" data-x="0">
                           <div class="" data-id="1" element>
                             <div class="" sub-element>
@@ -341,6 +362,25 @@
                                       <input type="text" id="searchColumns" value=""/>
                                       <label for="searchColumns" class="">Ricerca</label>
                                     </div>
+
+                                    <ul id="columns">
+                                      <template id="template-list-columns">
+                                        <div class="element">
+                                          <li></li>
+                                          <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                                          <i id="columns-icon" class="material-icons md-18">view_list</i>
+                                          <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                                          <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                                          <i id="metrics-icon" class="material-icons md-18">show_chart</i>
+                                        </div>
+                                      </template>
+                                    </ul>
+                                  </section>
+                                  <section options>
+                                    <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
+                                    <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
+                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
+                                    <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
                                   </section>
                                 </div>
                               </div>
@@ -351,9 +391,21 @@
                       </div>
 
                     </div>
-                    <div class="button">
-                      <button id="add" type="button" name="button">add</button>
+
+                    <div class="relation">
+                      <div class="icon-relation">
+                        <i id="add" class="material-icons md-24" add>add</i>
+                        <i class="material-icons md-24 anim" hierarchies>insert_link</i>
+                        <i class="material-icons md-24 anim" hierarchies-left>flip</i>
+                        <i class="material-icons md-24 anim" hierarchies-right>flip</i>
+                        <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
+                      </div>
                     </div>
+
+                    <!-- <div class="button">
+
+                      <button id="add" type="button" name="button">add</button>
+                    </div> -->
 
                   </div>
 

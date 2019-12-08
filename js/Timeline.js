@@ -14,6 +14,7 @@ class Timeline {
     this.totalElements = this.timelineRef.querySelector('.timelineTranslate').childElementCount;
     // this.activeElementId = +this.timelineRef.querySelector('.timelineOverflow').getAttribute('active');
     this.btnAdd = this.timelineRef.querySelector('#add');
+    console.log(this.btnAdd);
     this.btnAdd.onclick = this.add.bind(this);
     // console.log(this.btnAdd);
   }
