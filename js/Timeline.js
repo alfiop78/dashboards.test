@@ -90,6 +90,14 @@ class Timeline {
     this.elementAdded = element;
   }
 
+  addInfoReferenceElement() {
+    // aggiungo sull'elemento div[element] il nomde dell'elemento contenuto al suo interno, questo apparirà nelle "info" sotto i circle come una sorta di "segnalibri"
+    // element = elemento nel DOM che contiene l'attributo da far visualizzare come segnalibro
+
+    
+
+  }
+
   addCircle() {
     // aggiungo lo step nella timeline
     let tmplCircleTimeline = document.getElementById('circle-timeline');

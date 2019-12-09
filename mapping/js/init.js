@@ -193,15 +193,15 @@ var App = new Application();
             ulContainer.appendChild(element);
             li.onclick = app.Cube.handlerColumns.bind(app.Cube);
           }
-          // se ci sono poche colonne in questa tabella non attiva la input search
+          // se ci sono poche colonne in questa tabella non attivo la input search
           if (Object.keys(response).length > 10) {
             // event #searchColumns
             app.Cube.activeCardRef.querySelector('#searchColumns').oninput = App.searchInList;
             // visualizzo la input #searchColumns
             app.Cube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
-            // lego eventi ai tasti i[....] nascosti
           }
 
+          // lego eventi ai tasti i[....] nascosti
           app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
           app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
           app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
@@ -369,7 +369,7 @@ var App = new Application();
     card.onclick = app.handlerCardSelected;
   });
   // evento su icona per aggiungere una tabella alla gerarchia
-  document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
+  document.querySelector('.icon-relation > span > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
   Array.from(document.querySelectorAll('.icon-relation > i[hierarchies]')).forEach((btnHierarchies) => {
     // console.log(btnHierarchies);
