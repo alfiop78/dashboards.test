@@ -474,7 +474,8 @@ class Cube {
     /*
     * quando si imposta la modalità tra hierarchies, columns e filters resetto tutte le card-table
     */
-    document.querySelectorAll('.hierarchies .card-table').forEach((card) => {
+    document.querySelectorAll('.timelineTranslate .card-table').forEach((card) => {
+      console.log(card);
       if (card.hasAttribute("hierarchies")) {card.removeAttribute('hierarchies');}
       if (card.hasAttribute("columns")) {card.removeAttribute('columns');}
       if (card.hasAttribute("filters")) {card.removeAttribute('filters');}

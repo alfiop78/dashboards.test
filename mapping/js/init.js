@@ -246,22 +246,18 @@ var App = new Application();
 
   app.handlerAddHierarchy = function(e) {
     // console.log(this);
-    console.log(e.path);
+    // console.log(e.path);
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
     // recupero le due card dove in mezzo c'è questo tasto
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
     app.Cube.changeMode();
-    
-    // recupero le card attive nell'overflow .timelineOverflow[active]
-    // let upCard = e.path[3].querySelector('section.card-table');
-    // console.log(upCard);
-    // let downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
-    // console.log(downCard);
-    // let arrCards = [upCard, downCard];
-    app.Timeline.activeElements().forEach((card) => {
+    app.Timeline.activeElements().forEach((element) => {
+      console.log(element);
+      let card = element.querySelector('section.card-table')
+
       let help = card.querySelector('.help');
-      if (card.querySelectorAll('ul li').length === 0) {
+      if (element.querySelectorAll('ul li').length === 0) {
         help.setAttribute('alert', true);
         card.removeAttribute('hierarchies');
         help.innerText = "Necessario aggiungere una tabella per creare una relazione";
