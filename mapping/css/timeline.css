@@ -4,11 +4,13 @@
 .timeline span{margin: 8px 16px;display: flex;align-items: center;padding: 8px;width: 4px; height: 4px;border-radius: 16px;border: solid thin grey;
   position: relative;}
 /* l'ultima "palla" della timeline non deve avere la linea alla sua destra*/
-.timeline span:not(:last-child)::after{content: '';width: 20px;background: grey;height: 1px;position: absolute;left: 26px;}
-.timeline span[active]{border: solid thin brown;box-shadow: 0 0px 6px 1px brown;}
+/* Nascondo momentaneamente la linea della timeline */
+/* .timeline span:not(:last-child)::after{content: '';width: 20px;background: grey;height: 1px;position: absolute;left: 26px;} */
+
+.timeline span[active]{border: solid thin #a2a2a2;box-shadow: 0 0px 6px 1px #a2a2a2;background: brown;}
 .timelineOverflow{display: flex;overflow: hidden;transition: width 150ms;position: relative;width: auto;}
 /* .overflow[data-elements="1"]{width: 364px;} */
 .timelineTranslate{display: flex; transition: transform 400ms;}
 /* NOTE: se la width: 300px sulla card non viene inserta, la timeline funziona lo stesso perchè la larghezza poi dipende da .subElement*/
-.timelineContainer div[element]{width: 400px;display: flex;justify-content: center;color: white;padding: 0 48px;margin: 8px 0;}
+.timelineContainer div[element]{width: 430px;display: flex;justify-content: center;color: white;padding: 0 68px;margin: 8px 18px;}
 .timelineContainer div[element] > div[sub-element]{/*background-color: salmon;*/width: 100%;}

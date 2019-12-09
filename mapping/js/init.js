@@ -237,37 +237,29 @@ var App = new Application();
   };
 
   app.handlerAddTable = function(e) {
-    // console.log(this);
-    // aggiungo un'altra tabella alla gerarchia
-    let tmplCard = document.getElementById('template-card-table');
-    let tmplContent = tmplCard.content.cloneNode(true);
-    let card = tmplContent.querySelector('.card');
-    let parentElement = document.getElementById('containerCards');
-    // let factTable = document.getElementById('fact-card');
-    // parentElement.insertBefore(card, factTable);
-    parentElement.appendChild(card);
-    // lego evento click sulla card
-    card.querySelector('.card-table').onclick = app.handlerCardSelected;
-    card.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
-    card.querySelector('.icon-relation > i[hierarchies]').onclick = app.handlerAddHierarchy;
-    card.querySelector('.icon-relation > i[hierarchies-left]').onclick = app.handlerAddHierarchiesLeft;
-    card.querySelector('.icon-relation > i[hierarchies-right]').onclick = app.handlerAddHierarchiesRight;
-    card.querySelector('.icon-relation > i[hierarchies-remove]').onclick = app.handlerAddHierarchiesRemove;
-
+    /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
+    ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
+    app.Timeline.add();
+    // imposto evento onclick sulla card appena aggiunta
+    app.Timeline.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
   };
 
   app.handlerAddHierarchy = function(e) {
     // console.log(this);
-    // console.log(e.path);
+    console.log(e.path);
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
     // recupero le due card dove in mezzo c'è questo tasto
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
     app.Cube.changeMode();
-    let upCard = e.path[3].querySelector('section.card-table');
-    let downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
-    let arrCards = [upCard, downCard];
-    arrCards.forEach((card) => {
+    
+    // recupero le card attive nell'overflow .timelineOverflow[active]
+    // let upCard = e.path[3].querySelector('section.card-table');
+    // console.log(upCard);
+    // let downCard = (e.path[3].id === "factContainerCards") ? document.getElementById('fact') : e.path[3].nextElementSibling.querySelector('section.card-table');
+    // console.log(downCard);
+    // let arrCards = [upCard, downCard];
+    app.Timeline.activeElements().forEach((card) => {
       let help = card.querySelector('.help');
       if (card.querySelectorAll('ul li').length === 0) {
         help.setAttribute('alert', true);
@@ -377,11 +369,11 @@ var App = new Application();
 
   /*events */
   document.querySelectorAll('.card-table').forEach((card) => {
-    // console.log(card);
+    // questo imposta l'evento sulla prima card e sulla fact che sono già presenti nel DOM
     card.onclick = app.handlerCardSelected;
   });
   // evento su icona per aggiungere una tabella alla gerarchia
-  // document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
+  document.querySelector('.icon-relation > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
   Array.from(document.querySelectorAll('.icon-relation > i[hierarchies]')).forEach((btnHierarchies) => {
     // console.log(btnHierarchies);

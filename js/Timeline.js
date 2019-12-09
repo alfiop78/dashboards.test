@@ -15,9 +15,11 @@ class Timeline {
     // this.activeElementId = +this.timelineRef.querySelector('.timelineOverflow').getAttribute('active');
     this.btnAdd = this.timelineRef.querySelector('#add');
     console.log(this.btnAdd);
-    this.btnAdd.onclick = this.add.bind(this);
-    // console.log(this.btnAdd);
   }
+
+  set elementAdded(element) {this.addedElement = element;}
+
+  get elementAdded() {return this.addedElement;}
 
   move() {
     // Spostamento timeline
@@ -30,7 +32,8 @@ class Timeline {
       }
       // console.log(document.querySelector(".timeline span[id='"+total+"']"));
       document.querySelector(".timeline span[id='"+total+"']").setAttribute('active', true);
-      let offsetCard = document.querySelector("div[element][data-id='"+total+"']").offsetLeft;
+      let offsetCard = document.querySelector("div[element][data-id='"+total+"']").offsetLeft-18;
+      // console.log(offsetCard);
       this.translateRef.style.transform = "translateX(-"+offsetCard+"px)"
       this.translateRef.setAttribute('data-x', -offsetCard);
     }
@@ -41,16 +44,16 @@ class Timeline {
     document.querySelectorAll('div[element]').forEach((element) => {
       // recupero la timeline attiva
       let step = +document.querySelector('.timeline span[active]').getAttribute('id');
-      console.log(step); // es.: step attivo 4, recupero la larghezza delle element 4 e 5
-      console.log(element);
-      console.log(element.clientWidth);
+      // console.log(step); // es.: step attivo 4, recupero la larghezza delle element 4 e 5
+      // console.log(element);
+      // console.log(element.clientWidth);
 
       if (+element.getAttribute('data-id') === step || +element.getAttribute('data-id') === step+1) {
-        widthOverflow += element.clientWidth;
+        widthOverflow += element.clientWidth+36;
         // console.log(typeof widthOverflow);
         // console.log(widthOverflow);
       }
-      console.log(widthOverflow);
+      // console.log(widthOverflow);
       this.overflowRef.style.width = widthOverflow+"px";
 
     });
@@ -64,7 +67,8 @@ class Timeline {
     }
     e.target.setAttribute('active', true);
     // left dello step this.id
-    let offsetCard = document.querySelector("div[element][data-id='"+e.target.id+"']").offsetLeft;
+    let offsetCard = document.querySelector("div[element][data-id='"+e.target.id+"']").offsetLeft-18;
+    // console.log(offsetCard);
     this.translateRef.style.transform = "translateX(-"+offsetCard+"px)"
     this.translateRef.setAttribute('data-x', -offsetCard);
 
@@ -80,16 +84,32 @@ class Timeline {
     element.setAttribute('data-id', ++this.totalElements);
     // element.querySelector('div[subElement]').innerText = "element "+this.totalElements;
     this.translateRef.appendChild(element);
+    this.addCircle();
+    // mi sposto allo step della timeline appena aggiunta
+    this.move();
+    this.elementAdded = element;
+  }
+
+  addCircle() {
     // aggiungo lo step nella timeline
     let tmplCircleTimeline = document.getElementById('circle-timeline');
-    tmplContent = tmplCircleTimeline.content.cloneNode(true);
+    let tmplContent = tmplCircleTimeline.content.cloneNode(true);
     let circle = tmplContent.querySelector('span');
     let totalCircle = document.querySelector('.timeline').childElementCount;
     circle.id = ++totalCircle;
     circle.setAttribute('active', true);
     document.querySelector('.timeline').appendChild(circle);
     circle.onclick = this.goStep.bind(this);
-    // mi sposto allo step della timeline appena aggiunta
-    this.move();
+  }
+
+  activeElements() {
+    // recupero i due elementi "visibili", quindi attivi, nll'overflow
+    // all'interno dei circle (in alto nella timeline) è presente l'id dell'elemnto attivo. Ottenuto l'id ricavo anche l'elemento successivo a quello attivo
+    let activeElementId = +this.timelineRef.querySelector('.timelineContainer > .timeline > span[active]').getAttribute('id');
+    // console.log(activeElementId);
+    let first = this.overflowRef.querySelector("div[element][data-id='"+activeElementId+"']");
+    let second = first.nextElementSibling;
+
+    return [first, second];
   }
 }

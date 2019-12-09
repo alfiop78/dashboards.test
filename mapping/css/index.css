@@ -134,20 +134,20 @@ dialog .lists{min-width: 300px;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}
 .card-layout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
-.card-layout:hover section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
+.card-layout:hover .card-table[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
 section[options] i{color: dimgrey;}
 section[options] > span > i[metrics]{color: #587850;}
 section[options] > span > i[columns]{color: #9a6a6a;}
 section[options] > span > i[filters]{color: #3b7096;}
 section[options] > span > i[groupby]{color: #c7b198;}
 
-section[options] > span{margin: 2px 0;}
+section[options] > span{margin: 2px 0;position: relative;display: flex;justify-content: center;}
 
 section[options] i ~ small{visibility: hidden;}
 section[options] i:hover ~ small{visibility: visible;transform: scale(1);}
 
-section[options] > span > small{padding: 8px;background: #444;color: white;border-radius: 4px;position: absolute; left: 46px;font-size: .7rem;
-  transition: transform 100ms;transform: scale(.25);}
+section[options] > span > small{padding: 8px;background: #444;color: white;border-radius: 4px;position: absolute;top: 32px;font-size: .7rem;
+  transition: transform 100ms;transform: scale(.25);z-index: 5;}
 
 /* dialog */
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
