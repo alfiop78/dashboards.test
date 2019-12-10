@@ -9,6 +9,7 @@ var App = new Application();
   var app = {
     Cube : new Cube(),
     Timeline : new Timeline('layout-timeline-0'),
+    TimelineFact : new Timeline('layout-timeline-1'),
     Draw : null,
     // passo al Costruttore il contenitore di tutte le page
     Page : new Page(document.getElementById('pages')),
@@ -323,23 +324,49 @@ var App = new Application();
   app.cloneLastTable = function() {
     // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
     // ultima card nella gerarchia
-    let lastTableInHierarchy = document.querySelector('.hierarchies .card:last-child .card-table');
-    let lastCardRef = document.getElementById('last-card');
-
-    let card = document.createElement('div');
-    let cardLayout = document.createElement('div');
-    card.classList.add("card");
-    lastCardRef.appendChild(card);
-    cardLayout.classList.add("card-layout");
-    card.appendChild(cardLayout);
+    let lastTableInHierarchy = app.Timeline.translateRef.querySelector('div[element]:last-child .card');
+    console.log(lastTableInHierarchy);
+    // dove va inserita l'ultima card della gerarchia, prima della fact. La Fact ha data-id =2 perchè sicuramente ce ne sarà una a sinistra, con data-id=1
+    let factElement = app.TimelineFact.translateRef.querySelector('div[element][data-id="2"]');
+    console.log(factElement);
+    // creo l'elemento div[element] e [sub-element]
+    let divElement = document.createElement('div');
+    divElement.setAttribute('data-id', 1);
+    divElement.setAttribute('element', true);
+    divElement.setAttribute('info', true);
+    let divSubElement = document.createElement('div');
+    divSubElement.setAttribute('sub-element', true);
+    // aggiuno l'elemento div[element] prima del div[element] che contiene la fact (ottenuto in factElement)
+    app.TimelineFact.translateRef.insertBefore(divElement, factElement);
+    // in questo div[element] aggiungo div[sub-element] ...successivamente tutta la card
+    divElement.appendChild(divSubElement);
     let newCard = lastTableInHierarchy.cloneNode(true);
-    cardLayout.appendChild(newCard);
-    // aggiungo eventi per la selezione delle colonne
+    divSubElement.appendChild(newCard);
+
     newCard.querySelectorAll('li').forEach((li) => {
       li.onclick = app.Cube.handlerColumns.bind(app.Cube);
     });
     // evento oninput sulla searchColumns
     newCard.querySelector('#searchColumns').oninput = App.searchInList;
+
+    return;
+
+    // let lastCardRef = document.getElementById('last-card');
+    //
+    // let card = document.createElement('div');
+    // let cardLayout = document.createElement('div');
+    // card.classList.add("card");
+    // lastCardRef.appendChild(card);
+    // cardLayout.classList.add("card-layout");
+    // card.appendChild(cardLayout);
+    // let newCard = lastTableInHierarchy.cloneNode(true);
+    // cardLayout.appendChild(newCard);
+    // // aggiungo eventi per la selezione delle colonne
+    // newCard.querySelectorAll('li').forEach((li) => {
+    //   li.onclick = app.Cube.handlerColumns.bind(app.Cube);
+    // });
+    // // evento oninput sulla searchColumns
+    // newCard.querySelector('#searchColumns').oninput = App.searchInList;
 
   };
 
@@ -496,7 +523,7 @@ var App = new Application();
   /*ricerca dimensioni in elenco di sinistra*/
   // document.getElementById('dimensionSearch').oninput = App.searchInList;
   /* ricerca cubi in elenco di sinitra*/
-  document.getElementById('cubeSearch').oninput = App.searchInList;
+  // document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
   /*events */
@@ -559,5 +586,5 @@ var App = new Application();
 
   // app.getDimensionsList();
 
-  app.getDatamartList();
+  // app.getDatamartList();
 })();

@@ -7,6 +7,8 @@
 #pages[data-step="3"]{transform: translateX(-2000px);}
 
 .page > section{width: 100%;}
+/* #hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;} */
+.page > .structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
 
 /* associo il tasto con attributo data-associated-page alla pagina corrente*/
 #container[data-page="1"] > #controls button[data-associated-page="1"]{visibility: visible;display: inline-flex;}
@@ -68,8 +70,6 @@ ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: ce
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
-#hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
-
 .lists{display: flex;}
 dialog .lists{min-width: 300px;}
 
@@ -78,7 +78,7 @@ dialog .lists{min-width: 300px;}
 .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 4px;position: relative;transition: height 1s;}
 .card-table[fact-table]{background: var(--main-third-color);}
-#fact-card{display: flex;align-items: flex-end;padding: 2em 0;}
+
 .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;border-radius: 3px; box-shadow: 0 2px 6px -2px #757575;background: var(--main-primary-color);}
 .card-table > .help[alert]{background: indianred;color: white;}
 .card-table[hierarchies] > .help{background: #99b19c;color: white;}

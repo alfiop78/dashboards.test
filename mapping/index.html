@@ -298,7 +298,7 @@
 
               <section class="page" selected data-step="1">
                 <h2>Step 1 - Map dimensioni</h2>
-                <section id="hier-structure">
+                <section>
                   <h3>Creazione della struttura gerarchica</h3>
                   <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
 
@@ -395,10 +395,10 @@
                     <div class="relation">
                       <div class="icon-relation">
                         <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup">Aggiungi tabella</small></span>
-                        <span class="popupContent" anim><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
-                        <span class="popupContent" anim><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
-                        <span class="popupContent" anim><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
-                        <span class="popupContent" anim><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
                       </div>
                     </div>
 
@@ -421,11 +421,6 @@
                       <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova gerarchia</small></span>
                       <span class="popupContent"><i class="material-icons md-24">playlist_add_check</i><small class="popup">Salva gerarchia</small></span>
                       <span class="popupContent"><i id="saveDimension" class="material-icons md-24 brown">save</i><small class="popup">Salva dimensione</small></span>
-                      <!--
-                      <button type="button" class="md-button" id="addHierarchy">Nuova gerarchia</button>
-                      <button type="button" class="md-button" id="saveHierarchy">Salva Gerarchia</button>
-                      <button type="button" class="md-button" id="saveDimension">Salva Dimensione</button> -->
-
                     </div>
                   </div>
                 </section>
@@ -437,9 +432,66 @@
                   <h3>Associazione con la FACT table</h3>
                   <h5>description</h5>
 
+                  <div class="timelineContent" id="layout-timeline-1">
+                    <div class="timelineContainer">
+                      <template id="circle-timeline">
+                        <span id=""><span class="infoCircle"><small class="popup">reference 1</small><small class="popup">reference 2</small></span></span>
+                      </template>
+                      <div class="timeline"></div>
+
+                      <div class="timelineOverflow" data-elements="1">
+
+                        <div class="timelineTranslate" data-x="0">
+                          <!-- TODO: qui verrà inserita la tabella clonata (ultima tabella della relazione) -->
+                          <div class="" data-id="2" element info>
+                            <div class="" sub-element>
+                              <div class="card" id="fact-card">
+                                <div class="card-layout">
+                                  <section id="fact" class="card-table" fact-table>
+                                    <div class="help">Aggiungi la Fact Table</div>
+                                    <h6>FACT TABLE</h6>
+                                    <div class="md-field" hidden>
+                                      <input type="text" id="searchColumns" value=""/>
+                                      <label for="searchColumns" class="">Ricerca</label>
+                                    </div>
+                                    <ul id="columns"></ul>
+                                  </section>
+                                  <section options>
+                                    <span class="popupContent"><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
+                                    <span class="popupContent"><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
+                                    <span class="popupContent"><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
+                                    <span class="popupContent"><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
+                                  </section>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="relation">
+                      <div class="icon-relation">
+                        <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup"></small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="structure">
 
-                    <div class="lists">
+                    <div class="actions">
+                      <span class="popupContent"><i id="saveReport" class="material-icons md-24 brown">save</i><small class="popup">Salva Report</small></span>
+                    </div>
+                  </div>
+
+                  <!-- <div class="structure"> -->
+
+                    <!-- <div class="lists">
                       <div class="list">
                         <div class="md-field">
                           <input type="search" id="cubeSearch" value=""/>
@@ -448,62 +500,31 @@
 
                         <ul id="cubesList"></ul>
                       </div>
-                    </div>
+                    </div> -->
 
-                    <div class="hierarchies">
+                    <!-- <div class="hierarchies"> -->
 
-                      <div class="containerCards" id="factContainerCards">
+                      <!-- <div class="containerCards" id="factContainerCards"> -->
 
-                        <div class="dimensionHierarchy" id="last-card">
+                        <!-- <div class="dimensionHierarchy" id="last-card">
                           <div class="miniCard">
                             <p>minicard 1</p>
                             <p>minicard 2</p>
                             <p>minicard 3</p>
                           </div>
-                          <!-- qui verrà aggiunta l'ultima tabella della gerarchia -->
+                           qui verrà aggiunta l'ultima tabella della gerarchia
 
-                        </div>
+                        </div> -->
 
+                      <!-- </div> -->
 
-                        <div class="relation">
-                          <div class="icon-relation">
-                            <i class="material-icons md-24" hierarchies>insert_link</i>
-                            <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                            <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                            <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
-                          </div>
-                        </div>
+                    <!-- </div> -->
 
-                        <div class="card" id="fact-card">
-                          <div class="card-layout">
-                            <section id="fact" class="card-table" fact-table>
-                              <div class="help">Aggiungi la Fact Table</div>
-                              <h6>FACT TABLE</h6>
-                              <div class="md-field" hidden>
-                                <input type="text" id="searchColumns" value=""/>
-                                <label for="searchColumns" class="">Ricerca</label>
-                              </div>
-                              <ul id="columns"></ul>
-                            </section>
-                            <section options>
-                              <span><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
-                              <span><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
-                              <span><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
-                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
-                            </section>
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                    <div class="actions">
+                    <!-- <div class="actions">
                       <button type="button" class="md-button" id="saveReport">Elaborazione Report</button>
-                    </div>
+                    </div> -->
 
-                  </div>
+                  <!-- </div> -->
 
 
                 </section>

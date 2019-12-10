@@ -26,13 +26,13 @@ class Timeline {
     // se data-elements="1" c'è solo una element nell'timelineoverflow, quindi lo incremento di 1
     if (+this.overflowRef.getAttribute("data-elements") !== 1) {
 
-      let total = document.querySelector('.timeline').childElementCount;
-      if (document.querySelector('.timeline span[active]')) {
-        document.querySelector('.timeline span[active]').removeAttribute('active');
+      let total = this.timelineRef.querySelector('.timeline').childElementCount;
+      if (this.timelineRef.querySelector('.timeline span[active]')) {
+        this.timelineRef.querySelector('.timeline span[active]').removeAttribute('active');
       }
       // console.log(document.querySelector(".timeline span[id='"+total+"']"));
-      document.querySelector(".timeline span[id='"+total+"']").setAttribute('active', true);
-      let offsetCard = document.querySelector("div[element][data-id='"+total+"']").offsetLeft-18;
+      this.timelineRef.querySelector(".timeline span[id='"+total+"']").setAttribute('active', true);
+      let offsetCard = this.timelineRef.querySelector("div[element][data-id='"+total+"']").offsetLeft-18;
       // console.log(offsetCard);
       this.translateRef.style.transform = "translateX(-"+offsetCard+"px)"
       this.translateRef.setAttribute('data-x', -offsetCard);
@@ -41,9 +41,9 @@ class Timeline {
     this.overflowRef.setAttribute('data-elements', this.totalElements);
     // TODO: recupero le dimensioni delle cards ed imposto .timelineOverflow sulla width risultante
     let widthOverflow = 0;
-    document.querySelectorAll('div[element]').forEach((element) => {
+    this.timelineRef.querySelectorAll('div[element]').forEach((element) => {
       // recupero la timeline attiva
-      let step = +document.querySelector('.timeline span[active]').getAttribute('id');
+      let step = +this.timelineRef.querySelector('.timeline span[active]').getAttribute('id');
       // console.log(step); // es.: step attivo 4, recupero la larghezza delle element 4 e 5
       // console.log(element);
       // console.log(element.clientWidth);
@@ -94,7 +94,7 @@ class Timeline {
     // aggiungo sull'elemento div[element] il nomde dell'elemento contenuto al suo interno, questo apparirà nelle "info" sotto i circle come una sorta di "segnalibri"
     // element = elemento nel DOM che contiene l'attributo da far visualizzare come segnalibro
 
-    
+
 
   }
 
