@@ -371,11 +371,11 @@ var App = new Application();
   // evento su icona per aggiungere una tabella alla gerarchia
   document.querySelector('.icon-relation > span > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
-  Array.from(document.querySelectorAll('.icon-relation > i[hierarchies]')).forEach((btnHierarchies) => {
+  Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies]')).forEach((btnHierarchies) => {
     // console.log(btnHierarchies);
     btnHierarchies.onclick = app.handlerAddHierarchy;
   });
-  Array.from(document.querySelectorAll('.icon-relation > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
+  Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
     // console.log(btnHierarchiesRemove);
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
   });
@@ -422,7 +422,7 @@ var App = new Application();
     app.dialogDimensionName.close();
   };
 
-  // document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
+  document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un titolo*/
   document.getElementById('btnCubeSaveName').onclick = function(e) {
