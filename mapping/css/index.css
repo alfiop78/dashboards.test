@@ -103,11 +103,22 @@ dialog .lists{min-width: 300px;}
 /*actions*/
 
 
-.rel{display: flex;justify-content: center;}
-.rel .icon-rel{position: relative;display: flex;justify-content: center;}
-.rel .icon-rel span{left: 0;display: flex;}
+.relation{display: flex;justify-content: center;}
+.relation .icon-relation{position: relative;display: flex;justify-content: center;}
+.relation .icon-relation > span{display: flex;justify-content: center;}
+.relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;}
+.relation .icon-relation span:not(:first-child){position: absolute;left: 0;transition: left 150ms;}
 
-.icon-relation:hover i:first-child{opacity: 1;}
+.relation > .icon-relation:hover span:nth-child(2){background-color: salmon;left: calc(36px * 1);padding: 0 18px;}
+/* calc() 18 è il padding*/
+.relation > .icon-relation:hover span:nth-child(3){background-color: salmon;left: calc(-36px * 2);padding: 0 18px;}
+
+
+.relation > .icon-relation > span > small{visibility: hidden;position: absolute;padding: 8px;top: 36px;white-space: nowrap;background: #494949;color: white;}
+.relation > .icon-relation:hover > span:hover > small{visibility: visible;}
+
+
+/* .icon-relation:hover i:first-child{opacity: 1;}
 .icon-relation > span{display: flex;flex-direction: column;align-items: center;position: absolute;}
 .icon-relation span > small{visibility: hidden;background: #494949;color: white;padding: 8px;}
 .icon-relation i:first-child{opacity: .7;}
@@ -115,25 +126,25 @@ dialog .lists{min-width: 300px;}
 /* .icon-relation span.anim{position: absolute;top: auto;visibility: hidden;transition: left 300ms;left: 0;} */
 
 /* .icon-relation:hover span:nth-child(1) i:hover + small{visibility: visible;} */
-.icon-relation:hover i.anim:nth-child(2){color: #99b19c;left: calc(36px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
+/* .icon-relation:hover i.anim:nth-child(2){color: #99b19c;left: calc(36px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;} */
 /* .icon-relation:hover span:nth-child(2) i.anim{color: #99b19c;left: calc(36px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;} */
-.icon-relation:hover i.anim:nth-child(2):hover{opacity: 1;}
+/* .icon-relation:hover i.anim:nth-child(2):hover{opacity: 1;} */
 /* .icon-relation:hover span:nth-child(2) i.anim:hover{opacity: 1;} */
 
 /* .icon-relation:hover span:nth-child(2) i.anim:hover small{visibility: visible;} */
 
 /*left join ;*/
-.icon-relation:hover i.anim:nth-child(3){color: #99b19c;left: calc(-56px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
+/* .icon-relation:hover i.anim:nth-child(3){color: #99b19c;left: calc(-56px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;} */
 /* .icon-relation:hover span:nth-child(3) i.anim{color: #99b19c;left: calc(-56px * 1);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;} */
-.icon-relation:hover i.anim:nth-child(3):hover{opacity: 1;}
+/* .icon-relation:hover i.anim:nth-child(3):hover{opacity: 1;} */
 /* .icon-relation:hover span:nth-child(3) i.anim:hover{opacity: 1;} */
 
 /*right join */
-.icon-relation:hover i.anim:nth-child(4){color: #99b19c;left: calc(36px + 56px);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
-.icon-relation:hover i.anim:nth-child(4):hover{opacity: 1;}
+/* .icon-relation:hover i.anim:nth-child(4){color: #99b19c;left: calc(36px + 56px);visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
+.icon-relation:hover i.anim:nth-child(4):hover{opacity: 1;} */
 /*remove hierarchies*/
-.icon-relation:hover i.anim:nth-child(5){color: #3b7096;left: calc(36px + (56px * 2));visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
-.icon-relation:hover i.anim:nth-child(5):hover{opacity: 1;}
+/* .icon-relation:hover i.anim:nth-child(5){color: #3b7096;left: calc(36px + (56px * 2));visibility: visible;opacity: .7;padding-left: 16px;padding-right: 16px;}
+.icon-relation:hover i.anim:nth-child(5):hover{opacity: 1;} */
 
 /* .structure .containerCards{width: 60%;} */
 .structure .hierarchies{align-items: center;display: flex;flex-flow: column;max-height: 550px;overflow-y: auto;width: 100%;padding: 1em;}
