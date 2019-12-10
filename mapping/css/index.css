@@ -109,13 +109,22 @@ dialog .lists{min-width: 300px;}
 .relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;}
 .relation .icon-relation span:not(:first-child){position: absolute;left: 0;transition: left 150ms;}
 
-.relation > .icon-relation:hover span:nth-child(2){background-color: salmon;left: calc(36px * 1);padding: 0 18px;}
-/* calc() 18 è il padding*/
-.relation > .icon-relation:hover span:nth-child(3){background-color: salmon;left: calc(-36px * 2);padding: 0 18px;}
+.relation > .icon-relation:hover span:nth-child(2){background-color: salmon;left: 36px;padding: 0 12px;}
+/* left join impostata a sulla sinistra di add*/
+.relation > .icon-relation:hover span:nth-child(3){background-color: salmon;left: calc(-36px - 24px);padding: 0 12px;}
+/* right join*/
+.relation > .icon-relation:hover span:nth-child(4){background-color: salmon;left: calc(36px + 60px);padding: 0 12px;}
+/* rimuovi relazione*/
+.relation > .icon-relation:hover span:nth-child(5){background-color: salmon;left: calc(36px + 60px * 2);padding: 0 12px;}
 
 
 .relation > .icon-relation > span > small{visibility: hidden;position: absolute;padding: 8px;top: 36px;white-space: nowrap;background: #494949;color: white;}
-.relation > .icon-relation:hover > span:hover > small{visibility: visible;}
+.relation > .icon-relation:hover > span:hover > small{animation: popup 250ms ease;visibility: visible;}
+@keyframes popup {
+  0% {transform: scale(.2);}
+  75% {transform: scale(1.10);}
+  100% {transition: scale(1);}
+}
 
 
 /* .icon-relation:hover i:first-child{opacity: 1;}
