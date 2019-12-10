@@ -73,7 +73,7 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 .lists{display: flex;}
 dialog .lists{min-width: 300px;}
 
-.structure{width: 100%;justify-content: center;display: grid;grid-template-columns: auto 80%;}
+.structure{width: 90%;justify-content: flex-end;display: grid;grid-template-columns: auto;}
 
 .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 4px;position: relative;transition: height 1s;}
@@ -100,16 +100,21 @@ dialog .lists{min-width: 300px;}
 
 /*actions*/
 .actions{display: flex; flex-flow: column;}
+.actions > span{display: flex;justify-content: center;position: relative;}
+.actions span:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
 /*actions*/
 
 /*popup*/
+/* lo span che contiene l'icona e lo small della popup*/
+span.popupContent{display: flex;justify-content: center;}
+span.popupContent small{z-index: 5;}
 small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem;visibility: hidden;white-space: nowrap;
   box-shadow: 0 2px 4px 0 black;padding: 4px 8px;position: absolute;}
 /*popup*/
 
 .relation{display: flex;justify-content: center;}
 .relation .icon-relation{position: relative;display: flex;justify-content: center;}
-.relation .icon-relation > span{display: flex;justify-content: center;}
+/* .relation .icon-relation > span{display: flex;justify-content: center;} */
 .relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;background-color: #d4d6c8;z-index: 1;
   border-radius: 50%;color: dimgrey;box-shadow: 0 1px 4px 0px #717171;}
 .relation .icon-relation span:not(:first-child){position: absolute;left: 0;transition: left 150ms;z-index: 0;}
@@ -148,7 +153,7 @@ section[options] > span > i[columns]{color: #9a6a6a;}
 section[options] > span > i[filters]{color: #3b7096;}
 section[options] > span > i[groupby]{color: #c7b198;}
 
-section[options] > span{margin: 2px 0;position: relative;display: flex;justify-content: center;}
+section[options] > span{margin: 2px 0;position: relative;}
 
 section[options] i ~ small{visibility: hidden;}
 section[options] i:hover ~ small{visibility: visible;animation: popup 50ms ease;}

@@ -422,7 +422,7 @@ var App = new Application();
     app.dialogDimensionName.close();
   };
 
-  document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
+  // document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un titolo*/
   document.getElementById('btnCubeSaveName').onclick = function(e) {
@@ -469,10 +469,10 @@ var App = new Application();
 
   document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
 
-  document.getElementById('saveHierarchy').onclick = function(e) {
-    // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
-
-  };
+  // document.getElementById('saveHierarchy').onclick = function(e) {
+  //   // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
+  //
+  // };
 
   document.querySelectorAll('#operator-list li').forEach((li) => {
     li.onclick = app.handlerFunctionOperatorList;
