@@ -306,7 +306,7 @@
 
                     <div class="timelineContainer">
                       <template id="circle-timeline">
-                        <span id=""><span class="infoCircle"><small>reference 1</small><small>reference 2</small></span></span>
+                        <span id=""><span class="infoCircle"><small class="popup">reference 1</small><small class="popup">reference 2</small></span></span>
                       </template>
                       <div class="timeline"></div>
 
@@ -339,10 +339,10 @@
                                   </section>
 
                                   <section options>
-                                    <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
-                                    <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
-                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
-                                    <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
+                                    <span><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
+                                    <span><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
+                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
+                                    <span><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
                                   </section>
                                 </div>
                               </div>
@@ -377,10 +377,10 @@
                                     </ul>
                                   </section>
                                   <section options>
-                                    <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
-                                    <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
-                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
-                                    <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
+                                    <span><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
+                                    <span><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
+                                    <span><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
+                                    <span><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
                                   </section>
                                 </div>
                               </div>
@@ -394,28 +394,13 @@
 
                     <div class="relation">
                       <div class="icon-relation">
-                        <span><i id="add" class="material-icons md-24" add>add</i><small>Aggiungi tabella</small></span>
-                        <span anim><i class="material-icons md-24" hierarchies>insert_link</i><small>Relazione</small></span>
-                        <span anim><i class="material-icons md-24" hierarchies-left>flip</i><small>Left Join</small></span>
-                        <span anim><i class="material-icons md-24" hierarchies-right>flip</i><small>Right Join</small></span>
-                        <span anim><i class="material-icons md-24" hierarchies-remove>link_off</i><small>Rimuovi relazione</small></span>
+                        <span><i id="add" class="material-icons md-24" add>add</i><small class="popup">Aggiungi tabella</small></span>
+                        <span anim><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
+                        <span anim><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
+                        <span anim><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
+                        <span anim><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
                       </div>
                     </div>
-
-                    <!-- <div class="relation">
-                      <div class="icon-relation">
-                        <i id="add" class="material-icons md-24" add>add</i>
-                        <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                        <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                        <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                        <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
-                      </div>
-                    </div> -->
-
-                    <!-- <div class="button">
-
-                      <button id="add" type="button" name="button">add</button>
-                    </div> -->
 
                   </div>
 
@@ -430,104 +415,6 @@
 
                         <ul id="dimensionsList"></ul>
                       </div>
-                    </div> -->
-
-                    <!-- <div class="hierarchies">
-
-                      <template id="template-card-table">
-
-                        <div class="card">
-                          <div class="card-layout">
-                            <section class="card-table" active="true" name="">
-                              <div class="help" hidden></div>
-                              <h6>SELEZIONA TABELLA</h6>
-                              <div class="md-field" hidden>
-                                <input type="text" id="searchColumns" value=""/>
-                                <label for="searchColumns" class="">Ricerca</label>
-                              </div>
-                              <ul id="columns">
-                                <template id="template-list-columns">
-                                  <div class="element">
-                                    <li></li>
-                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                                    <i id="metrics-icon" class="material-icons md-18">show_chart</i>
-                                  </div>
-                                </template>
-                              </ul>
-                            </section>
-                            <section options>
-                              <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
-                              <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
-                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
-                              <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
-                            </section>
-                          </div>
-
-                          <div class="relation">
-                            <div class="line"></div>
-                            <div class="icon-relation">
-                              <i class="material-icons md-24" add>add</i>
-                              <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                              <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                              <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                              <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
-                            </div>
-                          </div>
-                        </div>
-                      </template>
-
-                      <div class="containerCards" id="containerCards">
-
-                        <div class="card">
-                          <div class="card-layout">
-                            <section class="card-table" active="true" name="">
-                              <div class="help">Seleziona una tabella per iniziare</div>
-                              <h6>SELEZIONA TABELLA</h6>
-                              <div class="md-field" hidden>
-                                <input type="text" id="searchColumns" value=""/>
-                                <label for="searchColumns" class="">Ricerca</label>
-                              </div>
-
-                              <ul id="columns">
-                                <template id="template-list-columns">
-                                  <div class="element">
-                                    <li></li>
-                                    <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                                    <i id="columns-icon" class="material-icons md-18">view_list</i>
-                                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
-                                    <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                                    <i id="metrics-icon" class="material-icons md-18">show_chart</i>
-                                  </div>
-                                </template>
-                              </ul>
-                            </section>
-                            <section options>
-                              <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
-                              <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
-                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
-                              <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
-                            </section>
-                          </div>
-
-
-                          <div class="relation">
-                            <div class="line"></div>
-                            <div class="icon-relation">
-                              <i class="material-icons md-24" add>add</i>
-                              <i class="material-icons md-24 anim" hierarchies>insert_link</i>
-                              <i class="material-icons md-24 anim" hierarchies-left>flip</i>
-                              <i class="material-icons md-24 anim" hierarchies-right>flip</i>
-                              <i class="material-icons md-24 anim" hierarchies-remove>link_off</i>
-                            </div>
-                          </div>
-                        </div>
-
-
-                      </div>
-
                     </div> -->
 
                     <div class="actions">
@@ -597,10 +484,10 @@
                               <ul id="columns"></ul>
                             </section>
                             <section options>
-                              <span><i class="material-icons md-18" metrics>show_chart</i><small>Metrica</small></span>
-                              <span><i class="material-icons md-18" columns>view_list</i><small>Colonna</small></span>
-                              <span><i class="material-icons md-18" filters>filter_list</i><small>Filtro</small></span>
-                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small>Raggruppamento</small></span>
+                              <span><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
+                              <span><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
+                              <span><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
+                              <span><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
                             </section>
                           </div>
 
