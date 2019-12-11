@@ -8,7 +8,7 @@ var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
-    Timeline : new Timeline('layout-timeline-0'),
+    TimelineHier : new Timeline('layout-timeline-0'),
     TimelineFact : new Timeline('layout-timeline-1'),
     Draw : null,
     // passo al Costruttore il contenitore di tutte le page
@@ -240,9 +240,9 @@ var App = new Application();
   app.handlerAddTable = function(e) {
     /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
     ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
-    app.Timeline.add();
+    app.TimelineHier.add();
     // imposto evento onclick sulla card appena aggiunta
-    app.Timeline.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
+    app.TimelineHier.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
   };
 
   app.handlerAddHierarchy = function(e) {
@@ -252,8 +252,14 @@ var App = new Application();
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
     // recupero le due card dove in mezzo c'è questo tasto
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
+
+    // BUG: quando si assovia la FACT la timeline attiva non è app.TimelineHier ma app.TimelineFact
     app.Cube.changeMode();
-    app.Timeline.activeElements().forEach((element) => {
+    // su quale timeline sto operando ?
+    // console.log(e.path[4]);
+    let objTimeline = new Timeline(e.path[4].id);
+    // console.log(Timeline);
+    objTimeline.activeElements().forEach((element) => {
       console.log(element);
       let card = element.querySelector('section.card-table')
 
@@ -324,11 +330,11 @@ var App = new Application();
   app.cloneLastTable = function() {
     // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
     // ultima card nella gerarchia
-    let lastTableInHierarchy = app.Timeline.translateRef.querySelector('div[element]:last-child .card');
-    console.log(lastTableInHierarchy);
+    let lastTableInHierarchy = app.TimelineHier.translateRef.querySelector('div[element]:last-child .card');
+    // console.log(lastTableInHierarchy);
     // dove va inserita l'ultima card della gerarchia, prima della fact. La Fact ha data-id =2 perchè sicuramente ce ne sarà una a sinistra, con data-id=1
     let factElement = app.TimelineFact.translateRef.querySelector('div[element][data-id="2"]');
-    console.log(factElement);
+    // console.log(factElement);
     // creo l'elemento div[element] e [sub-element]
     let divElement = document.createElement('div');
     divElement.setAttribute('data-id', 1);
@@ -348,26 +354,10 @@ var App = new Application();
     });
     // evento oninput sulla searchColumns
     newCard.querySelector('#searchColumns').oninput = App.searchInList;
-
-    return;
-
-    // let lastCardRef = document.getElementById('last-card');
-    //
-    // let card = document.createElement('div');
-    // let cardLayout = document.createElement('div');
-    // card.classList.add("card");
-    // lastCardRef.appendChild(card);
-    // cardLayout.classList.add("card-layout");
-    // card.appendChild(cardLayout);
-    // let newCard = lastTableInHierarchy.cloneNode(true);
-    // cardLayout.appendChild(newCard);
-    // // aggiungo eventi per la selezione delle colonne
-    // newCard.querySelectorAll('li').forEach((li) => {
-    //   li.onclick = app.Cube.handlerColumns.bind(app.Cube);
-    // });
-    // // evento oninput sulla searchColumns
-    // newCard.querySelector('#searchColumns').oninput = App.searchInList;
-
+    // elimino la sezione section[options]
+    newCard.querySelector('.card-layout').removeChild(newCard.querySelector('section[options]'));
+    // aggiungo la timeline circle
+    app.TimelineFact.addCircle();
   };
 
   app.handlerFunctionMetricList = function(e) {

@@ -6,15 +6,15 @@ class Timeline {
 
   constructor(timelineId) {
     this.timelineRef = document.querySelector('#'+timelineId);
-    console.log(this.timelineRef);
+    // console.log(this.timelineRef);
     this.translateRef = this.timelineRef.querySelector('.timelineTranslate');
-    console.log(this.translateRef);
+    // console.log(this.translateRef);
     this.overflowRef = this.timelineRef.querySelector('.timelineOverflow');
-    console.log(this.overflowRef);
+    // console.log(this.overflowRef);
     this.totalElements = this.timelineRef.querySelector('.timelineTranslate').childElementCount;
     // this.activeElementId = +this.timelineRef.querySelector('.timelineOverflow').getAttribute('active');
     this.btnAdd = this.timelineRef.querySelector('#add');
-    console.log(this.btnAdd);
+    // console.log(this.btnAdd);
   }
 
   set elementAdded(element) {this.addedElement = element;}
@@ -78,7 +78,7 @@ class Timeline {
     // Metodo per aggiungere un nuovo elemento alla timeline
     // aggiungo la element
     console.log(this);
-    let tmplElement = document.getElementById('template-element');
+    let tmplElement = this.timelineRef.querySelector('#template-element');
     let tmplContent = tmplElement.content.cloneNode(true);
     let element = tmplContent.querySelector('div[element]');
     element.setAttribute('data-id', ++this.totalElements);
@@ -94,25 +94,24 @@ class Timeline {
     // aggiungo sull'elemento div[element] il nomde dell'elemento contenuto al suo interno, questo apparirà nelle "info" sotto i circle come una sorta di "segnalibri"
     // element = elemento nel DOM che contiene l'attributo da far visualizzare come segnalibro
 
-
-
   }
 
   addCircle() {
     // aggiungo lo step nella timeline
-    let tmplCircleTimeline = document.getElementById('circle-timeline');
+    let tmplCircleTimeline = this.timelineRef.querySelector('#circle-timeline');
     let tmplContent = tmplCircleTimeline.content.cloneNode(true);
     let circle = tmplContent.querySelector('span');
-    let totalCircle = document.querySelector('.timeline').childElementCount;
+    let totalCircle = this.timelineRef.querySelector('.timeline').childElementCount;
     circle.id = ++totalCircle;
     circle.setAttribute('active', true);
-    document.querySelector('.timeline').appendChild(circle);
+    this.timelineRef.querySelector('.timeline').appendChild(circle);
     circle.onclick = this.goStep.bind(this);
   }
 
   activeElements() {
     // recupero i due elementi "visibili", quindi attivi, nll'overflow
     // all'interno dei circle (in alto nella timeline) è presente l'id dell'elemnto attivo. Ottenuto l'id ricavo anche l'elemento successivo a quello attivo
+    
     let activeElementId = +this.timelineRef.querySelector('.timelineContainer > .timeline > span[active]').getAttribute('id');
     // console.log(activeElementId);
     let first = this.overflowRef.querySelector("div[element][data-id='"+activeElementId+"']");
