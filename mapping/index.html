@@ -262,6 +262,19 @@
       </div>
     </dialog>
 
+    <dialog id="dialog-report-list">
+      <div class="lists">
+        <div class="list">
+          <div class="md-field">
+            <input type="search" id="cubeSearch" value=""/>
+            <label for="cubeSearch" class="">Ricerca</label>
+          </div>
+
+          <ul id="cubesList"></ul>
+        </div>
+      </div>
+    </dialog>
+
     <main>
       <div id="drawer">
 
@@ -395,7 +408,7 @@
                     <div class="relation">
                       <div class="icon-relation">
                         <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup">Aggiungi tabella</small></span>
-                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
@@ -473,8 +486,8 @@
 
                     <div class="relation">
                       <div class="icon-relation">
-                        <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup"></small></span>
-                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Relazione</small></span>
+                        <!-- <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup"></small></span> -->
+                        <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
@@ -485,22 +498,13 @@
                   <div class="structure">
 
                     <div class="actions">
+                      <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri Report</small></span>
                       <span class="popupContent"><i id="saveReport" class="material-icons md-24 brown">save</i><small class="popup">Salva Report</small></span>
                     </div>
                   </div>
 
                   <!-- <div class="structure"> -->
 
-                    <!-- <div class="lists">
-                      <div class="list">
-                        <div class="md-field">
-                          <input type="search" id="cubeSearch" value=""/>
-                          <label for="cubeSearch" class="">Ricerca</label>
-                        </div>
-
-                        <ul id="cubesList"></ul>
-                      </div>
-                    </div> -->
 
                     <!-- <div class="hierarchies"> -->
 

@@ -18,6 +18,7 @@ var App = new Application();
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
+    dialogReportList : document.getElementById('dialog-report-list'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
@@ -92,7 +93,7 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     // request.send(params);
 
-    // recupero un datamart FX... già creato
+    // recupero un datamart FX... già creato e visualizzo l'anteprima
     var url = "ajax/reports.php";
     let reportId = this.getAttribute('id');
     let params = "reportId="+reportId;
@@ -105,6 +106,7 @@ var App = new Application();
           var response = JSON.parse(request.response);
           console.table(response);
           app.createReport(response);
+          app.dialogReportList.close();
 
         } else {
 
@@ -380,6 +382,10 @@ var App = new Application();
     this.toggleAttribute('selected');
   };
 
+  app.openReportList = function() {
+    app.dialogReportList.showModal();
+  };
+
   /*events */
   document.querySelectorAll('.card-table').forEach((card) => {
     // questo imposta l'evento sulla prima card e sulla fact che sono già presenti nel DOM
@@ -455,20 +461,21 @@ var App = new Application();
     app.Cube.cube.name = app.Cube.cubeTitle;
     app.Cube.cube['report_id'] = app.Storage.reportId;
     console.log(app.Cube.cube);
-    return;
+    // return;
     // salvo il cubo in localStorage
     app.Storage.cube = app.Cube.cube;
 
     var url = "ajax/cube.php";
     let params = "cube="+app.Storage.cube;
     console.log(params);
-    return;
+    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
+          app.createReport(response);
 
         } else {
 
@@ -516,6 +523,9 @@ var App = new Application();
   // document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
+
+  // icona openReport apre la dialog con la lista di reports già creati
+  document.querySelector('#openReport').onclick = app.openReportList;
   /*events */
 
   app.createReport = function(response) {
@@ -576,5 +586,5 @@ var App = new Application();
 
   // app.getDimensionsList();
 
-  // app.getDatamartList();
+  app.getDatamartList();
 })();
