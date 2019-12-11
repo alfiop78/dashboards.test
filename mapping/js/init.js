@@ -93,6 +93,9 @@ var App = new Application();
     // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     // request.send(params);
 
+    console.log(this.getAttribute('label'));
+    let reportName = this.getAttribute('label');
+
     // recupero un datamart FX... già creato e visualizzo l'anteprima
     var url = "ajax/reports.php";
     let reportId = this.getAttribute('id');
@@ -105,7 +108,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response);
+          app.createReport(response, app.Storage.getJSONCube(reportName));
           app.dialogReportList.close();
 
         } else {
@@ -475,7 +478,8 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response);
+
+          app.createReport(response, app.Storage.getJSONCube(app.Cube.cube.name));
 
         } else {
 
@@ -528,12 +532,56 @@ var App = new Application();
   document.querySelector('#openReport').onclick = app.openReportList;
   /*events */
 
-  app.createReport = function(response) {
+  app.createReport = function(response, cube) {
     console.log('create report');
+    console.log(cube);
 
     let table = document.getElementById('table-01');
 
-    console.log(response);
+    // console.log(response);
+    // TODO: stabilire quante colonne ci sono, dal parametro passato "cube"
+    console.log(cube.columns);
+
+    /* reportPositioning = [0=> {'col': 'Cod.Sede'},
+                            1=> {'col': 'Sede'},
+                            2=> {'metric': 'venduto'},
+                            3=> {'metric': 'quantita'}
+                            ....
+                          ]*/
+
+    let reportPositioning = [];
+
+    Array.from(Object.keys(cube)).forEach((element) => {
+
+      if (element === "columns" || element === "metrics") {
+        // console.log(element);
+        Array.from(Object.keys(cube[element])).forEach((table) => {
+          // console.log(table);
+          // console.log(cube.columns[table]);
+          Array.from(Object.keys(cube[element][table])).forEach((value) => {
+            console.log(element);
+            let obj = {};
+            obj[element] = value;
+            reportPositioning.push(obj);
+          });
+        });
+      }
+
+    });
+
+
+    console.log(reportPositioning); // questo è OK
+    return;
+    // colonne definite nel cubo
+
+    let reportDefined = {
+      'cols': cols,
+      'metrics' : ['prima metrica']
+    };
+
+    // TODO: stabilire in quale colonna è posizionata la metrica
+    console.log(reportDefined.cols.length);
+    let colMetricPosition = reportDefined.cols.length;
     // return;
 
     let options =
@@ -545,10 +593,11 @@ var App = new Application();
       ],
       'filters' : [
         {'col': 0, 'attribute': 'multi'}
-        // {'col': 1, 'attribute': 'multi'},
+        // {'col': 1, 'attribute': 'multi'}
         // {'col': 3, 'attribute': 'hidden'}
       ],
-      'metrics' : [2], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
+      'metrics' : [colMetricPosition], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : app.pageSelectedTitle,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
