@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 /* funzione immediata */
+// TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
+// TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
 (() => {
   var app = {
     Cube : new Cube(),
     TimelineHier : new Timeline('layout-timeline-0'),
     TimelineFact : new Timeline('layout-timeline-1'),
-    Draw : null,
     // passo al Costruttore il contenitore di tutte le page
     Page : new Page(document.getElementById('pages')),
     Storage : new Storage(),
@@ -333,6 +334,8 @@ var App = new Application();
   };
 
   app.cloneLastTable = function() {
+    // BUG: se si torna indietro a fare una modifica alla gerarchia, dopo aver cliccato "Salva dimensione", viene clonata di nuovo la tabella, invece di
+    //....modificare quella già clonata
     // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
     // ultima card nella gerarchia
     let lastTableInHierarchy = app.TimelineHier.translateRef.querySelector('div[element]:last-child .card');
@@ -450,7 +453,7 @@ var App = new Application();
 
   document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
 
-  /* tasto OK nella dialog per il salvataggio di un titolo*/
+  /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
   document.getElementById('btnCubeSaveName').onclick = function(e) {
     app.Cube.cubeTitle = document.getElementById('cubeName').value;
     app.Cube.cube.dimensions = app.Cube.dimension;
@@ -537,52 +540,17 @@ var App = new Application();
     console.log(cube);
 
     let table = document.getElementById('table-01');
-
     // console.log(response);
-    // TODO: stabilire quante colonne ci sono, dal parametro passato "cube"
     console.log(cube.columns);
 
-    /* reportPositioning = [0=> {'col': 'Cod.Sede'},
-                            1=> {'col': 'Sede'},
-                            2=> {'metric': 'venduto'},
-                            3=> {'metric': 'quantita'}
-                            ....
-                          ]*/
+    // let AI = new AIDraw(table, null); // null sono le options che non sono ancora state definite
+    let AI = new AIDraw(table);
+    AI.definePositioning = cube;
 
-    let reportPositioning = [];
-
-    Array.from(Object.keys(cube)).forEach((element) => {
-
-      if (element === "columns" || element === "metrics") {
-        // console.log(element);
-        Array.from(Object.keys(cube[element])).forEach((table) => {
-          // console.log(table);
-          // console.log(cube.columns[table]);
-          Array.from(Object.keys(cube[element][table])).forEach((value) => {
-            console.log(element);
-            let obj = {};
-            obj[element] = value;
-            reportPositioning.push(obj);
-          });
-        });
-      }
-
-    });
-
-
-    console.log(reportPositioning); // questo è OK
-    return;
-    // colonne definite nel cubo
-
-    let reportDefined = {
-      'cols': cols,
-      'metrics' : ['prima metrica']
-    };
-
-    // TODO: stabilire in quale colonna è posizionata la metrica
-    console.log(reportDefined.cols.length);
-    let colMetricPosition = reportDefined.cols.length;
-    // return;
+    console.log(AI.definePositioning);
+    console.log(AI.metricsPosition);
+    // TODO: Inserire, tra le opzioni di una colonna (in fase di mapping) la possibilità di scegliere se il filtro in pageby deve essere single/multiselect
+    // Successivamente impostare queste opzioni nel Metodo della Classe che costruisce l'oggetto options qui sotto
 
     let options =
       {
@@ -597,37 +565,47 @@ var App = new Application();
         // {'col': 3, 'attribute': 'hidden'}
       ],
       // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
-      'metrics' : [colMetricPosition], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : AI.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
       'title' : app.pageSelectedTitle,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
-    app.Draw = new Draw(table, options);
-    // console.log(app.Draw);
+
+    AI.opt = options;
+    console.log(AI.opt);
+    return;
+
+    let DrawReport = new Draw(table); // REVIEW: forse non serve più instanziare questo oggetto, i metodi chiamati dopo, addColum, addParam,
+    // ... posso chiamarli anche dall'oggetto AI che ha incorporate anche le opzioni per il report
+
+    // console.log(DrawReport);
     // Opzione 1 - aggiungo tutte le colonne della query
     Object.keys(response[0]).forEach((el, i) => {
       // console.log('col:'+el);
-      app.Draw.addColumn(el, i);
+      DrawReport.addColumn(el, i);
       // aggiungo un filtro per ogni colonna della tabella
-      app.Draw.addParams(el, i);
+      DrawReport.addParams(el, i);
     });
     // Opzione 2 - aggiungo manualmetne le colonne
-    // app.Draw.addColumn('ID');
-    // app.Draw.addColumn('Dealer');
+    // DrawReport.addColumn('ID');
+    // DrawReport.addColumn('Dealer');
 
     // aggiungo le righe
     let arrParams = [];
     for (let i in response) {
       // console.log(Object.values(response[i]));
       // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      app.Draw.addRow(Object.values(response[i]));
+      DrawReport.addRow(Object.values(response[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
       // Opzione 2 - Aggiunta colonne manualmente
-      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
+      // DrawReport.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
     }
 
-    app.Draw.createDatalist();
+    DrawReport.createDatalist();
+    // TODO: set options
+    // DrawReport.options = options;
+
     // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
-    app.Draw.draw();
+    DrawReport.draw();
 
   };
 

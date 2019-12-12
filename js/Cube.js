@@ -371,11 +371,11 @@ class Cube {
     let objParam = {};
     if (Object.keys(filters).length > 0) {
       // questa è una metrica filtrata
-      this.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias, filters});
+      this.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
       this.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
       this.filteredMetrics[tableName] = objParam;
     } else {
-      this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'aliasMetric' : alias});
+      this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias});
       this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
       this.metrics[tableName] = objParam;
     }

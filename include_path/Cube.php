@@ -89,7 +89,7 @@ class Cube {
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->aliasMetric."'";
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
       }
     }
     return $this->_metrics = implode(", ", $metricsList);
@@ -133,10 +133,10 @@ class Cube {
       foreach ($metrics as $param) {
         unset($this->_sql);
 
-        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->aliasMetric`"; // TODO: provare con backtick
+        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->alias`"; // TODO: provare con backtick
         echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
         // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-        $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->aliasMetric; // memorizzo qui quante tabelle per metriche filtrate sono state create
+        $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
         $i++;
       }
     }
@@ -180,8 +180,8 @@ class Cube {
       $ONClause = array();
       $ONConditions = NULL;
       // var_dump($this->_columns);
-      foreach ($this->_metricTable as $metricTableName => $aliasMetric) {
-        $table_and_metric[] = "`$metricTableName`.`$aliasMetric`";
+      foreach ($this->_metricTable as $metricTableName => $alias) {
+        $table_and_metric[] = "`$metricTableName`.`$alias`";
         $leftJoin .= "\nLEFT JOIN `decisyon_cache`.`$metricTableName` ON ";
 
         foreach ($this->_columns as $columnAlias) {
