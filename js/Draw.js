@@ -50,6 +50,7 @@ class Draw {
   }
 
   set title(value) {
+    console.log(value);
     this.titleCaption = value;
     // console.log(this.titleCaption);
     // console.log(this.table.querySelector('caption'));
@@ -229,7 +230,7 @@ class Draw {
 
   eventParams() {
     this.paramsRef.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
-      console.log(this); // Draw
+      // console.log(this); // Draw
       el.oninput = this.handlerInput.bind(this);
       el.onclick = this.showFilters.bind(this);
       el.onblur = function(e) {e.target.removeAttribute('placeholder');};
@@ -434,8 +435,27 @@ class Report extends Draw {
   #metricsPosition = [];
   #options;
 
-  constructor(table) {
+  constructor(table, data) {
     super(table);
+    this.data = data;
+    console.log(this.data);
+    // Aggiungo le intestazioni di colonna e i filtri in pageBy
+    Object.keys(this.data[0]).forEach((el, i) => {
+      // console.log(el);
+      super.addColumn(el, i);
+      // aggiungo un filtro per ogni colonna della tabella
+      // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
+      super.addParams(el, i);
+    });
+
+    for (let i in this.data) {
+      // console.log(Object.values(response[i]));
+      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
+      super.addRow(Object.values(this.data[i]));
+      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
+      // Opzione 2 - Aggiunta colonne manualmente
+      // DrawReport.addRow([data[i].id, data[i].descrizione, data[i].versioneDMS, data[i].CodDealerCM]);
+    }
   }
 
   set definePositioning(cube) {
@@ -497,7 +517,7 @@ class Report extends Draw {
     // console.log(Object.keys(this.#options));
     let arrProperties = Object.keys(this.#options);
     // console.log(arrProperties);
-    if (arrProperties.includes('title')) {this.title = this.#options.title;}
+    if (arrProperties.includes('title')) {super.title = this.#options.title;}
     // console.log(this.#options.metrics);
     // return;
     if (arrProperties.includes('metrics')) {

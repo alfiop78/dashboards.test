@@ -538,53 +538,35 @@ var App = new Application();
   app.createReport = function(response, cube) {
     console.log('create report');
     console.log(cube);
-
+    console.log(cube.name);
     let table = document.getElementById('table-01');
-    // console.log(response);
-    console.log(cube.columns);
-
-    // let AI = new AIDraw(table, null); // null sono le options che non sono ancora state definite
-    let report = new Report(table);
+    let report = new Report(table, response);
     report.definePositioning = cube;
     // TODO: Inserire, tra le opzioni di una colonna (in fase di mapping) la possibilità di scegliere se il filtro in pageby deve essere single/multiselect
     // Successivamente impostare queste opzioni nel Metodo della Classe che costruisce l'oggetto options qui sotto
-
+    // ...
+    // TODO: creare degli object (es.: cols, pageBy, metrics, colors) che comporranno l'object 'options' (sotto)
+    // ... chiamerò dei Metodi per impostare questi object, in base alla personalizzazione fatta
+    // ... sul report all'interno del 3° step.
+    // TODO: personalizzare la tabella e inserire i valori impostati in options, (es. colore header)
     let options =
       {
-      'cols' : [
-        // {'col': 3, 'attribute': 'hidden'},
-        // {'col': 5, 'attribute': 'hidden'}
+        'cols' : [
+          // {'col': 3, 'attribute': 'hidden'},
+          // {'col': 5, 'attribute': 'hidden'}
 
-      ],
-      'filters' : [
-        {'col': 0, 'attribute': 'multi'}
-        // {'col': 1, 'attribute': 'multi'}
-        // {'col': 3, 'attribute': 'hidden'}
-      ],
-      // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
-      'metrics' : report.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      // 'metrics' : [2], // test
-      'title' : app.pageSelectedTitle,
-      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
+        ],
+        'filters' : [
+          {'col': 0, 'attribute': 'multi'}
+          // {'col': 1, 'attribute': 'multi'}
+          // {'col': 3, 'attribute': 'hidden'}
+        ],
+        // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
+        'metrics' : report.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+        // 'metrics' : [2], // test
+        'title' : cube.name,
+        'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
-
-
-    Object.keys(response[0]).forEach((el, i) => {
-      // console.log('col:'+el);
-      report.addColumn(el, i);
-      // aggiungo un filtro per ogni colonna della tabella
-      report.addParams(el, i);
-    });
-    // aggiungo le righe
-    let arrParams = [];
-    for (let i in response) {
-      // console.log(Object.values(response[i]));
-      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      report.addRow(Object.values(response[i]));
-      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-      // Opzione 2 - Aggiunta colonne manualmente
-      // DrawReport.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
-    }
 
     report.createDatalist();
     report.option = options;
