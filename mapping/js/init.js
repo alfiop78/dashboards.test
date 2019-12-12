@@ -544,11 +544,8 @@ var App = new Application();
     console.log(cube.columns);
 
     // let AI = new AIDraw(table, null); // null sono le options che non sono ancora state definite
-    let AI = new AIDraw(table);
-    AI.definePositioning = cube;
-
-    console.log(AI.definePositioning);
-    console.log(AI.metricsPosition);
+    let report = new Report(table);
+    report.definePositioning = cube;
     // TODO: Inserire, tra le opzioni di una colonna (in fase di mapping) la possibilità di scegliere se il filtro in pageby deve essere single/multiselect
     // Successivamente impostare queste opzioni nel Metodo della Classe che costruisce l'oggetto options qui sotto
 
@@ -565,47 +562,35 @@ var App = new Application();
         // {'col': 3, 'attribute': 'hidden'}
       ],
       // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
-      'metrics' : AI.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      'metrics' : report.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+      // 'metrics' : [2], // test
       'title' : app.pageSelectedTitle,
       'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
       };
 
-    AI.opt = options;
-    console.log(AI.opt);
-    return;
 
-    let DrawReport = new Draw(table); // REVIEW: forse non serve più instanziare questo oggetto, i metodi chiamati dopo, addColum, addParam,
-    // ... posso chiamarli anche dall'oggetto AI che ha incorporate anche le opzioni per il report
-
-    // console.log(DrawReport);
-    // Opzione 1 - aggiungo tutte le colonne della query
     Object.keys(response[0]).forEach((el, i) => {
       // console.log('col:'+el);
-      DrawReport.addColumn(el, i);
+      report.addColumn(el, i);
       // aggiungo un filtro per ogni colonna della tabella
-      DrawReport.addParams(el, i);
+      report.addParams(el, i);
     });
-    // Opzione 2 - aggiungo manualmetne le colonne
-    // DrawReport.addColumn('ID');
-    // DrawReport.addColumn('Dealer');
-
     // aggiungo le righe
     let arrParams = [];
     for (let i in response) {
       // console.log(Object.values(response[i]));
       // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      DrawReport.addRow(Object.values(response[i]));
+      report.addRow(Object.values(response[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
       // Opzione 2 - Aggiunta colonne manualmente
       // DrawReport.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
     }
 
-    DrawReport.createDatalist();
-    // TODO: set options
-    // DrawReport.options = options;
+    report.createDatalist();
+    report.option = options;
 
     // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
-    DrawReport.draw();
+    report.draw();
 
   };
 

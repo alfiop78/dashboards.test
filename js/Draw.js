@@ -40,11 +40,10 @@
 */
 
 class Draw {
-  constructor(table/*, options*/) {
+  constructor(table) {
     /*
     * table è il riferimento all'elemento table nel DOM
     */
-    // this.options = options;
     this.table = table;
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
@@ -376,15 +375,6 @@ class Draw {
     }
   }
 
-  draw() {
-    // TODO: qui si dovrebbe impostare una class che applica una transition per visualizzare la table
-    this.option();
-    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
-    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
-    this.eventParams();
-    this.info();
-  }
-
   info() {
     this.infoRef = this.table.querySelector('tfoot div[info]');
     this.rowCounter = this.infoRef.querySelector('span[row-number]');
@@ -393,58 +383,6 @@ class Draw {
         this.rowCounter.innerText = count++;
       }
     }
-  }
-
-  option() {
-    // console.log(this.options);
-    // console.log(Object.keys(this.options));
-    let arrProperties = Object.keys(this.options);
-    // console.log(arrProperties);
-    if (arrProperties.includes('title')) {this.title = this.options.title;}
-    // console.log(this.options.metrics);
-    if (arrProperties.includes('metrics')) {
-      this.options.metrics.forEach((col) => {
-        // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
-        document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
-        // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
-        this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {cols.classList.add('metrics');});
-      });
-    }
-    // console.log(this.options.inputSearch);
-    if (arrProperties.includes('inputSearch') && this.options.inputSearch) {
-      // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
-      document.getElementById('search').oninput = this.searchInput.bind(this);
-    } else {
-      // nascondo la input search
-      document.getElementById('search').parentElement.hidden = true;
-    }
-
-
-    arrProperties.forEach((property) => {
-      // console.log(property); // cols, filters, ecc...
-      if (Array.isArray(this.options[property])) {
-        // console.log(this.options[property]); // [{col: 1, attribute: "hidden"}]
-        this.options[property].forEach((prop) => {
-          // console.log(prop); // {col: 1, attribute: "hidden"}
-          let propertyRef = Object.keys(prop)[0]; // col
-          let propertyRefValue = prop[propertyRef]; // numero di colonna
-          let propertyAttributeValue = prop['attribute'];
-
-          // console.log(propertyRef);
-          // console.log(propertyRefValue);
-          // console.log(propertyAttributeValue);
-          // es. : :root [options='cols'][col='1']
-          // es. : :root [options='filters'][col='0']
-
-          let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
-          elements.forEach((el) => {
-            el.setAttribute(propertyAttributeValue, true);
-          });
-        });
-      }
-
-    });
-
   }
 
   searchInput(event) {
@@ -489,13 +427,12 @@ class Draw {
 
 }
 
-class AIDraw extends Draw {
+class Report extends Draw {
   // proprietà private
   #cube;
   #positioning = [];
   #metricsPosition = [];
-  // public
-  _opt;
+  #options;
 
   constructor(table) {
     super(table);
@@ -550,30 +487,32 @@ class AIDraw extends Draw {
     return this.#metricsPosition;
   }
 
-  set opt(value) {
-    this._opt = value;
-  }
+  set option(value) {this.#options = value;}
 
-  get opt() {return this._opt;}
+  get option() {return this.#options;}
 
-  optApply() {
+  optionsApply() {
     // applico le option impostate
-    // console.log(this._opt);
-    // console.log(Object.keys(this._opt));
-    let arrProperties = Object.keys(this._opt);
+    // console.log(this.#options);
+    // console.log(Object.keys(this.#options));
+    let arrProperties = Object.keys(this.#options);
     // console.log(arrProperties);
-    if (arrProperties.includes('title')) {this.title = this._opt.title;}
-    // console.log(this._opt.metrics);
+    if (arrProperties.includes('title')) {this.title = this.#options.title;}
+    // console.log(this.#options.metrics);
+    // return;
     if (arrProperties.includes('metrics')) {
-      this._opt.metrics.forEach((col) => {
+      this.#options.metrics.forEach((col) => {
+        // console.log(col);
+        console.log(document.querySelector('.params > .md-field'));
+        // return;
         // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
         document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
         // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
         this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {cols.classList.add('metrics');});
       });
     }
-    // console.log(this._opt.inputSearch);
-    if (arrProperties.includes('inputSearch') && this._opt.inputSearch) {
+    // console.log(this._optthis.#options.inputSearch);
+    if (arrProperties.includes('inputSearch') && this.#options.inputSearch) {
       // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
       document.getElementById('search').oninput = this.searchInput.bind(this);
     } else {
@@ -584,9 +523,9 @@ class AIDraw extends Draw {
 
     arrProperties.forEach((property) => {
       // console.log(property); // cols, filters, ecc...
-      if (Array.isArray(this._opt[property])) {
-        // console.log(this._opt[property]); // [{col: 1, attribute: "hidden"}]
-        this._opt[property].forEach((prop) => {
+      if (Array.isArray(this.#options[property])) {
+        // console.log(this.#options[property]); // [{col: 1, attribute: "hidden"}]
+        this.#options[property].forEach((prop) => {
           // console.log(prop); // {col: 1, attribute: "hidden"}
           let propertyRef = Object.keys(prop)[0]; // col
           let propertyRefValue = prop[propertyRef]; // numero di colonna
@@ -606,5 +545,14 @@ class AIDraw extends Draw {
       }
 
     });
+  }
+
+  draw() {
+    // TODO: qui si potrebbe impostare una class che applica una transition per visualizzare la table
+    this.optionsApply();
+    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
+    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
+    super.eventParams();
+    super.info();
   }
 }
