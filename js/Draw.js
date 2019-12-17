@@ -48,6 +48,8 @@ class Draw {
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
     this.dragged;
+    this.dragStartCol = 0;
+    this.dragTargetCol = 0;
   }
 
   set title(value) {
@@ -61,96 +63,28 @@ class Draw {
   get title() {return this.titleCaption;}
 
   addColumn(colName, index) {
-    let div = document.createElement('div');
-    div.classList.add('dropzone');
-    this.table.querySelector('thead tr').appendChild(div);
-
     this.th = document.createElement('th');
     this.th.setAttribute('col', index);
+    this.th.classList.add('dropzone');
     this.th.setAttribute('options', 'cols');
     this.th.setAttribute('draggable', true);
     // evento dragStart
     this.th.ondragstart = this.dragStart.bind(this);
-    div.ondragover = this.dragOver.bind(this);
-    div.ondrop = this.drop.bind(this);
-    div.ondragend = this.end.bind(this);
-    div.ondragenter = this.enter.bind(this);
-    div.ondragleave = this.leave.bind(this);
+    this.th.ondragover = this.dragOver.bind(this);
+    this.th.ondrop = this.drop.bind(this);
+    this.th.ondragend = this.end.bind(this);
+    this.th.ondragenter = this.enter.bind(this);
+    this.th.ondragleave = this.leave.bind(this);
     this.th.id = 'col-header-'+index;
     // this.th.setAttribute('ondrop', true);
     this.th.innerText = colName;
-    div.appendChild(this.th);
-    // this.table.querySelector('thead tr').appendChild(this.th);
+    this.table.querySelector('thead tr').appendChild(this.th);
   }
-
-  /*
-  var dragged;
-
-  /* events fired on the draggable target */
-  // document.addEventListener("drag", function( event ) {
-  //
-  // }, false);
-  //
-  // document.addEventListener("dragstart", function( event ) {
-  //     // store a ref. on the dragged elem
-  //     dragged = event.target;
-  //     // make it half transparent
-  //     event.target.style.opacity = .5;
-  // }, false);
-  //
-  // document.addEventListener("dragend", function( event ) {
-  //     // reset the transparency
-  //     event.target.style.opacity = "";
-  // }, false);
-
-  /* events fired on the drop targets */
-  // document.addEventListener("dragover", function( event ) {
-  //     // prevent default to allow drop
-  //     event.preventDefault();
-  // }, false);
-  //
-  // document.addEventListener("dragenter", function( event ) {
-  //     // highlight potential drop target when the draggable element enters it
-  //     if ( event.target.className == "dropzone" ) {
-  //         event.target.style.background = "purple";
-  //     }
-  //
-  // }, false);
-  //
-  // document.addEventListener("dragleave", function( event ) {
-  //     // reset background of potential drop target when the draggable element leaves it
-  //     if ( event.target.className == "dropzone" ) {
-  //         event.target.style.background = "";
-  //     }
-  //
-  // }, false);
-  //
-  // document.addEventListener("drop", function( event ) {
-  //     // prevent default action (open as link for some elements)
-  //     event.preventDefault();
-  //     // move dragged elem to the selected drop target
-  //     if ( event.target.className == "dropzone" ) {
-  //         event.target.style.background = "";
-  //         dragged.parentNode.removeChild( dragged );
-  //         event.target.appendChild( dragged );
-  //     }
-  //
-  // }, false);
-  // TODO: valutare se impostare addEventListener con false in questi eventi per il drag&drop
-
 
   dragStart(e) {
-    // console.log(e);
-    // console.log(e.target);
-    // console.log('drag');
-    // quali elementi saranno spostati dataTransfer
-    // e.dataTransfer.setData("text/html", e.target.id);//OK
-    this.dragged = e.target;
-    // e.target.style.opacity = .3;
-  }
-
-  end(e) {
-    // e.target.style.opacity = 1;
+    e.dataTransfer.setData("text/plain", e.target.id);
+    // console.log(e.dataTransfer);
+    this.dragStartCol = +e.target.getAttribute('col');
   }
 
   dragOver(e) {
@@ -161,34 +95,65 @@ class Draw {
   }
 
   enter(e) {
-    if ( e.target.className == "dropzone" ) {
-      e.target.style.borderLeft = "solid thick brown";
-      // e.target.classList.add('droppable');
+    this.dragTargetCol = +e.target.getAttribute('col');
+    if (e.target.className === "dropzone") {
+      (this.dragStartCol > this.dragTargetCol) ? e.target.classList.add('move-before') : e.target.classList.add('move-after');
     }
   }
 
   leave(e) {
-    if ( e.target.className == "dropzone" ) {
-      e.target.style.borderLeft = "initial";
-      // e.target.classList.remove('droppable');
-    }
+    this.dragTargetCol = +e.target.getAttribute('col');
+    (this.dragStartCol > this.dragTargetCol) ? e.target.classList.remove('move-before') : e.target.classList.remove('move-after');
   }
 
   drop(e) {
-    // console.log(e.target);
-    // let parent = e.path[1];
-    // console.log(parent);
     e.preventDefault();
-    // // Get the id of the target and add the moved element to the target's DOM
-    // let data = e.dataTransfer.getData("text/html");//OK
-    //
-    // e.target.appendChild(document.getElementById(data));//OK
-    // -------------------------------
-    // move dragged elem to the selected drop target
-    if ( e.target.className == "dropzone" ) {
-      e.target.style.borderLeft = "initial";
-      // this.dragged.parentNode.removeChild( this.dragged );
-      e.target.appendChild( this.dragged );
+    console.log('drop');
+    let data = e.dataTransfer.getData("text/plain");
+    // console.log(e.dataTransfer);
+    // let parent = e.target.parentElement;
+    // console.log(e.target.id);
+    this.dragged = document.getElementById(data);
+    // console.log(this.dragged);
+    // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
+    let colSelected = +this.dragged.getAttribute('col');
+    // console.log(colSelected);
+    // console.log(e.target);
+    let colTarget = +e.target.getAttribute('col');
+    // console.log(colSelected);
+    // console.log(colTarget);
+    (colSelected > colTarget) ? e.target.before(this.dragged) : e.target.after(this.dragged);
+    e.target.classList.remove('move-before', 'move-after');
+
+    // ho la colonna da spostare e la colonna target, con queste posso spostare tutte le righe appartenenti alla colonna
+    // recupero le righe della tabella
+    for (let i = 0; i < this.tbody.rows.length; i++) {
+      // console.log(app.table.rows[i]);
+      // recupero tutta la colonna da spostare
+      // console.log(colSelected);
+      // console.log(colTarget);
+      let elementSelected = this.tbody.rows[i].cells[colSelected];
+      // colonna dove fare il before, colTarget
+      let colTargetElement = this.tbody.rows[i].cells[colTarget];
+      // console.log(this.table.rows[i]);
+      if (this.tbody.rows[i].hasAttribute('row') || this.tbody.rows[i].hasAttribute('head')) {
+        (colSelected > colTarget) ? colTargetElement.before(elementSelected) : colTargetElement.after(elementSelected);
+      }
+
+    }
+  }
+
+  end(e) {
+    e.preventDefault();
+    console.log('end');
+    // ristabilisco le position tramite l'attributo col
+    for (let i = 0; i < this.table.rows.length; i++) {
+      // riposizioni l'attributo [col] solo sulle head e sulle row (body)
+      if (this.table.rows[i].hasAttribute("row") || this.table.rows[i].hasAttribute('head')) {
+        for (let c = 0; c < this.table.rows[i].cells.length; c++) {
+          this.table.rows[i].cells[c].setAttribute('col', c);
+        }
+      }
     }
   }
 
