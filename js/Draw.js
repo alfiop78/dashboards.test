@@ -81,7 +81,7 @@ class Draw {
     this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
   }
-  
+
   dragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.id);
     // console.log(e.dataTransfer);
@@ -156,6 +156,7 @@ class Draw {
         }
       }
     }
+    // TODO: Salvataggio delle impostazioni in localStorage
   }
 
   addParams(colName, id) {
