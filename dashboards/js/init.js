@@ -38,7 +38,7 @@ var App = new Application();
         1- Inserisco il nome del datamart(Report) selezionato in lyt-report
         */
         app.activeSection.querySelector('h5').innerText = li.innerHTML;
-        app.dialog.close();
+        app.dialogReports.close();
         // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
         // app.activeSection.setAttribute('associated-datamart', li.innerText);
         app.activeSection.setAttribute('associated-datamart-id', li.id);
@@ -59,7 +59,7 @@ var App = new Application();
     */
     console.log(this);
     app.activeSection = e.path[2];
-    app.dialog.showModal();
+    app.dialogReports.showModal();
   };
 
   app.getDatamart = function() {
