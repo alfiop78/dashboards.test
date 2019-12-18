@@ -75,12 +75,13 @@ class Draw {
     this.th.ondragend = this.end.bind(this);
     this.th.ondragenter = this.enter.bind(this);
     this.th.ondragleave = this.leave.bind(this);
+
     this.th.id = 'col-header-'+index;
     // this.th.setAttribute('ondrop', true);
     this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
   }
-
+  
   dragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.id);
     // console.log(e.dataTransfer);
