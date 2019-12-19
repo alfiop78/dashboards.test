@@ -47,9 +47,9 @@ class Draw {
     this.table = table;
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
-    this.dragged;
-    this.dragStartCol = 0;
-    this.dragTargetCol = 0;
+    // this.dragged;
+    // this.dragStartCol = 0;
+    // this.dragTargetCol = 0;
   }
 
   set title(value) {
@@ -68,96 +68,95 @@ class Draw {
     this.th.classList.add('dropzone');
     this.th.setAttribute('options', 'cols');
     this.th.setAttribute('draggable', true);
-    // evento dragStart
-    this.th.ondragstart = this.dragStart.bind(this);
-    this.th.ondragover = this.dragOver.bind(this);
-    this.th.ondrop = this.drop.bind(this);
-    this.th.ondragend = this.end.bind(this);
-    this.th.ondragenter = this.enter.bind(this);
-    this.th.ondragleave = this.leave.bind(this);
-
+    // // evento dragStart
+    // this.th.ondragstart = this.dragStart.bind(this);
+    // this.th.ondragover = this.dragOver.bind(this);
+    // this.th.ondrop = this.drop.bind(this);
+    // this.th.ondragend = this.end.bind(this);
+    // this.th.ondragenter = this.enter.bind(this);
+    // this.th.ondragleave = this.leave.bind(this);
     this.th.id = 'col-header-'+index;
     // this.th.setAttribute('ondrop', true);
     this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
   }
 
-  dragStart(e) {
-    e.dataTransfer.setData("text/plain", e.target.id);
-    // console.log(e.dataTransfer);
-    this.dragStartCol = +e.target.getAttribute('col');
-  }
+  // dragStart(e) {
+  //   e.dataTransfer.setData("text/plain", e.target.id);
+  //   // console.log(e.dataTransfer);
+  //   this.dragStartCol = +e.target.getAttribute('col');
+  // }
 
-  dragOver(e) {
-    e.preventDefault();
-    // Set the dropEffect to move
-    e.dataTransfer.dropEffect = "move";
-
-  }
-
-  enter(e) {
-    this.dragTargetCol = +e.target.getAttribute('col');
-    if (e.target.className === "dropzone") {
-      (this.dragStartCol > this.dragTargetCol) ? e.target.classList.add('move-before') : e.target.classList.add('move-after');
-    }
-  }
-
-  leave(e) {
-    this.dragTargetCol = +e.target.getAttribute('col');
-    (this.dragStartCol > this.dragTargetCol) ? e.target.classList.remove('move-before') : e.target.classList.remove('move-after');
-  }
-
-  drop(e) {
-    e.preventDefault();
-    console.log('drop');
-    let data = e.dataTransfer.getData("text/plain");
-    // console.log(e.dataTransfer);
-    // let parent = e.target.parentElement;
-    // console.log(e.target.id);
-    this.dragged = document.getElementById(data);
-    // console.log(this.dragged);
-    // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
-    let colSelected = +this.dragged.getAttribute('col');
-    // console.log(colSelected);
-    // console.log(e.target);
-    let colTarget = +e.target.getAttribute('col');
-    // console.log(colSelected);
-    // console.log(colTarget);
-    (colSelected > colTarget) ? e.target.before(this.dragged) : e.target.after(this.dragged);
-    e.target.classList.remove('move-before', 'move-after');
-
-    // ho la colonna da spostare e la colonna target, con queste posso spostare tutte le righe appartenenti alla colonna
-    // recupero le righe della tabella
-    for (let i = 0; i < this.tbody.rows.length; i++) {
-      // console.log(app.table.rows[i]);
-      // recupero tutta la colonna da spostare
-      // console.log(colSelected);
-      // console.log(colTarget);
-      let elementSelected = this.tbody.rows[i].cells[colSelected];
-      // colonna dove fare il before, colTarget
-      let colTargetElement = this.tbody.rows[i].cells[colTarget];
-      // console.log(this.table.rows[i]);
-      if (this.tbody.rows[i].hasAttribute('row') || this.tbody.rows[i].hasAttribute('head')) {
-        (colSelected > colTarget) ? colTargetElement.before(elementSelected) : colTargetElement.after(elementSelected);
-      }
-
-    }
-  }
-
-  end(e) {
-    e.preventDefault();
-    console.log('end');
-    // ristabilisco le position tramite l'attributo col
-    for (let i = 0; i < this.table.rows.length; i++) {
-      // riposizioni l'attributo [col] solo sulle head e sulle row (body)
-      if (this.table.rows[i].hasAttribute("row") || this.table.rows[i].hasAttribute('head')) {
-        for (let c = 0; c < this.table.rows[i].cells.length; c++) {
-          this.table.rows[i].cells[c].setAttribute('col', c);
-        }
-      }
-    }
-    // TODO: Salvataggio delle impostazioni in localStorage
-  }
+  // dragOver(e) {
+  //   e.preventDefault();
+  //   // Set the dropEffect to move
+  //   e.dataTransfer.dropEffect = "move";
+  //
+  // }
+  //
+  // enter(e) {
+  //   this.dragTargetCol = +e.target.getAttribute('col');
+  //   if (e.target.className === "dropzone") {
+  //     (this.dragStartCol > this.dragTargetCol) ? e.target.classList.add('move-before') : e.target.classList.add('move-after');
+  //   }
+  // }
+  //
+  // leave(e) {
+  //   this.dragTargetCol = +e.target.getAttribute('col');
+  //   (this.dragStartCol > this.dragTargetCol) ? e.target.classList.remove('move-before') : e.target.classList.remove('move-after');
+  // }
+  //
+  // drop(e) {
+  //   e.preventDefault();
+  //   console.log('drop');
+  //   let data = e.dataTransfer.getData("text/plain");
+  //   // console.log(e.dataTransfer);
+  //   // let parent = e.target.parentElement;
+  //   // console.log(e.target.id);
+  //   this.dragged = document.getElementById(data);
+  //   // console.log(this.dragged);
+  //   // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
+  //   let colSelected = +this.dragged.getAttribute('col');
+  //   // console.log(colSelected);
+  //   // console.log(e.target);
+  //   let colTarget = +e.target.getAttribute('col');
+  //   // console.log(colSelected);
+  //   // console.log(colTarget);
+  //   (colSelected > colTarget) ? e.target.before(this.dragged) : e.target.after(this.dragged);
+  //   e.target.classList.remove('move-before', 'move-after');
+  //
+  //   // ho la colonna da spostare e la colonna target, con queste posso spostare tutte le righe appartenenti alla colonna
+  //   // recupero le righe della tabella
+  //   for (let i = 0; i < this.tbody.rows.length; i++) {
+  //     // console.log(app.table.rows[i]);
+  //     // recupero tutta la colonna da spostare
+  //     // console.log(colSelected);
+  //     // console.log(colTarget);
+  //     let elementSelected = this.tbody.rows[i].cells[colSelected];
+  //     // colonna dove fare il before, colTarget
+  //     let colTargetElement = this.tbody.rows[i].cells[colTarget];
+  //     // console.log(this.table.rows[i]);
+  //     if (this.tbody.rows[i].hasAttribute('row') || this.tbody.rows[i].hasAttribute('head')) {
+  //       (colSelected > colTarget) ? colTargetElement.before(elementSelected) : colTargetElement.after(elementSelected);
+  //     }
+  //
+  //   }
+  // }
+  //
+  // end(e) {
+  //   e.preventDefault();
+  //   console.log('end');
+  //   // ristabilisco le position tramite l'attributo col
+  //   for (let i = 0; i < this.table.rows.length; i++) {
+  //     // riposizioni l'attributo [col] solo sulle head e sulle row (body)
+  //     if (this.table.rows[i].hasAttribute("row") || this.table.rows[i].hasAttribute('head')) {
+  //       for (let c = 0; c < this.table.rows[i].cells.length; c++) {
+  //         this.table.rows[i].cells[c].setAttribute('col', c);
+  //       }
+  //     }
+  //   }
+  //   // TODO: Salvataggio delle impostazioni in localStorage
+  // }
 
   addParams(colName, id) {
     // aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
@@ -526,6 +525,9 @@ class Report extends Draw {
   #positioning = [];
   #metricsPosition = [];
   #options;
+  #dragged;
+  #dragStartCol = 0;
+  #dragTargetCol = 0;
 
   constructor(table, data) {
     super(table);
@@ -539,6 +541,8 @@ class Report extends Draw {
       // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
       super.addParams(el, i);
     });
+    // TODO: associo evento drag sulle th
+    this.dragDrop();
 
     for (let i in this.data) {
       // console.log(Object.values(response[i]));
@@ -550,7 +554,106 @@ class Report extends Draw {
     }
   }
 
+  dragDrop() {
+    // associo gli eventi drag&Drop sulle header
+    console.log(this.table.querySelectorAll('thead th'));
+    Array.from(this.table.querySelectorAll('thead th')).forEach((th) => {
+      console.log(th);
+      th.ondragstart = this.dragStart.bind(this);
+      th.ondragover = this.dragOver.bind(this);
+      th.ondrop = this.drop.bind(this);
+      th.ondragend = this.end.bind(this);
+      th.ondragenter = this.enter.bind(this);
+      th.ondragleave = this.leave.bind(this);
+    });
+
+  }
+
+  dragStart(e) {
+    e.dataTransfer.setData("text/plain", e.target.id);
+    // console.log(e.dataTransfer);
+    this.#dragStartCol = +e.target.getAttribute('col');
+  }
+
+  dragOver(e) {
+    e.preventDefault();
+    // Set the dropEffect to move
+    e.dataTransfer.dropEffect = "move";
+
+  }
+
+  enter(e) {
+    this.#dragTargetCol = +e.target.getAttribute('col');
+    if (e.target.className === "dropzone") {
+      (this.#dragStartCol > this.#dragTargetCol) ? e.target.classList.add('move-before') : e.target.classList.add('move-after');
+    }
+  }
+
+  leave(e) {
+    this.#dragTargetCol = +e.target.getAttribute('col');
+    (this.#dragStartCol > this.#dragTargetCol) ? e.target.classList.remove('move-before') : e.target.classList.remove('move-after');
+  }
+
+  drop(e) {
+    e.preventDefault();
+    console.log('drop');
+    let data = e.dataTransfer.getData("text/plain");
+    // console.log(e.dataTransfer);
+    // let parent = e.target.parentElement;
+    // console.log(e.target.id);
+    this.#dragged = document.getElementById(data);
+    // console.log(this.dragged);
+    // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
+    let colSelected = +this.#dragged.getAttribute('col');
+    // console.log(colSelected);
+    // console.log(e.target);
+    let colTarget = +e.target.getAttribute('col');
+    // console.log(colSelected);
+    // console.log(colTarget);
+    (colSelected > colTarget) ? e.target.before(this.#dragged) : e.target.after(this.#dragged);
+    e.target.classList.remove('move-before', 'move-after');
+
+    // ho la colonna da spostare e la colonna target, con queste posso spostare tutte le righe appartenenti alla colonna
+    // recupero le righe della tabella
+    for (let i = 0; i < this.tbody.rows.length; i++) {
+      // console.log(app.table.rows[i]);
+      // recupero tutta la colonna da spostare
+      // console.log(colSelected);
+      // console.log(colTarget);
+      let elementSelected = this.tbody.rows[i].cells[colSelected];
+      // colonna dove fare il before, colTarget
+      let colTargetElement = this.tbody.rows[i].cells[colTarget];
+      // console.log(this.table.rows[i]);
+      if (this.tbody.rows[i].hasAttribute('row') || this.tbody.rows[i].hasAttribute('head')) {
+        (colSelected > colTarget) ? colTargetElement.before(elementSelected) : colTargetElement.after(elementSelected);
+      }
+
+    }
+  }
+
+  end(e) {
+    e.preventDefault();
+    console.log('end');
+    // ristabilisco le position tramite l'attributo col
+    for (let i = 0; i < this.table.rows.length; i++) {
+      // riposizioni l'attributo [col] solo sulle head e sulle row (body)
+      if (this.table.rows[i].hasAttribute("row") || this.table.rows[i].hasAttribute('head')) {
+        for (let c = 0; c < this.table.rows[i].cells.length; c++) {
+          this.table.rows[i].cells[c].setAttribute('col', c);
+        }
+      }
+    }
+    // TODO: Salvataggio delle impostazioni in localStorage
+    console.log('save draag');
+  }
+
   set definePositioning(cube) {
+    /*
+    Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
+    0: {columns: "Cod. Sede"}
+    1: {columns: "Sede"}
+    2: {metrics: "Venduto"}
+    */
     console.log('positioning');
     this.#cube = cube;
     // TODO: in definePositioning dovrò aggiungere altri parametri, ad esempio quale colonna deve essere hidden, quale colonna avrà il filtro in
@@ -561,8 +664,6 @@ class Report extends Draw {
                                3=> {'metric': 'quantita'}
                                ....
                              ]*/
-
-
      Array.from(Object.keys(this.#cube)).forEach((element) => {
        if (element === "columns" || element === "metrics") {
          // console.log(element);
@@ -578,14 +679,13 @@ class Report extends Draw {
          });
        }
      });
+     console.log(this.#positioning);
   }
 
   get definePositioning() {return this.#positioning;}
 
   get metricsPosition() {
-    // TODO: per ogni colonna ne determino alcune opzioni (es.: hidden, che dovrò inserire in reportPositioning,
-    // ...oppure stabilisco se il filtro per questa colonna dev essere single o multiselection) e il posizionamento.
-    // difinisco la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
+    // inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
     // ...e non avranno filtri in pageBy
     this.#metricsPosition = [];
     this.#positioning.forEach((element, index) => {
@@ -596,6 +696,7 @@ class Report extends Draw {
         // TODO: definisco gli attributi per le colonne
       }
     });
+    // console.log(this.#metricsPosition);
     return this.#metricsPosition;
   }
 
