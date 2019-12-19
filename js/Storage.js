@@ -36,7 +36,6 @@ class Storage {
   get cube() {return this.cubeStringify;}
 
   set reportConfig(value) {
-
     window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));
   }
 

@@ -579,11 +579,12 @@ class Report extends Draw {
       }
     }
     console.log(this.#positioning);
-    this.report['report_id_'+this.report_id] = {'id': this.report_id, 'positioning' : this.#positioning};
+
     this.saveReportConfig();
   }
 
   saveReportConfig() {
+    this.report['report_id_'+this.report_id] = {'id': this.report_id, 'positioning' : this.#positioning};
     let l = new Storage();
     console.log(this.report);
     l.reportConfig = this.report;
@@ -625,6 +626,7 @@ class Report extends Draw {
        }
      });
      console.log(this.#positioning);
+     this.saveReportConfig();
   }
 
   get definePositioning() {return this.#positioning;}
