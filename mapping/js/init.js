@@ -7,14 +7,16 @@
 // TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
 // TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
+var oStorage = new Storage();
+var oCube = new Cube();
+// TODO: dichiarare qui le altre Classi
 (() => {
   var app = {
-    Cube : new Cube(),
+
     TimelineHier : new Timeline('layout-timeline-0'),
     TimelineFact : new Timeline('layout-timeline-1'),
     // passo al Costruttore il contenitore di tutte le page
     Page : new Page(document.getElementById('pages')),
-    Storage : new Storage(),
     dialogTableList : document.getElementById('table-list'),
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
@@ -34,7 +36,7 @@ var App = new Application();
   app.getDimensionsList = function() {
     // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
     let ul = document.getElementById('dimensionsList');
-    app.Storage.getDimensionsList().forEach((name) => {
+    oStorage.getDimensionsList().forEach((name) => {
       // console.log(name);
       let element = document.createElement('div');
       element.classList.add('element');
@@ -49,7 +51,7 @@ var App = new Application();
 
   app.getDatamartList = function() {
     let ul = document.getElementById('cubesList');
-    app.Storage.getCubesList().forEach((cube) => {
+    oStorage.getCubesList().forEach((cube) => {
       // console.log(name);
       let element = document.createElement('div');
       element.classList.add('element');
@@ -68,7 +70,7 @@ var App = new Application();
     // ricreo un datamart
     // let data = window.localStorage.getItem(this.getAttribute('label'));
     // var url = "ajax/cube.php";
-    // // let params = "cube="+data+"&dimension="+JSON.stringify(app.Cube.dimension);
+    // // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
     // let params = "cube="+data;
     // console.log(params);
     // // return;
@@ -109,7 +111,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, app.Storage.getJSONCube(reportName));
+          app.createReport(response, oStorage.getJSONCube(reportName));
           app.dialogReportList.close();
 
         } else {
@@ -168,20 +170,20 @@ var App = new Application();
   app.handlerTableSelected = function(e) {
     // console.log('handlerTableSelected');
     this.toggleAttribute('selected');
-    // app.Cube.activeCard = document.querySelector('.card-table[active]');
+    // oCube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
-    app.Cube.table = this.getAttribute('label');
+    oCube.table = this.getAttribute('label');
 
     let tmplList = document.getElementById('template-list-columns');
 
     // let ulContainer = document.getElementById('columns');
-    let ulContainer = app.Cube.activeCard.querySelector('#columns');
+    let ulContainer = oCube.activeCard.querySelector('#columns');
     // pulisco l'elenco delle colonne in base alla selezione della tabella
     ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
     app.dialogTableList.close();
 
     var url = "ajax/tableInfo.php";
-    let params = "tableName="+app.Cube.table;
+    let params = "tableName="+oCube.table;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -198,21 +200,21 @@ var App = new Application();
             li.setAttribute('label', response[i][0]);
             li.id = i;
             ulContainer.appendChild(element);
-            li.onclick = app.Cube.handlerColumns.bind(app.Cube);
+            li.onclick = oCube.handlerColumns.bind(oCube);
           }
           // se ci sono poche colonne in questa tabella non attivo la input search
           if (Object.keys(response).length > 10) {
             // event #searchColumns
-            app.Cube.activeCardRef.querySelector('#searchColumns').oninput = App.searchInList;
+            oCube.activeCardRef.querySelector('#searchColumns').oninput = App.searchInList;
             // visualizzo la input #searchColumns
-            app.Cube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
+            oCube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
           }
 
           // lego eventi ai tasti i[....] nascosti
-          app.Cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          app.Cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          app.Cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          app.Cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+          oCube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          oCube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          oCube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          oCube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
 
@@ -236,7 +238,7 @@ var App = new Application();
       app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
       app.dialogTableList.showModal();
     }
-    app.Cube.activeCard = this;
+    oCube.activeCard = this;
     // rimuovo l'attriubto active dalla card-table attiva
     document.querySelector('.card-table[active]').removeAttribute('active');
 
@@ -260,7 +262,7 @@ var App = new Application();
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
 
     // BUG: quando si assovia la FACT la timeline attiva non è app.TimelineHier ma app.TimelineFact
-    app.Cube.changeMode();
+    oCube.changeMode();
     // su quale timeline sto operando ?
     // console.log(e.path[4]);
     let objTimeline = new Timeline(e.path[4].id);
@@ -289,9 +291,9 @@ var App = new Application();
   app.handlerAddColumns = function(e) {
     // console.log(this);
 
-    app.Cube.changeMode();
+    oCube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    app.Cube.activeCard = upCard;
+    oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne da mettere nel corpo della tabella";
     upCard.setAttribute('columns', true);
@@ -305,9 +307,9 @@ var App = new Application();
 
   app.handlerAddFilters = function(e) {
     // console.log(this);
-    app.Cube.changeMode();
+    oCube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    app.Cube.activeCard = upCard;
+    oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne su cui verranno applicati dei filtri";
     upCard.setAttribute('filters', true);
@@ -315,9 +317,9 @@ var App = new Application();
 
   app.handlerAddGroupBy = function(e) {
     // console.log(this);
-    app.Cube.changeMode();
+    oCube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    app.Cube.activeCard = upCard;
+    oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne su cui applicare il GROUP BY";
     upCard.setAttribute('groupby', true);
@@ -325,9 +327,9 @@ var App = new Application();
 
   app.handlerAddMetrics = function(e) {
     // console.log(this);
-    app.Cube.changeMode();
+    oCube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    app.Cube.activeCard = upCard;
+    oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = "Seleziona le colonne da impostare come Metriche";
     upCard.setAttribute('metrics', true);
@@ -358,7 +360,7 @@ var App = new Application();
     divSubElement.appendChild(newCard);
 
     newCard.querySelectorAll('li').forEach((li) => {
-      li.onclick = app.Cube.handlerColumns.bind(app.Cube);
+      li.onclick = oCube.handlerColumns.bind(oCube);
     });
     // evento oninput sulla searchColumns
     newCard.querySelector('#searchColumns').oninput = App.searchInList;
@@ -422,7 +424,7 @@ var App = new Application();
       Salvo in localStorage la dimensione creata
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
-    app.Cube.dimensionTitle = document.getElementById('dimensionName').value;
+    oCube.dimensionTitle = document.getElementById('dimensionName').value;
     let from = [];
     let objDimension = {};
     document.querySelectorAll('.card-table').forEach((card) => {
@@ -432,20 +434,20 @@ var App = new Application();
       }
     });
 
-    // in app.Cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
-    app.Cube.cube['hierarchies'] = app.Cube.hierarchyFact;
+    // in oCube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
+    oCube.cube['hierarchies'] = oCube.hierarchyFact;
     let hierarchies = {};
     // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
-    Object.keys(app.Cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = app.Cube.hierarchyTable[rel];}});
+    Object.keys(oCube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = oCube.hierarchyTable[rel];}});
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
     objDimension.type = "DIMENSION";
-    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da app.Cube.dimension
+    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da oCube.dimension
 
-    app.Cube.dimension[app.Cube.dimensionTitle] = objDimension;
-    console.log(app.Cube.dimension);
+    oCube.dimension[oCube.dimensionTitle] = objDimension;
+    console.log(oCube.dimension);
 
-    app.Storage.dimension = app.Cube.dimension;
+    oStorage.dimension = oCube.dimension;
 
     app.cloneLastTable();
     app.dialogDimensionName.close();
@@ -455,24 +457,27 @@ var App = new Application();
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
   document.getElementById('btnCubeSaveName').onclick = function(e) {
-    app.Cube.cubeTitle = document.getElementById('cubeName').value;
-    app.Cube.cube.dimensions = app.Cube.dimension;
-    app.Cube.cube.type = "CUBE";
-    app.Cube.cube['columns'] = app.Cube.columns;
-    app.Cube.cube['filters'] = app.Cube.filters;
-    app.Cube.cube['metrics'] = app.Cube.metrics;
-    app.Cube.cube['filteredMetrics'] = app.Cube.filteredMetrics;
-    app.Cube.cube['groupby'] = app.Cube.groupBy;
-    app.Cube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
-    app.Cube.cube.name = app.Cube.cubeTitle;
-    app.Cube.cube['report_id'] = app.Storage.reportId;
-    console.log(app.Cube.cube);
+    oCube.cubeTitle = document.getElementById('cubeName').value;
+    oCube.cube.dimensions = oCube.dimension;
+    oCube.cube.type = "CUBE";
+    oCube.cube['columns'] = oCube.columns;
+    oCube.cube['filters'] = oCube.filters;
+    oCube.cube['metrics'] = oCube.metrics;
+    oCube.cube['filteredMetrics'] = oCube.filteredMetrics;
+    oCube.cube['groupby'] = oCube.groupBy;
+    oCube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
+    oCube.cube.name = oCube.cubeTitle;
+    oCube.cube.cubeId = oStorage.cubeId;
+
+    // oCube.cube.cube_id = oStorage.cubeId;
+    console.log(oCube.cube);
     // return;
     // salvo il cubo in localStorage
-    app.Storage.cube = app.Cube.cube;
+    oStorage.save = oCube.cube;
+    return;
 
     var url = "ajax/cube.php";
-    let params = "cube="+app.Storage.cube;
+    let params = "cube="+oStorage.cube;
     console.log(params);
     // return;
     var request = new XMLHttpRequest();
@@ -482,7 +487,7 @@ var App = new Application();
           var response = JSON.parse(request.response);
           console.table(response);
 
-          app.createReport(response, app.Storage.getJSONCube(app.Cube.cube.name));
+          app.createReport(response, oStorage.getJSONCube(oCube.cube.name));
 
         } else {
 

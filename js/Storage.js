@@ -2,28 +2,29 @@
 La classe recupera il local storage ad ogni accesso alla pagina e contiene Metodi per recuperare ad esempio solo i CUBE o solo le PAGE, DIMENSION, ecc...
 */
 class Storage {
+  #_cubeId = 0;
 
   constructor() {
     this.storage = window.localStorage;
     this.storageKeys = Object.keys(window.localStorage);
-    this.report_id = 0;
-    this.reportId = this.report_id;
+    this.cubeId = this.#_cubeId;
     this.JSONData = null;
   }
 
-  set reportId(report_id) {
+  set cubeId(cubeId) {
+    // verifico, nello storage gli elementi CUBE presenti, creo un nuovo cubeId in base a quanti trovati
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
       if (jsonStorage.type === "CUBE") {
         console.log("cubo : "+key);
-        console.log(jsonStorage.report_id);
-        this.report_id = jsonStorage.report_id+1;
+        console.log(jsonStorage.cubeId);
+        this.#_cubeId = jsonStorage.cubeId+1;
       }
     });
   }
 
-  get reportId() {return this.report_id;}
+  get cubeId() {return this.#_cubeId;}
 
   set reportSetting(report_id) {
     this.reportParams = null;
@@ -46,7 +47,7 @@ class Storage {
     return JSON.stringify(this.reportParams);
   }
 
-  set cube(value) {
+  set save(value) {
     // inserisco il cube creato in localStorage (utilizzare setItem)
     // console.log(cubeObj.name);
     window.localStorage.setItem(value.name, JSON.stringify(value));
@@ -54,7 +55,7 @@ class Storage {
   }
 
   // restituisco il cubo in JSON.stringify per inviarlo alla richiesta ajax
-  get cube() {return this.cubeStringify;}
+  get open() {return this.cubeStringify;}
 
   set reportConfig(value) {
     window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));

@@ -39,7 +39,7 @@
       };
 */
 
-class Draw {
+class Report {
   constructor(table) {
     /*
     * table è il riferimento all'elemento table nel DOM
@@ -435,7 +435,7 @@ class Draw {
 
 }
 
-class Report extends Draw {
+class ReportConfig extends Draw {
   // proprietà private
   #cube;
   #positioning = [];
@@ -718,4 +718,8 @@ class Report extends Draw {
     super.eventParams();
     super.info();
   }
+}
+
+class ReportConstruction extends ReportConfig {
+
 }

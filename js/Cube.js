@@ -1,4 +1,5 @@
 class Cube {
+  #_cubeId = null;
 
   constructor() {
     this.cube = new Object();
@@ -21,8 +22,13 @@ class Cube {
     this.dialogColumns = document.getElementById('column-setting');
     this.dialogGroupBy = document.getElementById('groupby-setting');
     this.currentFieldSetting = null;
-
   }
+
+  set cubeId(value) {
+    this.#_cubeId = value;
+  }
+
+  get cubeId() {return this.#_cubeId;}
 
   set cubeTitle(value) {this.cube_title = value;}
   get cubeTitle() {return this.cube_title;}
