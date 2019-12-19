@@ -35,6 +35,11 @@ class Storage {
   // restituisco il cubo in JSON.stringify per inviarlo alla richiesta ajax
   get cube() {return this.cubeStringify;}
 
+  set reportConfig(value) {
+
+    window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));
+  }
+
   set dimension(value) {
     window.localStorage.setItem(Object.keys(value), JSON.stringify(value));
     this.dimensionName = Object.keys(value);
