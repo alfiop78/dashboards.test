@@ -9,7 +9,8 @@ var App = new Application();
   var app = {
     Draw : null,
     pageParams : Object.keys(window.localStorage),
-    pageSelectedTitle : null
+    pageSelectedTitle : null,
+    Storage : new Storage()
   };
   // console.log(app.pageParams);
 
@@ -20,8 +21,16 @@ var App = new Application();
     app.pageSelectedTitle = this.querySelector('span').innerText;
 
     var url = "ajax/reports.php";
-    let reportId = this.getAttribute('data-layout-reportid-id');
-    let params = "reportId="+reportId;
+    let reportId = +this.getAttribute('data-layout-reportid-id');
+    // TODO: cerco il report, in storage corrispondente (id) nello storage, questo mi servirà per inviare alla request i
+    // ---parametri del positioning (e altro da aggiungere)
+    app.Storage.reportSetting = reportId;
+    console.log(app.Storage.reportSetting);
+    // return;
+    let params = "datamart="+app.Storage.reportSetting;
+    console.log(params);
+    // let params = "reportId="+reportId;
+
     // visualizzo il template relativo al layout selezionato
     console.log(this);
 
@@ -52,6 +61,7 @@ var App = new Application();
   let ulPages = document.getElementById('pages');
   app.pageParams.forEach((item) => {
     // console.log(item);
+    // TODO: aggiungere un metodo nella Class Storage per recuperare questi dati
     let storageObject = JSON.parse(window.localStorage.getItem(item));
     // console.log(storageObject.type);
     if (storageObject.type === "PAGE") {
@@ -113,53 +123,10 @@ var App = new Application();
     console.log('create report');
 
     let table = document.getElementById('table-01');
+    let report = new Report(table, response);
 
     console.log(response);
-    // return;
 
-    let options =
-      {
-      'cols' : [
-        // {'col': 3, 'attribute': 'hidden'},
-        // {'col': 5, 'attribute': 'hidden'}
-
-      ],
-      'filters' : [
-        {'col': 0, 'attribute': 'multi'},
-        // {'col': 1, 'attribute': 'multi'},
-        {'col': 3, 'attribute': 'hidden'}
-      ],
-      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      'title' : app.pageSelectedTitle,
-      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-      };
-    app.Draw = new Draw(table, options);
-    // console.log(app.Draw);
-    // Opzione 1 - aggiungo tutte le colonne della query
-    Object.keys(response[0]).forEach((el, i) => {
-      // console.log('col:'+el);
-      app.Draw.addColumn(el, i);
-      // aggiungo un filtro per ogni colonna della tabella
-      app.Draw.addParams(el, i);
-    });
-    // Opzione 2 - aggiungo manualmetne le colonne
-    // app.Draw.addColumn('ID');
-    // app.Draw.addColumn('Dealer');
-
-    // aggiungo le righe
-    let arrParams = [];
-    for (let i in response) {
-      // console.log(Object.values(response[i]));
-      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      app.Draw.addRow(Object.values(response[i]));
-      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-      // Opzione 2 - Aggiunta colonne manualmente
-      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
-    }
-
-    app.Draw.createDatalist();
-    // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
-    app.Draw.draw();
 
   };
 

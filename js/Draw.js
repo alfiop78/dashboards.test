@@ -584,7 +584,7 @@ class Report extends Draw {
   }
 
   saveReportConfig() {
-    this.report['report_id_'+this.report_id] = {'id': this.report_id, 'positioning' : this.#positioning};
+    this.report['report_id_'+this.report_id] = {'type' : 'REPORT', 'id': this.report_id, 'positioning' : this.#positioning};
     let l = new Storage();
     console.log(this.report);
     l.reportConfig = this.report;

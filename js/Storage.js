@@ -25,6 +25,27 @@ class Storage {
 
   get reportId() {return this.report_id;}
 
+  set reportSetting(report_id) {
+    this.reportParams = null;
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "REPORT") {
+        console.log("report : "+key);
+        console.log(jsonStorage.id);
+        console.log(report_id);
+        console.log(jsonStorage);
+        if (jsonStorage.id === report_id) {
+          this.reportParams = jsonStorage;
+        }
+      }
+    });
+  }
+
+  get reportSetting() {
+    return JSON.stringify(this.reportParams);
+  }
+
   set cube(value) {
     // inserisco il cube creato in localStorage (utilizzare setItem)
     // console.log(cubeObj.name);
