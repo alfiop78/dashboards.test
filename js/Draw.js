@@ -625,6 +625,8 @@ class ReportConfig extends Report {
     this.report.type = "REPORT"; // TODO: questa si può impostare nel Metodo Storage.save()
     this.report.id = this.report_id;
     this.report['nomeReport'] = this.options;
+    console.log(this.report);
+    console.log('termine debug');// TODO: verificare il salvataggio dell'object report in storage
     return;
     // da definire
     // let objStorage = new Storage();
@@ -644,14 +646,11 @@ class ReportConfig extends Report {
     console.log(this.#cube);
     this.report_id = this.#cube.report_id;
     console.log(this.report_id);
-    // TODO: in definePositioning dovrò aggiungere altri parametri, ad esempio quale colonna deve essere hidden, quale colonna avrà il filtro in
-       //. ..single o multi selecton, ecc...
-       /* definePositioning = [0=> {'col': 'Cod.Sede'},
-                               1=> {'col': 'Sede'},
-                               2=> {'metric': 'venduto'},
-                               3=> {'metric': 'quantita'}
-                               ....
-                             ]*/
+    /* definePositioning = [0=> {'col': 'Cod.Sede'},
+                            1=> {'col': 'Sede'},
+                            2=> {'metric': 'venduto'},
+                            3=> {'metric': 'quantita'}
+                           ]*/
      Array.from(Object.keys(this.#cube)).forEach((element) => {
        if (element === "columns" || element === "metrics") {
          // console.log(element);

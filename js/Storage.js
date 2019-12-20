@@ -82,7 +82,7 @@ class Storage {
       // console.log(key);
       if (jsonStorage.type === "CUBE") {
         // console.log("cubo : "+key);
-        let cubeProperties = {key, 'report_id' : jsonStorage.report_id};
+        let cubeProperties = {key, 'cubeId' : jsonStorage.cubeId};
         cubes.push(cubeProperties);
       }
     });
@@ -134,14 +134,16 @@ class CubeStorage extends Storage {
   set save(value) {
     // salvo il cubo nello storage
     window.localStorage.setItem(value.name, JSON.stringify(value));
+    // in stringify posso inviare le richieste ajax oppure scrivere su un record il contenuto del cube
     this.#_stringify = JSON.stringify(value);
   }
 
-  get cubeParams() {
-    // open in stringify per essere inviato a richiesta ajax
+  get stringify() {return this.#_stringify;}
 
+  json(cubeName) {
+    // un object del cube convertito in json, questo mi servirà per ricostruire la struttura (non per ajax request o DB)
+    return JSON.parse(window.localStorage.getItem(cubeName));
   }
-
 
 }
 

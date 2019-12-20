@@ -34,6 +34,7 @@ class Queries {
   public function getDatamartDefault($reportId) {
     $l = new ConnectDB("decisyon_cache");
     $datamartName = "FX".$reportId;
+    var_dump($datamartName);
     return $l->getResultAssoc("SELECT * FROM $datamartName;");
   }
 

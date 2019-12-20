@@ -57,7 +57,7 @@ var oCube = new Cube();
       element.classList.add('element');
       let li = document.createElement('li');
       li.innerText = cube.key;
-      li.id = cube.report_id;
+      li.id = cube.cubeId;
       li.setAttribute('label', cube.key);
       ul.appendChild(element);
       element.appendChild(li);
@@ -81,7 +81,7 @@ var oCube = new Cube();
     //       var response = JSON.parse(request.response);
     //       console.table(response);
     //       // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
-    //       app.createReport(response);
+    //       // app.createReport(response);
     //
     //     } else {
     //
@@ -96,7 +96,7 @@ var oCube = new Cube();
     // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     // request.send(params);
 
-    console.log(this.getAttribute('label'));
+    // console.log(this.getAttribute('label'));
     let reportName = this.getAttribute('label');
 
     // recupero un datamart FX... già creato e visualizzo l'anteprima
@@ -477,19 +477,20 @@ var oCube = new Cube();
 
     // salvo il cubo in localStorage
     cubeStorage.save = oCube.cube;
-    return;
 
     var url = "ajax/cube.php";
-    let params = "cube="+oStorage.open;
+    let params = "cube="+cubeStorage.stringify;
     console.log(params);
+
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
+          console.log(oCube.cube.name);
 
-          app.createReport(response, oStorage.getJSONCube(oCube.cube.name));
+          app.createReport(response, cubeStorage.json(oCube.cube.name));
 
         } else {
 

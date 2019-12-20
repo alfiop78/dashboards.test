@@ -13,7 +13,7 @@ $cube = json_decode($_POST['cube']); // object
 // $arrData = json_decode($_POST['data'], true); // array
 
 $q = new Cube($cube->{'FACT'});
-$q->setReportId($cube->{'report_id'});
+$q->setReportId($cube->{'cubeId'});
 $q->SELECT($cube->{'columns'});
 $q->METRICS($cube->{'metrics'});
 $q->FROM($cube->{'dimensions'});
@@ -33,9 +33,9 @@ if ($baseTable > 0) {
   var_dump($metricTable);
 
   $result = $q->createDatamart();
+  // var_dump($result);
 
 }
-
 
 ob_clean();
 echo json_encode($result, JSON_FORCE_OBJECT);

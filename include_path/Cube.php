@@ -174,7 +174,7 @@ class Cube {
     $sql = "CREATE TABLE $datamartName AS ";
     $sql .= "(SELECT $baseTableName.*, ";
 
-    if (count($this->_metricTable) > 0) {
+    if (isset($this->_metricTable) && count($this->_metricTable) > 0) {
       $table_and_metric = array();
       $leftJoin = null;
       $ONClause = array();
