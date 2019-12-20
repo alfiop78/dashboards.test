@@ -435,7 +435,7 @@ class Report {
 
 }
 
-class ReportConfig extends Draw {
+class ReportConfig extends Report {
   // proprietà private
   #cube;
   #positioning = [];
@@ -718,8 +718,4 @@ class ReportConfig extends Draw {
     super.eventParams();
     super.info();
   }
-}
-
-class ReportConstruction extends ReportConfig {
-
 }

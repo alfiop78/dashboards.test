@@ -204,10 +204,9 @@ var oCube = new Cube();
           }
           // se ci sono poche colonne in questa tabella non attivo la input search
           if (Object.keys(response).length > 10) {
-            // event #searchColumns
-            oCube.activeCardRef.querySelector('#searchColumns').oninput = App.searchInList;
-            // visualizzo la input #searchColumns
-            oCube.activeCardRef.querySelector('#searchColumns').parentElement.removeAttribute('hidden');
+            oCube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
+            // visualizzo la input per la ricerca delle colonne
+            oCube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
           }
 
           // lego eventi ai tasti i[....] nascosti
@@ -363,7 +362,7 @@ var oCube = new Cube();
       li.onclick = oCube.handlerColumns.bind(oCube);
     });
     // evento oninput sulla searchColumns
-    newCard.querySelector('#searchColumns').oninput = App.searchInList;
+    newCard.querySelector('.md-field > input').oninput = App.searchInList;
     // elimino la sezione section[options]
     newCard.querySelector('.card-layout').removeChild(newCard.querySelector('section[options]'));
     // aggiungo la timeline circle
