@@ -544,7 +544,7 @@ var oCube = new Cube();
     console.log(cube);
     console.log(cube.name);
     let table = document.getElementById('table-01');
-    let report = new Report(table, response);
+    let report = new ReportConfig(table, response);
     report.definePositioning = cube;
     // TODO: Inserire, tra le opzioni di una colonna (in fase di mapping) la possibilità di scegliere se il filtro in pageby deve essere single/multiselect
     // Successivamente impostare queste opzioni nel Metodo della Classe che costruisce l'oggetto options qui sotto

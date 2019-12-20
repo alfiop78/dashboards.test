@@ -436,6 +436,37 @@ class Report {
 }
 
 class ReportConfig extends Report {
+  // qui vogli odefinire le options del report, queste options andranno a scrivere in storage ...
+  // ... le opzioni definite per ogni singolo report. Le opzioni, invece di definirle in init.js, le definisce l'utente, ad esempio, con il
+  // drag&drop, la selezione dei colori delle colonne, la formatazione delle colonne, ecc....
+  /*
+  In storage si avrà:
+  'nomeReport' :
+    {
+    report_id : 239,
+    definisco gli attributi/personalizzazione delle colonne
+    'cols' : [0 :
+              {'bgColor': 'red'},
+              {'fgColor': 'white'},
+              {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
+              {'altro (es. gestione del drillthrought, ecc...)'}
+            ]
+    definisco l'ordinamento e posizionamento delle colonne del report
+    posistioning : {
+        [0: {columns: 'Cod.Sede'}]
+        [1: {columns: 'Sede'}]
+        [2: {metrics: 'Venduto'}]
+        ecc...
+      }
+    'filtersType' : [{'col': 0, 'attribute': 'multi'}] multiselezione in pageBy
+    'title' : Titolo del cubo visualizzato in localStorage,
+
+    'inputSearch' : true visualizzo e lego evento input alla casella di ricerca, in basso.
+
+    metricsPosition : [2,3] definisco la posizione delle metriche nel report, le stesse saranno nascoste nel pageBy
+
+    }
+  */
   // proprietà private
   #cube;
   #positioning = [];
@@ -446,6 +477,7 @@ class ReportConfig extends Report {
   #dragTargetCol = 0;
   report_id = null;
   report = new Object();
+  #_options;
 
   constructor(table, data) {
     super(table);
