@@ -40,6 +40,9 @@
 */
 
 class Report {
+  options = new Object();
+
+
   constructor(table) {
     /*
     * table è il riferimento all'elemento table nel DOM
@@ -48,9 +51,7 @@ class Report {
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
-    // this.dragged;
-    // this.dragStartCol = 0;
-    // this.dragTargetCol = 0;
+
   }
 
   set title(value) {
@@ -470,19 +471,19 @@ class ReportConfig extends Report {
   */
   // proprietà private
   #cube;
-  #positioning = [];
   #metricsPosition = [];
-  #options;
+  // #options;
   #dragged;
   #dragStartCol = 0;
   #dragTargetCol = 0;
   report_id = null;
   report = new Object();
-  #_options;
+  // #_options;
 
   constructor(table, data) {
     super(table);
     this.data = data;
+    this.positioning = [];
     console.log(this.data);
     // Aggiungo le intestazioni di colonna e i filtri in pageBy
     Object.keys(this.data[0]).forEach((el, i) => {
@@ -596,34 +597,42 @@ class ReportConfig extends Report {
     }
     // TODO: Salvataggio delle impostazioni in localStorage
     console.log('save draag');
-    this.defineColsPosition();
+
+    this.definePositioning();
   }
 
-  defineColsPosition() {
+  definePositioning() {
     // dopo il drag&drop ridefinisco le posizioni delle colonne
-    console.log(this.#positioning);
+    console.log(this.positioning);
 
     for (let i = 0; i < this.table.rows[0].cells.length; i++) {
       console.log(this.table.rows[0].cells[i]);
-      // per ogni cella controllo se è una column o una metrica e la inserisco in this.#positioning
+      // per ogni cella controllo se è una column o una metrica e la inserisco in this.positioning
       if (!this.table.rows[0].cells[i].hasAttribute('metrics')) {
         // è una column
-        this.#positioning[i].columns = this.table.rows[0].cells[i].innerText;
+        this.positioning[i].columns = this.table.rows[0].cells[i].innerText;
       }
     }
-    console.log(this.#positioning);
+    console.log(this.positioning);
+    this.options = this.positioning;
 
-    this.saveReportConfig();
+    console.log(this.options);
+
+    // this.saveReportConfig();
   }
 
   saveReportConfig() {
-    this.report['report_id_'+this.report_id] = {'type' : 'REPORT', 'id': this.report_id, 'positioning' : this.#positioning};
-    let l = new Storage();
-    console.log(this.report);
-    l.reportConfig = this.report;
+    this.report.type = "REPORT"; // TODO: questa si può impostare nel Metodo Storage.save()
+    this.report.id = this.report_id;
+    this.report['nomeReport'] = this.options;
+    return;
+    // da definire
+    // let objStorage = new Storage();
+    // console.log(this.report);
+    // objStorage.reportConfig = this.report;
   }
 
-  set definePositioning(cube) {
+  set defaultPositioning(cube) {
     /*
     Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
     0: {columns: "Cod. Sede"}
@@ -653,95 +662,96 @@ class ReportConfig extends Report {
              // recupero l'alias per questo object
              let obj = {};
              obj[element] = this.#cube[element][table][value]['alias'];
-             this.#positioning.push(obj);
+             this.positioning.push(obj);
            });
          });
        }
      });
-     console.log(this.#positioning);
+     console.log(this.positioning);
+     this.options = this.positioning;
      this.saveReportConfig();
   }
 
-  get definePositioning() {return this.#positioning;}
+  get defaultPositioning() {return this.positioning;}
 
   get metricsPosition() {
     // inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
     // ...e non avranno filtri in pageBy
-    this.#metricsPosition = [];
-    this.#positioning.forEach((element, index) => {
-      // NOTE: utilizzo di for...of con Object.entries
-      for (let [key, value] of Object.entries(element)) {
-        // console.log(`${key}: ${value}`);
-        if (key === "metrics") this.#metricsPosition.push(index);
-        // TODO: definisco gli attributi per le colonne
-      }
-    });
-    // console.log(this.#metricsPosition);
-    return this.#metricsPosition;
+    // this.#metricsPosition = [];
+    // this.positioning.forEach((element, index) => {
+    //   // NOTE: utilizzo di for...of con Object.entries
+    //   for (let [key, value] of Object.entries(element)) {
+    //     // console.log(`${key}: ${value}`);
+    //     if (key === "metrics") this.#metricsPosition.push(index);
+    //     // TODO: definisco gli attributi per le colonne
+    //   }
+    // });
+    // // console.log(this.#metricsPosition);
+    // return this.#metricsPosition;
   }
 
-  set option(value) {this.#options = value;}
+  // set option(value) {this.#options = value;}
+  //
+  // get option() {return this.#options;}
 
-  get option() {return this.#options;}
-
-  optionsApply() {
-    // applico le option impostate
-    console.log(this.#options);
-    // console.log(Object.keys(this.#options));
-    let arrProperties = Object.keys(this.#options);
-    // console.log(arrProperties);
-    if (arrProperties.includes('title')) {super.title = this.#options.title;}
-    // console.log(this.#options.metrics);
-    // return;
-    if (arrProperties.includes('metrics')) {
-      this.#options.metrics.forEach((col) => {
-        // console.log(col);
-        // console.log(document.querySelector('.params > .md-field'));
-        // return;
-        // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
-        document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
-        // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
-        this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {
-          cols.classList.add('metrics');
-          cols.setAttribute('metrics', true);
-        });
-      });
-    }
-    // console.log(this._optthis.#options.inputSearch);
-    if (arrProperties.includes('inputSearch') && this.#options.inputSearch) {
-      // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
-      document.getElementById('search').oninput = this.searchInput.bind(this);
-    } else {
-      // nascondo la input search
-      document.getElementById('search').parentElement.hidden = true;
-    }
-
-
-    arrProperties.forEach((property) => {
-      // console.log(property); // cols, filters, ecc...
-      if (Array.isArray(this.#options[property])) {
-        // console.log(this.#options[property]); // [{col: 1, attribute: "hidden"}]
-        this.#options[property].forEach((prop) => {
-          // console.log(prop); // {col: 1, attribute: "hidden"}
-          let propertyRef = Object.keys(prop)[0]; // col
-          let propertyRefValue = prop[propertyRef]; // numero di colonna
-          let propertyAttributeValue = prop['attribute'];
-
-          // console.log(propertyRef);
-          // console.log(propertyRefValue);
-          // console.log(propertyAttributeValue);
-          // es. : :root [options='cols'][col='1']
-          // es. : :root [options='filters'][col='0']
-
-          let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
-          elements.forEach((el) => {
-            el.setAttribute(propertyAttributeValue, true);
-          });
-        });
-      }
-
-    });
-  }
+  // optionsApply() {
+  //   // applico le option impostate
+  //   console.log(this.#options);
+  //   // console.log(Object.keys(this.#options));
+  //   let arrProperties = Object.keys(this.#options);
+  //   // console.log(arrProperties);
+  //   if (arrProperties.includes('title')) {super.title = this.#options.title;}
+  //   // console.log(this.#options.metrics);
+  //   // return;
+  //   if (arrProperties.includes('metrics')) {
+  //     this.#options.metrics.forEach((col) => {
+  //       // console.log(col);
+  //       // console.log(document.querySelector('.params > .md-field'));
+  //       // return;
+  //       // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
+  //       document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
+  //       // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
+  //       this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {
+  //         cols.classList.add('metrics');
+  //         cols.setAttribute('metrics', true);
+  //       });
+  //     });
+  //   }
+  //   // console.log(this._optthis.#options.inputSearch);
+  //   if (arrProperties.includes('inputSearch') && this.#options.inputSearch) {
+  //     // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
+  //     document.getElementById('search').oninput = this.searchInput.bind(this);
+  //   } else {
+  //     // nascondo la input search
+  //     document.getElementById('search').parentElement.hidden = true;
+  //   }
+  //
+  //
+  //   arrProperties.forEach((property) => {
+  //     // console.log(property); // cols, filters, ecc...
+  //     if (Array.isArray(this.#options[property])) {
+  //       // console.log(this.#options[property]); // [{col: 1, attribute: "hidden"}]
+  //       this.#options[property].forEach((prop) => {
+  //         // console.log(prop); // {col: 1, attribute: "hidden"}
+  //         let propertyRef = Object.keys(prop)[0]; // col
+  //         let propertyRefValue = prop[propertyRef]; // numero di colonna
+  //         let propertyAttributeValue = prop['attribute'];
+  //
+  //         // console.log(propertyRef);
+  //         // console.log(propertyRefValue);
+  //         // console.log(propertyAttributeValue);
+  //         // es. : :root [options='cols'][col='1']
+  //         // es. : :root [options='filters'][col='0']
+  //
+  //         let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
+  //         elements.forEach((el) => {
+  //           el.setAttribute(propertyAttributeValue, true);
+  //         });
+  //       });
+  //     }
+  //
+  //   });
+  // }
 
   draw() {
     // TODO: qui si potrebbe impostare una class che applica una transition per visualizzare la table

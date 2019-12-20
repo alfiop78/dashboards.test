@@ -466,19 +466,22 @@ var oCube = new Cube();
     oCube.cube['groupby'] = oCube.groupBy;
     oCube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
     oCube.cube.name = oCube.cubeTitle;
-    oCube.cube.cubeId = oStorage.cubeId;
+    let cubeStorage = new CubeStorage();
+
+    // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
+    oCube.cube.cubeId = cubeStorage.id;
+    console.log(oCube.cube.cubeId);
 
     // oCube.cube.cube_id = oStorage.cubeId;
     console.log(oCube.cube);
-    // return;
+
     // salvo il cubo in localStorage
-    oStorage.save = oCube.cube;
+    cubeStorage.save = oCube.cube;
     return;
 
     var url = "ajax/cube.php";
-    let params = "cube="+oStorage.cube;
+    let params = "cube="+oStorage.open;
     console.log(params);
-    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -545,14 +548,11 @@ var oCube = new Cube();
     console.log(cube.name);
     let table = document.getElementById('table-01');
     let report = new ReportConfig(table, response);
-    report.definePositioning = cube;
-    // TODO: Inserire, tra le opzioni di una colonna (in fase di mapping) la possibilità di scegliere se il filtro in pageby deve essere single/multiselect
-    // Successivamente impostare queste opzioni nel Metodo della Classe che costruisce l'oggetto options qui sotto
-    // ...
-    // TODO: creare degli object (es.: cols, pageBy, metrics, colors) che comporranno l'object 'options' (sotto)
-    // ... chiamerò dei Metodi per impostare questi object, in base alla personalizzazione fatta
-    // ... sul report all'interno del 3° step.
-    // TODO: personalizzare la tabella e inserire i valori impostati in options, (es. colore header)
+    // TODO: set report_id
+    report.defaultPositioning = cube; // definisco le posizioni inziali delle colonne
+
+    return;
+
     let options =
       {
         'cols' : [
