@@ -11,6 +11,11 @@ class Storage {
     this.JSONData = null;
   }
 
+  set save(value) {
+    // salvo nello storage
+    window.localStorage.setItem(value.name, JSON.stringify(value));
+  }
+
   // set cubeId(cubeId) {
   //   // verifico, nello storage gli elementi CUBE presenti, creo un nuovo cubeId in base a quanti trovati
   //   this.storageKeys.forEach((key) => {
@@ -131,12 +136,12 @@ class CubeStorage extends Storage {
     return this.cubeId;
   }
 
-  set save(value) {
-    // salvo il cubo nello storage
-    window.localStorage.setItem(value.name, JSON.stringify(value));
-    // in stringify posso inviare le richieste ajax oppure scrivere su un record il contenuto del cube
-    this.#_stringify = JSON.stringify(value);
-  }
+  // set save(value) {
+  //   // salvo il cubo nello storage
+  //   window.localStorage.setItem(value.name, JSON.stringify(value));
+  //   // in stringify posso inviare le richieste ajax oppure scrivere su un record il contenuto del cube
+  //   this.#_stringify = JSON.stringify(value);
+  // }
 
   get stringify() {return this.#_stringify;}
 
@@ -156,7 +161,7 @@ class ReportStorage extends Storage {
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       if (jsonStorage.type === "REPORT") {
-        tis.reportId = jsonStorage.reportId+1;
+        this.reportId = jsonStorage.id+1;
       }
     });
     console.log(this.reportId);

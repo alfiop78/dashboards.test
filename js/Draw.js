@@ -446,6 +446,7 @@ class ReportConfig extends Report {
   'nomeReport' :
     {
     report_id : 239,
+    datamartId : 1, il cubeId per poter prendere il nome del datamart Fx...
     'options' : {
       definisco gli attributi/personalizzazione delle colonne
       'cols' : [0 :
@@ -474,8 +475,9 @@ class ReportConfig extends Report {
   #dragged;
   #dragStartCol = 0;
   #dragTargetCol = 0;
-  report = new Object();
+  report = new Object(); // questo object verrà salvato in storage
   #positioning = [];
+  #dialogColSetting = document.getElementById('dialog-col-setting');
 
 
   constructor(table, data) {
@@ -490,17 +492,23 @@ class ReportConfig extends Report {
     Object.keys(this.data[0]).forEach((el, i) => {
       // console.log(el);
       super.addColumn(el, i);
+
       // aggiungo un filtro per ogni colonna della tabella
       // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
       super.addParams(el, i);
     });
     // associo evento drag sulle th
     this.dragDrop();
+    this.actions();
 
     for (let i in this.data) {
       super.addRow(Object.values(this.data[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
     }
+  }
+
+  set datamartId(value) {
+    this.report.datamartId = value;
   }
 
   set defaultOptions(value) {
@@ -509,9 +517,17 @@ class ReportConfig extends Report {
     /* Successivamente per reimpostare il posizionamento dopo il drag&drop chiamo il Metodo positioning perchè lavora sulla table e non sul cube*/
     this.defaultPositioning();
     this.metricsPositioning();
-    // this.saveReportConfig();
-    // console.log(this.options);
-    // console.log(this.report);
+    this.saveReportConfig();
+  }
+
+  actions() {
+    console.log('click');
+    this.thead.onclick = this.theadSetting.bind(this)
+  }
+
+  theadSetting(e) {
+    console.log(e.target);
+    this.#dialogColSetting.showModal();
   }
 
   defaultPositioning() {
@@ -684,6 +700,7 @@ class ReportConfig extends Report {
     console.log(this.metricsPosition);
     this.options.metricsPosition = this.metricsPosition;
     console.log(this.options);
+    this.saveReportConfig();
 
   }
 
@@ -691,8 +708,11 @@ class ReportConfig extends Report {
     this.report.type = "REPORT"; // TODO: questa si può impostare nel Metodo Storage.save()
     this.report.id = this.report_id;
     this.report['options'] = this.options;
+    this.report.name = "TESTNAME";
 
     console.log(this.report);
+    let storage = new ReportStorage();
+    storage.save = this.report;
     // TODO: verificare il salvataggio dell'object report in storage
     return;
     // da definire
@@ -700,8 +720,6 @@ class ReportConfig extends Report {
     // console.log(this.report);
     // objStorage.reportConfig = this.report;
   }
-
-
 
   colsAttribute() {
     // applico gli attributi columns e metrics sulle rispettive colonne
@@ -791,4 +809,11 @@ class ReportConfig extends Report {
     super.eventParams();
     super.info();
   }
+}
+
+class ReportDraw extends Report {
+  /*
+  Creo il report per la sola visualizzazione nella pagina finale. Qui passerò l'oggetto in storage che è stato personalizzato in mapping, comprese le opzioni
+  e sarà visualizzato così comeè stato personalizzato (quindi non ungerò il drag&drop, mouseOver e altro...)
+  */
 }
