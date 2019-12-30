@@ -549,8 +549,9 @@ var oCube = new Cube();
     console.log(cube.name);
     let table = document.getElementById('table-01');
     let report = new ReportConfig(table, response);
-    // TODO: set report_id
-    report.defaultPositioning = cube; // definisco le posizioni inziali delle colonne
+    report.defaultOptions = cube;
+
+    // report.defaultPositioning = cube; // definisco le posizioni inziali delle colonne
 
     return;
 

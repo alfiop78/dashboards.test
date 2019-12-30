@@ -149,6 +149,22 @@ class CubeStorage extends Storage {
 
 class ReportStorage extends Storage {
   // Metodi per leggere/scrivere Report nello Storage
+  constructor() {
+    super();
+    // ottengo un reportId disponibile
+    this.reportId = 0;
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      if (jsonStorage.type === "REPORT") {
+        tis.reportId = jsonStorage.reportId+1;
+      }
+    });
+    console.log(this.reportId);
+  }
+
+  get id() {
+    return this.reportId;
+  }
 }
 
 class DimensionStorage extends Storage {

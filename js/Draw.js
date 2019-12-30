@@ -447,43 +447,44 @@ class ReportConfig extends Report {
     {
     report_id : 239,
     'options' : {
-    definisco gli attributi/personalizzazione delle colonne
-    'cols' : [0 :
-              {'bgColor': 'red'},
-              {'fgColor': 'white'},
-              {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
-              {'altro (es. gestione del drillthrought, ecc...)'}
-            ]
-    definisco l'ordinamento e posizionamento delle colonne del report (fatte con il drag&drop)
-    posistioning : {
-        [0: {columns: 'Cod.Sede'}]
-        [1: {columns: 'Sede'}]
-        [2: {metrics: 'Venduto'}]
-        ecc...
-      }
-    'filtersType' : [{'col': 0, 'attribute': 'multi'}] multiselezione in pageBy
-    'title' : Titolo del Report visualizzato in localStorage,
-    'inputSearch' : true visualizzo e lego evento input alla casella di ricerca, in basso.
-    metricsPosition : [2,3] definisco la posizione delle metriche nel report, le stesse saranno nascoste nel pageBy
+      definisco gli attributi/personalizzazione delle colonne
+      'cols' : [0 :
+                {'bgColor': 'red'},
+                {'fgColor': 'white'},
+                {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
+                {'altro (es. gestione del drillthrought, ecc...)'}
+              ]
+      definisco l'ordinamento e posizionamento delle colonne del report (fatte con il drag&drop)
+      posistioning : {
+          [0: {columns: 'Cod.Sede'}]
+          [1: {columns: 'Sede'}]
+          [2: {metrics: 'Venduto'}]
+          ecc...
+        }
+      'filtersType' : [{'col': 0, 'attribute': 'multi'}] multiselezione in pageBy
+      'title' : Titolo del Report visualizzato in localStorage,
+      'inputSearch' : true visualizzo e lego evento input alla casella di ricerca, in basso.
+      metricsPosition : [2,3] definisco la posizione delle metriche nel report, le stesse saranno nascoste nel pageBy
     }
 
     }
   */
   // proprietà private
   #cube;
-  #metricsPosition = [];
-  // #options;
   #dragged;
   #dragStartCol = 0;
   #dragTargetCol = 0;
-  report_id = null;
   report = new Object();
-  // #_options;
+  #positioning = [];
+
 
   constructor(table, data) {
     super(table);
+    let objReportStorage = new ReportStorage();
+    this.report_id = objReportStorage.id;
+    console.log(this.report_id);
     this.data = data;
-    this.positioning = [];
+
     console.log(this.data);
     // Aggiungo le intestazioni di colonna e i filtri in pageBy
     Object.keys(this.data[0]).forEach((el, i) => {
@@ -493,24 +494,67 @@ class ReportConfig extends Report {
       // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
       super.addParams(el, i);
     });
-    // TODO: associo evento drag sulle th
+    // associo evento drag sulle th
     this.dragDrop();
 
     for (let i in this.data) {
-      // console.log(Object.values(response[i]));
-      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
       super.addRow(Object.values(this.data[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-      // Opzione 2 - Aggiunta colonne manualmente
-      // DrawReport.addRow([data[i].id, data[i].descrizione, data[i].versioneDMS, data[i].CodDealerCM]);
     }
+  }
+
+  set defaultOptions(value) {
+    this.#cube = value;
+    // NOTE: il metodo defaultPositioning imposta il posizionamento delle colonne in base al cubo (default).
+    /* Successivamente per reimpostare il posizionamento dopo il drag&drop chiamo il Metodo positioning perchè lavora sulla table e non sul cube*/
+    this.defaultPositioning();
+    this.metricsPositioning();
+    // this.saveReportConfig();
+    // console.log(this.options);
+    // console.log(this.report);
+  }
+
+  defaultPositioning() {
+    /*
+    Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
+    0: {columns: "Cod. Sede"}
+    1: {columns: "Sede"}
+    2: {metrics: "Venduto"}
+    */
+    console.log('positioning');
+    console.log(this.#cube);
+    /* definePositioning = [0=> {'col': 'Cod.Sede'},
+                            1=> {'col': 'Sede'},
+                            2=> {'metric': 'venduto'},
+                            3=> {'metric': 'quantita'}
+                           ]*/
+     Array.from(Object.keys(this.#cube)).forEach((element) => {
+       if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
+         // console.log(element);
+         Array.from(Object.keys(this.#cube[element])).forEach((table) => {
+           // console.log(table);
+           // console.log(cube.columns[table]);
+           Array.from(Object.keys(this.#cube[element][table])).forEach((value) => {
+             // recupero l'alias per questo object
+             let obj = {};
+             obj[element] = this.#cube[element][table][value]['alias'];
+             this.#positioning.push(obj);
+           });
+         });
+       }
+     });
+     // console.log(this.#positioning);
+     this.colsAttribute();
+     return this.#positioning;
+     // this.options.positioning = this.#positioning;
+
   }
 
   dragDrop() {
     // associo gli eventi drag&Drop sulle header
     // console.log(this.table.querySelectorAll('thead th'));
     Array.from(this.table.querySelectorAll('thead th')).forEach((th) => {
-      console.log(th);
+      // console.log(th);
       th.ondragstart = this.dragStart.bind(this);
       th.ondragover = this.dragOver.bind(this);
       th.ondrop = this.drop.bind(this);
@@ -524,6 +568,7 @@ class ReportConfig extends Report {
   dragStart(e) {
     e.dataTransfer.setData("text/plain", e.target.id);
     // console.log(e.dataTransfer);
+
     this.#dragStartCol = +e.target.getAttribute('col');
   }
 
@@ -554,6 +599,7 @@ class ReportConfig extends Report {
     // let parent = e.target.parentElement;
     // console.log(e.target.id);
     this.#dragged = document.getElementById(data);
+
     // console.log(this.dragged);
     // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
     let colSelected = +this.#dragged.getAttribute('col');
@@ -598,35 +644,56 @@ class ReportConfig extends Report {
     // TODO: Salvataggio delle impostazioni in localStorage
     console.log('save draag');
 
-    this.definePositioning();
+    this.positioning();
   }
 
-  definePositioning() {
+  positioning() {
     // dopo il drag&drop ridefinisco le posizioni delle colonne
-    console.log(this.positioning);
+    console.log(this.#positioning);
 
-    for (let i = 0; i < this.table.rows[0].cells.length; i++) {
-      console.log(this.table.rows[0].cells[i]);
-      // per ogni cella controllo se è una column o una metrica e la inserisco in this.positioning
-      if (!this.table.rows[0].cells[i].hasAttribute('metrics')) {
-        // è una column
-        this.positioning[i].columns = this.table.rows[0].cells[i].innerText;
+    for (let i = 0; i < this.thead.rows[0].cells.length; i++) {
+      console.log(this.thead.rows[0].cells[i]);
+      // per ogni cella controllo se è una column o una metrica e la inserisco in this.#positioning
+      if (this.thead.rows[0].cells[i].hasAttribute('metrics')) {
+        this.#positioning[i] = {'metrics': this.thead.rows[0].cells[i].innerText};
+      } else if (this.thead.rows[0].cells[i].hasAttribute('columns')) {
+        this.#positioning[i] = {'columns': this.thead.rows[0].cells[i].innerText};
       }
     }
-    console.log(this.positioning);
-    this.options = this.positioning;
+    console.log(this.#positioning);
+    this.options.positioning = this.#positioning;
 
     console.log(this.options);
+    // ricontrollo la posizione delle metriche dopo il drag&drop
+    this.metricsPositioning();
+  }
 
-    // this.saveReportConfig();
+  metricsPositioning() {
+    /* inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
+     ...e non avranno filtri in pageBy
+     */
+    this.metricsPosition = [];
+    this.#positioning.forEach((element, index) => {
+      // NOTE: utilizzo di for...of con Object.entries
+      for (let [key, value] of Object.entries(element)) {
+        // console.log(`${key}: ${value}`);
+        if (key === "metrics") this.metricsPosition.push(index);
+        // TODO: definisco gli attributi per le colonne
+      }
+    });
+    console.log(this.metricsPosition);
+    this.options.metricsPosition = this.metricsPosition;
+    console.log(this.options);
+
   }
 
   saveReportConfig() {
     this.report.type = "REPORT"; // TODO: questa si può impostare nel Metodo Storage.save()
     this.report.id = this.report_id;
-    this.report['nomeReport'] = this.options;
+    this.report['options'] = this.options;
+
     console.log(this.report);
-    console.log('termine debug');// TODO: verificare il salvataggio dell'object report in storage
+    // TODO: verificare il salvataggio dell'object report in storage
     return;
     // da definire
     // let objStorage = new Storage();
@@ -634,59 +701,23 @@ class ReportConfig extends Report {
     // objStorage.reportConfig = this.report;
   }
 
-  set defaultPositioning(cube) {
-    /*
-    Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
-    0: {columns: "Cod. Sede"}
-    1: {columns: "Sede"}
-    2: {metrics: "Venduto"}
-    */
-    console.log('positioning');
-    this.#cube = cube;
-    console.log(this.#cube);
-    this.report_id = this.#cube.report_id;
-    console.log(this.report_id);
-    /* definePositioning = [0=> {'col': 'Cod.Sede'},
-                            1=> {'col': 'Sede'},
-                            2=> {'metric': 'venduto'},
-                            3=> {'metric': 'quantita'}
-                           ]*/
-     Array.from(Object.keys(this.#cube)).forEach((element) => {
-       if (element === "columns" || element === "metrics") {
-         // console.log(element);
-         Array.from(Object.keys(this.#cube[element])).forEach((table) => {
-           // console.log(table);
-           // console.log(cube.columns[table]);
-           Array.from(Object.keys(this.#cube[element][table])).forEach((value) => {
-             // recupero l'alias per questo object
-             let obj = {};
-             obj[element] = this.#cube[element][table][value]['alias'];
-             this.positioning.push(obj);
-           });
-         });
-       }
-     });
-     console.log(this.positioning);
-     this.options = this.positioning;
-     this.saveReportConfig();
-  }
 
-  get defaultPositioning() {return this.positioning;}
 
-  get metricsPosition() {
-    // inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
-    // ...e non avranno filtri in pageBy
-    // this.#metricsPosition = [];
-    // this.positioning.forEach((element, index) => {
-    //   // NOTE: utilizzo di for...of con Object.entries
-    //   for (let [key, value] of Object.entries(element)) {
-    //     // console.log(`${key}: ${value}`);
-    //     if (key === "metrics") this.#metricsPosition.push(index);
-    //     // TODO: definisco gli attributi per le colonne
-    //   }
-    // });
-    // // console.log(this.#metricsPosition);
-    // return this.#metricsPosition;
+  colsAttribute() {
+    // applico gli attributi columns e metrics sulle rispettive colonne
+    console.log('cols attribute');
+    // console.log(this.options.positioning);
+    // console.log(Array.isArray(this.#positioning));
+
+    this.#positioning.forEach((col, index) => {
+      // console.log(col, index);
+      this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
+      for (let i = 0; i < this.tbody.rows.length; i++) {
+        // console.log(this.tbody.rows[i].cells[index]);
+        this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
+      }
+    });
+
   }
 
   // set option(value) {this.#options = value;}
