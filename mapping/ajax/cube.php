@@ -12,6 +12,7 @@ $cube = json_decode($_POST['cube']); // object
 // var_dump($dimension);
 // $arrData = json_decode($_POST['data'], true); // array
 
+
 $q = new Cube($cube->{'FACT'});
 $q->setReportId($cube->{'cubeId'});
 $q->SELECT($cube->{'columns'});
@@ -31,10 +32,9 @@ if ($baseTable > 0) {
 
   $metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
   var_dump($metricTable);
-
+  // return;
   $result = $q->createDatamart();
-  // var_dump($result);
-
+  var_dump($result);
 }
 
 ob_clean();

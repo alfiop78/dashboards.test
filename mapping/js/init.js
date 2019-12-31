@@ -68,35 +68,37 @@ var oCube = new Cube();
   app.handlerCubeSelected = function(e) {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
     // ricreo un datamart
-    // let data = window.localStorage.getItem(this.getAttribute('label'));
-    // var url = "ajax/cube.php";
-    // // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
-    // let params = "cube="+data;
-    // console.log(params);
-    // // return;
-    // var request = new XMLHttpRequest();
-    // request.onreadystatechange = function() {
-    //   if (request.readyState === XMLHttpRequest.DONE) {
-    //     if (request.status === 200) {
-    //       var response = JSON.parse(request.response);
-    //       console.table(response);
-    //       // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
-    //       // app.createReport(response);
-    //
-    //     } else {
-    //
-    //     }
-    //   } else {
-    //
-    //   }
-    // };
-    //
-    // request.open('POST', url);
-    // // request.setRequestHeader('Content-Type','application/json');
-    // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    // request.send(params);
+    /*
+    let data = window.localStorage.getItem(this.getAttribute('label'));
+    var url = "ajax/cube.php";
+    // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
+    let params = "cube="+data;
+    console.log(params);
+    // return;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
+          // app.createReport(response);
+
+        } else {
+
+        }
+      } else {
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);*/
 
     // console.log(this.getAttribute('label'));
+
     let reportName = this.getAttribute('label');
 
     // recupero un datamart FX... già creato e visualizzo l'anteprima
@@ -477,6 +479,7 @@ var oCube = new Cube();
 
     // salvo il cubo in localStorage
     cubeStorage.save = oCube.cube;
+    cubeStorage.stringify = oCube.cube;
 
     var url = "ajax/cube.php";
     let params = "cube="+cubeStorage.stringify;

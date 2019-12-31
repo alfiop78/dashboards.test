@@ -25,3 +25,11 @@ ul > li:hover{list-style: none;padding: 6px;background-color: #d4d6c8;border-rad
 ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border-radius: 4px;cursor: pointer;}
 
 /* list */
+
+
+/* layout-settings */
+.layout-settings{display: grid;grid-template-areas: "params" "body";}
+.layout-settings section[params] {grid-area: params; display: grid; grid-template-columns: 95% auto;}
+.layout-settings section[body] {grid-area: body; display: grid; grid-template-columns: 95% auto;}
+.settings{display: flex; flex-flow: column;align-items: center; justify-content: center;}
+/* layout-settings */

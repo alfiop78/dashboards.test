@@ -143,6 +143,10 @@ class CubeStorage extends Storage {
   //   this.#_stringify = JSON.stringify(value);
   // }
 
+  set stringify(value) {
+    this.#_stringify = JSON.stringify(value);
+  }
+
   get stringify() {return this.#_stringify;}
 
   json(cubeName) {
