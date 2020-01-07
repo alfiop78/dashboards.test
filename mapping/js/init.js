@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/* funzione immediata */
 // TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
 // TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
@@ -12,7 +6,6 @@ var oCube = new Cube();
 // TODO: dichiarare qui le altre Classi
 (() => {
   var app = {
-
     TimelineHier : new Timeline('layout-timeline-0'),
     TimelineFact : new Timeline('layout-timeline-1'),
     // passo al Costruttore il contenitore di tutte le page
@@ -24,8 +17,6 @@ var oCube = new Cube();
     dialogReportList : document.getElementById('dialog-report-list'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
-    btnPreviewReport : document.getElementById('mdc-preview-report'),
-    btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
     btnNewReport : document.getElementById('mdc-new-report')
   };
 
@@ -113,7 +104,9 @@ var oCube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, oStorage.getJSONCube(reportName));
+          // abilito il tasto btnPreviewReport
+          app.btnPreviewReport.disabled = false;
+          // app.createReport(response, oStorage.getJSONCube(reportName));
           app.dialogReportList.close();
 
         } else {
@@ -522,13 +515,10 @@ var oCube = new Cube();
 
   app.btnFact.onclick = function(e) {app.Page.next();};
 
-  app.btnPreviewReport.onclick = function(e) {app.Page.next();};
+  // vado alla pagina reports/index.html
+  app.btnPreviewReport.onclick = function(e) {location.href = "/reports/"};
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
-
-  app.btnDashboardLayout.onclick = function(e) {
-    window.location.href = "/dashboards/";
-  };
 
   app.btnNewReport.onclick = function(e) {
     // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
@@ -546,7 +536,7 @@ var oCube = new Cube();
   document.querySelector('#openReport').onclick = app.openReportList;
   /*events */
 
-  app.createReport = function(response, cube) {
+  /* app.createReport = function(response, cube) {
     console.log('create report');
     console.log(cube);
     console.log(cube.name);
@@ -582,7 +572,7 @@ var oCube = new Cube();
     // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
     report.draw();
 
-  };
+  }; */
 
   app.getDatabaseTable();
 
