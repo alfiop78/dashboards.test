@@ -17,7 +17,8 @@ var oCube = new Cube();
     dialogReportList : document.getElementById('dialog-report-list'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
-    btnNewReport : document.getElementById('mdc-new-report')
+    btnNewReport: document.getElementById('mdc-new-report'),
+    btnPreviewReport : document.getElementById('mdc-preview-report')
   };
 
   // App.getSessionName();
@@ -42,7 +43,8 @@ var oCube = new Cube();
 
   app.getDatamartList = function() {
     let ul = document.getElementById('cubesList');
-    oStorage.getCubesList().forEach((cube) => {
+    const storage = new CubeStorage();
+    storage.list.forEach((cube) => {
       // console.log(name);
       let element = document.createElement('div');
       element.classList.add('element');
@@ -520,10 +522,10 @@ var oCube = new Cube();
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
 
-  app.btnNewReport.onclick = function(e) {
-    // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
-    app.Page.restart();
-  };
+  // app.btnNewReport.onclick = function(e) {
+  //   // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
+  //   app.Page.restart();
+  // };
 
   /*ricerca dimensioni in elenco di sinistra*/
   // document.getElementById('dimensionSearch').oninput = App.searchInList;

@@ -16,7 +16,8 @@
     <script src="/js/Application.js"></script>
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
-    <script src="/js/Draw.js"></script>
+    <!-- <script src="/js/Draw.js"></script> -->
+    <script src="/js/Report.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>Creazione Report</title>
   </head>
@@ -39,12 +40,12 @@
       </div>
     </dialog>
 
-    <dialog id="dialog-report-list">
+    <dialog id="dialog-cube-list">
       <div class="lists">
         <div class="list">
           <div class="md-field">
-            <input type="search" id="cubeSearch" value=""/>
-            <label for="cubeSearch" class="">Ricerca</label>
+            <input type="search" id="cubesSearch" value=""/>
+            <label for="cubesSearch" class="">Ricerca</label>
           </div>
 
           <ul id="cubesList"></ul>
@@ -91,6 +92,10 @@
                 <section>
                   <h3>Impostazione Report</h3>
                   <h5>descrizione</h5>
+
+                  <div class="actions">
+                    <span class="popupContent"><i id="openCube" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
+                  </div>
 
                   <div class="layout-settings">
 
