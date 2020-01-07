@@ -88,10 +88,7 @@ var App = new Application();
      * TODO: da definire
      */
     let report = new ReportConfig(table, response, cube);
-    return;
-    report.datamartId = cube.cubeId;
-    report.defaultOptions = cube;
-
+    
     return;
 
     let options =

@@ -469,64 +469,43 @@ class ReportConfig extends Report {
 
       }
   */
-  // proprietà private
-  #cube;
-  #dragged;
-  #dragStartCol = 0;
-  #dragTargetCol = 0;
-  report = new Object(); // questo object verrà salvato in storage
-  #positioning = [];
-  #dialogColSetting = document.getElementById('dialog-col-setting');
+  
+  // #dragged;
+  // #dragStartCol = 0;
+  // #dragTargetCol = 0;
+  // #dialogColSetting = document.getElementById('dialog-col-setting');
 
 
-  constructor(table, data) {
+  constructor(table, data, cube) {
     super(table);
+    this.report = {}; // questo object verrà salvato in storage
+    this.cube = cube;
+    this.report.datamartId = cube.cubeId;
+    this.positioning = [];
+    // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni come il positioning delle metriche
+    this.defaultPositioning();
+    this.metricsPositioning();
+    return;
     // let objReportStorage = new ReportStorage();
     // this.report_id = objReportStorage.id;
     // console.log(this.report_id);
     this.data = data;
-
-    console.log(this.data);
     // Aggiungo le intestazioni di colonna e i filtri in pageBy
     Object.keys(this.data[0]).forEach((el, i) => {
       // console.log(el);
       super.addColumn(el, i);
-
       // aggiungo un filtro per ogni colonna della tabella
       // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
       super.addParams(el, i);
     });
     // associo evento drag sulle th
-    this.dragDrop();
-    this.actions();
+    // this.dragDrop();
+    // this.actions();
 
     for (let i in this.data) {
       super.addRow(Object.values(this.data[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
     }
-  }
-
-  set datamartId(value) {
-    this.report.datamartId = value;
-  }
-
-  set defaultOptions(value) {
-    this.#cube = value;
-    // NOTE: il metodo defaultPositioning imposta il posizionamento delle colonne in base al cubo (default).
-    /* Successivamente per reimpostare il posizionamento dopo il drag&drop chiamo il Metodo positioning perchè lavora sulla table e non sul cube*/
-    this.defaultPositioning();
-    this.metricsPositioning();
-    this.saveReportConfig();
-  }
-
-  actions() {
-    console.log('click');
-    this.thead.onclick = this.theadSetting.bind(this)
-  }
-
-  theadSetting(e) {
-    console.log(e.target);
-    this.#dialogColSetting.showModal();
   }
 
   defaultPositioning() {
@@ -537,35 +516,35 @@ class ReportConfig extends Report {
     2: {metrics: "Venduto"}
     */
     console.log('positioning');
-    console.log(this.#cube);
+    console.log(this.cube);
     /* definePositioning = [0=> {'col': 'Cod.Sede'},
                             1=> {'col': 'Sede'},
                             2=> {'metric': 'venduto'},
                             3=> {'metric': 'quantita'}
                            ]*/
-     Array.from(Object.keys(this.#cube)).forEach((element) => {
-       if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
-         // console.log(element);
-         Array.from(Object.keys(this.#cube[element])).forEach((table) => {
-           // console.log(table);
-           // console.log(cube.columns[table]);
-           Array.from(Object.keys(this.#cube[element][table])).forEach((value) => {
-             // recupero l'alias per questo object
-             let obj = {};
-             obj[element] = this.#cube[element][table][value]['alias'];
-             this.#positioning.push(obj);
-           });
-         });
-       }
-     });
-     // console.log(this.#positioning);
-     this.colsAttribute();
-     return this.#positioning;
-     // this.options.positioning = this.#positioning;
-
+    Array.from(Object.keys(this.cube)).forEach((element) => {
+      if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
+        // console.log(element);
+        Array.from(Object.keys(this.cube[element])).forEach((table) => {
+          // console.log(table);
+          // console.log(cube.columns[table]);
+          Array.from(Object.keys(this.cube[element][table])).forEach((value) => {
+            // recupero l'alias per questo object
+            let obj = {};
+            obj[element] = this.cube[element][table][value]['alias'];
+            this.positioning.push(obj);
+          });
+        });
+      }
+    });
+    console.log(this.positioning);
+    //  this.colsAttribute();
+    this.options.positioning = this.positioning;
+    console.log(this.options);
+    return this.positioning;
   }
 
-  dragDrop() {
+  /* dragDrop() {
     // associo gli eventi drag&Drop sulle header
     // console.log(this.table.querySelectorAll('thead th'));
     Array.from(this.table.querySelectorAll('thead th')).forEach((th) => {
@@ -660,23 +639,23 @@ class ReportConfig extends Report {
     console.log('save draag');
 
     this.positioning();
-  }
+  } */
 
   positioning() {
     // dopo il drag&drop ridefinisco le posizioni delle colonne
-    console.log(this.#positioning);
+    console.log(this.positioning);
 
     for (let i = 0; i < this.thead.rows[0].cells.length; i++) {
       console.log(this.thead.rows[0].cells[i]);
-      // per ogni cella controllo se è una column o una metrica e la inserisco in this.#positioning
+      // per ogni cella controllo se è una column o una metrica e la inserisco in this.positioning
       if (this.thead.rows[0].cells[i].hasAttribute('metrics')) {
-        this.#positioning[i] = {'metrics': this.thead.rows[0].cells[i].innerText};
+        this.positioning[i] = {'metrics': this.thead.rows[0].cells[i].innerText};
       } else if (this.thead.rows[0].cells[i].hasAttribute('columns')) {
-        this.#positioning[i] = {'columns': this.thead.rows[0].cells[i].innerText};
+        this.positioning[i] = {'columns': this.thead.rows[0].cells[i].innerText};
       }
     }
-    console.log(this.#positioning);
-    this.options.positioning = this.#positioning;
+    console.log(this.positioning);
+    this.options.positioning = this.positioning;
 
     console.log(this.options);
     // ricontrollo la posizione delle metriche dopo il drag&drop
@@ -688,7 +667,7 @@ class ReportConfig extends Report {
      ...e non avranno filtri in pageBy
      */
     this.metricsPosition = [];
-    this.#positioning.forEach((element, index) => {
+    this.positioning.forEach((element, index) => {
       // NOTE: utilizzo di for...of con Object.entries
       for (let [key, value] of Object.entries(element)) {
         // console.log(`${key}: ${value}`);
@@ -699,7 +678,7 @@ class ReportConfig extends Report {
     console.log(this.metricsPosition);
     this.options.metricsPosition = this.metricsPosition;
     console.log(this.options);
-    this.saveReportConfig();
+    // this.saveReportConfig();
 
   }
 
@@ -724,9 +703,9 @@ class ReportConfig extends Report {
     // applico gli attributi columns e metrics sulle rispettive colonne
     console.log('cols attribute');
     // console.log(this.options.positioning);
-    // console.log(Array.isArray(this.#positioning));
+    // console.log(Array.isArray(this.positioning));
 
-    this.#positioning.forEach((col, index) => {
+    this.positioning.forEach((col, index) => {
       // console.log(col, index);
       this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
       for (let i = 0; i < this.tbody.rows.length; i++) {
@@ -734,7 +713,6 @@ class ReportConfig extends Report {
         this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
       }
     });
-
   }
 
   // set option(value) {this.#options = value;}
