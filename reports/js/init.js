@@ -87,11 +87,7 @@ var App = new Application();
     console.log(cube.name);
     
     let table = document.getElementById('table-01');
-    /**Operazioni da fare in ReportConfig:
-     * 1-tramite il json di cube posso andare a definire, per prima cosa, quali sono le metriche del report
-     *    ...una volta stabilite le posizioni delle metriche, posso creare il pageBy escludendo quelli delle metriche
-     * TODO: da definire
-     */
+    
     app.report = new ReportConfig(table, response, cube);
     
     return;
@@ -137,7 +133,8 @@ var App = new Application();
   }
 
   app.btnSaveReportDone.onclick = function (e) {
-    app.report.name = 'test';
+    app.report.name = document.getElementById('reportName').value;
+    app.dialogReportName.close();
   }
   /* events */
   

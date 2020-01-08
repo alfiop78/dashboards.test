@@ -43,9 +43,7 @@ class Report {
   // options = new Object();
 
   constructor(table) {
-    /*
-    * table è il riferimento all'elemento table nel DOM
-    */
+    // riferimento nel DOM
     this.table = table;
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
@@ -482,17 +480,11 @@ class ReportConfig extends Report {
     this.cube = cube;
     this.report.datamartId = cube.cubeId;
     
-    // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni come il positioning delle metriche
+    // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni di default
     this.default = this.cube;
     console.log(this.default);
     console.log(this.report);
-    // this.saveReportConfig();
     
-    
-    return;
-    // let objReportStorage = new ReportStorage();
-    // this.report_id = objReportStorage.id;
-    // console.log(this.report_id);
     this.data = data;
     // Aggiungo le intestazioni di colonna e i filtri in pageBy
     Object.keys(this.data[0]).forEach((el, i) => {
@@ -500,6 +492,7 @@ class ReportConfig extends Report {
       super.addColumn(el, i);
       // aggiungo un filtro per ogni colonna della tabella
       // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
+
       super.addParams(el, i);
     });
     // associo evento drag sulle th
@@ -510,30 +503,30 @@ class ReportConfig extends Report {
       super.addRow(Object.values(this.data[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
     }
+    this.colsAttribute();
   }
 
   set name(value) {
     this.reportName = value;
-    this.saveReportConfig();
+    this.saveOptions();
   }
   
   get name() { return this.reportName;}
 
   set default(cube) {
     /*
-    Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
-    0: {columns: "Cod. Sede"}
-    1: {columns: "Sede"}
-    2: {metrics: "Venduto"}
+    Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
+    positioning = [
+      0=> {'col': 'Cod.Sede'},
+      1=> {'col': 'Sede'},
+      2=> {'metric': 'venduto'},
+      3=> {'metric': 'quantita'}
+    ]
     */
     this.positioning = [];
     console.log('positioning');
     console.log(cube);
-    /* definePositioning = [0=> {'col': 'Cod.Sede'},
-                            1=> {'col': 'Sede'},
-                            2=> {'metric': 'venduto'},
-                            3=> {'metric': 'quantita'}
-                           ]*/
+    
     Array.from(Object.keys(cube)).forEach((element) => {
       if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
         // console.log(element);
@@ -556,9 +549,7 @@ class ReportConfig extends Report {
     this.metricsPositioning();
   }
 
-  get default() {
-    return this.options;
-  }
+  get default() {return this.options;}
 
   /* dragDrop() {
     // associo gli eventi drag&Drop sulle header
@@ -698,7 +689,7 @@ class ReportConfig extends Report {
 
   }
 
-  saveReportConfig() {
+  saveOptions() {
     this.report.type = "REPORT";
     // ottengo il reportId
     let storage = new ReportStorage();
@@ -706,7 +697,7 @@ class ReportConfig extends Report {
     console.log(this.report_id);
     this.report.id = this.report_id;
     this.report.name = this.name;
-    this.report['options'] = this.options;
+    this.report.options = this.options;
     
     console.log(this.report);
     storage.save = this.report;
@@ -733,10 +724,6 @@ class ReportConfig extends Report {
       }
     });
   }
-
-  // set option(value) {this.#options = value;}
-  //
-  // get option() {return this.#options;}
 
   // optionsApply() {
   //   // applico le option impostate
@@ -805,11 +792,4 @@ class ReportConfig extends Report {
     super.eventParams();
     super.info();
   }
-}
-
-class ReportDraw extends Report {
-  /*
-  Creo il report per la sola visualizzazione nella pagina finale. Qui passerò l'oggetto in storage che è stato personalizzato in mapping, comprese le opzioni
-  e sarà visualizzato così comeè stato personalizzato (quindi non ungerò il drag&drop, mouseOver e altro...)
-  */
 }
