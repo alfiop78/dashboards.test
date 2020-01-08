@@ -481,10 +481,14 @@ class ReportConfig extends Report {
     this.report = {}; // questo object verrà salvato in storage
     this.cube = cube;
     this.report.datamartId = cube.cubeId;
-    this.positioning = [];
+    
     // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni come il positioning delle metriche
-    this.defaultPositioning();
-    this.metricsPositioning();
+    this.default = this.cube;
+    console.log(this.default);
+    console.log(this.report);
+    // this.saveReportConfig();
+    
+    
     return;
     // let objReportStorage = new ReportStorage();
     // this.report_id = objReportStorage.id;
@@ -508,30 +512,38 @@ class ReportConfig extends Report {
     }
   }
 
-  defaultPositioning() {
+  set name(value) {
+    this.reportName = value;
+    this.saveReportConfig();
+  }
+  
+  get name() { return this.reportName;}
+
+  set default(cube) {
     /*
     Definisco un array di oggetti contenenti la dispossizione delle colonne, nello stato iniziale del datamart
     0: {columns: "Cod. Sede"}
     1: {columns: "Sede"}
     2: {metrics: "Venduto"}
     */
+    this.positioning = [];
     console.log('positioning');
-    console.log(this.cube);
+    console.log(cube);
     /* definePositioning = [0=> {'col': 'Cod.Sede'},
                             1=> {'col': 'Sede'},
                             2=> {'metric': 'venduto'},
                             3=> {'metric': 'quantita'}
                            ]*/
-    Array.from(Object.keys(this.cube)).forEach((element) => {
+    Array.from(Object.keys(cube)).forEach((element) => {
       if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
         // console.log(element);
-        Array.from(Object.keys(this.cube[element])).forEach((table) => {
+        Array.from(Object.keys(cube[element])).forEach((table) => {
           // console.log(table);
           // console.log(cube.columns[table]);
-          Array.from(Object.keys(this.cube[element][table])).forEach((value) => {
+          Array.from(Object.keys(cube[element][table])).forEach((value) => {
             // recupero l'alias per questo object
             let obj = {};
-            obj[element] = this.cube[element][table][value]['alias'];
+            obj[element] = cube[element][table][value]['alias'];
             this.positioning.push(obj);
           });
         });
@@ -541,7 +553,11 @@ class ReportConfig extends Report {
     //  this.colsAttribute();
     this.options.positioning = this.positioning;
     console.log(this.options);
-    return this.positioning;
+    this.metricsPositioning();
+  }
+
+  get default() {
+    return this.options;
   }
 
   /* dragDrop() {
@@ -643,7 +659,7 @@ class ReportConfig extends Report {
 
   positioning() {
     // dopo il drag&drop ridefinisco le posizioni delle colonne
-    console.log(this.positioning);
+    this.positioning = [];
 
     for (let i = 0; i < this.thead.rows[0].cells.length; i++) {
       console.log(this.thead.rows[0].cells[i]);
@@ -683,13 +699,16 @@ class ReportConfig extends Report {
   }
 
   saveReportConfig() {
-    this.report.type = "REPORT"; // TODO: questa si può impostare nel Metodo Storage.save()
-    this.report.id = this.report_id;
-    this.report['options'] = this.options;
-    this.report.name = "TESTNAME";
-
-    console.log(this.report);
+    this.report.type = "REPORT";
+    // ottengo il reportId
     let storage = new ReportStorage();
+    this.report_id = storage.id;
+    console.log(this.report_id);
+    this.report.id = this.report_id;
+    this.report.name = this.name;
+    this.report['options'] = this.options;
+    
+    console.log(this.report);
     storage.save = this.report;
     // TODO: verificare il salvataggio dell'object report in storage
     return;

@@ -2,17 +2,22 @@ var App = new Application();
 
 (() => {
   var app = {
+    report : null,
     btnOpenCubes: document.getElementById('openCube'),
     dialogTableList : document.getElementById('table-list'),
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
-    dialogCubeList : document.getElementById('dialog-cube-list'),
+    dialogCubeList: document.getElementById('dialog-cube-list'),
+    dialogReportName : document.getElementById('report-name'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
-    btnNewReport : document.getElementById('mdc-new-report')
+    btnNewReport: document.getElementById('mdc-new-report'),
+    btnSaveReport : document.getElementById('saveReport'),
+    btnSaveReportDone : document.getElementById('btnReportSaveName')
+    
   };
   
   App.init();
@@ -87,7 +92,7 @@ var App = new Application();
      *    ...una volta stabilite le posizioni delle metriche, posso creare il pageBy escludendo quelli delle metriche
      * TODO: da definire
      */
-    let report = new ReportConfig(table, response, cube);
+    app.report = new ReportConfig(table, response, cube);
     
     return;
 
@@ -122,9 +127,18 @@ var App = new Application();
 
 
   /* events */
-  app.btnDashboardLayout.onclick = (e) => {window.location.href = "/dashboards/";};
+  app.btnDashboardLayout.onclick = function(e) {window.location.href = "/dashboards/";};
   
-  app.btnOpenCubes.onclick = (e) => {app.dialogCubeList.showModal();};
+  app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
+  
+  app.btnSaveReport.onclick = function (e) {
+    // apro dialog report-name
+    app.dialogReportName.showModal();
+  }
+
+  app.btnSaveReportDone.onclick = function (e) {
+    app.report.name = 'test';
+  }
   /* events */
   
 
