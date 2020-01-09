@@ -70,10 +70,11 @@ class Report {
     this.th.id = 'col-header-'+index;
     this.th.innerText = colName;
     this.table.querySelector('thead tr').appendChild(this.th);
+    // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
   }
 
   addParams(colName, id) {
-    // aggiungo anche il filtro per ogni colonna, deciderò successivamente, nelle opzioni, se visualizzarlo o meno.
+    // aggiungo anche il filtro per ogni colonna
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div[data-param-id]');
@@ -433,7 +434,7 @@ class Report {
 
 }
 
-class ReportConfig extends Report {
+class ReportOptions extends Report {
 
   /*
     qui vengono definite le options del report, queste options andranno a scrivere in storage ...
@@ -460,7 +461,7 @@ class ReportConfig extends Report {
             ecc...
           }
         'filtersType' : [{'col': 0, 'attribute': 'multi'}] multiselezione in pageBy
-        'title' : Titolo del Report visualizzato in localStorage,
+        'name' : Titolo del Report visualizzato in localStorage,
         'inputSearch' : true visualizzo e lego evento input alla casella di ricerca, in basso.
         metricsPosition : [2,3] definisco la posizione delle metriche nel report, le stesse saranno nascoste nel pageBy
       }
@@ -476,9 +477,23 @@ class ReportConfig extends Report {
 
   constructor(table, data, cube) {
     super(table);
-    this.report = {}; // questo object verrà salvato in storage
+    // ottengo il reportId TODO: utilizzare la logica di getIdAvailable
+    this.storage = new ReportStorage();
+    this.report = {
+      'id': this.storage.id,
+      'type': 'REPORT',
+      'datamartId': cube.cubeId,
+      'name': null,
+      'options': {}
+      // 'options': {
+      //   'inputSearch': true,
+      //   'cols': {},
+      //   'pageBy': {},
+      //   'positioning': [],
+      //   'metricsPosition': []
+      // }
+    }; // questo object verrà salvato in storage
     this.cube = cube;
-    this.report.datamartId = cube.cubeId;
     
     // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni di default
     this.default = this.cube;
@@ -546,6 +561,7 @@ class ReportConfig extends Report {
     //  this.colsAttribute();
     this.options.positioning = this.positioning;
     console.log(this.options);
+    // this.save();
     this.metricsPositioning();
   }
 
@@ -685,22 +701,15 @@ class ReportConfig extends Report {
     console.log(this.metricsPosition);
     this.options.metricsPosition = this.metricsPosition;
     console.log(this.options);
-    // this.saveReportConfig();
-
+    this.save();
   }
 
-  saveOptions() {
-    this.report.type = "REPORT";
-    // ottengo il reportId
-    let storage = new ReportStorage();
-    this.report_id = storage.id;
-    console.log(this.report_id);
-    this.report.id = this.report_id;
-    this.report.name = this.name;
+  save() {
+    
     this.report.options = this.options;
     
     console.log(this.report);
-    storage.save = this.report;
+    this.storage.save = this.report;
     // TODO: verificare il salvataggio dell'object report in storage
     return;
     // da definire

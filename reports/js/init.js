@@ -73,10 +73,6 @@ var App = new Application();
       element.appendChild(li);
       li.onclick = app.handlerCubeSelected;
     });
-    
-    
-    
-    
   };
 
   app.createReport = function(response, cubeName) {
@@ -88,7 +84,9 @@ var App = new Application();
     
     let table = document.getElementById('table-01');
     
-    app.report = new ReportConfig(table, response, cube);
+    app.report = new ReportOptions(table, response, cube);
+
+    
     
     return;
 
