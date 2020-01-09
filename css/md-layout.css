@@ -130,10 +130,7 @@ tr:nth-child(even) {background-color: #f8f9fa61;}
 td[metrics], th[metrics]{font-weight: 600;text-align: center;}
 thead th.move-before{border-left-width: 62px;opacity: .3;}
 thead th.move-after{border-right-width: 62px;opacity: .3;}
-
-thead:hover{background-color: gainsboro;}
-
-
+thead th:hover{background-color: gainsboro;cursor: pointer;}
 /*table search*/
 tr[row='body'][hidden] {display: none;}
 
@@ -169,11 +166,11 @@ tr.tr-right{display: flex;justify-content: flex-end;}
 
 /*actions*/
 .actions{display: flex; flex-flow: row;margin: 16px;}
-.actions > span{display: flex;justify-content: center;position: relative;}
-.actions span:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
+/* .actions > span{display: flex;justify-content: center;position: relative;} */
+span.popupContent:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
 /*actions*/
 /* lo span che contiene l'icona e lo small della popup*/
-span.popupContent{display: flex;justify-content: center;}
+span.popupContent{display: flex;justify-content: center;align-items: center;position: relative;}
 span.popupContent small{z-index: 5;}
 small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem;visibility: hidden;white-space: nowrap;
   box-shadow: 0 2px 4px 0 black;padding: 4px 8px;position: absolute;}

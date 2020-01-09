@@ -438,6 +438,8 @@ class Options {
   constructor(table, data, cube) {
     this.table = table;
     this.data = data;
+    this.dialogOption = document.getElementById('columnsOption');
+    
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
@@ -468,19 +470,24 @@ class Options {
     Object.keys(this.data[0]).forEach((colName, index) => {
       // console.log(el);
       this.th = document.createElement('th');
-      this.i = document.createElement('i');
-      this.i.className = 'material-icons md-18';
-      this.i.innerText = "settings";
       this.th.setAttribute('col', index);
       this.th.classList.add('dropzone');
       this.th.setAttribute('options', 'cols');
       this.th.setAttribute('draggable', true);
       this.th.id = 'col-header-'+index;
       this.th.innerText = colName;
-      this.th.appendChild(this.i);
-      this.table.querySelector('thead tr').appendChild(this.th);  
+      this.th.onclick = this.handlerColOption.bind(this);
+      this.table.querySelector('thead tr').appendChild(this.th);
     });
     this.setColsAttribute();
+  }
+  handlerColOption = function (e) {
+    console.log('handlerColOption');
+    console.log(this);
+    console.log(e.target);
+    this.dialogOption.setAttribute('col', +e.target.getAttribute('col'));
+    this.dialogOption.showModal();
+    
   }
 
   addPageBy() {
@@ -493,6 +500,7 @@ class Options {
         this.tmplParams = document.getElementById('params');
         this.tmplContent = this.tmplParams.content.cloneNode(true);
         this.params = this.tmplContent.querySelector('div[data-param-id]');
+        this.settingIcon = this.tmplContent.querySelector('span.popupContent');
         // console.log(this.params);
         this.params.setAttribute('col', index);
         this.params.setAttribute('data-param-id', index);
@@ -503,6 +511,7 @@ class Options {
         this.params.querySelector('input').setAttribute('data-param-id', index);
         this.params.querySelector('.elements').setAttribute('col', index);
         this.paramsRef.appendChild(this.params);
+        this.params.after(this.settingIcon);
       }
       
     });
@@ -583,6 +592,18 @@ class Options {
   }
 
   get defaultPositioning() { return this.options.positioning;}
+}
+
+class Col extends Options {
+  constructor(table, columnsId) {
+    super(table);
+    this.columnsId = columnsId;
+  }
+
+  hide() {
+    // TODO: memorizzo il valore della colonna in this.options.cols....
+  }
+
 }
 
 class ReportOptions extends Report {

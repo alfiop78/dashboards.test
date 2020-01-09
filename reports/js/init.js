@@ -9,14 +9,15 @@ var App = new Application();
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogCubeList: document.getElementById('dialog-cube-list'),
-    dialogReportName : document.getElementById('report-name'),
+    dialogReportName: document.getElementById('report-name'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
     btnNewReport: document.getElementById('mdc-new-report'),
     btnSaveReport : document.getElementById('saveReport'),
-    btnSaveReportDone : document.getElementById('btnReportSaveName')
+    btnSaveReportDone: document.getElementById('btnReportSaveName'),
+    btnSaveColOption: document.getElementById('btnSaveColOption')
     
   };
   
@@ -135,6 +136,7 @@ var App = new Application();
     app.report.name = document.getElementById('reportName').value;
     app.dialogReportName.close();
   }
+
   /* events */
   
 
