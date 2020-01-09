@@ -84,10 +84,11 @@ var App = new Application();
     
     let table = document.getElementById('table-01');
     
-    app.report = new ReportOptions(table, response, cube);
-
+    app.report = new Options(table, response, cube);
     
     
+    // TODO: queste opzioni le invio alla classe Report con i parametri (table, options); per disegnare il report
+    // let objReport = new Report(table, options);
     return;
 
     let options =

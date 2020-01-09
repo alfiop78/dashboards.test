@@ -59,7 +59,7 @@ class Report {
     this.table.querySelector('caption').innerHTML = this.titleCaption;
   }
 
-  get title() {return this.titleCaption;}
+  get title() { return this.titleCaption; }
 
   addColumn(colName, index) {
     this.th = document.createElement('th');
@@ -434,6 +434,157 @@ class Report {
 
 }
 
+class Options {
+  constructor(table, data, cube) {
+    this.table = table;
+    this.data = data;
+    this.tbody = this.table.querySelector('tbody'); // le righe nella table
+    this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
+
+    this.storage = new ReportStorage();
+    
+    this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
+    
+    this.reportOptions = {
+      'id': this.storage.id,
+      'type': 'REPORT',
+      'datamartId': cube.cubeId,
+      'name': 'TMP_'+this.storage.id,
+      'options': this.options
+    }; // questo object verrà salvato in storage
+    console.log(this.reportOptions);
+    
+    // imposto le opzioni di default
+    this.defaultPositioning = cube;
+    // disegno il report con le options di default
+    this.addColumn();
+    this.addPageBy();
+    this.addRows();
+    
+  }
+  
+  addColumn() {
+    Object.keys(this.data[0]).forEach((colName, index) => {
+      // console.log(el);
+      this.th = document.createElement('th');
+      this.i = document.createElement('i');
+      this.i.className = 'material-icons md-18';
+      this.i.innerText = "settings";
+      this.th.setAttribute('col', index);
+      this.th.classList.add('dropzone');
+      this.th.setAttribute('options', 'cols');
+      this.th.setAttribute('draggable', true);
+      this.th.id = 'col-header-'+index;
+      this.th.innerText = colName;
+      this.th.appendChild(this.i);
+      this.table.querySelector('thead tr').appendChild(this.th);  
+    });
+    this.setColsAttribute();
+  }
+
+  addPageBy() {
+    // aggiungo anche il filtro per ogni colonna
+    Object.keys(this.data[0]).forEach((colName, index) => {
+      // console.log(Object.keys(this.positioning[index])[0]);
+      // se questa colonna è una metrica non creo il filtro in pageBy
+      
+      if (Object.keys(this.positioning[index])[0] !== "metrics") {
+        this.tmplParams = document.getElementById('params');
+        this.tmplContent = this.tmplParams.content.cloneNode(true);
+        this.params = this.tmplContent.querySelector('div[data-param-id]');
+        // console.log(this.params);
+        this.params.setAttribute('col', index);
+        this.params.setAttribute('data-param-id', index);
+        this.params.querySelector('ul').id = "datalist-"+index;
+        this.params.querySelector('label').setAttribute('for', "param-"+index);
+        this.params.querySelector('label').innerText = colName;
+        this.params.querySelector('input').id = "param-"+index;
+        this.params.querySelector('input').setAttribute('data-param-id', index);
+        this.params.querySelector('.elements').setAttribute('col', index);
+        this.paramsRef.appendChild(this.params);
+      }
+      
+    });
+    
+  }
+
+  addRows() {
+    for (let i in this.data) {
+      // console.log(rowValues);
+      this.tr = document.createElement('tr');
+      this.tr.setAttribute('row', 'body');
+      this.tbody.appendChild(this.tr);
+  
+      // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
+      Object.values(this.data[i]).forEach((el, i) => {
+        // el contiene il valore della cella
+        this.td = document.createElement('td');
+        this.td.setAttribute('col', i);
+        this.td.setAttribute('options', 'cols');
+        this.td.setAttribute(Object.keys(this.positioning[i])[0], true);
+        
+        (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
+        this.tr.appendChild(this.td);
+      });
+      
+    }
+    
+  }
+
+  setColsAttribute() {
+    // applico gli attributi columns e metrics sulle rispettive colonne
+    console.log('cols attribute');
+    // console.log(this.options.positioning);
+    // console.log(Array.isArray(this.positioning));
+
+    this.positioning.forEach((col, index) => {
+      // console.log(col, index);
+      this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
+      for (let i = 0; i < this.tbody.rows.length; i++) {
+        // console.log(this.tbody.rows[i].cells[index]);
+        this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
+      }
+    });
+  }
+  
+
+  set defaultPositioning(cube) {
+    /*
+    Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
+    positioning = [
+      0=> {'col': 'Cod.Sede'},
+      1=> {'col': 'Sede'},
+      2=> {'metric': 'venduto'},
+      3=> {'metric': 'quantita'}
+    ]
+    */
+    this.positioning = [];
+    console.log('positioning');
+    
+    Array.from(Object.keys(cube)).forEach((element) => {
+      if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
+        // console.log(element);
+        Array.from(Object.keys(cube[element])).forEach((table) => {
+          // console.log(table);
+          // console.log(cube.columns[table]);
+          Array.from(Object.keys(cube[element][table])).forEach((value) => {
+            // recupero l'alias per questo object
+            let obj = {};
+            obj[element] = cube[element][table][value]['alias'];
+            this.positioning.push(obj);
+          });
+        });
+      }
+    });
+    console.log(this.positioning);
+    this.options.positioning = this.positioning;
+    console.log(this.reportOptions);
+  }
+
+  get defaultPositioning() { return this.options.positioning;}
+}
+
 class ReportOptions extends Report {
 
   /*
@@ -475,7 +626,7 @@ class ReportOptions extends Report {
   // #dialogColSetting = document.getElementById('dialog-col-setting');
 
 
-  constructor(table, data, cube) {
+  constructor(table, data) {
     super(table);
     // ottengo il reportId TODO: utilizzare la logica di getIdAvailable
     this.storage = new ReportStorage();
@@ -493,8 +644,8 @@ class ReportOptions extends Report {
       //   'metricsPosition': []
       // }
     }; // questo object verrà salvato in storage
-    this.cube = cube;
-    
+    // this.cube = cube;
+    return;
     // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni di default
     this.default = this.cube;
     console.log(this.default);
@@ -518,7 +669,8 @@ class ReportOptions extends Report {
       super.addRow(Object.values(this.data[i]));
       // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
     }
-    this.colsAttribute();
+    // this.colsAttribute();
+    
   }
 
   set name(value) {
@@ -528,7 +680,7 @@ class ReportOptions extends Report {
   
   get name() { return this.reportName;}
 
-  set default(cube) {
+  set defaultPositioning(cube) {
     /*
     Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
     positioning = [
@@ -558,14 +710,15 @@ class ReportOptions extends Report {
       }
     });
     console.log(this.positioning);
+    
     //  this.colsAttribute();
     this.options.positioning = this.positioning;
     console.log(this.options);
     // this.save();
-    this.metricsPositioning();
+    // this.metricsPositioning();
   }
 
-  get default() {return this.options;}
+  get defaultPositioning() {return this.positioning;}
 
   /* dragDrop() {
     // associo gli eventi drag&Drop sulle header
@@ -685,24 +838,24 @@ class ReportOptions extends Report {
     this.metricsPositioning();
   }
 
-  metricsPositioning() {
-    /* inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
-     ...e non avranno filtri in pageBy
-     */
-    this.metricsPosition = [];
-    this.positioning.forEach((element, index) => {
-      // NOTE: utilizzo di for...of con Object.entries
-      for (let [key, value] of Object.entries(element)) {
-        // console.log(`${key}: ${value}`);
-        if (key === "metrics") this.metricsPosition.push(index);
-        // TODO: definisco gli attributi per le colonne
-      }
-    });
-    console.log(this.metricsPosition);
-    this.options.metricsPosition = this.metricsPosition;
-    console.log(this.options);
-    this.save();
-  }
+  // metricsPositioning() {
+  //   /* inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
+  //    ...e non avranno filtri in pageBy
+  //    */
+  //   this.metricsPosition = [];
+  //   this.positioning.forEach((element, index) => {
+  //     // NOTE: utilizzo di for...of con Object.entries
+  //     for (let [key, value] of Object.entries(element)) {
+  //       // console.log(`${key}: ${value}`);
+  //       if (key === "metrics") this.metricsPosition.push(index);
+  //       // TODO: definisco gli attributi per le colonne
+  //     }
+  //   });
+  //   console.log(this.metricsPosition);
+  //   this.options.metricsPosition = this.metricsPosition;
+  //   console.log(this.options);
+  //   this.save();
+  // }
 
   save() {
     
@@ -733,6 +886,8 @@ class ReportOptions extends Report {
       }
     });
   }
+
+
 
   // optionsApply() {
   //   // applico le option impostate
