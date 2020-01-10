@@ -71,16 +71,22 @@
 
     <dialog id="columnsOption">
       <div class="colProperties">
-        <span property="hidden">Mostra/Nascondi</span>
+        <span>Mostra/Nascondi</span>
         <label class="mdc-checkbox">
           <input id="chkbox-hide-col" type="checkbox" name="name-checkbox" property="hidden"/>
           <span></span>
         </label>
       </div>
       <div class="colProperties">
-        <span property="...">property</span>
+        <span>Colore</span>
+        <input type="color" id="fgColor" name="fgColor" property="color" value="#e66465">
+        <label for="fgColor">Colore testo</label>
+        <input type="color" id="bgColor" name="bgColor" property="backgroundColor" value="#000">
+        <label for="bgColor">Colore sfondo</label>
+        
         
       </div>
+      
 
       <div class="dialog-buttons">
         <button id="btnSaveColOption" type="button" name="done" class="md-button">OK</button>

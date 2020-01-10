@@ -445,17 +445,31 @@ class Options {
     this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
 
-    this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
+    
     /**
-     * 'cols':[
-     * 0: {'columnId': 2, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
-     * 1: {'columnId': 1, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
-     * 2: {'columnId': 3, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
+     * * 'cols':[
+     * 0: {
+     *    'columnId': 2, 
+     *    'style': {'bgColor': 'red', 'fgColor': 'white'}, // stili css da applicare
+     *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
+     
      * ]
      * 
      */
     this.cols = {}; // array di object
-    this.colProperties = {};
+    // TODO: attributes e style per ora vanno separati perchè, per impostarli sull'elemento, il procedimento è diverso.
+    /*
+     * Per impostare gli attributi li aggiungo all'elemento es.: <th id=0 attributo=valore>
+     * Per impostare gli stili in futuro si potrà usare attr(data-nomeattributo) nel css (funzionalità sperimentale)
+     * Al momento dovrò applicare gli styles tramite js th.style.color = valore
+     */
+    this.styles = {};
+    this.attributes = {};
+
+    this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
+    
+    this.report = {}; // conterrà l'object completo che verrà salvato in storage
+    
   }
 
   set datamartData(value) {
@@ -490,23 +504,54 @@ class Options {
 
   set column(value) {
     this.columnId = value;
-    // this.columnId = ;
+    // TODO: se viene selezionata la stessa colonna già modificata non azzero this.styles perchè continuerò ad aggiungere/modificare questo object
+    // altrimenti dovrò azzerare this.styles per applicare le proprietà ad un altra colonna
+    console.log(this.styles);
+    console.log(this.options);
+    
     this.cols[this.columnId] = { 'columnId': this.columnId };
-    console.log(this.cols); 
+    console.log(this.cols);
   }
 
   get column() { return this.columnId; }
   
-  set colProperty(property) {
-    // this.colProperties = value;
-    // this.cols[this.columnId][Object.keys(value)] = Object.values(value)[0];
-    for (let [key, value] of Object.entries(property)) {
-      // console.log(`${key}: ${value}`);
-      this.cols[this.columnId][key] = value;
+  set attribute(attribute) {
+    // imposto attributo, questo ha sempre la coppia key/value
+    for (let [key, value] of Object.entries(attribute)) {
+      this.attributes[key] = value;
     }
+    // console.log(this.attributes);
+    this.cols[this.columnId]['attributes'] = this.attributes;
     console.log(this.cols);
+  }
+
+  get attribute() { return this.attributes; }
+
+  set colOption(option) {
+    console.log(option);
+    
+    this.options.cols = option;
+    console.log(this.options);
     
   }
+
+  get colOption() { return this.options.cols;}
+
+  set style(style) {
+    
+    // imposto attributo, questo ha sempre la coppia key/value
+    for (let [key, value] of Object.entries(style)) {
+      this.styles[key] = value;
+    }
+    console.log(this.styles);
+    
+    this.cols[this.columnId]['styles'] = this.styles;
+
+    console.log(this.cols);
+  }
+
+  get style() {return this.styles;}
+  
 
   addColumn() {
     Object.keys(this.data[0]).forEach((colName, index) => {
@@ -535,10 +580,12 @@ class Options {
     
   }
 
-  btnDoneDialogOption = function (e) {
+  btnDoneDialogOption(e) {
     // click tasto OK nella dialog Options per la colonna
     console.log('btnDoneDialogOption');
     this.dialogOption.close();
+    this.colOption = this.cols;
+    
   }
 
   addPageBy() {
@@ -643,40 +690,6 @@ class Options {
   }
 
   get defaultPositioning() { return this.options.positioning;}
-}
-
-class Col extends Options {
-  /**
-   * le modifiche fatte in questa class si riferiscono alla colonna selezionata, andròa creare, all'interno dell'object cols le varie 
-   * opzioni e parametri da inserire successivamente in super.options che a sua volta fanno parte di super.reportOption (il quale sarà salavato in storage)
-   */
-  constructor(table, columnId) {
-    super(table);
-    this.columnsId = columnId;
-    this.cols = { 'columnId': this.columnsId };
-    this.attribute = { 'attribute': [] };
-    console.log(this.cols);
-    console.log(this.attribute);
-    /**
-     * 'cols':[
-     * 0: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
-     * 1: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
-     * 2: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
-     * ]
-     */
-    
-    
-    // l'array cols conterrà un'object di proprietà 
-    // 'cols' : [0 :
-    //   {'columnId': x},
-    //   {'bgColor': 'red'},
-    //   {'fgColor': 'white'},
-    //   {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
-    //   {'altro (es. gestione del drillthrought, ecc...)'}
-    // ]
-    
-  }
-
 }
 
 class ReportOptions extends Report {

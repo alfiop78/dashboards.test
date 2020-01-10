@@ -20,7 +20,9 @@ var App = new Application();
     btnSaveColOption: document.getElementById('btnSaveColOption'),
     table: document.getElementById('table-01'),
 
-    propertyColHidden: document.getElementById('chkbox-hide-col')
+    propertyColHidden: document.getElementById('chkbox-hide-col'),
+    fgColorInput : document.getElementById('fgColor'),
+    bgColorInput : document.getElementById('bgColor')
     
   };
   
@@ -158,22 +160,26 @@ var App = new Application();
 
   app.propertyColHidden.onclick = function (e) { 
     console.log('checkbox click');
-    // TODO: recuper i della colonna selezionata
-    /*
-    passo l'id della colonna su cui lavorare alla subClass Col per impostarne le proprietà e salvare in options
-
-    */
-    let propertyName = this.getAttribute('property');
+    
     // TODO: propertyValue conterrà il valore di questa proprietà selezionata (es.: in questo caso true/false)
-    console.log(propertyName);
+    // console.log(propertyName);
     
-    app.report.colProperty = {'bgColor': 'red'};
-    // app.report.colProperty = {''};
-    
-    
+    app.report.attribute = { 'hidden': true };
   };
 
   
+  app.handlerColorInput = function (e) { 
+    // console.log(e.target.value);
+    let propName = e.target.getAttribute('property');
+    let propValue = e.target.value;
+    // Se non utilizzo le [] in propName l'oggetto sarà {propName: 'red'} invece di {color: 'red'}
+    app.report.style = { [propName]: propValue };
+  };
+
+  app.fgColorInput.oninput = app.handlerColorInput;
+  // app.fgColorInput.onchange = app.handlerColorInput;
+  app.bgColorInput.oninput = app.handlerColorInput;
+  // app.bgColorInput.onchange = app.handlerColorInput;
 
   /* events */
   
