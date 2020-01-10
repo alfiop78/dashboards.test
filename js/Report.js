@@ -435,37 +435,79 @@ class Report {
 }
 
 class Options {
-  constructor(table, data, cube) {
+  constructor(table) {
     this.table = table;
-    this.data = data;
     this.dialogOption = document.getElementById('columnsOption');
+    // tasto ok nella dialog 
+    this.dialogOption.querySelector('#btnSaveColOption').onclick = this.btnDoneDialogOption.bind(this);
     
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
 
-    this.storage = new ReportStorage();
-    
     this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
-    
-    this.reportOptions = {
-      'id': this.storage.id,
-      'type': 'REPORT',
-      'datamartId': cube.cubeId,
-      'name': 'TMP_'+this.storage.id,
-      'options': this.options
-    }; // questo object verrà salvato in storage
-    console.log(this.reportOptions);
-    
-    // imposto le opzioni di default
-    this.defaultPositioning = cube;
-    // disegno il report con le options di default
-    this.addColumn();
-    this.addPageBy();
-    this.addRows();
-    
+    /**
+     * 'cols':[
+     * 0: {'columnId': 2, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
+     * 1: {'columnId': 1, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
+     * 2: {'columnId': 3, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]} colProperties
+     * ]
+     * 
+     */
+    this.cols = {}; // array di object
+    this.colProperties = {};
+  }
+
+  set datamartData(value) {
+    this.data = value;
+  }
+
+  get datamartData() { return this.data; }
+  
+  set cubeObj(value) {
+    this.cube = value;
+    // quando imposto il cubo imposto anche il posizionamaneto di default
+    this.defaultPositioning = this.cube;
   }
   
+  get cubeObj() { return this.cube;}
+
+  set reportObject(reportId) {
+    
+    this.reportOptions = {
+      'id': reportId,
+      'type': 'REPORT',
+      'datamartId': this.cube.cubeId,
+      'name': 'TMP_'+reportId,
+      'options': this.options
+    }; // questo object verrà salvato in storage
+
+    console.log(this.reportOptions);
+    
+  }
+
+  get reportObject() { return this.reportOptions; }
+
+  set column(value) {
+    this.columnId = value;
+    // this.columnId = ;
+    this.cols[this.columnId] = { 'columnId': this.columnId };
+    console.log(this.cols); 
+  }
+
+  get column() { return this.columnId; }
+  
+  set colProperty(property) {
+    // this.colProperties = value;
+    // this.cols[this.columnId][Object.keys(value)] = Object.values(value)[0];
+    for (let [key, value] of Object.entries(property)) {
+      // console.log(`${key}: ${value}`);
+      this.cols[this.columnId][key] = value;
+    }
+    console.log(this.cols);
+    
+  }
+
   addColumn() {
     Object.keys(this.data[0]).forEach((colName, index) => {
       // console.log(el);
@@ -481,13 +523,22 @@ class Options {
     });
     this.setColsAttribute();
   }
-  handlerColOption = function (e) {
+
+  handlerColOption(e) {
+    // click sulla header della colonna selezionata
     console.log('handlerColOption');
     console.log(this);
     console.log(e.target);
-    this.dialogOption.setAttribute('col', +e.target.getAttribute('col'));
+    // this.dialogOption.setAttribute('columnId', +e.target.getAttribute('col'));
+    this.column = +e.target.getAttribute('col');
     this.dialogOption.showModal();
     
+  }
+
+  btnDoneDialogOption = function (e) {
+    // click tasto OK nella dialog Options per la colonna
+    console.log('btnDoneDialogOption');
+    this.dialogOption.close();
   }
 
   addPageBy() {
@@ -595,13 +646,35 @@ class Options {
 }
 
 class Col extends Options {
-  constructor(table, columnsId) {
+  /**
+   * le modifiche fatte in questa class si riferiscono alla colonna selezionata, andròa creare, all'interno dell'object cols le varie 
+   * opzioni e parametri da inserire successivamente in super.options che a sua volta fanno parte di super.reportOption (il quale sarà salavato in storage)
+   */
+  constructor(table, columnId) {
     super(table);
-    this.columnsId = columnsId;
-  }
-
-  hide() {
-    // TODO: memorizzo il valore della colonna in this.options.cols....
+    this.columnsId = columnId;
+    this.cols = { 'columnId': this.columnsId };
+    this.attribute = { 'attribute': [] };
+    console.log(this.cols);
+    console.log(this.attribute);
+    /**
+     * 'cols':[
+     * 0: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
+     * 1: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
+     * 2: {'columnId': x, 'bgColor': 'red', 'fgColor': 'white', 'attributes': ['hidden', 'order', ecc...]}
+     * ]
+     */
+    
+    
+    // l'array cols conterrà un'object di proprietà 
+    // 'cols' : [0 :
+    //   {'columnId': x},
+    //   {'bgColor': 'red'},
+    //   {'fgColor': 'white'},
+    //   {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
+    //   {'altro (es. gestione del drillthrought, ecc...)'}
+    // ]
+    
   }
 
 }

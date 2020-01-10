@@ -10,14 +10,17 @@ var App = new Application();
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogCubeList: document.getElementById('dialog-cube-list'),
     dialogReportName: document.getElementById('report-name'),
-    btnFact : document.getElementById('mdc-next'),
+    dialogColOption : document.getElementById('columnsOption'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
     btnNewReport: document.getElementById('mdc-new-report'),
     btnSaveReport : document.getElementById('saveReport'),
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
-    btnSaveColOption: document.getElementById('btnSaveColOption')
+    btnSaveColOption: document.getElementById('btnSaveColOption'),
+    table: document.getElementById('table-01'),
+
+    propertyColHidden: document.getElementById('chkbox-hide-col')
     
   };
   
@@ -83,12 +86,28 @@ var App = new Application();
     let cube = cubeStorage.JSONFormat(cubeName);
     console.log(cube.name);
     
-    let table = document.getElementById('table-01');
     
-    app.report = new Options(table, response, cube);
+    // TODO: se app.report è utilizzata solo in questa funzione inizializzarla con let/const
+    app.report = new Options(app.table);
+    app.report.report = cube;
+
+    // imposto il cubo su cui lavorare, di default questo metodo crea anche il positioning
+    app.report.cubeObj = cube;
+
+    // imposto i dati estratti dalla query
+    app.report.datamartData = response;
+    // creo l'object Report che sarà salvato in storage
+    const reportStorage = new ReportStorage();
+    app.report.reportObject = reportStorage.id;
+
+
+    // disegno il report con le options di default
+    app.report.addColumn();
+    app.report.addPageBy();
+    app.report.addRows();
     
     
-    // TODO: queste opzioni le invio alla classe Report con i parametri (table, options); per disegnare il report
+    // TODO: Le opzioni che andrò a creare le invio alla classe Report con i parametri (table, options); per disegnare il report
     // let objReport = new Report(table, options);
     return;
 
@@ -130,12 +149,31 @@ var App = new Application();
   app.btnSaveReport.onclick = function (e) {
     // apro dialog report-name
     app.dialogReportName.showModal();
-  }
+  };
 
   app.btnSaveReportDone.onclick = function (e) {
     app.report.name = document.getElementById('reportName').value;
     app.dialogReportName.close();
-  }
+  };
+
+  app.propertyColHidden.onclick = function (e) { 
+    console.log('checkbox click');
+    // TODO: recuper i della colonna selezionata
+    /*
+    passo l'id della colonna su cui lavorare alla subClass Col per impostarne le proprietà e salvare in options
+
+    */
+    let propertyName = this.getAttribute('property');
+    // TODO: propertyValue conterrà il valore di questa proprietà selezionata (es.: in questo caso true/false)
+    console.log(propertyName);
+    
+    app.report.colProperty = {'bgColor': 'red'};
+    // app.report.colProperty = {''};
+    
+    
+  };
+
+  
 
   /* events */
   

@@ -70,8 +70,16 @@
     </dialog>
 
     <dialog id="columnsOption">
-      <div class="property">
-        <p id="col-hidden">Nascondi</p>
+      <div class="colProperties">
+        <span property="hidden">Mostra/Nascondi</span>
+        <label class="mdc-checkbox">
+          <input id="chkbox-hide-col" type="checkbox" name="name-checkbox" property="hidden"/>
+          <span></span>
+        </label>
+      </div>
+      <div class="colProperties">
+        <span property="...">property</span>
+        
       </div>
 
       <div class="dialog-buttons">
@@ -122,7 +130,7 @@
 
                   <div class="actions">
                     <span class="popupContent"><i id="openCube" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
-                    <span class="popupContent"><i id="saveReport" class="material-icons md-24">folder_open</i><small class="popup">Salva Report</small></span>
+                    <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
                   </div>
 
                   <div class="layout-settings">
