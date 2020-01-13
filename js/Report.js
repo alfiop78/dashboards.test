@@ -42,12 +42,13 @@
 class Report {
   // options = new Object();
 
-  constructor(table) {
+  constructor(table, reportName) {
     // riferimento nel DOM
-    this.table = table;
-    this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
-    this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
+    // this.table = table;
+    // this.tbody = this.table.querySelector('tbody'); // le righe nella table
+    // this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    // this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
+    // this.options = options;
     this.options = {};
   }
 
@@ -432,10 +433,32 @@ class Report {
     }
   }
 
+  applyStyles() {
+    // applico le opzioni impostate al report
+    console.log(this.options);
+    console.log(this.styles);
+
+    
+    for (let columnId in this.options.cols) {
+      console.log(columnId);
+      // leggo le proprietà impostate per questa colonna
+      console.log(this.options.cols[columnId].styles);
+      
+      for (let [property, value] of Object.entries(this.options.cols[columnId].styles)) {
+        console.log(property);
+        console.log(value);
+        this.thead.rows[0].cells[columnId].style[property] = value;
+      }
+    }
+  }
+
+
+
 }
 
-class Options {
+class Options extends Report{
   constructor(table) {
+    super(table);
     this.table = table;
     this.dialogOption = document.getElementById('columnsOption');
     // tasto ok nella dialog 
@@ -448,9 +471,9 @@ class Options {
     
     /**
      * * 'cols':[
-     * 0: {
+     * 2: {
      *    'columnId': 2, 
-     *    'style': {'bgColor': 'red', 'fgColor': 'white'}, // stili css da applicare
+     *    'style': {'backgroundColor': 'red', 'color': 'white'}, // stili css da applicare
      *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
      
      * ]
@@ -466,7 +489,7 @@ class Options {
     this.styles = {};
     this.attributes = {};
 
-    this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
+    // this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
     
     this.report = {}; // conterrà l'object completo che verrà salvato in storage
     
@@ -506,15 +529,12 @@ class Options {
     // verifico se già esiste la key con l'id della colonna da modificare, se non esiste azzero this.styles
     this.columnId = value;
     for (let key in this.cols) {
-      console.log(+key);
-      console.log(this.columnId);
-      
+      // se la colonna selezionata già esiste in this.cols non faccio il reset di styles/attributes per non perdere le selezioni precedenti di questa colonna
+      // se si attiva una colonna non presente in this.cols azzero styles/attributes per il salvataggio "pulito" di questi personalizzazioni
       if (+key !== +this.columnId) {
-        console.log('azzero');
-        
+        // console.log('azzero');
         this.styles = {};
         this.attributes = {};
-        // this.cols[this.columnId] = { 'columnId': this.columnId };
       }
     }
     
@@ -547,16 +567,13 @@ class Options {
 
   set style(style) {
     // imposto attributo, questo ha sempre la coppia key/value
-    
     for (let [key, value] of Object.entries(style)) {
       this.styles[key] = value; 
     }
-    
     console.log(this.styles);
   }
 
   get style() {return this.styles;}
-  
 
   addColumn() {
     Object.keys(this.data[0]).forEach((colName, index) => {
@@ -587,14 +604,20 @@ class Options {
 
   btnDoneDialogOption(e) {
     // click tasto OK nella dialog Options per la colonna
+    // Salvo le impostazioni per questa colonna
     console.log('btnDoneDialogOption');
     this.dialogOption.close();
     this.cols[this.columnId] = { 'columnId': this.columnId };
     this.cols[this.columnId].styles = this.styles;
     this.cols[this.columnId].attributes = this.attributes;
+    // imposto this.options
     this.colOption = this.cols;
-    
+    // TODO: applico le impostazioni sul report
+    super.applyStyles();
+    // this.apply();
   }
+
+  
 
   addPageBy() {
     // aggiungo anche il filtro per ogni colonna
@@ -985,23 +1008,6 @@ class ReportOptions extends Report {
     // console.log(this.report);
     // objStorage.reportConfig = this.report;
   }
-
-  colsAttribute() {
-    // applico gli attributi columns e metrics sulle rispettive colonne
-    console.log('cols attribute');
-    // console.log(this.options.positioning);
-    // console.log(Array.isArray(this.positioning));
-
-    this.positioning.forEach((col, index) => {
-      // console.log(col, index);
-      this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
-      for (let i = 0; i < this.tbody.rows.length; i++) {
-        // console.log(this.tbody.rows[i].cells[index]);
-        this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
-      }
-    });
-  }
-
 
 
   // optionsApply() {
