@@ -91,7 +91,7 @@ var App = new Application();
     
     // TODO: se app.report è utilizzata solo in questa funzione inizializzarla con let/const
     app.report = new Options(app.table);
-    app.report.report = cube;
+    // app.report.report = cube;
 
     // imposto il cubo su cui lavorare, di default questo metodo crea anche il positioning
     app.report.cubeObj = cube;
@@ -100,7 +100,8 @@ var App = new Application();
     app.report.datamartData = response;
     // creo l'object Report che sarà salvato in storage
     const reportStorage = new ReportStorage();
-    app.report.reportObject = reportStorage.id;
+    // app.report.reportObject = reportStorage.id;
+    app.report.report = reportStorage.id;
 
 
     // disegno il report con le options di default
@@ -154,7 +155,9 @@ var App = new Application();
   };
 
   app.btnSaveReportDone.onclick = function (e) {
-    app.report.name = document.getElementById('reportName').value;
+    // TODO: salvo il report e l'oggetto Report, contenente tutte le options, in Storage
+    app.report.reportName = document.getElementById('reportName').value;
+    app.report.saveReport();
     app.dialogReportName.close();
   };
 

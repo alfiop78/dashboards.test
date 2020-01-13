@@ -42,16 +42,16 @@
 class Report {
   // options = new Object();
 
-  constructor(table, reportName) {
+  constructor(table, reportId) {
     // riferimento nel DOM
-    // this.table = table;
-    // this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    // this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
-    // this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
-    // this.options = options;
+    this.table = table;
+    this.tbody = this.table.querySelector('tbody'); // le righe nella table
+    this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
+    // this.reportId = reportId; // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
     this.options = {};
   }
-
+  
   set title(value) {
     console.log(value);
     this.titleCaption = value;
@@ -437,18 +437,44 @@ class Report {
     // applico le opzioni impostate al report
     console.log(this.options);
     console.log(this.styles);
-
     
     for (let columnId in this.options.cols) {
       console.log(columnId);
       // leggo le proprietà impostate per questa colonna
       console.log(this.options.cols[columnId].styles);
-      
-      for (let [property, value] of Object.entries(this.options.cols[columnId].styles)) {
-        console.log(property);
-        console.log(value);
-        this.thead.rows[0].cells[columnId].style[property] = value;
-      }
+      console.log(Object.keys(this.options.cols[columnId].styles).length);
+      // se ci sono delle proprietà impostate in styles le applico al report
+      if (Object.keys(this.options.cols[columnId].styles).length >= 1) {
+        for (let [property, value] of Object.entries(this.options.cols[columnId].styles)) {
+          console.log(property);
+          console.log(value);
+          this.thead.rows[0].cells[columnId].style[property] = value;
+        }
+      } 
+    }
+  }
+  
+  applyAttributes() {
+    // applico le opzioni impostate al report
+    console.log(this.options);
+    
+    for (let columnId in this.options.cols) {
+      console.log(columnId);
+      // leggo le proprietà impostate per questa colonna
+      console.log(this.options.cols[columnId].attributes);
+      console.log(Object.keys(this.options.cols[columnId].attributes).length);
+      // se ci sono delle proprietà impostate in styles le applico al report
+      if (Object.keys(this.options.cols[columnId].attributes).length >= 1) {
+        for (let [property, value] of Object.entries(this.options.cols[columnId].attributes)) {
+          console.log(property);
+          console.log(value);
+          this.thead.rows[0].cells[columnId].setAttribute(property, value);
+          // TODO: applico l'attributo a tutta la colonna
+          for (let i = 0; i < this.tbody.rows.length; i++) {
+            this.tbody.rows[i].cells[columnId].setAttribute(property, value);
+          }
+        }
+      } 
     }
   }
 
@@ -459,14 +485,9 @@ class Report {
 class Options extends Report{
   constructor(table) {
     super(table);
-    this.table = table;
     this.dialogOption = document.getElementById('columnsOption');
     // tasto ok nella dialog 
     this.dialogOption.querySelector('#btnSaveColOption').onclick = this.btnDoneDialogOption.bind(this);
-    
-    this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
-    this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
 
     
     /**
@@ -475,6 +496,12 @@ class Options extends Report{
      *    'columnId': 2, 
      *    'style': {'backgroundColor': 'red', 'color': 'white'}, // stili css da applicare
      *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
+     *    'filters' : {'mode': 'multi/single', ecc...} // pageBy filter
+     * 1: {
+     *    'columnId': 1, 
+     *    'style': {'backgroundColor': 'darkgrey', 'color': 'black'}, // stili css da applicare
+     *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
+     *    'filters' : {'mode' : 'multi/single', ecc..} // pageBy filter
      
      * ]
      * 
@@ -491,7 +518,7 @@ class Options extends Report{
 
     // this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
     
-    this.report = {}; // conterrà l'object completo che verrà salvato in storage
+    this.reportOptions = {}; // conterrà l'object completo che verrà salvato in storage
     
   }
 
@@ -500,30 +527,32 @@ class Options extends Report{
   }
 
   get datamartData() { return this.data; }
+
+  set reportName(value) {
+    this.name = value;
+  }
+  
+  get reportName() { return this.name;}
   
   set cubeObj(value) {
     this.cube = value;
     // quando imposto il cubo imposto anche il posizionamaneto di default
     this.defaultPositioning = this.cube;
+    // imposto anche il datamartId
+    this.datamart = this.cube.cubeId;
   }
+
+  set datamart(id) { this.datamartId = id; }
   
-  get cubeObj() { return this.cube;}
-
-  set reportObject(reportId) {
-    
-    this.reportOptions = {
-      'id': reportId,
-      'type': 'REPORT',
-      'datamartId': this.cube.cubeId,
-      'name': 'TMP_'+reportId,
-      'options': this.options
-    }; // questo object verrà salvato in storage
-
-    console.log(this.reportOptions);
-    
+  get datamart() { return this.datamartId;}
+  
+  get cubeObj() { return this.cube; }
+  
+  set report(value) {
+    this.reportId = value;
   }
 
-  get reportObject() { return this.reportOptions; }
+  get report() { return this.reportId; }
 
   set column(value) {
     // verifico se già esiste la key con l'id della colonna da modificare, se non esiste azzero this.styles
@@ -570,10 +599,22 @@ class Options extends Report{
     for (let [key, value] of Object.entries(style)) {
       this.styles[key] = value; 
     }
-    console.log(this.styles);
+    // console.log(this.styles);
   }
 
-  get style() {return this.styles;}
+  get style() { return this.styles; }
+  
+  saveReport() {
+    this.reportOptions.id = this.report;
+    this.reportOptions.type = "REPORT";
+    this.reportOptions.datamartId = this.datamart;
+    this.reportOptions.name = this.reportName;
+    this.reportOptions.options = this.options;
+
+    this.storage = new ReportStorage();
+    console.log(this.reportOptions);
+    this.storage.save = this.reportOptions;
+  }
 
   addColumn() {
     Object.keys(this.data[0]).forEach((colName, index) => {
@@ -614,6 +655,7 @@ class Options extends Report{
     this.colOption = this.cols;
     // TODO: applico le impostazioni sul report
     super.applyStyles();
+    super.applyAttributes();
     // this.apply();
   }
 
@@ -810,13 +852,6 @@ class ReportOptions extends Report {
     // this.colsAttribute();
     
   }
-
-  set name(value) {
-    this.reportName = value;
-    this.saveOptions();
-  }
-  
-  get name() { return this.reportName;}
 
   set defaultPositioning(cube) {
     /*

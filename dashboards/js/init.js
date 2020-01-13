@@ -26,13 +26,17 @@ var App = new Application();
   app.getDatamarts = function() {
     /*recupero lista reports creati dal localStorage*/
     let ul = document.getElementById('datamartList');
-
-    app.Storage.getCubesList().forEach((cube) => {
-      // console.log(cube);
+    let storage = new ReportStorage();
+    console.log(storage.list());
+    storage.list().forEach((report) => {
+      console.log(report);
       let li = document.createElement('li');
-      li.id = cube.report_id;
-      li.innerHTML = cube.key;
+      li.id = report.reportId;
+      li.setAttribute('datamart-id', report.datamartId);
+      li.setAttribute('label', report.name);
+      li.innerHTML = report.name;
       ul.appendChild(li);
+
       li.onclick = function(e) {
         /*
         1- Inserisco il nome del datamart(Report) selezionato in lyt-report
@@ -41,16 +45,18 @@ var App = new Application();
         app.dialogReports.close();
         // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
         // app.activeSection.setAttribute('associated-datamart', li.innerText);
-        app.activeSection.setAttribute('associated-datamart-id', li.id);
+        app.activeSection.setAttribute('associated-datamart-id', +li.getAttribute('datamart-id'));
 
         // definisco le data-section per ogni oggetto inserito nella pagina
         // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
         // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
-        let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'reportId' : +li.id}];
+        let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'datamartId' : +li.getAttribute('datamart-id')}];
         let report_section_association = arrSections;
         app.pageParams.layoutParams = report_section_association;
       }
-    });
+      
+    })
+    
   };
 
   app.handlerAddObject = function(e) {
@@ -64,17 +70,18 @@ var App = new Application();
 
   app.getDatamart = function() {
     /* Lista dei reportId (FXn) da recuperare*/
-    let reportId;
+    let datamartId;
     document.querySelectorAll('div[associated-datamart-id]').forEach((datamart) => {
       console.log(datamart);
       // TODO: implementare un'object json con la lista dei datamart da recuperare
       // ... utilizzo un solo reportId per Test
-      reportId = +datamart.getAttribute('associated-datamart-id');
+      datamartId = +datamart.getAttribute('associated-datamart-id');
     });
-    console.log(reportId);
+    console.log(datamartId);
     // TODO: apro la pagina con il layout definito e carico il datamart in quella pagina
 
-    location.href = "../layouts/layout_0.html?reportId="+reportId;
+    // location.href = "../layouts/layout_0.html?datamartId="+datamartId;
+    // location.href = "../layouts/layout_0.html?datamartId="+datamartId;
 
   };
 

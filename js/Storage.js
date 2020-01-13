@@ -171,9 +171,27 @@ class ReportStorage extends Storage {
     console.log(this.reportId);
   }
 
+  list() {
+    // this.storageKeys = Object.keys(this.storage);
+    let reports = [];
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "REPORT") {
+        // console.log("cubo : "+key);
+        let reportProperties = {'name' : key, 'reportId' : jsonStorage.id, 'datamartId' : jsonStorage.datamartId};
+        reports.push(reportProperties);
+      }
+    });
+    return reports;
+
+  
+  }
+
   get id() {
     return this.reportId;
   }
+
 }
 
 class DimensionStorage extends Storage {
