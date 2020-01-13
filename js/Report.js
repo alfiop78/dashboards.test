@@ -503,13 +503,21 @@ class Options {
   get reportObject() { return this.reportOptions; }
 
   set column(value) {
+    // verifico se già esiste la key con l'id della colonna da modificare, se non esiste azzero this.styles
     this.columnId = value;
-    // TODO: se viene selezionata la stessa colonna già modificata non azzero this.styles perchè continuerò ad aggiungere/modificare questo object
-    // altrimenti dovrò azzerare this.styles per applicare le proprietà ad un altra colonna
-    console.log(this.styles);
-    console.log(this.options);
+    for (let key in this.cols) {
+      console.log(+key);
+      console.log(this.columnId);
+      
+      if (+key !== +this.columnId) {
+        console.log('azzero');
+        
+        this.styles = {};
+        this.attributes = {};
+        // this.cols[this.columnId] = { 'columnId': this.columnId };
+      }
+    }
     
-    this.cols[this.columnId] = { 'columnId': this.columnId };
     console.log(this.cols);
   }
 
@@ -521,7 +529,7 @@ class Options {
       this.attributes[key] = value;
     }
     // console.log(this.attributes);
-    this.cols[this.columnId]['attributes'] = this.attributes;
+    // this.cols[this.columnId]['attributes'] = this.attributes;
     console.log(this.cols);
   }
 
@@ -538,16 +546,13 @@ class Options {
   get colOption() { return this.options.cols;}
 
   set style(style) {
-    
     // imposto attributo, questo ha sempre la coppia key/value
-    for (let [key, value] of Object.entries(style)) {
-      this.styles[key] = value;
-    }
-    console.log(this.styles);
     
-    this.cols[this.columnId]['styles'] = this.styles;
-
-    console.log(this.cols);
+    for (let [key, value] of Object.entries(style)) {
+      this.styles[key] = value; 
+    }
+    
+    console.log(this.styles);
   }
 
   get style() {return this.styles;}
@@ -572,8 +577,8 @@ class Options {
   handlerColOption(e) {
     // click sulla header della colonna selezionata
     console.log('handlerColOption');
-    console.log(this);
-    console.log(e.target);
+    // console.log(this);
+    // console.log(e.target);
     // this.dialogOption.setAttribute('columnId', +e.target.getAttribute('col'));
     this.column = +e.target.getAttribute('col');
     this.dialogOption.showModal();
@@ -584,6 +589,9 @@ class Options {
     // click tasto OK nella dialog Options per la colonna
     console.log('btnDoneDialogOption');
     this.dialogOption.close();
+    this.cols[this.columnId] = { 'columnId': this.columnId };
+    this.cols[this.columnId].styles = this.styles;
+    this.cols[this.columnId].attributes = this.attributes;
     this.colOption = this.cols;
     
   }
