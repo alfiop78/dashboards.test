@@ -101,7 +101,7 @@ var App = new Application();
     // creo l'object Report che sarà salvato in storage
     const reportStorage = new ReportStorage();
     // app.report.reportObject = reportStorage.id;
-    app.report.report = reportStorage.id;
+    app.report.report = reportStorage.getIdAvailable();
 
 
     // disegno il report con le options di default
@@ -109,36 +109,6 @@ var App = new Application();
     app.report.addPageBy();
     app.report.addRows();
     
-    
-    // TODO: Le opzioni che andrò a creare le invio alla classe Report con i parametri (table, options); per disegnare il report
-    // let objReport = new Report(table, options);
-    return;
-
-    let options =
-      {
-        'cols' : [
-          // {'col': 3, 'attribute': 'hidden'},
-          // {'col': 5, 'attribute': 'hidden'}
-
-        ],
-        'filters' : [
-          {'col': 0, 'attribute': 'multi'}
-          // {'col': 1, 'attribute': 'multi'}
-          // {'col': 3, 'attribute': 'hidden'}
-        ],
-        // metrics : [2] = la terza colonna è una metrica e nella Classe Draw quessta viene automaticamente nascosta nei filtri e formattata in modo diverso dalle colonne
-        'metrics' : report.metricsPosition, // le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-        // 'metrics' : [2], // test
-        'title' : cube.name,
-        'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-      };
-
-    report.createDatalist();
-    report.option = options;
-
-    // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
-    report.draw();
-
   };
 
   app.loadCubes();

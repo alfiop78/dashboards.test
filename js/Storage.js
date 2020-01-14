@@ -33,19 +33,6 @@ class Storage {
     return JSON.parse(window.localStorage.getItem(name));
   }
 
-  getDimensionsList() {
-    // this.storageKeys = Object.keys(this.storage);
-    let dimensions = [];
-    this.storageKeys.forEach((key) => {
-      let jsonStorage = JSON.parse(this.storage.getItem(key));
-      // console.log(jsonStorage);
-      // console.log(jsonStorage[key]);
-      if (jsonStorage[key] && jsonStorage[key].type === "DIMENSION") {
-        dimensions.push(key);
-      }
-    });
-    return dimensions;
-  }
 
 }
 
@@ -114,15 +101,52 @@ class ReportStorage extends Storage {
   // Metodi per leggere/scrivere Report nello Storage
   constructor() {
     super();
-    // ottengo un reportId disponibile
-    this.reportId = 0;
-    this.storageKeys.forEach((key) => {
+    this.id = 0;
+  }
+
+  set reportId(value) {
+    this.id = value;
+  }
+
+  get reportId() { return this.id; }
+  
+  getIdAvailable() {
+    // ottengo il primo Id disponibile
+    console.log(this.storageKeys);
+    this.elements = [];
+    this.storageKeys.forEach((key, index) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+      
       if (jsonStorage.type === "REPORT") {
-        this.reportId = jsonStorage.id+1;
+        // ottengo il numero di elementi PAGE nello storage
+        this.elements.push(jsonStorage.id);
       }
+      
     });
-    console.log(this.reportId);
+    // TODO: cerco il primo id "libero"
+    // ordino l'array
+    this.elements.sort(function (a, b) {
+      console.log(a);
+      console.log(b);
+      // TODO: cosa sono a e b ?
+      return a - b;
+    })
+    
+    // this.pagesElement.sort((a, b) => a - b);
+    for (let i = 0; i < this.elements.length; i++) {
+      // indice 0
+      // se 0 è presente in elements aggiungo una unità
+      // console.log(this.pagesElement.includes(i));
+      
+      if (this.elements.includes(i)) {
+        this.id++;
+        // console.log(this.id);
+      } else {
+        this.id = i;
+      }
+    }
+    return this.id;
   }
 
   set settings(report_id) {
@@ -147,6 +171,28 @@ class ReportStorage extends Storage {
     return JSON.stringify(this.reportParams);
   }
 
+  set options(report_id) {
+    // TODO: da rivedere e ottimizzare
+    this._options = null;
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "REPORT") {
+        // console.log("report : "+key);
+        // console.log(jsonStorage.id);
+        // console.log(report_id);
+        // console.log(jsonStorage.options);
+        if (jsonStorage.id === report_id) {
+          this._options = jsonStorage.options;
+        }
+      }
+    });
+  }
+
+  get options() {
+    return JSON.stringify(this._options);
+  }
+
   list() {
     // this.storageKeys = Object.keys(this.storage);
     let reports = [];
@@ -161,15 +207,28 @@ class ReportStorage extends Storage {
     });
     return reports;
   }
-
-  get id() {
-    return this.reportId;
-  }
-
 }
 
 class DimensionStorage extends Storage {
   // Metodi per leggere/scrivere Dimensioni nello Storage
+  // TODO: da completare in base alla logica di PageStorage
+  constructor() {
+    super();
+    this.id = 0; // default
+  }
+
+  list() {
+    let dimensions = [];
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+      // console.log(jsonStorage[key]);
+      if (jsonStorage[key] && jsonStorage[key].type === "DIMENSION") {
+        dimensions.push(key);
+      }
+    });
+    return dimensions;
+  }
 }
 
 class PageStorage extends Storage {

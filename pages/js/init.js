@@ -16,7 +16,7 @@ var App = new Application();
 
   app.getPages = function () { 
     // visualizzo elenco delle pagine sulla sinistra
-    let ulPages = document.getElementById('pages');
+    // let ulPages = document.getElementById('pages');
     let storage = new PageStorage();
     console.log(storage.list());
     storage.list().forEach((page) => {
@@ -30,15 +30,6 @@ var App = new Application();
       element.setAttribute('data-layout-id', page.layoutId);
       element.setAttribute('data-id', page.id);
       
-      
-      // storage.layoutParams.forEach((params) => {
-      //   // TODO: utilizzare for...of
-      //   for (let i in Object.keys(params)) {
-      //     let propertyName = Object.keys(params)[i];
-      //     let propertyValue = Object.values(params)[i];
-      //     element.setAttribute("data-layout-"+propertyName+"-id", propertyValue);
-      //   }
-      // });
       nav.appendChild(element);
       element.onclick = app.handlerPageSelect;
 
@@ -56,10 +47,12 @@ var App = new Application();
     var url = "ajax/reports.php";
     let reportId = +this.getAttribute('data-id');
     let report = new ReportStorage();
+    console.log(reportId);
+    
     
     report.settings = reportId;
     console.log(report.settings);
-    // return;
+    return;
     let params = "datamart="+report.settings;
     console.log(params);
     // let params = "reportId="+reportId;
@@ -74,7 +67,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, reportId);
+          app.createReport(response, reportId, report.settings);
 
         } else {
 
@@ -108,13 +101,16 @@ var App = new Application();
     let report = new Report(table, reportId);
 
     report.data = response;
-    console.log(report.data);
-
+    // imposto le options recuperate dallo storage tramite il reportId
+    report.settings = reportId;
+    
     report.addColumns();
 
-    // report.addPageBy();
-
     report.addRows();
+
+    report.createDatalist();
+
+    report.draw();
   };
 
   App.init();

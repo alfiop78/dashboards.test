@@ -1,56 +1,29 @@
-/*
-  setting delle opzioni
-
-    cols : Definisce le colonne della tabella su cui applicare le opzioni
-      {'riferimento_colonna' : numero_colonna, 'elemento_da_impostare': attributo}
-      elemento_da_impostare : 'attribute', 'class', ecc....
-
-    filters : Definisce le opzioni per i Filtri da impostare
-      {'riferimento_colonna': numero_colonna, 'elemento_da_impostare': attributo}
-
-    metrics : Array di colonne che devono essere impostate come metriche [5,6,3, ecc...] Le stesse avranno una formattazione
-      diversa in tbody e verranno nascoste nei Params
-
-    rowsNumber : Numero di righe da mostrare prima dell'overflow-y nella tabella
-
-    title : Imposta il titolo della tabella
-
-    inputSearch (boolean)
-      true = viene legato il metodo searchInput all'evento input della input type=search
-      false = viene nascosta la input type=search
-
-    -----------------------------------Esempio ----------------------------
-
-    let options =
-      {
-      'cols' : [
-        {'col': 3, 'attribute': 'hidden'},
-        {'col': 5, 'attribute': 'hidden'}
-
-      ],
-      'filters' : [
-        {'col': 0, 'attribute': 'multi'},
-        {'col': 1, 'attribute': 'multi'},
-        {'col': 3, 'attribute': 'hidden'}
-      ],
-      'metrics' : [6], // TODO: le metriche vanno nascoste nei filtri
-      'title' : 'Free Courtesy',
-      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-      };
-*/
-
 class Report {
-  // options = new Object();
 
   constructor(table, reportId) {
     // riferimento nel DOM
     this.table = table;
+    // tbody posso lavorare solo sul corpo del report
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
-    this.thead = this.table.querySelector('thead'); // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    // thead posso lavorare solo sullheader del report
+    this.thead = this.table.tHead; // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    // sezone in cui sono visualizzati i filtri in page-by
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
-    // this.reportId = reportId; // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
+    document.querySelector('section[params]').hidden = true;
+    // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
+    this.reportId = reportId;
     this.options = {};
   }
+
+  set settings(reportId) {
+    // this._options
+    this.setting = null;
+    this.storage = new ReportStorage();
+    this.storage.options = reportId;
+    this._options = JSON.parse(this.storage.options);
+  }
+
+  get settings() { return this._options;}
 
   set data(value) {
     this._data = value;
@@ -81,35 +54,65 @@ class Report {
   // }
 
   addColumns() {
-    console.log('addCol');
-    
+    // aggiungo le intestazioni di colonna
+    //TODO: qui posso vedere quali sono le opzioni della colonna, se ad esempio la colonna 2 è hidden qui non la creo
     Object.keys(this._data[0]).forEach((col, index) => {
       this.th = document.createElement('th');
       this.th.setAttribute('col', index);
-      this.th.classList.add('dropzone');
-      this.th.setAttribute('options', 'cols');
-      this.th.setAttribute('draggable', true);
+      // this.th.setAttribute('options', 'cols');
       this.th.id = 'col-header-'+index;
       this.th.innerText = col;
       this.table.querySelector('thead tr').appendChild(this.th);
-      // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
+      // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams),
+      // vado a controllare, in this._options.positioning, se l'indice della colonna che sto aggiungendo è una metrica, se true non la inserisco come pageBy
+      // console.log(index);
+      // console.log(this._options.positioning[index]);
+      // console.log(Object.keys(this._options.positioning[index]));
+      for (let [key, colName] of Object.entries(this._options.positioning[index])) {
+        // imposto l'attributo columns/metrics sulle intestazioni di colonna
+        this.th.setAttribute(key, true);
+        // console.log(key);
+        // console.log(value);
+        if (key === "columns") {
+          //TODO: aggiungo il pageBy
+          this.addPageBy(colName, index);
+        }
+      }
     });
   }
 
-  addParams(colName, id) {
-    // aggiungo anche il filtro per ogni colonna
+  // addParams(colName, id) {
+  //   // aggiungo anche il filtro per ogni colonna
+  //   this.tmplParams = document.getElementById('params');
+  //   this.tmplContent = this.tmplParams.content.cloneNode(true);
+  //   this.params = this.tmplContent.querySelector('div[data-param-id]');
+  //   // console.log(this.params);
+  //   this.params.setAttribute('col', id);
+  //   this.params.setAttribute('data-param-id', id);
+  //   this.params.querySelector('ul').id = "datalist-"+id;
+  //   this.params.querySelector('label').setAttribute('for', "param-"+id);
+  //   this.params.querySelector('label').innerText = colName;
+  //   this.params.querySelector('input').id = "param-"+id;
+  //   this.params.querySelector('input').setAttribute('data-param-id', id);
+  //   this.params.querySelector('.elements').setAttribute('col', id);
+
+  //   this.paramsRef.appendChild(this.params);
+  // }
+
+  addPageBy(col, index) {
+    // aggiungo il filtro per ogni colonna, tranne le metriche
+
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div[data-param-id]');
-    // console.log(this.params);
-    this.params.setAttribute('col', id);
-    this.params.setAttribute('data-param-id', id);
-    this.params.querySelector('ul').id = "datalist-"+id;
-    this.params.querySelector('label').setAttribute('for', "param-"+id);
-    this.params.querySelector('label').innerText = colName;
-    this.params.querySelector('input').id = "param-"+id;
-    this.params.querySelector('input').setAttribute('data-param-id', id);
-    this.params.querySelector('.elements').setAttribute('col', id);
+    this.params.setAttribute('col', index);
+    this.params.setAttribute('data-param-id', index);
+    this.params.querySelector('ul').id = "datalist-" + index;
+    this.params.querySelector('label').setAttribute('for', "param-"+index);
+    this.params.querySelector('label').innerText = col;
+    this.params.querySelector('input').id = "param-"+index;
+    this.params.querySelector('input').setAttribute('data-param-id', index);
+    this.params.querySelector('.elements').setAttribute('col', index);
 
     this.paramsRef.appendChild(this.params);
   }
@@ -179,10 +182,10 @@ class Report {
   }
 
   handlerSelect(e) {
-    // console.log(this);
-    // // this = Draw
     // console.log('handlerSelect');
-
+    // console.log(e.target);
+    // console.log(e.path);
+    
     let parent = e.path[5]; // md-field
     let liElement = e.path[1].querySelector('li');
     let input = parent.querySelector('input');
@@ -203,56 +206,62 @@ class Report {
     // creo le option nella datalist in base a quello che 'vedo' nella table
     // console.log(this.table.rows.length);
 
-    let arrColumns = [];
+    this.arrColumns = [];
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
-      // per ogni colonna ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
-      // console.log(this.tbody.rows[i].cells[c]);
-      // let arr = [c, this.tbody.rows[i].cells[c].innerHTML];
-      let arrCols = [];
+      // se questa è una columns (quindi non è una metrica) aggiungo gli elementi in pageby
+      if (this.tbody.rows[0].cells[c].hasAttribute('columns')) {
+        
+        // per ogni colonna con attributo columns (quindi escludo le metriche) ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
+        this.arrCols = [];
+        for (let r = 0; r < this.tbody.rows.length; r++) {
+          // console.log(this.tbody.rows[r].cells[c]);
+          this.arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
+        }
+        // ottengo gli elementi che vedo nella table
+        // console.log(this.arrCols);
+        
+        this.arrColumns.push(this.arrCols);
+        console.log(this.arrColumns);
 
-      for (let r = 0; r < this.tbody.rows.length; r++) {
-        arrCols.push(this.tbody.rows[r].cells[c].innerHTML);
+        // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
+        /*
+        callback
+          Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
+        element
+          The current element being processed in the array.
+        index Optional
+          The index of the current element being processed in the array.
+        array Optional
+          The array filter was called upon.
+        thisArg Optional
+          Value to use as this when executing callback.
+        */
+        this.arrayUnique = this.arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
+        // console.log(this.arrayUnique);
+        this.datalist = document.getElementById('datalist-'+c);
+        this.arrayUnique.forEach((el, i) => {
+          this.elContent = document.createElement('div');
+          this.elContent.classList.add('elementContent');
+          this.datalist.appendChild(this.elContent);
+          this.element = document.createElement('div');
+          this.element.classList.add('element');
+          this.elContent.appendChild(this.element);
+          this.iconDone = document.createElement('i');
+          this.iconDone.innerText = 'done';
+          // iconDone.hidden = true; // default non è multiselezione
+          this.iconDone.classList.add("material-icons", "md-18");
+
+          this.li = document.createElement('li');
+          this.li.id = i;
+          this.li.innerHTML = el.toUpperCase().trim();
+          this.li.setAttribute('label', el.toUpperCase().trim());
+          this.element.appendChild(this.li);
+          this.element.appendChild(this.iconDone);
+        });
       }
-      // ottengo gli elementi che vedo nella table
-      arrColumns.push(arrCols);
-      // console.log(arrColumns);
-
-      // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
-      /*
-      callback
-        Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
-      element
-        The current element being processed in the array.
-      index Optional
-        The index of the current element being processed in the array.
-      array Optional
-        The array filter was called upon.
-      thisArg Optional
-        Value to use as this when executing callback.
-      */
-      let arrayUnique = arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
-      // console.log(arrayUnique);
-      this.datalist = document.getElementById('datalist-'+c);
-      arrayUnique.forEach((el, i) => {
-        let elContent = document.createElement('div');
-        elContent.classList.add('elementContent');
-        this.datalist.appendChild(elContent);
-        let element = document.createElement('div');
-        element.classList.add('element');
-        elContent.appendChild(element);
-        let iconDone = document.createElement('i');
-        iconDone.innerText = 'done';
-        // iconDone.hidden = true; // default non è multiselezione
-        iconDone.classList.add("material-icons", "md-18");
-
-        this.li = document.createElement('li');
-        this.li.id = i;
-        this.li.innerHTML = el.toUpperCase().trim();
-        this.li.setAttribute('label', el.toUpperCase().trim());
-        element.appendChild(this.li);
-        element.appendChild(iconDone);
-      });
+      
+      
     }
 
   }
@@ -264,7 +273,7 @@ class Report {
       el.onclick = this.showFilters.bind(this);
       el.onblur = function(e) {e.target.removeAttribute('placeholder');};
       // elementi presenti nei Filtri standard
-      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((liElement) => {liElement.onclick = this.handlerSelect.bind(this);});
+      el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((element) => {element.onclick = this.handlerSelect.bind(this);});
       // elementi presenti nei Filtri Multiselect
       el.parentElement.querySelectorAll('.elements[multi] > ul div.element').forEach((liElement) => {liElement.onclick = this.handlerSelectMulti.bind(liElement);});
       // tasto OK all'interno dei params in multiselect
@@ -290,18 +299,25 @@ class Report {
   // }
   
   addRows() {
+    // TODO: provare questi metodi: https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/insertRow
     // console.log(rowValues);
     for (let i in this._data) {
       this.tr = document.createElement('tr');
       this.tr.setAttribute('row', 'body');
       this.tbody.appendChild(this.tr);
-      console.log(this._data[i]);
+      // console.log(this._data[i]);
       Array.from(Object.values(this._data[i])).forEach((col, index) => { 
         this.td = document.createElement('td');
         this.td.setAttribute('col', index);
-        this.td.setAttribute('options', 'cols');
+        // this.td.setAttribute('options', 'cols');
         (!col) ? console.log('NULL'): this.td.innerHTML = col.toUpperCase().trim();
         this.tr.appendChild(this.td);
+        // tramite il positioning imposto l'attributo columns/metrics sulle celle
+        for (let [key, colName] of Object.entries(this._options.positioning[index])) {
+          // imposto l'attributo columns/metrics sulle intestazioni di colonna
+          this.td.setAttribute(key, true);
+        }
+
       });
     }
   }
@@ -517,6 +533,40 @@ class Report {
     }
   }
 
+  test() {
+    // applico le opzioni
+    for (let columnId in this._options.cols) {
+      console.log(columnId);
+      // leggo le proprietà impostate per questa colonna
+      console.log(this._options.cols[columnId].styles);
+      console.log(Object.keys(this._options.cols[columnId].styles).length);
+      // se ci sono delle proprietà impostate in styles le applico al report
+      if (Object.keys(this._options.cols[columnId].styles).length >= 1) {
+        for (let [property, value] of Object.entries(this._options.cols[columnId].styles)) {
+          // console.log(property);
+          // console.log(value);
+          // console.log(this.thead);
+          console.log(this.table.tBodies);
+          console.log(this.tbody);
+          
+          this.thead.rows[0].cells[columnId].style[property] = value;
+        }
+      } 
+    }
+  }
+
+  draw() {
+    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
+    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
+    this.eventParams();
+    this.info();
+    this.test();
+    // visualizzo il page-by
+    document.querySelector('section[params]').hidden = false;
+    // visualizzo la table
+    this.table.hidden = false;
+  }
+
 
 
 }
@@ -698,13 +748,10 @@ class Options extends Report{
     // this.apply();
   }
 
-  
-
   addPageBy() {
     // aggiungo anche il filtro per ogni colonna
     Object.keys(this.data[0]).forEach((colName, index) => {
       // console.log(Object.keys(this.positioning[index])[0]);
-      // se questa colonna è una metrica non creo il filtro in pageBy
       
       if (Object.keys(this.positioning[index])[0] !== "metrics") {
         this.tmplParams = document.getElementById('params');
