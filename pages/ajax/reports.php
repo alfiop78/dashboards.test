@@ -11,12 +11,9 @@ $q = new Queries();
 $datamart = json_decode($_POST['datamart']); // object
 // var_dump($datamart);
 // var_dump($datamart->{'id'});
-// var_dump($datamart->{'positioning'});
 $result = $q->getDatamartData($datamart);
+// var_dump($result);
 // return;
-//
-// $reportId = filter_input(INPUT_POST, 'reportId');
-// $result = $q->getDatamartData($reportId);
 
 ob_clean();
 echo json_encode($result, JSON_FORCE_OBJECT);

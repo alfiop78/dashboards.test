@@ -51,6 +51,12 @@ class Report {
     // this.reportId = reportId; // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
     this.options = {};
   }
+
+  set data(value) {
+    this._data = value;
+  }
+
+  get data() { return this._data;}
   
   set title(value) {
     console.log(value);
@@ -62,16 +68,32 @@ class Report {
 
   get title() { return this.titleCaption; }
 
-  addColumn(colName, index) {
-    this.th = document.createElement('th');
-    this.th.setAttribute('col', index);
-    this.th.classList.add('dropzone');
-    this.th.setAttribute('options', 'cols');
-    this.th.setAttribute('draggable', true);
-    this.th.id = 'col-header-'+index;
-    this.th.innerText = colName;
-    this.table.querySelector('thead tr').appendChild(this.th);
-    // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
+  // addColumn(colName, index) {
+  //   this.th = document.createElement('th');
+  //   this.th.setAttribute('col', index);
+  //   this.th.classList.add('dropzone');
+  //   this.th.setAttribute('options', 'cols');
+  //   this.th.setAttribute('draggable', true);
+  //   this.th.id = 'col-header-'+index;
+  //   this.th.innerText = colName;
+  //   this.table.querySelector('thead tr').appendChild(this.th);
+  //   // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
+  // }
+
+  addColumns() {
+    console.log('addCol');
+    
+    Object.keys(this._data[0]).forEach((col, index) => {
+      this.th = document.createElement('th');
+      this.th.setAttribute('col', index);
+      this.th.classList.add('dropzone');
+      this.th.setAttribute('options', 'cols');
+      this.th.setAttribute('draggable', true);
+      this.th.id = 'col-header-'+index;
+      this.th.innerText = col;
+      this.table.querySelector('thead tr').appendChild(this.th);
+      // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
+    });
   }
 
   addParams(colName, id) {
@@ -250,21 +272,38 @@ class Report {
     });
   }
 
-  addRow(rowValues) {
-    // console.log(rowValues);
-    this.tr = document.createElement('tr');
-    this.tr.setAttribute('row', 'body');
-    this.tbody.appendChild(this.tr);
+  // addRow(rowValues) {
+  //   // console.log(rowValues);
+  //   this.tr = document.createElement('tr');
+  //   this.tr.setAttribute('row', 'body');
+  //   this.tbody.appendChild(this.tr);
 
-    // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
-    rowValues.forEach((el, i) => {
-      // el contiene il valore della cella
-      this.td = document.createElement('td');
-      this.td.setAttribute('col', i);
-      this.td.setAttribute('options', 'cols');
-      (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
-      this.tr.appendChild(this.td);
-    });
+  //   // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
+  //   rowValues.forEach((el, i) => {
+  //     // el contiene il valore della cella
+  //     this.td = document.createElement('td');
+  //     this.td.setAttribute('col', i);
+  //     this.td.setAttribute('options', 'cols');
+  //     (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
+  //     this.tr.appendChild(this.td);
+  //   });
+  // }
+  
+  addRows() {
+    // console.log(rowValues);
+    for (let i in this._data) {
+      this.tr = document.createElement('tr');
+      this.tr.setAttribute('row', 'body');
+      this.tbody.appendChild(this.tr);
+      console.log(this._data[i]);
+      Array.from(Object.values(this._data[i])).forEach((col, index) => { 
+        this.td = document.createElement('td');
+        this.td.setAttribute('col', index);
+        this.td.setAttribute('options', 'cols');
+        (!col) ? console.log('NULL'): this.td.innerHTML = col.toUpperCase().trim();
+        this.tr.appendChild(this.td);
+      });
+    }
   }
 
   search() {

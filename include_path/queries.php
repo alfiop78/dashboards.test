@@ -41,20 +41,27 @@ class Queries {
   public function getDatamartData($datamart) {
     $l = new ConnectDB("decisyon_cache");
 
-    $datamartName = "FX".$datamart->{'id'};
-    foreach ($datamart->{'positioning'} as $key => $value) {
+    $datamartName = "FX".$datamart->{'datamartId'};
+    $options = $datamart->{'options'};
+    
+    // return $options->{'positioning'};
+    foreach ($options->{'positioning'} as $key => $value) {
       // echo $key;
       foreach ($value as $column) {
         $this->_SELECT[] = "`".$column."`";
       }
     }
-    // var_dump($this->_SELECT);
+    var_dump($this->_SELECT);
+    
     $fields = implode(', ', $this->_SELECT);
-    $query = "SELECT $fields FROM $datamartName";
+    // var_dump($fields);
+    
+    $sql = "SELECT $fields FROM $datamartName";
     // echo $sql;
+    // return;
 
     // var_dump($datamartName);
-    return $l->getResultAssoc($query);
+    return $l->getResultAssoc($sql);
   }
 
 

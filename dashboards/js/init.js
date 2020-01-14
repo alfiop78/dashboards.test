@@ -9,13 +9,14 @@ var App = new Application();
   var app = {
     // Cube : new Cube(),
     Draw : null,
-    Storage : new Storage(),
+    Storage: new Storage(),
+    btnCreatePage : document.getElementById('mdc-create-page'),
     report_id : 0,
-    reports : new Object(),
+    reports : {},
     dialogReports : document.getElementById('dialog-reports'),
     activeSection : null, // indica la sezione dove si è cliccato per l'inserimento di un oggetto nella pagina
     layoutId : null,
-    pageParams : new Object()
+    pageParams : {}
 
   };
 
@@ -23,13 +24,13 @@ var App = new Application();
 
   App.init();
 
-  app.getDatamarts = function() {
+  app.getReports = function() {
     /*recupero lista reports creati dal localStorage*/
     let ul = document.getElementById('datamartList');
     let storage = new ReportStorage();
-    console.log(storage.list());
+    // console.log(storage.list());
     storage.list().forEach((report) => {
-      console.log(report);
+      // console.log(report);
       let li = document.createElement('li');
       li.id = report.reportId;
       li.setAttribute('datamart-id', report.datamartId);
@@ -39,8 +40,10 @@ var App = new Application();
 
       li.onclick = function(e) {
         /*
-        1- Inserisco il nome del datamart(Report) selezionato in lyt-report
+        1- Inserisco il nome del Report selezionato in lyt-report
         */
+        console.log(app.activeSection);
+        
         app.activeSection.querySelector('h5').innerText = li.innerHTML;
         app.dialogReports.close();
         // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
@@ -50,7 +53,13 @@ var App = new Application();
         // definisco le data-section per ogni oggetto inserito nella pagina
         // il data-section identifica la sezione in cui deve esseree inserito il report/chart/indicator
         // ... lo stesso andrà a finire nell'object in localStorage nella function mdc-create-page.onclick
-        let arrSections = [{'sectionId' : +app.activeSection.getAttribute('data-section'), 'datamartId' : +li.getAttribute('datamart-id')}];
+        let arrSections = [
+          {
+            'sectionId': +app.activeSection.getAttribute('data-section'),
+            'reportId': +li.id,
+            'datamartId': +li.getAttribute('datamart-id')
+          }
+        ];
         let report_section_association = arrSections;
         app.pageParams.layoutParams = report_section_association;
       }
@@ -62,6 +71,7 @@ var App = new Application();
   app.handlerAddObject = function(e) {
     /*
     Apro la dialog per selezionare l'oggetto (report o grafico, indicatori, ecc...) da incorporare nella pagina
+    Imposto app.activeSection, la sezione deve verrà inserito l'oggetto (report, grafico, ecc...)
     */
     console.log(this);
     app.activeSection = e.path[2];
@@ -102,31 +112,26 @@ var App = new Application();
 
   };
 
-  document.getElementById('mdc-create-page').onclick = function(e) {
+  app.btnCreatePage.onclick = function(e) {
     /*
     1 - Memorizzo in localStorage un id per la pagina con all'interno i reports in essa contenuti
     */
     let pageTitle = document.getElementById('pageTitle').value;
-    let pageId;
-    // TODO: verifico quante pagina ci sono in localStorage ed assegno l'id successivo a quest a pagina
-    // console.log(window.localStorage);
-    // recupero i nomi degli oggetti contenuto nello storage
-    let objStorage = Object.keys(window.localStorage);
-    objStorage.forEach((item) => {
-      // verifico, per ogni oggetto se è presente il type : "PAGE"
-      // console.log(item);
-      // ottengo un JSON dallo storage
-      let storageItem = JSON.parse(window.localStorage.getItem(item));
-      // console.log(storageItem.type);
-      if (storageItem.page) {pageId = storageItem.pageId+1;}
-    });
-
-    app.pageParams.pageId = pageId;
+    // let pageId;
+    let pageStorage = new PageStorage();
+    // console.log(pageStorage.getIdAvailable());
+    let pageId = pageStorage.getIdAvailable();
+    console.log(pageId);
+    
+    
+    app.pageParams.id = pageId;
     app.pageParams.layoutId = app.layoutId;
     app.pageParams.type = "PAGE";
-    window.localStorage[pageTitle] = JSON.stringify(app.pageParams);
+    app.pageParams.name = pageTitle;
+    // return;
+    pageStorage.save = app.pageParams;
     // apro la pagina del dashboard finale
-    window.location.href = "../pages/";
+    // window.location.href = "../pages/";
 
   };
 
@@ -194,60 +199,60 @@ var App = new Application();
   // event click su preview-layout
   document.querySelectorAll('.preview-layout').forEach((layout) => {layout.onclick = app.handlerPreviewLayoutSelected;});
 
-  app.getDatamarts();
+  app.getReports();
 
-  app.createReport = function(response) {
-    console.log('create report');
+  // app.createReport = function(response) {
+  //   console.log('create report');
 
-    let table = document.getElementById('table-01');
+  //   let table = document.getElementById('table-01');
 
-    console.log(response);
-    // return;
+  //   console.log(response);
+  //   // return;
 
-    let options =
-      {
-      'cols' : [
-        // {'col': 3, 'attribute': 'hidden'},
-        // {'col': 5, 'attribute': 'hidden'}
+  //   let options =
+  //     {
+  //     'cols' : [
+  //       // {'col': 3, 'attribute': 'hidden'},
+  //       // {'col': 5, 'attribute': 'hidden'}
 
-      ],
-      'filters' : [
-        {'col': 0, 'attribute': 'multi'},
-        // {'col': 1, 'attribute': 'multi'},
-        {'col': 3, 'attribute': 'hidden'}
-      ],
-      'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
-      // 'title' : app.Cube.cube.name,
-      'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
-      };
-    app.Draw = new Draw(table, options);
-    // console.log(app.Draw);
-    // Opzione 1 - aggiungo tutte le colonne della query
-    Object.keys(response[0]).forEach((el, i) => {
-      // console.log('col:'+el);
-      app.Draw.addColumn(el, i);
-      // aggiungo un filtro per ogni colonna della tabella
-      app.Draw.addParams(el, i);
-    });
-    // Opzione 2 - aggiungo manualmetne le colonne
-    // app.Draw.addColumn('ID');
-    // app.Draw.addColumn('Dealer');
+  //     ],
+  //     'filters' : [
+  //       {'col': 0, 'attribute': 'multi'},
+  //       // {'col': 1, 'attribute': 'multi'},
+  //       {'col': 3, 'attribute': 'hidden'}
+  //     ],
+  //     'metrics' : [2,3], // TODO: le metriche vanno nascoste nei filtri e formattate in modo diverso nella table
+  //     // 'title' : app.Cube.cube.name,
+  //     'inputSearch' : true // visualizzo e lego evento input alla casella di ricerca, in basso.
+  //     };
+  //   app.Draw = new Draw(table, options);
+  //   // console.log(app.Draw);
+  //   // Opzione 1 - aggiungo tutte le colonne della query
+  //   Object.keys(response[0]).forEach((el, i) => {
+  //     // console.log('col:'+el);
+  //     app.Draw.addColumn(el, i);
+  //     // aggiungo un filtro per ogni colonna della tabella
+  //     app.Draw.addParams(el, i);
+  //   });
+  //   // Opzione 2 - aggiungo manualmetne le colonne
+  //   // app.Draw.addColumn('ID');
+  //   // app.Draw.addColumn('Dealer');
 
-    // aggiungo le righe
-    let arrParams = [];
-    for (let i in response) {
-      // console.log(Object.values(response[i]));
-      // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
-      app.Draw.addRow(Object.values(response[i]));
-      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-      // Opzione 2 - Aggiunta colonne manualmente
-      // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
-    }
+  //   // aggiungo le righe
+  //   let arrParams = [];
+  //   for (let i in response) {
+  //     // console.log(Object.values(response[i]));
+  //     // Opzione 1 - Aggiunta colonne automaticamente (in base alla query)
+  //     app.Draw.addRow(Object.values(response[i]));
+  //     // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
+  //     // Opzione 2 - Aggiunta colonne manualmente
+  //     // app.Draw.addRow([response[i].id, response[i].descrizione, response[i].versioneDMS, response[i].CodDealerCM]);
+  //   }
 
-    app.Draw.createDatalist();
-    // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
-    app.Draw.draw();
+  //   app.Draw.createDatalist();
+  //   // in draw vengono impostate le option e gli eventi sui filtri semplici e multi selezione
+  //   app.Draw.draw();
 
-  };
+  // };
 
 })();
