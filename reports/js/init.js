@@ -115,6 +115,8 @@ var App = new Application();
     app.report.data = response;
     // aggiungo le colonne
     app.report.addColumns();
+    // aggiungo le righe del report
+    app.report.addRows();
     
     /* test 2*/
     

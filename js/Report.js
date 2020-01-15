@@ -12,7 +12,7 @@ class Report {
     document.querySelector('section[params]').hidden = true;
     // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
     this.reportId = reportId;
-    this.options = {};
+    // this._options = {};
   }
 
   set settings(reportId) {
@@ -497,17 +497,17 @@ class Report {
 
   applyStyles() {
     // applico le opzioni impostate al report
-    console.log(this.options);
+    console.log(this._options);
     console.log(this.styles);
     
-    for (let columnId in this.options.cols) {
+    for (let columnId in this._options.cols) {
       console.log(columnId);
       // leggo le proprietà impostate per questa colonna
-      console.log(this.options.cols[columnId].styles);
-      console.log(Object.keys(this.options.cols[columnId].styles).length);
+      console.log(this._options.cols[columnId].styles);
+      console.log(Object.keys(this._options.cols[columnId].styles).length);
       // se ci sono delle proprietà impostate in styles le applico al report
-      if (Object.keys(this.options.cols[columnId].styles).length >= 1) {
-        for (let [property, value] of Object.entries(this.options.cols[columnId].styles)) {
+      if (Object.keys(this._options.cols[columnId].styles).length >= 1) {
+        for (let [property, value] of Object.entries(this._options.cols[columnId].styles)) {
           console.log(property);
           console.log(value);
           this.thead.rows[0].cells[columnId].style[property] = value;
@@ -518,16 +518,16 @@ class Report {
   
   applyAttributes() {
     // applico le opzioni impostate al report
-    console.log(this.options);
+    console.log(this._options);
     
-    for (let columnId in this.options.cols) {
+    for (let columnId in this._options.cols) {
       console.log(columnId);
       // leggo le proprietà impostate per questa colonna
-      console.log(this.options.cols[columnId].attributes);
-      console.log(Object.keys(this.options.cols[columnId].attributes).length);
+      console.log(this._options.cols[columnId].attributes);
+      console.log(Object.keys(this._options.cols[columnId].attributes).length);
       // se ci sono delle proprietà impostate in styles le applico al report
-      if (Object.keys(this.options.cols[columnId].attributes).length >= 1) {
-        for (let [property, value] of Object.entries(this.options.cols[columnId].attributes)) {
+      if (Object.keys(this._options.cols[columnId].attributes).length >= 1) {
+        for (let [property, value] of Object.entries(this._options.cols[columnId].attributes)) {
           console.log(property);
           console.log(value);
           this.thead.rows[0].cells[columnId].setAttribute(property, value);
@@ -637,17 +637,11 @@ class Options extends Report{
     this.styles = {};
     this.attributes = {};
 
-    // this.options = {}; // conterà le opzioni all'interno dell'oggetto this.report
+    // this._options = {}; // conterà le opzioni all'interno dell'oggetto this.report
     
     this.reportOptions = {}; // conterrà l'object completo che verrà salvato in storage
     
   }
-
-  // set datamartData(value) {
-  //   this.data = value;
-  // }
-
-  // get datamartData() { return this.data; }
 
   set reportName(value) {
     this.name = value;
@@ -708,12 +702,12 @@ class Options extends Report{
   set colOption(option) {
     console.log(option);
     
-    this.options.cols = option;
-    console.log(this.options);
+    this._options.cols = option;
+    console.log(this._options);
     
   }
 
-  get colOption() { return this.options.cols;}
+  get colOption() { return this._options.cols;}
 
   set style(style) {
     // imposto attributo, questo ha sempre la coppia key/value
@@ -730,7 +724,7 @@ class Options extends Report{
     this.reportOptions.type = "REPORT";
     this.reportOptions.datamartId = this.datamart;
     this.reportOptions.name = this.reportName;
-    this.reportOptions.options = this.options;
+    this.reportOptions.options = this._options;
 
     this.storage = new ReportStorage();
     console.log(this.reportOptions);
@@ -781,7 +775,7 @@ class Options extends Report{
     this.cols[this.columnId] = { 'columnId': this.columnId };
     this.cols[this.columnId].styles = this.styles;
     this.cols[this.columnId].attributes = this.attributes;
-    // imposto this.options
+    // imposto this._options
     this.colOption = this.cols;
     // TODO: applico le impostazioni sul report
     super.applyStyles();
@@ -808,44 +802,21 @@ class Options extends Report{
     
   }
 
-  addRows() {
-    for (let i in this.data) {
-      // console.log(rowValues);
-      this.tr = document.createElement('tr');
-      this.tr.setAttribute('row', 'body');
-      this.tbody.appendChild(this.tr);
-  
-      // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
-      Object.values(this.data[i]).forEach((el, i) => {
-        // el contiene il valore della cella
-        this.td = document.createElement('td');
-        this.td.setAttribute('col', i);
-        this.td.setAttribute('options', 'cols');
-        this.td.setAttribute(Object.keys(this.positioning[i])[0], true);
-        
-        (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
-        this.tr.appendChild(this.td);
-      });
-      
-    }
-    
-  }
+  // setColsAttribute() {
+  //   // applico gli attributi columns e metrics sulle rispettive colonne
+  //   console.log('cols attribute');
+  //   // console.log(this._options.positioning);
+  //   // console.log(Array.isArray(this.positioning));
 
-  setColsAttribute() {
-    // applico gli attributi columns e metrics sulle rispettive colonne
-    console.log('cols attribute');
-    // console.log(this.options.positioning);
-    // console.log(Array.isArray(this.positioning));
-
-    this.positioning.forEach((col, index) => {
-      // console.log(col, index);
-      this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
-      for (let i = 0; i < this.tbody.rows.length; i++) {
-        // console.log(this.tbody.rows[i].cells[index]);
-        this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
-      }
-    });
-  }
+  //   this.positioning.forEach((col, index) => {
+  //     // console.log(col, index);
+  //     this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
+  //     for (let i = 0; i < this.tbody.rows.length; i++) {
+  //       // console.log(this.tbody.rows[i].cells[index]);
+  //       this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
+  //     }
+  //   });
+  // }
   
 
   set defaultPositioning(cube) {
