@@ -70,27 +70,63 @@
     </dialog>
 
     <dialog id="columnsOption">
-      <div class="colProperties">
-        <span>Mostra/Nascondi</span>
-        <label class="mdc-checkbox">
-          <input id="chkbox-hide-col" type="checkbox" name="name-checkbox" property="hidden"/>
-          <span></span>
-        </label>
-      </div>
-      <div class="colProperties">
-        <span>Colore</span>
-        <input type="color" id="fgColor" name="fgColor" property="color" value="#e66465">
-        <label for="fgColor">Colore testo</label>
-        <input type="color" id="bgColor" name="bgColor" property="backgroundColor" value="#000000">
-        <label for="bgColor">Colore sfondo</label>
+      <section class="dialogTitle">Impostazioni per la colonna <span id="colName"></span></section>
+      <div class="dialogContent">
+        <div class="colProperties">
+          <span>Visualizzazione</span>
+          <label class="mdc-checkbox">
+            <input id="chkbox-hide-col" type="checkbox" name="name-checkbox" property="hidden"/>
+            <span>Nascondi</span>
+          </label>
+        </div>
+
+        <div class="colProperties">
+          <span>Font</span>
+          <div class="properties">
+            <i id="font-size" class="material-icons md-18" property="fontSize" value="">info</i>
+          </div>
+        </div>
+
+        <div class="colProperties">
+          <span>Allineamento</span>
+          <div class="properties">
+            <i id="align-left" class="material-icons md-18" property="textAlign" value="left">format_align_left</i>
+            <i id="align-center" class="material-icons md-18" property="textAlign" value="center">format_align_center</i>
+            <i id="align-right" class="material-icons md-18" property="textAlign" value="right">format_align_right</i>
+          </div>
+        </div>
+
+        <div class="colProperties">
+          <span>Formattazione</span>
+          <div class="properties">
+            <i id="format-bold" class="material-icons md-18" property="fontWeight" value="bold">format_bold</i>
+            <i id="format-italic" class="material-icons md-18" property="fontStyle" value="italic">format_italic</i>
+          </div>
+        </div>
+
+        <div class="colProperties">
+          <div class="cell-full md-field">
+            <input type="color" id="fgColor" name="fgColor" property="color" value="#e66465">
+            <label for="fgColor" class="has-content">Colore testo</label>
+          </div>
+          <div class="cell-full md-field">
+            <input type="color" id="bgColor" name="bgColor" property="backgroundColor" value="#000000">
+            <label for="bgColor" class="has-content">Colore sfondo</label>
+          </div>
+          
+          <label class="mdc-checkbox">
+            <input id="chkbox-column-color" type="checkbox" name="columnColor" property="color backgroundColor"/>
+            <span>Applica a tutta la colonna</span>
+          </label>
+          
+        </div>
         
-        
+  
+        <div class="dialog-buttons">
+          <button id="btnSaveColOption" type="button" name="done" class="md-button">OK</button>
+        </div>
       </div>
       
-
-      <div class="dialog-buttons">
-        <button id="btnSaveColOption" type="button" name="done" class="md-button">OK</button>
-      </div>
     </dialog>
 
 
@@ -155,14 +191,13 @@
                               </section>
                             </div>
                           </div>
-                          <span class="popupContent"><i id="test" class="material-icons md-18">settings</i><small class="popup">Impostazioni</small></span>
+                          <span class="popupContent"><i id="pageby-settings" class="material-icons md-18">settings</i><small class="popup">Impostazioni</small></span>
                         </template>
 
                       </div>
 
                       <section class="settings" paramSettings>
-                        <i class="material-icons">settings</i>
-                        <i class="material-icons">info</i>
+                        <span class="popupContent"><i id="head-settings" class="material-icons md-18">settings</i><small class="popup">PageBy</small></span>
                       </section>
 
                     </section>
@@ -180,7 +215,7 @@
                           <tfoot>
                             <tr><td>Total</td></tr>
                             <tr>
-                              <td>
+                              <td inputSearch>
                                 <div class="cell-full md-field">
                                   <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
                                   <label for="search">Ricerca</label>
@@ -202,11 +237,8 @@
                       </section>
 
                       <section class="settings" tableSettings>
-                        <i class="material-icons">info</i>
-                        <i class="material-icons">done</i>
-                        <i class="material-icons">settings</i>
-                        <i class="material-icons">info</i>
-                        <i class="material-icons">info</i>
+                        <span class="popupContent"><i id="body-settings" class="material-icons md-18">settings</i><small class="popup">Body Report</small></span>
+                        <span class="popupContent"><i id="other-settings" class="material-icons md-18">line_style</i><small class="popup">Altre impostazioni</small></span>
                       </section>
                     </section>
 

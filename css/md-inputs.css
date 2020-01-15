@@ -207,6 +207,8 @@ label[for]{color:#999; left: 4px; margin:0;font-weight:normal;position:absolute;
 
 .cell-full input:not([type=radio]){width:100%;}
 
+.cell-full input[type="color"] {width: auto;background-color: transparent;border: none;}
+
 .grid-row{display: grid; grid-template-rows: auto;grid-row-gap: 8px;}
 .grid-row.dateTemplate{display: grid;grid-row-gap: 16px;margin-top: 16px;}
 
@@ -413,7 +415,7 @@ input:invalid ~ label.has-content ~ span{visibility: visible;}
   /* .md-field{min-width: 300px;} */
 
   .md-field[date]{min-width: 190px;}
-  dialog .md-field{min-width: 150px;}
+  /* dialog .md-field{min-width: 150px;} */
   .indicator{max-width: 800px;width: 60%;}
   .indicator > .layout{grid-template-columns: calc(50% - 8px) calc(50% - 8px);justify-self: stretch; grid-column-gap: 16px;}
   .chartContent{display: grid;justify-items: center;}

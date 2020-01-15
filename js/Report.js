@@ -7,6 +7,8 @@ class Report {
     this.tbody = this.table.querySelector('tbody'); // le righe nella table
     // thead posso lavorare solo sullheader del report
     this.thead = this.table.tHead; // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
+    // footer
+    this.tfoot = this.table.tFoot;
     // sezone in cui sono visualizzati i filtri in page-by
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
     document.querySelector('section[params]').hidden = true;
@@ -40,6 +42,7 @@ class Report {
   get data() { return this._data;}
   
   set title(value) {
+    // FIXME: vedere se questa viene chiamata
     console.log(value);
     this.titleCaption = value;
     // console.log(this.titleCaption);
@@ -77,7 +80,6 @@ class Report {
     });
   }
 
-
   addPageBy(col, index) {
     // aggiungo il filtro per ogni colonna, tranne le metriche
 
@@ -112,10 +114,7 @@ class Report {
   }
 
   handlerMultiBtn(e) {
-    // this passato come bind(Draw)
-    // console.log(this);
-    // console.log(e.path);
-    // console.log(e.path[2]);
+    // TODO: dovrebbe essere il taso OK all'interno dei multiselect, da controllare
     let parentElement = e.path[3]; // md-field
     let elements = parentElement.querySelector('.elements[show]');
     let input = parentElement.querySelector('input');
@@ -134,9 +133,7 @@ class Report {
   }
 
   handlerInput(e) {
-    // this = Draw
-    // console.log(e.target);
-    // console.log(this);
+    // input search nel pageby
     let parentElement = e.path[1];
     let label = parentElement.querySelector('label');
     if (e.target.value.length > 0) {
@@ -161,10 +158,7 @@ class Report {
   }
 
   handlerSelect(e) {
-    // console.log('handlerSelect');
-    // console.log(e.target);
-    // console.log(e.path);
-    
+    // selezione di un elemento nei filtri in page-by
     let parent = e.path[5]; // md-field
     let liElement = e.path[1].querySelector('li');
     let input = parent.querySelector('input');
@@ -204,18 +198,18 @@ class Report {
         console.log(this.arrColumns);
 
         // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
-        /*
-        callback
-          Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
-        element
-          The current element being processed in the array.
-        index Optional
-          The index of the current element being processed in the array.
-        array Optional
-          The array filter was called upon.
-        thisArg Optional
-          Value to use as this when executing callback.
-        */
+          /*
+          callback
+            Function is a predicate, to test each element of the array. Return true to keep the element, false otherwise. It accepts three arguments:
+          element
+            The current element being processed in the array.
+          index Optional
+            The index of the current element being processed in the array.
+          array Optional
+            The array filter was called upon.
+          thisArg Optional
+            Value to use as this when executing callback.
+          */
         this.arrayUnique = this.arrColumns[c].filter((value, index, self) => self.indexOf(value) === index);
         // console.log(this.arrayUnique);
         this.datalist = document.getElementById('datalist-'+c);
@@ -249,7 +243,7 @@ class Report {
     this.paramsRef.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
       el.oninput = this.handlerInput.bind(this);
       el.onclick = this.showFilters.bind(this);
-      el.onblur = function(e) {e.target.removeAttribute('placeholder');};
+      el.onblur = (e) => {e.target.removeAttribute('placeholder');};
       // elementi presenti nei Filtri standard
       el.parentElement.querySelectorAll('.elements:not([multi]) > ul div.element').forEach((element) => {element.onclick = this.handlerSelect.bind(this);});
       // elementi presenti nei Filtri Multiselect
@@ -301,7 +295,7 @@ class Report {
   }
 
   search() {
-    /*Ricerca in base alla selezione dei filtri*/
+    // Ricerca in base alla selezione dei filtri
     console.log('search');
     let cols = [], multiSelectElements = [];
     // recupero i filtri che sono stati impostati
@@ -376,6 +370,7 @@ class Report {
   }
 
   rebuildDatalists() {
+    // TODO: da rivedere
     // console.log(this.table.rows.length);
 
     let arrColumns = [];
@@ -417,6 +412,10 @@ class Report {
   }
 
   info() {
+    console.log('info');
+    // TODO: da rivedere
+    console.log(this.table.tFoot); // utlizzare questo nel costruttore (se ritorna il footer)
+    
     this.infoRef = this.table.querySelector('tfoot div[info]');
     this.rowCounter = this.infoRef.querySelector('span[row-number]');
     for (let i = 0, count = 1; i < this.tbody.rows.length; i++) {
@@ -467,6 +466,8 @@ class Report {
   }
 
   applyStyles() {
+    console.log('applyStyles');
+    
     // applico le opzioni impostate al report
     console.log(this._options);
     console.log(this.styles);
@@ -560,12 +561,10 @@ class Options extends Report{
      * Al momento dovrò applicare gli styles tramite js th.style.color = valore
      */
     this.styles = {};
-    this.attributes = {};
-
-    // this._options = {}; // conterà le opzioni all'interno dell'oggetto this.report
-    
+    this.attributes = {};    
     this.reportOptions = {}; // conterrà l'object completo che verrà salvato in storage
-    
+    // default imposto la inputSearch (in basso nel footer) abilitata alla ricerca
+    this.inputSearch = true;
   }
 
   set reportName(value) {
@@ -583,6 +582,25 @@ class Options extends Report{
   }
 
   get cube() { return this._cube; }
+
+  set inputSearch(value) {
+    this._inputSearch = value;
+    this.td = this.tfoot.querySelector('td[inputSearch]');
+    // se la inputSearch è abilitata (true) la visualizzo ed associo l'evento input al metodo searchInput()
+    if (this._inputSearch) {
+      // la visualizzo e gli associo l'evento oninput
+      console.log(this.tfoot);
+      this.td.hidden = false;
+      this.tfoot.querySelector('#search').oninput = this.searchInput.bind(this);
+    } else {
+      // la nascondo e rimuovo l'evento oniput
+      this.td.hidden = false;
+      this.tfoot.querySelector('#search').removeEventListener('click', this.searchInput.bind(this));
+    }
+    this._options.inputSearch = this._inputSearch;
+  }
+
+  get inputSearch() { return this._inputSearch;}
 
   set datamart(id) { this.datamartId = id; }
   
@@ -688,8 +706,10 @@ class Options extends Report{
     // console.log(e.target);
     // this.dialogOption.setAttribute('columnId', +e.target.getAttribute('col'));
     this.column = +e.target.getAttribute('col');
+    console.log(e.target.innerText);
+    // inserisco il nome della colonna selezionata nella dialog
+    this.dialogOption.querySelector('#colName').innerHTML = e.target.innerText;
     this.dialogOption.showModal();
-    
   }
 
   btnDoneDialogOption(e) {
@@ -703,8 +723,8 @@ class Options extends Report{
     // imposto this._options
     this.colOption = this.cols;
     // applico le impostazioni sul report
-    super.applyStyles();
-    super.applyAttributes();
+    this.applyStyles();
+    this.applyAttributes();
   }
 
   addPageBy(col, index) {
@@ -779,12 +799,13 @@ class Options extends Report{
   get defaultPositioning() { return this._options.positioning; }
   
   draw() {
+    console.log('draw');
+    
+    // TODO: da ottimizzare nascondendo il report come fatto nella Classe Report
     // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
     // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
     this.eventParams();
     this.info();
-    // this.applyStyles();
-    // this.applyAttributes();
     
     // visualizzo il page-by
     // document.querySelector('section[params]').hidden = false;

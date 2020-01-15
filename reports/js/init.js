@@ -19,10 +19,15 @@ var App = new Application();
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
     btnSaveColOption: document.getElementById('btnSaveColOption'),
     table: document.getElementById('table-01'),
-
+    // TODO: valutare se questi elementi, con i suoi eventi, bisogna inserirli nella classe Options
     propertyColHidden: document.getElementById('chkbox-hide-col'),
     fgColorInput : document.getElementById('fgColor'),
-    bgColorInput : document.getElementById('bgColor')
+    bgColorInput: document.getElementById('bgColor'),
+    alignLeft: document.getElementById('align-left'),
+    alignCenter: document.getElementById('align-center'),
+    alignRight: document.getElementById('align-right'),
+    formatBold: document.getElementById('format-bold'),
+    formatItalic: document.getElementById('format-italic')
     
   };
   
@@ -92,24 +97,8 @@ var App = new Application();
     const reportStorage = new ReportStorage();
     
     app.report = new Options(app.table, reportStorage.getIdAvailable());
-    /* es. funzionante 
-    // // imposto il cubo su cui lavorare, di default questo metodo crea anche il positioning
-    // app.report.cubeObj = cube;
-
-    // // imposto i dati estratti dalla query
-    // app.report.datamartData = response;
-    // // creo l'object Report che sarà salvato in storage
-    // const reportStorage = new ReportStorage();
-    // // app.report.reportObject = reportStorage.id;
-    // app.report.report = reportStorage.getIdAvailable();
-
-
-    // // disegno il report con le options di default
-    // app.report.addColumn();
-    // app.report.addPageBy();
-    // app.report.addRows();
-    */
-    /* test 2*/
+    
+    
     app.report.cube = cube;
     // dati estratti dalla query
     app.report.data = response;
@@ -121,8 +110,6 @@ var App = new Application();
     app.report.createDatalist();
 
     app.report.draw();
-    
-    /* test 2*/
     
   };
 
@@ -169,6 +156,29 @@ var App = new Application();
   app.bgColorInput.oninput = app.handlerColorInput;
   // app.bgColorInput.onchange = app.handlerColorInput;
 
+  app.handlerOption = function (e) { 
+    let propName = e.target.getAttribute('property');
+    let propValue = e.target.getAttribute('value');
+    // imposto di un colore lo stile dell'allineamneto applicato (per questa colonna)
+    e.target.style.color = "indianred";
+    // TODO: Quando riapro questa colonna devo riprendere le impostazioni salvate e "riscriverle" qui nella dialog
+    console.log(propName);
+    console.log(propValue);
+    app.report.style = { [propName]: propValue };
+    
+  };
+
+  // align
+  app.alignLeft.onclick = app.handlerOption;
+  app.alignCenter.onclick = app.handlerOption;
+  app.alignRight.onclick = app.handlerOption;
+
+  // format e style 
+  app.formatBold.onclick = app.handlerOption;
+  app.formatItalic.onclick = app.handlerOption;
+
+  
+    
   /* events */
   
 

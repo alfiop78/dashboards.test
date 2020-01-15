@@ -18,7 +18,6 @@ h3 ~ h5{padding: 0;font-size: .9rem;margin: 8px;font-weight: 300;color: var(--ma
 /*layout*/
 
 /* list */
-.list{}
 ul{padding-inline-start: 0;font-size: .75rem;border-radius: 4px;}
 ul > li{list-style: none;padding: 6px;margin: 2px 8px;}
 ul > li:hover{list-style: none;padding: 6px;background-color: #d4d6c8;border-radius: 4px;cursor: pointer;}
@@ -29,9 +28,9 @@ ul > li[selected]{list-style: none;padding: 6px;background-color: #d4d6c8;border
 
 /* layout-settings */
 .layout-settings{display: grid;grid-template-areas: "params" "body";}
-.layout-settings section[params] {grid-area: params; display: grid; grid-template-columns: 95% auto;}
+.layout-settings section[params] {grid-area: params; display: grid; grid-template-columns: 90% auto;}
 .layout-settings section[params] .params.column{box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;padding: 1.5em;border-radius: 4px;display: flex;flex-flow: row;}
-.layout-settings section[body] {grid-area: body; display: grid; grid-template-columns: 95% auto;}
+.layout-settings section[body] {grid-area: body; display: grid; grid-template-columns: 90% auto;}
 .settings{display: flex; flex-flow: column;align-items: center; justify-content: center;}
 /* layout-settings */

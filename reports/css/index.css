@@ -1,4 +1,4 @@
 th{position: relative;}
 th i.material-icons{position: absolute;right: 8px;display: inline-table;}
 
-.colProperties{display: flex;flex-flow: row;}
+.colProperties{display: flex;flex-flow: row;justify-content: space-between; margin: 16px;align-items: center;}
