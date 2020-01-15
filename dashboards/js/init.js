@@ -56,8 +56,7 @@ var App = new Application();
         let arrSections = [
           {
             'sectionId': +app.activeSection.getAttribute('data-section'),
-            'reportId': +li.id,
-            'datamartId': +li.getAttribute('datamart-id')
+            'reportId': +li.id
           }
         ];
         let report_section_association = arrSections;

@@ -87,27 +87,36 @@ var App = new Application();
     const cubeStorage = new CubeStorage();
     let cube = cubeStorage.JSONFormat(cubeName);
     console.log(cube.name);
-    
-    
-    // TODO: se app.report è utilizzata solo in questa funzione inizializzarla con let/const
-    app.report = new Options(app.table);
-    // app.report.report = cube;
 
-    // imposto il cubo su cui lavorare, di default questo metodo crea anche il positioning
-    app.report.cubeObj = cube;
-
-    // imposto i dati estratti dalla query
-    app.report.datamartData = response;
-    // creo l'object Report che sarà salvato in storage
+    // ottengo un reportId per passarlo a costruttore
     const reportStorage = new ReportStorage();
-    // app.report.reportObject = reportStorage.id;
-    app.report.report = reportStorage.getIdAvailable();
+    
+    app.report = new Options(app.table, reportStorage.getIdAvailable());
+    /* es. funzionante 
+    // // imposto il cubo su cui lavorare, di default questo metodo crea anche il positioning
+    // app.report.cubeObj = cube;
+
+    // // imposto i dati estratti dalla query
+    // app.report.datamartData = response;
+    // // creo l'object Report che sarà salvato in storage
+    // const reportStorage = new ReportStorage();
+    // // app.report.reportObject = reportStorage.id;
+    // app.report.report = reportStorage.getIdAvailable();
 
 
-    // disegno il report con le options di default
-    app.report.addColumn();
-    app.report.addPageBy();
-    app.report.addRows();
+    // // disegno il report con le options di default
+    // app.report.addColumn();
+    // app.report.addPageBy();
+    // app.report.addRows();
+    */
+    /* test 2*/
+    app.report.cube = cube;
+    // dati estratti dalla query
+    app.report.data = response;
+    // aggiungo le colonne
+    app.report.addColumns();
+    
+    /* test 2*/
     
   };
 

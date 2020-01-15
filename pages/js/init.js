@@ -18,7 +18,6 @@ var App = new Application();
     // visualizzo elenco delle pagine sulla sinistra
     // let ulPages = document.getElementById('pages');
     let storage = new PageStorage();
-    console.log(storage.list());
     storage.list().forEach((page) => {
       // inserisco le pages nel drawer
       let tmplMenuElement = document.getElementById('menuElement');
@@ -29,7 +28,12 @@ var App = new Application();
       span.innerHTML = page.name;
       element.setAttribute('data-layout-id', page.layoutId);
       element.setAttribute('data-id', page.id);
-      
+      console.log(page.layoutParams);
+      page.layoutParams.forEach((sections, index) => { 
+        // ogni layoutParams può avere più section e quindi più reports al suo interno per creare la pagina
+        // TODO: probabilmente dovrò utilizzare index inserendolo come attributo [data-report-id-index]=reportid
+        element.setAttribute('data-report-id', sections.reportId);
+      });
       nav.appendChild(element);
       element.onclick = app.handlerPageSelect;
 
@@ -45,18 +49,17 @@ var App = new Application();
     app.pageSelectedTitle = this.querySelector('span').innerText;
     
     var url = "ajax/reports.php";
-    let reportId = +this.getAttribute('data-id');
+    let reportId = +this.getAttribute('data-report-id');
     let report = new ReportStorage();
     console.log(reportId);
     
     
     report.settings = reportId;
+    
     console.log(report.settings);
-    return;
+    // return;
     let params = "datamart="+report.settings;
     console.log(params);
-    // let params = "reportId="+reportId;
-
     // visualizzo il template relativo al layout selezionato
     console.log(this);
 
@@ -67,7 +70,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, reportId, report.settings);
+          app.createReport(response, reportId, report.name);
 
         } else {
 
@@ -94,7 +97,7 @@ var App = new Application();
     return layout;
   };
 
-  app.createReport = function(response, reportId) {
+  app.createReport = function(response, reportId, caption) {
     console.log('create report');
 
     let table = document.getElementById('table-01');
@@ -107,6 +110,8 @@ var App = new Application();
     report.addColumns();
 
     report.addRows();
+
+    report.caption = caption;
 
     report.createDatalist();
 

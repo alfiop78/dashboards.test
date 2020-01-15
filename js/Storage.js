@@ -127,8 +127,8 @@ class ReportStorage extends Storage {
     // TODO: cerco il primo id "libero"
     // ordino l'array
     this.elements.sort(function (a, b) {
-      console.log(a);
-      console.log(b);
+      // console.log(a);
+      // console.log(b);
       // TODO: cosa sono a e b ?
       return a - b;
     })
@@ -156,16 +156,23 @@ class ReportStorage extends Storage {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
       if (jsonStorage.type === "REPORT") {
-        console.log("report : "+key);
-        console.log(jsonStorage.id);
-        console.log(report_id);
-        console.log(jsonStorage);
+        // console.log("report : "+key);
+        // console.log(jsonStorage.id);
+        // console.log(report_id);
+        // console.log(jsonStorage);
         if (jsonStorage.id === report_id) {
           this.reportParams = jsonStorage;
+          this.reportName = jsonStorage.name;
         }
       }
     });
   }
+
+  set reportName(value) {
+    this.name = value;
+  }
+
+  get reportName() { return this.name;}
 
   get settings() {
     return JSON.stringify(this.reportParams);
@@ -251,7 +258,13 @@ class PageStorage extends Storage {
       // console.log(key);
       if (jsonStorage.type === "PAGE") {
         // console.log("cubo : "+key);
-        let pageProperties = { 'name': key, 'id': jsonStorage.id, 'layoutId': jsonStorage.layoutId};
+        // console.log(jsonStorage.layoutParams);
+        
+        let pageProperties = {
+          'name': key,
+          'id': jsonStorage.id,
+          'layoutId': jsonStorage.layoutId,
+          'layoutParams': jsonStorage.layoutParams};
         this.pages.push(pageProperties);
       }
     });
@@ -272,7 +285,7 @@ class PageStorage extends Storage {
       }
       
     });
-    // TODO: cerco il primo id "libero"
+    
     // ordino l'array
     this.pagesElement.sort(function (a, b) {
       console.log(a);

@@ -23,7 +23,15 @@ class Report {
     this._options = JSON.parse(this.storage.options);
   }
 
-  get settings() { return this._options;}
+  get settings() { return this._options; }
+  
+  set caption(value) {
+    this.name = value;
+    let caption = this.table.createCaption();
+    caption.textContent = this.name;
+  }
+
+  get caption() { return this.name;}
 
   set data(value) {
     this._data = value;
@@ -268,7 +276,6 @@ class Report {
 
   eventParams() {
     this.paramsRef.querySelectorAll('input[type="search"]:not([id="search"])').forEach((el) => {
-      // console.log(this); // Draw
       el.oninput = this.handlerInput.bind(this);
       el.onclick = this.showFilters.bind(this);
       el.onblur = function(e) {e.target.removeAttribute('placeholder');};
@@ -533,6 +540,30 @@ class Report {
     }
   }
 
+  testAPPLYAttribute() {
+    // applico le opzioni impostate al report
+    console.log(this._options);
+    
+    for (let columnId in this._options.cols) {
+      console.log(columnId);
+      // leggo le proprietà impostate per questa colonna
+      console.log(this._options.cols[columnId].attributes);
+      console.log(Object.keys(this._options.cols[columnId].attributes).length);
+      // se ci sono delle proprietà impostate in styles le applico al report
+      if (Object.keys(this._options.cols[columnId].attributes).length >= 1) {
+        for (let [property, value] of Object.entries(this._options.cols[columnId].attributes)) {
+          console.log(property);
+          console.log(value);
+          this.thead.rows[0].cells[columnId].setAttribute(property, value);
+          // TODO: applico l'attributo a tutta la colonna
+          for (let i = 0; i < this.tbody.rows.length; i++) {
+            this.tbody.rows[i].cells[columnId].setAttribute(property, value);
+          }
+        }
+      } 
+    }
+  }
+
   test() {
     // applico le opzioni
     for (let columnId in this._options.cols) {
@@ -561,19 +592,20 @@ class Report {
     this.eventParams();
     this.info();
     this.test();
+    this.testAPPLYAttribute();
+    
     // visualizzo il page-by
     document.querySelector('section[params]').hidden = false;
     // visualizzo la table
     this.table.hidden = false;
   }
 
-
-
 }
 
 class Options extends Report{
-  constructor(table) {
-    super(table);
+  constructor(table, reportId) {
+    super(table, reportId);
+    this._options = {};
     this.dialogOption = document.getElementById('columnsOption');
     // tasto ok nella dialog 
     this.dialogOption.querySelector('#btnSaveColOption').onclick = this.btnDoneDialogOption.bind(this);
@@ -611,11 +643,11 @@ class Options extends Report{
     
   }
 
-  set datamartData(value) {
-    this.data = value;
-  }
+  // set datamartData(value) {
+  //   this.data = value;
+  // }
 
-  get datamartData() { return this.data; }
+  // get datamartData() { return this.data; }
 
   set reportName(value) {
     this.name = value;
@@ -623,19 +655,19 @@ class Options extends Report{
   
   get reportName() { return this.name;}
   
-  set cubeObj(value) {
-    this.cube = value;
+  set cube(value) {
+    this._cube = value;
     // quando imposto il cubo imposto anche il posizionamaneto di default
-    this.defaultPositioning = this.cube;
+    this.defaultPositioning = this._cube;
     // imposto anche il datamartId
-    this.datamart = this.cube.cubeId;
+    this.datamart = this._cube.cubeId;
   }
+
+  get cube() { return this._cube; }
 
   set datamart(id) { this.datamartId = id; }
   
   get datamart() { return this.datamartId;}
-  
-  get cubeObj() { return this.cube; }
   
   set report(value) {
     this.reportId = value;
@@ -705,20 +737,29 @@ class Options extends Report{
     this.storage.save = this.reportOptions;
   }
 
-  addColumn() {
-    Object.keys(this.data[0]).forEach((colName, index) => {
-      // console.log(el);
+  addColumns() {
+    Object.keys(this._data[0]).forEach((col, index) => {
       this.th = document.createElement('th');
       this.th.setAttribute('col', index);
       this.th.classList.add('dropzone');
-      this.th.setAttribute('options', 'cols');
+      // this.th.setAttribute('options', 'cols');
       this.th.setAttribute('draggable', true);
       this.th.id = 'col-header-'+index;
-      this.th.innerText = colName;
+      this.th.innerText = col;
       this.th.onclick = this.handlerColOption.bind(this);
       this.table.querySelector('thead tr').appendChild(this.th);
+      for (let [key, colName] of Object.entries(this._options.positioning[index])) {
+        // imposto l'attributo columns/metrics sulle intestazioni di colonna
+        this.th.setAttribute(key, true);
+        // console.log(key);
+        // console.log(value);
+        if (key === "columns") {
+          //TODO: aggiungo il pageBy
+          this.addPageBy(colName, index);
+        }
+      }
     });
-    this.setColsAttribute();
+    // this.setColsAttribute();
   }
 
   handlerColOption(e) {
@@ -748,30 +789,22 @@ class Options extends Report{
     // this.apply();
   }
 
-  addPageBy() {
-    // aggiungo anche il filtro per ogni colonna
-    Object.keys(this.data[0]).forEach((colName, index) => {
-      // console.log(Object.keys(this.positioning[index])[0]);
-      
-      if (Object.keys(this.positioning[index])[0] !== "metrics") {
-        this.tmplParams = document.getElementById('params');
-        this.tmplContent = this.tmplParams.content.cloneNode(true);
-        this.params = this.tmplContent.querySelector('div[data-param-id]');
-        this.settingIcon = this.tmplContent.querySelector('span.popupContent');
-        // console.log(this.params);
-        this.params.setAttribute('col', index);
-        this.params.setAttribute('data-param-id', index);
-        this.params.querySelector('ul').id = "datalist-"+index;
-        this.params.querySelector('label').setAttribute('for', "param-"+index);
-        this.params.querySelector('label').innerText = colName;
-        this.params.querySelector('input').id = "param-"+index;
-        this.params.querySelector('input').setAttribute('data-param-id', index);
-        this.params.querySelector('.elements').setAttribute('col', index);
-        this.paramsRef.appendChild(this.params);
-        this.params.after(this.settingIcon);
-      }
-      
-    });
+  addPageBy(col, index) {
+    this.tmplParams = document.getElementById('params');
+    this.tmplContent = this.tmplParams.content.cloneNode(true);
+    this.params = this.tmplContent.querySelector('div[data-param-id]');
+    this.settingIcon = this.tmplContent.querySelector('span.popupContent');
+    // console.log(this.params);
+    this.params.setAttribute('col', index);
+    this.params.setAttribute('data-param-id', index);
+    this.params.querySelector('ul').id = "datalist-"+index;
+    this.params.querySelector('label').setAttribute('for', "param-"+index);
+    this.params.querySelector('label').innerText = col;
+    this.params.querySelector('input').id = "param-"+index;
+    this.params.querySelector('input').setAttribute('data-param-id', index);
+    this.params.querySelector('.elements').setAttribute('col', index);
+    this.paramsRef.appendChild(this.params);
+    this.params.after(this.settingIcon);
     
   }
 
@@ -844,358 +877,9 @@ class Options extends Report{
       }
     });
     console.log(this.positioning);
-    this.options.positioning = this.positioning;
+    this._options.positioning = this.positioning;
     console.log(this.reportOptions);
   }
 
-  get defaultPositioning() { return this.options.positioning;}
-}
-
-class ReportOptions extends Report {
-
-  /*
-    qui vengono definite le options del report, queste options andranno a scrivere in storage ...
-    // ... le opzioni definite per ogni singolo report. Le opzioni, invece di definirle in init.js, le definisce l'utente, ad esempio, con il
-    // drag&drop, la selezione dei colori delle colonne, la formatazione delle colonne, ecc....
-    In storage si avrà il report con all'interno l'object 'options':
-    'nomeReport' :
-      {
-      report_id : 239,
-      datamartId : 1, il cubeId per poter prendere il nome del datamart Fx...
-      'options' : {
-        definisco gli attributi/personalizzazione delle colonne
-        'cols' : [0 :
-                  {'bgColor': 'red'},
-                  {'fgColor': 'white'},
-                  {'attribute', ['hidden', 'order', 'ecc...']}, attributi da inserire sulla colonna, i quali verranno personalizzati da css/js
-                  {'altro (es. gestione del drillthrought, ecc...)'}
-                ]
-        definisco l'ordinamento e posizionamento delle colonne del report (fatte con il drag&drop)
-        posistioning : {
-            [0: {columns: 'Cod.Sede'}]
-            [1: {columns: 'Sede'}]
-            [2: {metrics: 'Venduto'}]
-            ecc...
-          }
-        'filtersType' : [{'col': 0, 'attribute': 'multi'}] multiselezione in pageBy
-        'name' : Titolo del Report visualizzato in localStorage,
-        'inputSearch' : true visualizzo e lego evento input alla casella di ricerca, in basso.
-        metricsPosition : [2,3] definisco la posizione delle metriche nel report, le stesse saranno nascoste nel pageBy
-      }
-
-      }
-  */
-  
-  // #dragged;
-  // #dragStartCol = 0;
-  // #dragTargetCol = 0;
-  // #dialogColSetting = document.getElementById('dialog-col-setting');
-
-
-  constructor(table, data) {
-    super(table);
-    // ottengo il reportId TODO: utilizzare la logica di getIdAvailable
-    this.storage = new ReportStorage();
-    this.report = {
-      'id': this.storage.id,
-      'type': 'REPORT',
-      'datamartId': cube.cubeId,
-      'name': null,
-      'options': {}
-      // 'options': {
-      //   'inputSearch': true,
-      //   'cols': {},
-      //   'pageBy': {},
-      //   'positioning': [],
-      //   'metricsPosition': []
-      // }
-    }; // questo object verrà salvato in storage
-    // this.cube = cube;
-    return;
-    // TODO: prima di aggiungere i dati nel report ne definisco alcune opzioni di default
-    this.default = this.cube;
-    console.log(this.default);
-    console.log(this.report);
-    
-    this.data = data;
-    // Aggiungo le intestazioni di colonna e i filtri in pageBy
-    Object.keys(this.data[0]).forEach((el, i) => {
-      // console.log(el);
-      super.addColumn(el, i);
-      // aggiungo un filtro per ogni colonna della tabella
-      // REVIEW: Filtri in pageBy. In addParams potrei definire se il filtro deve essere single/multi select, in base alle options
-
-      super.addParams(el, i);
-    });
-    // associo evento drag sulle th
-    // this.dragDrop();
-    // this.actions();
-
-    for (let i in this.data) {
-      super.addRow(Object.values(this.data[i]));
-      // TODO: eliminare gli spazi bianchi prima e/o dopo il testo
-    }
-    // this.colsAttribute();
-    
-  }
-
-  set defaultPositioning(cube) {
-    /*
-    Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
-    positioning = [
-      0=> {'col': 'Cod.Sede'},
-      1=> {'col': 'Sede'},
-      2=> {'metric': 'venduto'},
-      3=> {'metric': 'quantita'}
-    ]
-    */
-    this.positioning = [];
-    console.log('positioning');
-    console.log(cube);
-    
-    Array.from(Object.keys(cube)).forEach((element) => {
-      if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
-        // console.log(element);
-        Array.from(Object.keys(cube[element])).forEach((table) => {
-          // console.log(table);
-          // console.log(cube.columns[table]);
-          Array.from(Object.keys(cube[element][table])).forEach((value) => {
-            // recupero l'alias per questo object
-            let obj = {};
-            obj[element] = cube[element][table][value]['alias'];
-            this.positioning.push(obj);
-          });
-        });
-      }
-    });
-    console.log(this.positioning);
-    
-    //  this.colsAttribute();
-    this.options.positioning = this.positioning;
-    console.log(this.options);
-    // this.save();
-    // this.metricsPositioning();
-  }
-
-  get defaultPositioning() {return this.positioning;}
-
-  /* dragDrop() {
-    // associo gli eventi drag&Drop sulle header
-    // console.log(this.table.querySelectorAll('thead th'));
-    Array.from(this.table.querySelectorAll('thead th')).forEach((th) => {
-      // console.log(th);
-      th.ondragstart = this.dragStart.bind(this);
-      th.ondragover = this.dragOver.bind(this);
-      th.ondrop = this.drop.bind(this);
-      th.ondragend = this.end.bind(this);
-      th.ondragenter = this.enter.bind(this);
-      th.ondragleave = this.leave.bind(this);
-    });
-
-  }
-
-  dragStart(e) {
-    e.dataTransfer.setData("text/plain", e.target.id);
-    // console.log(e.dataTransfer);
-
-    this.#dragStartCol = +e.target.getAttribute('col');
-  }
-
-  dragOver(e) {
-    e.preventDefault();
-    // Set the dropEffect to move
-    e.dataTransfer.dropEffect = "move";
-
-  }
-
-  enter(e) {
-    this.#dragTargetCol = +e.target.getAttribute('col');
-    if (e.target.className === "dropzone") {
-      (this.#dragStartCol > this.#dragTargetCol) ? e.target.classList.add('move-before') : e.target.classList.add('move-after');
-    }
-  }
-
-  leave(e) {
-    this.#dragTargetCol = +e.target.getAttribute('col');
-    (this.#dragStartCol > this.#dragTargetCol) ? e.target.classList.remove('move-before') : e.target.classList.remove('move-after');
-  }
-
-  drop(e) {
-    e.preventDefault();
-    console.log('drop');
-    let data = e.dataTransfer.getData("text/plain");
-    // console.log(e.dataTransfer);
-    // let parent = e.target.parentElement;
-    // console.log(e.target.id);
-    this.#dragged = document.getElementById(data);
-
-    // console.log(this.dragged);
-    // recupero l'id colonna dell'elemento spostato, per poter spostare tutta la colonna (righe relative alla colonna)
-    let colSelected = +this.#dragged.getAttribute('col');
-    // console.log(colSelected);
-    // console.log(e.target);
-    let colTarget = +e.target.getAttribute('col');
-    // console.log(colSelected);
-    // console.log(colTarget);
-    (colSelected > colTarget) ? e.target.before(this.#dragged) : e.target.after(this.#dragged);
-    e.target.classList.remove('move-before', 'move-after');
-
-    // ho la colonna da spostare e la colonna target, con queste posso spostare tutte le righe appartenenti alla colonna
-    // recupero le righe della tabella
-    for (let i = 0; i < this.tbody.rows.length; i++) {
-      // console.log(app.table.rows[i]);
-      // recupero tutta la colonna da spostare
-      // console.log(colSelected);
-      // console.log(colTarget);
-      let elementSelected = this.tbody.rows[i].cells[colSelected];
-      // colonna dove fare il before, colTarget
-      let colTargetElement = this.tbody.rows[i].cells[colTarget];
-      // console.log(this.table.rows[i]);
-      if (this.tbody.rows[i].hasAttribute('row') || this.tbody.rows[i].hasAttribute('head')) {
-        (colSelected > colTarget) ? colTargetElement.before(elementSelected) : colTargetElement.after(elementSelected);
-      }
-
-    }
-  }
-
-  end(e) {
-    e.preventDefault();
-    console.log('end');
-    // ristabilisco le position tramite l'attributo col
-    for (let i = 0; i < this.table.rows.length; i++) {
-      // riposizioni l'attributo [col] solo sulle head e sulle row (body)
-      if (this.table.rows[i].hasAttribute("row") || this.table.rows[i].hasAttribute('head')) {
-        for (let c = 0; c < this.table.rows[i].cells.length; c++) {
-          this.table.rows[i].cells[c].setAttribute('col', c);
-        }
-      }
-    }
-    // TODO: Salvataggio delle impostazioni in localStorage
-    console.log('save draag');
-
-    this.positioning();
-  } */
-
-  positioning() {
-    // dopo il drag&drop ridefinisco le posizioni delle colonne
-    this.positioning = [];
-
-    for (let i = 0; i < this.thead.rows[0].cells.length; i++) {
-      console.log(this.thead.rows[0].cells[i]);
-      // per ogni cella controllo se è una column o una metrica e la inserisco in this.positioning
-      if (this.thead.rows[0].cells[i].hasAttribute('metrics')) {
-        this.positioning[i] = {'metrics': this.thead.rows[0].cells[i].innerText};
-      } else if (this.thead.rows[0].cells[i].hasAttribute('columns')) {
-        this.positioning[i] = {'columns': this.thead.rows[0].cells[i].innerText};
-      }
-    }
-    console.log(this.positioning);
-    this.options.positioning = this.positioning;
-
-    console.log(this.options);
-    // ricontrollo la posizione delle metriche dopo il drag&drop
-    this.metricsPositioning();
-  }
-
-  // metricsPositioning() {
-  //   /* inserisco in #metricsPosition la posizione delle metriche, queste avranno una formattazione diversa nel report (bold, align, ecc...)
-  //    ...e non avranno filtri in pageBy
-  //    */
-  //   this.metricsPosition = [];
-  //   this.positioning.forEach((element, index) => {
-  //     // NOTE: utilizzo di for...of con Object.entries
-  //     for (let [key, value] of Object.entries(element)) {
-  //       // console.log(`${key}: ${value}`);
-  //       if (key === "metrics") this.metricsPosition.push(index);
-  //       // TODO: definisco gli attributi per le colonne
-  //     }
-  //   });
-  //   console.log(this.metricsPosition);
-  //   this.options.metricsPosition = this.metricsPosition;
-  //   console.log(this.options);
-  //   this.save();
-  // }
-
-  save() {
-    
-    this.report.options = this.options;
-    
-    console.log(this.report);
-    this.storage.save = this.report;
-    // TODO: verificare il salvataggio dell'object report in storage
-    return;
-    // da definire
-    // let objStorage = new Storage();
-    // console.log(this.report);
-    // objStorage.reportConfig = this.report;
-  }
-
-
-  // optionsApply() {
-  //   // applico le option impostate
-  //   console.log(this.#options);
-  //   // console.log(Object.keys(this.#options));
-  //   let arrProperties = Object.keys(this.#options);
-  //   // console.log(arrProperties);
-  //   if (arrProperties.includes('title')) {super.title = this.#options.title;}
-  //   // console.log(this.#options.metrics);
-  //   // return;
-  //   if (arrProperties.includes('metrics')) {
-  //     this.#options.metrics.forEach((col) => {
-  //       // console.log(col);
-  //       // console.log(document.querySelector('.params > .md-field'));
-  //       // return;
-  //       // cerco la colonna, nei filtri, da impostare come metrica e la nascondo
-  //       document.querySelector('.params > .md-field[col="'+col+'"]').hidden = true;
-  //       // cerco le colonne, nella sezione tbody, da impostare come metrics e aggiungo la cass metrics per formattarle
-  //       this.table.querySelectorAll('td[col="'+col+'"], th[col="'+col+'"]').forEach((cols) => {
-  //         cols.classList.add('metrics');
-  //         cols.setAttribute('metrics', true);
-  //       });
-  //     });
-  //   }
-  //   // console.log(this._optthis.#options.inputSearch);
-  //   if (arrProperties.includes('inputSearch') && this.#options.inputSearch) {
-  //     // voglio che nel Metodo search il this faccia riferimento sempre alla Classe e non alla input
-  //     document.getElementById('search').oninput = this.searchInput.bind(this);
-  //   } else {
-  //     // nascondo la input search
-  //     document.getElementById('search').parentElement.hidden = true;
-  //   }
-  //
-  //
-  //   arrProperties.forEach((property) => {
-  //     // console.log(property); // cols, filters, ecc...
-  //     if (Array.isArray(this.#options[property])) {
-  //       // console.log(this.#options[property]); // [{col: 1, attribute: "hidden"}]
-  //       this.#options[property].forEach((prop) => {
-  //         // console.log(prop); // {col: 1, attribute: "hidden"}
-  //         let propertyRef = Object.keys(prop)[0]; // col
-  //         let propertyRefValue = prop[propertyRef]; // numero di colonna
-  //         let propertyAttributeValue = prop['attribute'];
-  //
-  //         // console.log(propertyRef);
-  //         // console.log(propertyRefValue);
-  //         // console.log(propertyAttributeValue);
-  //         // es. : :root [options='cols'][col='1']
-  //         // es. : :root [options='filters'][col='0']
-  //
-  //         let elements = Array.from(document.querySelectorAll(":root [options='"+property+"']["+propertyRef+"='"+propertyRefValue+"']"));
-  //         elements.forEach((el) => {
-  //           el.setAttribute(propertyAttributeValue, true);
-  //         });
-  //       });
-  //     }
-  //
-  //   });
-  // }
-
-  draw() {
-    // TODO: qui si potrebbe impostare una class che applica una transition per visualizzare la table
-    this.optionsApply();
-    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
-    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
-    super.eventParams();
-    super.info();
-  }
+  get defaultPositioning() { return this._options.positioning;}
 }
