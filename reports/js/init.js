@@ -117,6 +117,10 @@ var App = new Application();
     app.report.addColumns();
     // aggiungo le righe del report
     app.report.addRows();
+    // aggiungo elementi nelle datalist (page-by)
+    app.report.createDatalist();
+
+    app.report.draw();
     
     /* test 2*/
     

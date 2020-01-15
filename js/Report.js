@@ -49,18 +49,6 @@ class Report {
 
   get title() { return this.titleCaption; }
 
-  // addColumn(colName, index) {
-  //   this.th = document.createElement('th');
-  //   this.th.setAttribute('col', index);
-  //   this.th.classList.add('dropzone');
-  //   this.th.setAttribute('options', 'cols');
-  //   this.th.setAttribute('draggable', true);
-  //   this.th.id = 'col-header-'+index;
-  //   this.th.innerText = colName;
-  //   this.table.querySelector('thead tr').appendChild(this.th);
-  //   // TODO: se questa è una colonna (e non una metrica) agigungo anche il pageBy (addParams)
-  // }
-
   addColumns() {
     // aggiungo le intestazioni di colonna
     //TODO: qui posso vedere quali sono le opzioni della colonna, se ad esempio la colonna 2 è hidden qui non la creo
@@ -89,23 +77,6 @@ class Report {
     });
   }
 
-  // addParams(colName, id) {
-  //   // aggiungo anche il filtro per ogni colonna
-  //   this.tmplParams = document.getElementById('params');
-  //   this.tmplContent = this.tmplParams.content.cloneNode(true);
-  //   this.params = this.tmplContent.querySelector('div[data-param-id]');
-  //   // console.log(this.params);
-  //   this.params.setAttribute('col', id);
-  //   this.params.setAttribute('data-param-id', id);
-  //   this.params.querySelector('ul').id = "datalist-"+id;
-  //   this.params.querySelector('label').setAttribute('for', "param-"+id);
-  //   this.params.querySelector('label').innerText = colName;
-  //   this.params.querySelector('input').id = "param-"+id;
-  //   this.params.querySelector('input').setAttribute('data-param-id', id);
-  //   this.params.querySelector('.elements').setAttribute('col', id);
-
-  //   this.paramsRef.appendChild(this.params);
-  // }
 
   addPageBy(col, index) {
     // aggiungo il filtro per ogni colonna, tranne le metriche
@@ -540,59 +511,13 @@ class Report {
     }
   }
 
-  testAPPLYAttribute() {
-    // applico le opzioni impostate al report
-    console.log(this._options);
-    
-    for (let columnId in this._options.cols) {
-      console.log(columnId);
-      // leggo le proprietà impostate per questa colonna
-      console.log(this._options.cols[columnId].attributes);
-      console.log(Object.keys(this._options.cols[columnId].attributes).length);
-      // se ci sono delle proprietà impostate in styles le applico al report
-      if (Object.keys(this._options.cols[columnId].attributes).length >= 1) {
-        for (let [property, value] of Object.entries(this._options.cols[columnId].attributes)) {
-          console.log(property);
-          console.log(value);
-          this.thead.rows[0].cells[columnId].setAttribute(property, value);
-          // TODO: applico l'attributo a tutta la colonna
-          for (let i = 0; i < this.tbody.rows.length; i++) {
-            this.tbody.rows[i].cells[columnId].setAttribute(property, value);
-          }
-        }
-      } 
-    }
-  }
-
-  test() {
-    // applico le opzioni
-    for (let columnId in this._options.cols) {
-      console.log(columnId);
-      // leggo le proprietà impostate per questa colonna
-      console.log(this._options.cols[columnId].styles);
-      console.log(Object.keys(this._options.cols[columnId].styles).length);
-      // se ci sono delle proprietà impostate in styles le applico al report
-      if (Object.keys(this._options.cols[columnId].styles).length >= 1) {
-        for (let [property, value] of Object.entries(this._options.cols[columnId].styles)) {
-          // console.log(property);
-          // console.log(value);
-          // console.log(this.thead);
-          console.log(this.table.tBodies);
-          console.log(this.tbody);
-          
-          this.thead.rows[0].cells[columnId].style[property] = value;
-        }
-      } 
-    }
-  }
-
   draw() {
     // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
     // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
     this.eventParams();
     this.info();
-    this.test();
-    this.testAPPLYAttribute();
+    this.applyStyles();
+    this.applyAttributes();
     
     // visualizzo il page-by
     document.querySelector('section[params]').hidden = false;
@@ -777,10 +702,9 @@ class Options extends Report{
     this.cols[this.columnId].attributes = this.attributes;
     // imposto this._options
     this.colOption = this.cols;
-    // TODO: applico le impostazioni sul report
+    // applico le impostazioni sul report
     super.applyStyles();
     super.applyAttributes();
-    // this.apply();
   }
 
   addPageBy(col, index) {
@@ -852,5 +776,19 @@ class Options extends Report{
     console.log(this.reportOptions);
   }
 
-  get defaultPositioning() { return this._options.positioning;}
+  get defaultPositioning() { return this._options.positioning; }
+  
+  draw() {
+    // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
+    // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
+    this.eventParams();
+    this.info();
+    // this.applyStyles();
+    // this.applyAttributes();
+    
+    // visualizzo il page-by
+    // document.querySelector('section[params]').hidden = false;
+    // visualizzo la table
+    // this.table.hidden = false;
+  }
 }
