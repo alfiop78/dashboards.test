@@ -26,7 +26,7 @@ class Report {
   }
 
   get settings() { return this._options; }
-  
+
   set caption(value) {
     this.name = value;
     let caption = this.table.createCaption();
@@ -40,7 +40,7 @@ class Report {
   }
 
   get data() { return this._data;}
-  
+
   set title(value) {
     // FIXME: vedere se questa viene chiamata
     console.log(value);
@@ -184,7 +184,7 @@ class Report {
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // se questa è una columns (quindi non è una metrica) aggiungo gli elementi in pageby
       if (this.tbody.rows[0].cells[c].hasAttribute('columns')) {
-        
+
         // per ogni colonna con attributo columns (quindi escludo le metriche) ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
         this.arrCols = [];
         for (let r = 0; r < this.tbody.rows.length; r++) {
@@ -193,7 +193,7 @@ class Report {
         }
         // ottengo gli elementi che vedo nella table
         // console.log(this.arrCols);
-        
+
         this.arrColumns.push(this.arrCols);
         console.log(this.arrColumns);
 
@@ -233,8 +233,8 @@ class Report {
           this.element.appendChild(this.iconDone);
         });
       }
-      
-      
+
+
     }
 
   }
@@ -269,7 +269,7 @@ class Report {
   //     this.tr.appendChild(this.td);
   //   });
   // }
-  
+
   addRows() {
     // TODO: provare questi metodi: https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/insertRow
     // console.log(rowValues);
@@ -278,7 +278,7 @@ class Report {
       this.tr.setAttribute('row', 'body');
       this.tbody.appendChild(this.tr);
       // console.log(this._data[i]);
-      Array.from(Object.values(this._data[i])).forEach((col, index) => { 
+      Array.from(Object.values(this._data[i])).forEach((col, index) => {
         this.td = document.createElement('td');
         this.td.setAttribute('col', index);
         // this.td.setAttribute('options', 'cols');
@@ -415,7 +415,7 @@ class Report {
     console.log('info');
     // TODO: da rivedere
     console.log(this.table.tFoot); // utlizzare questo nel costruttore (se ritorna il footer)
-    
+
     this.infoRef = this.table.querySelector('tfoot div[info]');
     this.rowCounter = this.infoRef.querySelector('span[row-number]');
     for (let i = 0, count = 1; i < this.tbody.rows.length; i++) {
@@ -467,11 +467,11 @@ class Report {
 
   applyStyles() {
     console.log('applyStyles');
-    
+
     // applico le opzioni impostate al report
     console.log(this._options);
     console.log(this.styles);
-    
+
     for (let columnId in this._options.cols) {
       console.log(columnId);
       // leggo le proprietà impostate per questa colonna
@@ -484,14 +484,14 @@ class Report {
           console.log(value);
           this.thead.rows[0].cells[columnId].style[property] = value;
         }
-      } 
+      }
     }
   }
-  
+
   applyAttributes() {
     // applico le opzioni impostate al report
     console.log(this._options);
-    
+
     for (let columnId in this._options.cols) {
       console.log(columnId);
       // leggo le proprietà impostate per questa colonna
@@ -508,7 +508,7 @@ class Report {
             this.tbody.rows[i].cells[columnId].setAttribute(property, value);
           }
         }
-      } 
+      }
     }
   }
 
@@ -519,7 +519,7 @@ class Report {
     this.info();
     this.applyStyles();
     this.applyAttributes();
-    
+
     // visualizzo il page-by
     document.querySelector('section[params]').hidden = false;
     // visualizzo la table
@@ -533,25 +533,29 @@ class Options extends Report{
     super(table, reportId);
     this._options = {};
     this.dialogOption = document.getElementById('columnsOption');
-    // tasto ok nella dialog 
+    // dialog per setting page-by
+    this.dialogPageByOption = document.getElementById('pageByOptions');
+    // tasto ok nella dialog per setting page-by
+    this.dialogPageByOption.querySelector('#btnSavePageByOption').onclick = this.btnDonePageByOptions.bind(this);
+    // tasto ok nella dialog
     this.dialogOption.querySelector('#btnSaveColOption').onclick = this.btnDoneDialogOption.bind(this);
 
-    
+
     /**
      * * 'cols':[
      * 2: {
-     *    'columnId': 2, 
+     *    'columnId': 2,
      *    'style': {'backgroundColor': 'red', 'color': 'white'}, // stili css da applicare
      *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
      *    'filters' : {'mode': 'multi/single', ecc...} // pageBy filter
      * 1: {
-     *    'columnId': 1, 
+     *    'columnId': 1,
      *    'style': {'backgroundColor': 'darkgrey', 'color': 'black'}, // stili css da applicare
      *    'attributes': {'hidden': true, 'order': 'asc', ecc...} // attributi da applicare [esmpio=attributo]
      *    'filters' : {'mode' : 'multi/single', ecc..} // pageBy filter
-     
+
      * ]
-     * 
+     *
      */
     this.cols = {}; // array di object
     // TODO: attributes e style per ora vanno separati perchè, per impostarli sull'elemento, il procedimento è diverso.
@@ -561,7 +565,8 @@ class Options extends Report{
      * Al momento dovrò applicare gli styles tramite js th.style.color = valore
      */
     this.styles = {};
-    this.attributes = {};    
+    this.pageBy = {};
+    this.attributes = {};
     this.reportOptions = {}; // conterrà l'object completo che verrà salvato in storage
     // default imposto la inputSearch (in basso nel footer) abilitata alla ricerca
     this.inputSearch = true;
@@ -570,9 +575,9 @@ class Options extends Report{
   set reportName(value) {
     this.name = value;
   }
-  
+
   get reportName() { return this.name;}
-  
+
   set cube(value) {
     this._cube = value;
     // quando imposto il cubo imposto anche il posizionamaneto di default
@@ -603,9 +608,9 @@ class Options extends Report{
   get inputSearch() { return this._inputSearch;}
 
   set datamart(id) { this.datamartId = id; }
-  
+
   get datamart() { return this.datamartId;}
-  
+
   set report(value) {
     this.reportId = value;
   }
@@ -621,15 +626,16 @@ class Options extends Report{
       if (+key !== +this.columnId) {
         // console.log('azzero');
         this.styles = {};
+        this.pageBy = {};
         this.attributes = {};
       }
     }
-    
+
     console.log(this.cols);
   }
 
   get column() { return this.columnId; }
-  
+
   set attribute(attribute) {
     // imposto attributo, questo ha sempre la coppia key/value
     for (let [key, value] of Object.entries(attribute)) {
@@ -642,12 +648,24 @@ class Options extends Report{
 
   get attribute() { return this.attributes; }
 
+  set pageByOption(pageBy) {
+    console.log(pageBy);
+    // imposto parametri del pageby, questo ha sempre la coppia key/value
+    for (let [key, value] of Object.entries(pageBy)) {
+      this.pageBy[key] = value;
+    }
+    console.log(this.pageBy);
+    console.log(this.cols);
+  }
+
+  get pageByOption() {return this.pageBy;}
+
   set colOption(option) {
     console.log(option);
-    
+
     this._options.cols = option;
     console.log(this._options);
-    
+
   }
 
   get colOption() { return this._options.cols;}
@@ -655,13 +673,13 @@ class Options extends Report{
   set style(style) {
     // imposto attributo, questo ha sempre la coppia key/value
     for (let [key, value] of Object.entries(style)) {
-      this.styles[key] = value; 
+      this.styles[key] = value;
     }
     // console.log(this.styles);
   }
 
   get style() { return this.styles; }
-  
+
   saveReport() {
     this.reportOptions.id = this.report;
     this.reportOptions.type = "REPORT";
@@ -727,11 +745,42 @@ class Options extends Report{
     this.applyAttributes();
   }
 
+  btnDonePageByOptions() {
+    // btn OK nella dialog pageByOption
+    // TODO: completare
+    this.dialogPageByOption.close();
+    console.log(this.columnId);
+    this.cols[this.columnId] = { 'columnId': this.columnId };
+    this.cols[this.columnId].pageBy = this.pageBy;
+    // imposto this._options
+    this.colOption = this.cols;
+    // applico le impostazioni sul report
+    console.log('applico impostazione del pageby');
+  }
+
+  handlerPageByOption(e) {
+    // Click icona setting nel pageBy
+    console.log('pageby option');
+    // imposto la colonna selezionata
+    this.column = +e.target.getAttribute('data-id');
+    console.log(this.column);
+    // console.log(e.target);
+    // inserisco il nome del filtro selezionato nella dialog
+    this.dialogPageByOption.querySelector('#pageBy-colName').innerHTML = e.target.getAttribute('label');
+    // open dialog
+    this.dialogPageByOption.showModal();
+  }
+
   addPageBy(col, index) {
     this.tmplParams = document.getElementById('params');
     this.tmplContent = this.tmplParams.content.cloneNode(true);
     this.params = this.tmplContent.querySelector('div[data-param-id]');
     this.settingIcon = this.tmplContent.querySelector('span.popupContent');
+    this.settingIcon.setAttribute('pageby-setting', index);
+    this.icon = this.settingIcon.querySelector('i');
+    this.icon.setAttribute('data-id', index);
+    // aggiungo una label che fa riferimento alla colonna selezionata
+    this.icon.setAttribute('label', col);
     // console.log(this.params);
     this.params.setAttribute('col', index);
     this.params.setAttribute('data-param-id', index);
@@ -743,7 +792,8 @@ class Options extends Report{
     this.params.querySelector('.elements').setAttribute('col', index);
     this.paramsRef.appendChild(this.params);
     this.params.after(this.settingIcon);
-    
+    // evento click su icona setting per il pageBy
+    this.icon.onclick = this.handlerPageByOption.bind(this);
   }
 
   // setColsAttribute() {
@@ -761,7 +811,7 @@ class Options extends Report{
   //     }
   //   });
   // }
-  
+
 
   set defaultPositioning(cube) {
     /*
@@ -775,7 +825,7 @@ class Options extends Report{
     */
     this.positioning = [];
     console.log('positioning');
-    
+
     Array.from(Object.keys(cube)).forEach((element) => {
       if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
         // console.log(element);
@@ -797,16 +847,16 @@ class Options extends Report{
   }
 
   get defaultPositioning() { return this._options.positioning; }
-  
+
   draw() {
     console.log('draw');
-    
+
     // TODO: da ottimizzare nascondendo il report come fatto nella Classe Report
     // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
     // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
     this.eventParams();
     this.info();
-    
+
     // visualizzo il page-by
     // document.querySelector('section[params]').hidden = false;
     // visualizzo la table

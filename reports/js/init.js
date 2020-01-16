@@ -11,6 +11,7 @@ var App = new Application();
     dialogCubeList: document.getElementById('dialog-cube-list'),
     dialogReportName: document.getElementById('report-name'),
     dialogColOption : document.getElementById('columnsOption'),
+    dialogPagebyOption : document.getElementById('pagebyOptions'),
     btnBack : document.getElementById('mdc-back'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
@@ -27,10 +28,11 @@ var App = new Application();
     alignCenter: document.getElementById('align-center'),
     alignRight: document.getElementById('align-right'),
     formatBold: document.getElementById('format-bold'),
-    formatItalic: document.getElementById('format-italic')
-    
+    formatItalic: document.getElementById('format-italic'),
+    radioSingleSelection: document.getElementsByName('selection-type')
+
   };
-  
+
   App.init();
 
   app.handlerCubeSelected = function(e) {
@@ -48,7 +50,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          
+
           app.createReport(response, reportName);
           app.dialogCubeList.close();
 
@@ -65,7 +67,7 @@ var App = new Application();
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
   };
-  
+
   app.loadCubes = () => {
     // carico elenco Cubi su cui creare il report
     console.log('loadCubes');
@@ -95,10 +97,10 @@ var App = new Application();
 
     // ottengo un reportId per passarlo a costruttore
     const reportStorage = new ReportStorage();
-    
+
     app.report = new Options(app.table, reportStorage.getIdAvailable());
-    
-    
+
+
     app.report.cube = cube;
     // dati estratti dalla query
     app.report.data = response;
@@ -110,7 +112,7 @@ var App = new Application();
     app.report.createDatalist();
 
     app.report.draw();
-    
+
   };
 
   app.loadCubes();
@@ -118,9 +120,9 @@ var App = new Application();
 
   /* events */
   app.btnDashboardLayout.onclick = function(e) {window.location.href = "/dashboards/";};
-  
+
   app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
-  
+
   app.btnSaveReport.onclick = function (e) {
     // apro dialog report-name
     app.dialogReportName.showModal();
@@ -133,17 +135,16 @@ var App = new Application();
     app.dialogReportName.close();
   };
 
-  app.propertyColHidden.onclick = function (e) { 
+  app.propertyColHidden.onclick = function (e) {
     console.log('checkbox click');
-    
+
     // TODO: propertyValue conterrà il valore di questa proprietà selezionata (es.: in questo caso true/false)
     // console.log(propertyName);
-    
+
     app.report.attribute = { 'hidden': true };
   };
 
-  
-  app.handlerColorInput = function (e) { 
+  app.handlerColorInput = function (e) {
     // console.log(e.target.value);
     let propName = e.target.getAttribute('property');
     let propValue = e.target.value;
@@ -156,7 +157,7 @@ var App = new Application();
   app.bgColorInput.oninput = app.handlerColorInput;
   // app.bgColorInput.onchange = app.handlerColorInput;
 
-  app.handlerOption = function (e) { 
+  app.handlerOption = function (e) {
     let propName = e.target.getAttribute('property');
     let propValue = e.target.getAttribute('value');
     // imposto di un colore lo stile dell'allineamneto applicato (per questa colonna)
@@ -165,7 +166,7 @@ var App = new Application();
     console.log(propName);
     console.log(propValue);
     app.report.style = { [propName]: propValue };
-    
+
   };
 
   // align
@@ -173,13 +174,29 @@ var App = new Application();
   app.alignCenter.onclick = app.handlerOption;
   app.alignRight.onclick = app.handlerOption;
 
-  // format e style 
+  // format e style
   app.formatBold.onclick = app.handlerOption;
   app.formatItalic.onclick = app.handlerOption;
 
-  
-    
+  console.log(app.radioSingleSelection);
+
+  app.handlerRadioSelectionType = function(e) {
+    console.log('radio : ', e.target);
+    let propName = e.target.getAttribute('property');
+    let propValue = e.target.value;
+
+    app.report.pageByOption = { [propName]: propValue };
+  };
+  app.radioSingleSelection.forEach((item, i) => {
+    // console.log(item);
+    item.onchange = app.handlerRadioSelectionType;
+  });
+
+
+
+
+
   /* events */
-  
+
 
 })();

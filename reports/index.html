@@ -72,6 +72,7 @@
     <dialog id="columnsOption">
       <section class="dialogTitle">Impostazioni per la colonna <span id="colName"></span></section>
       <div class="dialogContent">
+
         <div class="colProperties">
           <span>Visualizzazione</span>
           <label class="mdc-checkbox">
@@ -113,20 +114,51 @@
             <input type="color" id="bgColor" name="bgColor" property="backgroundColor" value="#000000">
             <label for="bgColor" class="has-content">Colore sfondo</label>
           </div>
-          
+
           <label class="mdc-checkbox">
             <input id="chkbox-column-color" type="checkbox" name="columnColor" property="color backgroundColor"/>
             <span>Applica a tutta la colonna</span>
           </label>
-          
+
         </div>
-        
-  
+
         <div class="dialog-buttons">
           <button id="btnSaveColOption" type="button" name="done" class="md-button">OK</button>
         </div>
       </div>
-      
+
+    </dialog>
+
+    <dialog id="pageByOptions">
+      <section class="dialogTitle">Impostazioni per il filtro <span id="pageBy-colName"></span></section>
+      <div class="dialogContent">
+        <div class="colProperties">
+          <span>Tipo</span>
+          <div class="properties">
+            <div class="cell-full md-field">
+              <label class="mdc-radio">
+                <input type="radio" id="singleSelection" name="selection-type" title="Selezione singola" property="selectionType" value="single" checked>
+                <span>Singola</span>
+              </label>
+            </div>
+
+            <div class="cell-full md-field">
+              <label class="mdc-radio">
+                <input type="radio" id="multipleSelection" name="selection-type" title="Selezione multipla" property="selectionType" value="multple">
+                <span>Multipla</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="properties">
+
+          </div>
+        </div>
+
+        <div class="dialog-buttons">
+          <button id="btnSavePageByOption" type="button" name="done" class="md-button">OK</button>
+        </div>
+      </div>
     </dialog>
 
 
@@ -191,7 +223,7 @@
                               </section>
                             </div>
                           </div>
-                          <span class="popupContent"><i id="pageby-settings" class="material-icons md-18">settings</i><small class="popup">Impostazioni</small></span>
+                          <span class="popupContent"><i class="material-icons md-18">settings</i><small class="popup">Impostazioni</small></span>
                         </template>
 
                       </div>
