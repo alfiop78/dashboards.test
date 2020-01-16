@@ -152,15 +152,15 @@ div.elements > ul{max-height: 300px;overflow-y: auto;padding-inline-start: 0;}
 ul.filters > .elementContent > .element{font-size: small;display: flex;justify-content: space-between;align-items: center;position: relative;}
 ul.filters li{list-style: none;padding: .5em;width: 100%;height: 100%;position: absolute;z-index: 1;display: flex;align-items: center;}
 ul.filters .elementContent:hover{background: darksalmon;cursor: pointer;color: white;border-radius: 2px;}
-.elements[multi] ul.filters .elementContent:hover{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
+.elements[selectionType='multiple'] ul.filters .elementContent:hover{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
 ul::-webkit-scrollbar{display: none;}
 div.elements::-webkit-scrollbar{display: none;}
-.elements:not([multi]) > section{display: none;}
-.elements[multi] > section{text-align: right;padding: .5em;}
+.elements:not([selectionType='multiple']) > section{display: none;}
+.elements[selectionType='multiple'] > section{text-align: right;padding: .5em;}
 .elements ul i{visibility: hidden;}
-.elements[multi] .elementContent:hover i{visibility: visible;}
-.elements[multi] .elementContent[selected]{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
-.elements[multi] .elementContent[selected] i{visibility: visible;}
+.elements[selectionType='multiple'] .elementContent:hover i{visibility: visible;}
+.elements[selectionType='multiple'] .elementContent[selected]{background: steelblue;cursor: pointer;color: white;border-radius: 2px;}
+.elements[selectionType='multiple'] .elementContent[selected] i{visibility: visible;}
 .filters .element i{width: 100%;z-index: 0;display: flex;justify-content: flex-end;}
 /*filters*/
 /*tfoot*/

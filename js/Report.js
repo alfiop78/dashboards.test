@@ -9,7 +9,7 @@ class Report {
     this.thead = this.table.tHead; // intestazioni, si può utilizzare per ciclare solo l'intestazione senza il corpo del report
     // footer
     this.tfoot = this.table.tFoot;
-    // sezone in cui sono visualizzati i filtri in page-by
+    // sezione in cui sono visualizzati i filtri in page-by
     this.paramsRef = document.querySelector('section[params] > div.params'); // elemento in cui sono i filtri
     document.querySelector('section[params]').hidden = true;
     // con il reportId vado a recuperaro l'object REPORT dallo storage e con esso anche tutte le opzioni per disegnare il report
@@ -512,6 +512,25 @@ class Report {
     }
   }
 
+  applyPageBy() {
+    // applico le opzioni inserite sul pageBy
+
+    for (let columnId in this._options.cols) {
+      console.log(columnId);
+      // leggo le proprietà impostate per questo filtro in pageBy
+      console.log(this._options.cols[columnId].pageBy);
+      // se ci sono delle proprietà impostate per il pageBy le applico
+      if (Object.keys(this._options.cols[columnId].pageBy).length >= 1) {
+        for (let [property, value] of Object.entries(this._options.cols[columnId].pageBy)) {
+          console.log(property);
+          console.log(value);
+          // i parametri e/o le opzioni dei filtri le imposto sull'elemento div.elements[options]
+          this.paramsRef.querySelector(".elements[col='"+columnId+"']").setAttribute(property, value);
+        }
+      }
+    }
+  }
+
   draw() {
     // aggiungo event sugli elementi dei filtri, sia filtri semplici che multiselezione
     // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
@@ -649,23 +668,21 @@ class Options extends Report{
   get attribute() { return this.attributes; }
 
   set pageByOption(pageBy) {
-    console.log(pageBy);
+    // console.log(pageBy);
     // imposto parametri del pageby, questo ha sempre la coppia key/value
     for (let [key, value] of Object.entries(pageBy)) {
       this.pageBy[key] = value;
     }
-    console.log(this.pageBy);
-    console.log(this.cols);
+    // console.log(this.pageBy);
+    // console.log(this.cols);
   }
 
   get pageByOption() {return this.pageBy;}
 
   set colOption(option) {
-    console.log(option);
-
+    // console.log(option);
     this._options.cols = option;
     console.log(this._options);
-
   }
 
   get colOption() { return this._options.cols;}
@@ -756,6 +773,7 @@ class Options extends Report{
     this.colOption = this.cols;
     // applico le impostazioni sul report
     console.log('applico impostazione del pageby');
+    this.applyPageBy();
   }
 
   handlerPageByOption(e) {
