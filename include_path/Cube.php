@@ -89,7 +89,10 @@ class Cube {
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
+        // $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
+        // TODO: imposto un FORMAT per i numeri (16.01.2020)
+        // FROMAT(SUM(nometabella.nomecampo), 2, 'IT_it') AS alias
+        $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
       }
     }
     return $this->_metrics = implode(", ", $metricsList);
@@ -133,7 +136,7 @@ class Cube {
       foreach ($metrics as $param) {
         unset($this->_sql);
 
-        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->alias`"; // TODO: provare con backtick
+        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->alias`";
         echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
         // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
         $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
