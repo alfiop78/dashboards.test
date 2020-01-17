@@ -279,6 +279,7 @@ class Cube {
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
     let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').innerText;
+    console.log(operator);
     let values = document.getElementById('filter-values').value;
     let filterName = document.getElementById('filter-name').value;
 

@@ -379,9 +379,10 @@ var oCube = new Cube();
   });
 
   app.handlerFunctionOperatorList = function(e) {
-    // console.log(this);
+    console.log(this);
     // questo elenco deve avere sempre almeno un elemento selezionato
     if (this.hasAttribute('selected')) {return;}
+    // TODO: quando inserisco between bisogna far comparire anche la seconda input
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
     this.toggleAttribute('selected');
   };

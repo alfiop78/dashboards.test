@@ -148,6 +148,7 @@
                 <li label="<>">&lt;&gt;</li>
                 <li label="<">&lt;</li>
                 <li label=">">&gt;</li>
+                <li label="BETWEEN">BETWEEN</li>
                 <li label="IN">IN()</li>
                 <li label="NOT IN">NOT IN()</li>
                 <li label="IS NULL">IS NULL</li>
@@ -160,6 +161,11 @@
             <h6>Valori</h6>
             <div class="listContent">
               <div class="md-field">
+                <input type="text" id="filter-values" value=""/>
+                <label for="filter-values" class="">Valore</label>
+              </div>
+              <!-- questa input dovrà essere utilizzata per il BETWEEN -->
+              <div class="md-field" hidden>
                 <input type="text" id="filter-values" value=""/>
                 <label for="filter-values" class="">Valore</label>
               </div>
