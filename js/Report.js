@@ -291,12 +291,11 @@ class Report {
           // (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
           // this.tr.appendChild(this.td);
           if (key === "metrics") {
-            // TODO: format della metrica con default 2 decimali
-            // console.log(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(number));
-            console.log(data);
-            console.log(new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(data));
-            this.formatNumber = new Intl.NumberFormat('it-IT', {style: 'currency', currency: 'EUR'}).format(data);
-            (!data) ? console.log('NULL'): this.td.innerHTML = this.formatNumber;
+            // TODO: format della metrica con "decimal", "currency", "percent" oppure "unit"
+            // console.log(new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(data));
+            // this.formatNumber = new Intl.NumberFormat('it-IT', {style: 'currency', currency: 'EUR'}).format(data);
+            // (!data) ? console.log('NULL'): this.td.innerHTML = this.formatNumber;
+            (!data) ? console.log('NULL'): this.td.innerHTML = data;
           } else {
             (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
           }
@@ -502,21 +501,41 @@ class Report {
 
   applyAttributes() {
     // applico le opzioni impostate al report
-    console.log(this._options);
+    console.log('applyAttributes');
+    // console.log(this._options);
+    console.log(this.attributes);
+    /*
+    // TODO: dopo aver impostato l'attributo lo devo impostare a tutta la colonna. Alcuni attributi, come hidden sono
+      automaticamente impostati qui e quindi ho l'effetto immediato, altri attributi devo andarli a leggerli (switch)
+      ed impostarli in base alla proprietà (es.: [format='currency']) non è impostato in automatico e devo farlo attraverso
+      this.formatNumber = new Intl.NumberFormat('it-IT', {style: 'currency', currency: 'EUR'}).format(number);
+    */
 
     for (let columnId in this._options.cols) {
-      console.log(columnId);
+      // console.log(columnId);
       // leggo le proprietà impostate per questa colonna
-      console.log(this._options.cols[columnId].attributes);
-      console.log(Object.keys(this._options.cols[columnId].attributes).length);
-      // se ci sono delle proprietà impostate in styles le applico al report
+      // console.log(this._options.cols[columnId].attributes);
+      // console.log(Object.keys(this._options.cols[columnId].attributes).length);
+      // se ci sono delle proprietà impostate in attributes le applico al report
       if (Object.keys(this._options.cols[columnId].attributes).length >= 1) {
         for (let [property, value] of Object.entries(this._options.cols[columnId].attributes)) {
           console.log(property);
           console.log(value);
           this.thead.rows[0].cells[columnId].setAttribute(property, value);
-          // TODO: applico l'attributo a tutta la colonna
+          // applico l'attributo a tutta la colonna
           for (let i = 0; i < this.tbody.rows.length; i++) {
+            if (property = "format") {
+              console.log('format');
+              // valore della cella da modificare
+              // OPTIMIZE: Impostare anche altri formati (decimal, percent, ecc...)
+              this.cellValue = this.tbody.rows[i].cells[columnId].innerText;
+              // console.log(this.cellValue);
+              this.formatOptions = {style: value, currency: 'EUR'};
+              // console.log(this.formatOptions);
+              this.numberFormat = new Intl.NumberFormat('it-IT', this.formatOptions).format(this.cellValue);
+              // console.log(this.numberFormat);
+              this.tbody.rows[i].cells[columnId].innerHTML = this.numberFormat;
+            }
             this.tbody.rows[i].cells[columnId].setAttribute(property, value);
           }
         }
@@ -770,8 +789,8 @@ class Options extends Report{
     // imposto this._options
     this.colOption = this.cols;
     // applico le impostazioni sul report
-    this.applyStyles();
-    this.applyAttributes();
+    super.applyStyles();
+    super.applyAttributes();
   }
 
   btnDonePageByOptions() {

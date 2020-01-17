@@ -30,7 +30,7 @@ var App = new Application();
     formatBold: document.getElementById('format-bold'),
     formatItalic: document.getElementById('format-italic'),
     radioSingleSelection: document.getElementsByName('selection-type'),
-    inputDecimal : document.getElementById('decimalPosition')
+    numberFormat : document.getElementById('numberFormat')
 
   };
 
@@ -194,15 +194,17 @@ var App = new Application();
     item.onchange = app.handlerRadioSelectionType;
   });
 
-  app.inputDecimal.onchange = function(e) {
+  app.numberFormat.onchange = function(e) {
+    
     let propName = e.target.getAttribute('property');
-    let propValue = e.target.value;
-    app.report.style = { [propName]: propValue};
+    console.log(this.selectedIndex);
+    // NOTE: Esempio utilizzo select per recuperare l'elemento selezionato (value oppure id della option)
+    // console.log(this.options[this.selectedIndex].value);
+    let propValue = this.options[this.selectedIndex].value;
+    // console.log(this.options[this.selectedIndex].label);
+    // value dell'elemento selezionato nella select
+    app.report.attribute = { [propName]: propValue};
   };
-
-
-
-
 
   /* events */
 
