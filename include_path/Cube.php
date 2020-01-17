@@ -89,10 +89,10 @@ class Cube {
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
       foreach ($metric as $param) {
-        // $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
-        // TODO: imposto un FORMAT per i numeri (16.01.2020)
-        // FROMAT(SUM(nometabella.nomecampo), 2, 'IT_it') AS alias
-        $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
+        $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
+        // CHANGED: imposto un FORMAT per i numeri (16.01.2020)
+        // 17.01.2020 Formattazione impostat in JS
+        // $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
       }
     }
     return $this->_metrics = implode(", ", $metricsList);

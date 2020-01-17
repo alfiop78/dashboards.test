@@ -278,18 +278,30 @@ class Report {
       this.tr.setAttribute('row', 'body');
       this.tbody.appendChild(this.tr);
       // console.log(this._data[i]);
-      Array.from(Object.values(this._data[i])).forEach((col, index) => {
+      Array.from(Object.values(this._data[i])).forEach((data, index) => {
         this.td = document.createElement('td');
         this.td.setAttribute('col', index);
         // this.td.setAttribute('options', 'cols');
-        (!col) ? console.log('NULL'): this.td.innerHTML = col.toUpperCase().trim();
-        this.tr.appendChild(this.td);
+        // (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
+        // this.tr.appendChild(this.td);
         // tramite il positioning imposto l'attributo columns/metrics sulle celle
         for (let [key, colName] of Object.entries(this._options.positioning[index])) {
           // imposto l'attributo columns/metrics sulle intestazioni di colonna
           this.td.setAttribute(key, true);
+          // (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
+          // this.tr.appendChild(this.td);
+          if (key === "metrics") {
+            // TODO: format della metrica con default 2 decimali
+            // console.log(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(number));
+            console.log(data);
+            console.log(new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(data));
+            this.formatNumber = new Intl.NumberFormat('it-IT', {style: 'currency', currency: 'EUR'}).format(data);
+            (!data) ? console.log('NULL'): this.td.innerHTML = this.formatNumber;
+          } else {
+            (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
+          }
+          this.tr.appendChild(this.td);
         }
-
       });
     }
   }
