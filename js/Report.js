@@ -704,7 +704,7 @@ class Options extends Report{
     for (let [key, value] of Object.entries(style)) {
       this.styles[key] = value;
     }
-    // console.log(this.styles);
+    // console.log(this.styles);addR
   }
 
   get style() { return this.styles; }

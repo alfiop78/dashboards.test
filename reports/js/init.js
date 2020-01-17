@@ -29,7 +29,8 @@ var App = new Application();
     alignRight: document.getElementById('align-right'),
     formatBold: document.getElementById('format-bold'),
     formatItalic: document.getElementById('format-italic'),
-    radioSingleSelection: document.getElementsByName('selection-type')
+    radioSingleSelection: document.getElementsByName('selection-type'),
+    inputDecimal : document.getElementById('decimalPosition')
 
   };
 
@@ -187,10 +188,17 @@ var App = new Application();
 
     app.report.pageByOption = { [propName]: propValue };
   };
+
   app.radioSingleSelection.forEach((item, i) => {
     // console.log(item);
     item.onchange = app.handlerRadioSelectionType;
   });
+
+  app.inputDecimal.onchange = function(e) {
+    let propName = e.target.getAttribute('property');
+    let propValue = e.target.value;
+    app.report.style = { [propName]: propValue};
+  };
 
 
 

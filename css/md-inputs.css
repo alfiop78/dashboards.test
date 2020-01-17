@@ -59,7 +59,7 @@ label[for]{color:#999; left: 4px; margin:0;font-weight:normal;position:absolute;
 .md-field-helper{padding: 4px;position: relative;margin-bottom: 12px;}
 .md-field.end{justify-self: end;}
 
-.md-field[number]{min-width: 100px;max-width: 160px;}
+/* .md-field[number]{min-width: 100px;max-width: 160px;} */
 
 /* checkboxes ***/
 
