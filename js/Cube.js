@@ -278,17 +278,26 @@ class Cube {
   handlerBtnFilterDone() {
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
-    let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').innerText;
+    let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
     console.log(operator);
     // return;
     // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
     let values = [];
+    let value;
     switch (operator) {
       // TODO: aggiungere altri operatori
       case 'BETWEEN':
         // recupero i valori di filter-values-from e filter-values-to
         values.push(document.getElementById('filter-values-from').value);
         values.push(document.getElementById('filter-values-to').value);
+        break;
+      case 'IN':
+      case 'NOT IN':
+        value = document.getElementsByName('in')[0].value;
+        // console.log(value);
+        values = value.split(",");
+        // console.log(values);
+        // return;
         break;
       default:
         values.push(document.getElementById('filter-values').value);

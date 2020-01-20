@@ -83,7 +83,7 @@ var oCube = new Cube();
           // TODO:
         }
       } else {
-        // TODO: 
+        // TODO:
 
       }
     };
@@ -398,8 +398,17 @@ var oCube = new Cube();
         app.dialogFilters.querySelector('.md-field[value]').hidden = true;
 
         break;
-      default:
+      case "IN":
+      case "NOT IN":
+        document.getElementById('in').hidden = false;
+        app.dialogFilters.querySelector('.md-field[value]').hidden = true;
+        document.getElementById('between').hidden = true;
 
+        break;
+      default:
+        document.getElementById('in').hidden = true;
+        app.dialogFilters.querySelector('.md-field[value]').hidden = false;
+        document.getElementById('between').hidden = true;
     }
   };
 
@@ -483,7 +492,7 @@ var oCube = new Cube();
     let cubeStorage = new CubeStorage();
 
     // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-    oCube.cube.cubeId = cubeStorage.id;
+    oCube.cube.cubeId = cubeStorage.getIdAvailable();
     console.log(oCube.cube.cubeId);
 
     // oCube.cube.cube_id = oStorage.cubeId;
@@ -503,10 +512,6 @@ var oCube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          console.log(oCube.cube.name);
-
-          app.createReport(response, cubeStorage.json(oCube.cube.name));
-
         } else {
           // TODO:
         }

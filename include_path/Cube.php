@@ -83,6 +83,10 @@ class Cube {
             // var_dump($param->values);
             $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".implode(" AND ", $param->values);
             break;
+          case 'IN':
+          case 'NOT IN':
+            $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." (".implode(", ", $param->values).")";
+            break;
           default:
             // var_dump($param->values);
             $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values[0];
@@ -226,7 +230,6 @@ class Cube {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
     // return $sql;
-
     return $this->connect->multiInsert($sql);
   }
 

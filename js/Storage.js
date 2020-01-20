@@ -37,28 +37,53 @@ class Storage {
 }
 
 class CubeStorage extends Storage {
-  _stringify;
-
-  // Metodi per leggere/scrivere Cube nello Storage
   constructor() {
     super();
-    this.cubeId = 0;
-    // ottengo un cubeId disponibile
-    // TODO: ottimizzare secondo la logica di 'getIDAvailable'
-    this.storageKeys.forEach((key) => {
-      let jsonStorage = JSON.parse(this.storage.getItem(key));
-      // console.log(key);
-      if (jsonStorage.type === "CUBE") {
-        // console.log("cubo : "+key);
-        // console.log(jsonStorage.cubeId);
-        this.cubeId = jsonStorage.cubeId+1;
-      }
-    });
-    console.log(this.cubeId);
+    this.id = 0; // default
   }
 
-  get id() {
-    return this.cubeId;
+  set cubeId(value) {
+    this.id = value;
+  }
+
+  get cubeId() { return this.id; }
+
+  getIdAvailable() {
+    // ottengo il primo Id disponibile
+    console.log(this.storageKeys);
+    this.cubesElement = [];
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+
+      if (jsonStorage.type === "CUBE") {
+        // ottengo il numero di elementi PAGE nello storage
+        this.cubesElement.push(jsonStorage.id);
+      }
+    });
+
+    // ordino l'array
+    this.cubesElement.sort(function (a, b) {
+      console.log(a);
+      console.log(b);
+      // TODO: cosa sono a e b ?
+      return a - b;
+    })
+    // this.pagesElement.sort((a, b) => a - b);
+
+    for (let i = 0; i < this.cubesElement.length; i++) {
+      // indice 0
+      // se 0 è presente in pagesElement aggiungo una unità
+      // console.log(this.pagesElement.includes(i));
+
+      if (this.cubesElement.includes(i)) {
+        this.id++;
+        // console.log(this.id);
+      } else {
+        this.id = i;
+      }
+    }
+    return this.id;
   }
 
   get list() {
@@ -74,7 +99,12 @@ class CubeStorage extends Storage {
       }
     });
     return cubes;
+  }
 
+  set stringify(value) {this._stringify = value;}
+
+  get stringify() {
+    return this._stringify;
   }
 
   // set save(value) {
@@ -109,7 +139,7 @@ class ReportStorage extends Storage {
   }
 
   get reportId() { return this.id; }
-  
+
   getIdAvailable() {
     // ottengo il primo Id disponibile
     console.log(this.storageKeys);
@@ -117,12 +147,12 @@ class ReportStorage extends Storage {
     this.storageKeys.forEach((key, index) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
-      
+
       if (jsonStorage.type === "REPORT") {
         // ottengo il numero di elementi PAGE nello storage
         this.elements.push(jsonStorage.id);
       }
-      
+
     });
     // TODO: cerco il primo id "libero"
     // ordino l'array
@@ -132,13 +162,13 @@ class ReportStorage extends Storage {
       // TODO: cosa sono a e b ?
       return a - b;
     })
-    
+
     // this.pagesElement.sort((a, b) => a - b);
     for (let i = 0; i < this.elements.length; i++) {
       // indice 0
       // se 0 è presente in elements aggiungo una unità
       // console.log(this.pagesElement.includes(i));
-      
+
       if (this.elements.includes(i)) {
         this.id++;
         // console.log(this.id);
@@ -249,7 +279,7 @@ class PageStorage extends Storage {
   }
 
   get pageId() { return this.id; }
-  
+
   list() {
     // ottengo la lista delle pagine create
     this.pages = [];
@@ -259,7 +289,7 @@ class PageStorage extends Storage {
       if (jsonStorage.type === "PAGE") {
         // console.log("cubo : "+key);
         // console.log(jsonStorage.layoutParams);
-        
+
         let pageProperties = {
           'name': key,
           'id': jsonStorage.id,
@@ -278,14 +308,14 @@ class PageStorage extends Storage {
     this.storageKeys.forEach((key, index) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
-      
+
       if (jsonStorage.type === "PAGE") {
         // ottengo il numero di elementi PAGE nello storage
         this.pagesElement.push(jsonStorage.id);
       }
-      
+
     });
-    
+
     // ordino l'array
     this.pagesElement.sort(function (a, b) {
       console.log(a);
@@ -293,22 +323,22 @@ class PageStorage extends Storage {
       // TODO: cosa sono a e b ?
       return a - b;
     })
-    
+
     // this.pagesElement.sort((a, b) => a - b);
     for (let i = 0; i < this.pagesElement.length; i++) {
       // indice 0
       // se 0 è presente in pagesElement aggiungo una unità
       // console.log(this.pagesElement.includes(i));
-      
+
       if (this.pagesElement.includes(i)) {
         this.id++;
         // console.log(this.id);
       } else {
         this.id = i;
       }
-      
+
     }
-    
+
     return this.id;
   }
 }
