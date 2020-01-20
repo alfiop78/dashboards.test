@@ -165,4 +165,8 @@ dialog .formula{padding: 16px;}
 .name-alias{display: grid;grid-template-columns: auto auto;}
 dialog h6{font-size: .85rem;font-weight: normal;padding: 4px;margin: 0;color: #52524e}
 dialog small{font-weight: lighter;padding: 4px;}
+
+dialog #between[hidden]{display: none;}
+dialog #between{display: flex;flex-direction: column;}
+dialog #between > span{padding: 16px;}
 /* end dialog */

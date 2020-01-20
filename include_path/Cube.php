@@ -77,9 +77,20 @@ class Cube {
     $or = " OR ";
     foreach ($filters as $table => $filter) {
       foreach ($filter as $param) {
-        $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values;
+        // TODO: aggiungere anche gli altri operatori (IN, NOT IN, ecc...)
+        switch ($param->operator) {
+          case 'BETWEEN':
+            // var_dump($param->values);
+            $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".implode(" AND ", $param->values);
+            break;
+          default:
+            // var_dump($param->values);
+            $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values[0];
+            break;
+        }
       }
     }
+    // var_dump($this->_reportFilters);
 
     return $this->_reportFilters;
   }

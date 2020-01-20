@@ -1,3 +1,4 @@
+/* global Application, Cube, Timeline, Page, CubeStorage */
 // TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
 // TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
@@ -15,6 +16,7 @@ var oCube = new Cube();
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogReportList : document.getElementById('dialog-report-list'),
+    dialogFilters : document.getElementById('filter-setting'),
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
@@ -61,7 +63,7 @@ var oCube = new Cube();
   app.handlerCubeSelected = function(e) {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
     // ricreo un datamart
-    /*
+
     let data = window.localStorage.getItem(this.getAttribute('label'));
     var url = "ajax/cube.php";
     // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
@@ -78,43 +80,10 @@ var oCube = new Cube();
           // app.createReport(response);
 
         } else {
-
+          // TODO:
         }
       } else {
-
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);*/
-
-    // console.log(this.getAttribute('label'));
-
-    let reportName = this.getAttribute('label');
-
-    // recupero un datamart FX... già creato e visualizzo l'anteprima
-    var url = "ajax/reports.php";
-    let reportId = this.getAttribute('id');
-    let params = "reportId="+reportId;
-
-    // console.log(params);
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          console.table(response);
-          // abilito il tasto btnPreviewReport
-          app.btnPreviewReport.disabled = false;
-          // app.createReport(response, oStorage.getJSONCube(reportName));
-          app.dialogReportList.close();
-
-        } else {
-
-        }
-      } else {
+        // TODO: 
 
       }
     };
@@ -123,6 +92,40 @@ var oCube = new Cube();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+
+    // console.log(this.getAttribute('label'));
+
+    // let reportName = this.getAttribute('label');
+    //
+    // // recupero un datamart FX... già creato e visualizzo l'anteprima
+    // var url = "ajax/reports.php";
+    // let reportId = this.getAttribute('id');
+    // let params = "reportId="+reportId;
+    //
+    // // console.log(params);
+    // var request = new XMLHttpRequest();
+    // request.onreadystatechange = function() {
+    //   if (request.readyState === XMLHttpRequest.DONE) {
+    //     if (request.status === 200) {
+    //       var response = JSON.parse(request.response);
+    //       console.table(response);
+    //       // abilito il tasto btnPreviewReport
+    //       app.btnPreviewReport.disabled = false;
+    //       // app.createReport(response, oStorage.getJSONCube(reportName));
+    //       app.dialogReportList.close();
+    //
+    //     } else {
+    //       // TODO:
+    //     }
+    //   } else {
+    //     // TODO:
+    //   }
+    // };
+    //
+    // request.open('POST', url);
+    // // request.setRequestHeader('Content-Type','application/json');
+    // request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    // request.send(params);
   };
 
   app.getDatabaseTable = function() {
@@ -152,9 +155,10 @@ var oCube = new Cube();
           }
 
         } else {
-
+          // TODO:
         }
       } else {
+        // TODO:
 
       }
     };
@@ -213,10 +217,10 @@ var oCube = new Cube();
           oCube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
-
+          // TODO:
         }
       } else {
-
+        // TODO:
       }
     };
 
@@ -379,12 +383,24 @@ var oCube = new Cube();
   });
 
   app.handlerFunctionOperatorList = function(e) {
-    console.log(this);
+    // console.log(this);
     // questo elenco deve avere sempre almeno un elemento selezionato
     if (this.hasAttribute('selected')) {return;}
     // TODO: quando inserisco between bisogna far comparire anche la seconda input
+    // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
     this.toggleAttribute('selected');
+    console.log(e.target);
+    switch (e.target.getAttribute('label')) {
+      case "BETWEEN":
+        document.getElementById('between').hidden = false;
+        // nascondo la input stanrdard
+        app.dialogFilters.querySelector('.md-field[value]').hidden = true;
+
+        break;
+      default:
+
+    }
   };
 
   app.openReportList = function() {
@@ -492,10 +508,10 @@ var oCube = new Cube();
           app.createReport(response, cubeStorage.json(oCube.cube.name));
 
         } else {
-
+          // TODO:
         }
       } else {
-
+        // TODO:
       }
     };
 

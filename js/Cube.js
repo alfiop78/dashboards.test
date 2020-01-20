@@ -280,12 +280,25 @@ class Cube {
     let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
     let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').innerText;
     console.log(operator);
-    let values = document.getElementById('filter-values').value;
+    // return;
+    // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
+    let values = [];
+    switch (operator) {
+      // TODO: aggiungere altri operatori
+      case 'BETWEEN':
+        // recupero i valori di filter-values-from e filter-values-to
+        values.push(document.getElementById('filter-values-from').value);
+        values.push(document.getElementById('filter-values-to').value);
+        break;
+      default:
+        values.push(document.getElementById('filter-values').value);
+    }
+
     let filterName = document.getElementById('filter-name').value;
 
     if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
 
-    this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator': operator, 'values': values});
+    this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});
     let objParam = {};
     this.conditionsColName.forEach((filter) => {objParam[filter.fieldName] = filter;});
 
