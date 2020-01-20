@@ -85,12 +85,6 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 .relation > .line{background: grey;width: 1px;height: 40px;}
 .icon-relation{display: flex;justify-content: center;position: relative;margin-top: 4px;margin-bottom: 4px;}
 
-/*actions*/
-.actions{display: flex; flex-flow: column;}
-.actions > span{display: flex;justify-content: center;position: relative;}
-.actions span:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
-/*actions*/
-
 /*popup*/
 /* lo span che contiene l'icona e lo small della popup*/
 span.popupContent{display: flex;justify-content: center;}

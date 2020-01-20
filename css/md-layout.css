@@ -168,7 +168,7 @@ tr.tr-right{display: flex;justify-content: flex-end;}
 /*tfoot*/
 
 /*actions*/
-.actions{display: flex; flex-flow: row;margin: 16px;}
+.actions{display: flex; flex-flow: row;margin: 16px 32px;}
 /* .actions > span{display: flex;justify-content: center;position: relative;} */
 span.popupContent:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
 /*actions*/
