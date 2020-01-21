@@ -484,15 +484,15 @@ class Report {
     console.log(this.styles);
 
     for (let columnId in this._options.cols) {
-      console.log(columnId);
+      // console.log(columnId);
       // leggo le proprietà impostate per questa colonna
-      console.log(this._options.cols[columnId].styles);
-      console.log(Object.keys(this._options.cols[columnId].styles).length);
+      // console.log(this._options.cols[columnId].styles);
+      // console.log(Object.keys(this._options.cols[columnId].styles).length);
       // se ci sono delle proprietà impostate in styles le applico al report
       if (Object.keys(this._options.cols[columnId].styles).length >= 1) {
         for (let [property, value] of Object.entries(this._options.cols[columnId].styles)) {
-          console.log(property);
-          console.log(value);
+          // console.log(property);
+          // console.log(value);
           this.thead.rows[0].cells[columnId].style[property] = value;
         }
       }
@@ -524,7 +524,7 @@ class Report {
           this.thead.rows[0].cells[columnId].setAttribute(property, value);
           // applico l'attributo a tutta la colonna
           for (let i = 0; i < this.tbody.rows.length; i++) {
-            if (property = "format") {
+            if (property === "format") {
               console.log('format');
               // valore della cella da modificare
               // OPTIMIZE: Impostare anche altri formati (decimal, percent, ecc...)
@@ -550,15 +550,18 @@ class Report {
       console.log(columnId);
       // leggo le proprietà impostate per questo filtro in pageBy
       console.log(this._options.cols[columnId].pageBy);
-      // se ci sono delle proprietà impostate per il pageBy le applico
-      if (Object.keys(this._options.cols[columnId].pageBy).length >= 1) {
+      if (this._options.cols[columnId].pageBy) {
         for (let [property, value] of Object.entries(this._options.cols[columnId].pageBy)) {
+          console.info('CONTROLLO PAGEBY TRUE');
           console.log(property);
           console.log(value);
           // i parametri e/o le opzioni dei filtri le imposto sull'elemento div.elements[options]
           this.paramsRef.querySelector(".elements[col='"+columnId+"']").setAttribute(property, value);
         }
+      } else {
+        console.log('CONTROLLO PAGEBY FALSE');
       }
+
     }
   }
 
@@ -795,15 +798,19 @@ class Options extends Report{
 
   btnDonePageByOptions() {
     // btn OK nella dialog pageByOption
-    // TODO: completare
     this.dialogPageByOption.close();
     console.log(this.columnId);
-    this.cols[this.columnId] = { 'columnId': this.columnId };
+    // TODO: se già esiste il columnId selezionato in this.cols non lo riassegno (altrimenti viene resettato styles e attributes)
+    if (!this.cols[this.columnId].hasOwnProperty('columnId')) {
+      console.log('colonna non impostata azzero');
+      this.cols[this.columnId] = { 'columnId': this.columnId };
+    }
     this.cols[this.columnId].pageBy = this.pageBy;
     // imposto this._options
     this.colOption = this.cols;
     // applico le impostazioni sul report
     console.log('applico impostazione del pageby');
+    console.log(this.cols);
     this.applyPageBy();
   }
 

@@ -1,3 +1,4 @@
+/* global Application, CubeStorage, ReportStorage, Options */
 var App = new Application();
 
 (() => {
@@ -56,10 +57,10 @@ var App = new Application();
           app.dialogCubeList.close();
 
         } else {
-
+          // TODO:
         }
       } else {
-
+        // TODO:
       }
     };
 
@@ -100,7 +101,6 @@ var App = new Application();
     const reportStorage = new ReportStorage();
 
     app.report = new Options(app.table, reportStorage.getIdAvailable());
-
 
     app.report.cube = cube;
     // dati estratti dalla query
@@ -195,7 +195,7 @@ var App = new Application();
   });
 
   app.numberFormat.onchange = function(e) {
-    
+
     let propName = e.target.getAttribute('property');
     console.log(this.selectedIndex);
     // NOTE: Esempio utilizzo select per recuperare l'elemento selezionato (value oppure id della option)

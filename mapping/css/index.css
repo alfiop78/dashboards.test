@@ -1,7 +1,7 @@
 /* #content,#body::-webkit-scrollbar{display: none;} */
 /*pages*/
 #pages{display: flex;transition: all 250ms;}
-.page{align-items: center;display: flex;flex-direction: column;min-width: 100%;padding: 8px;}
+.page{align-items: center;display: flex;flex-direction: column;min-width: 100%;margin: 8px;}
 #pages[data-step="1"]{transform: translateX(0px);}
 #pages[data-step="2"]{transform: translateX(-1000px);}
 #pages[data-step="3"]{transform: translateX(-2000px);}

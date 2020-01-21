@@ -50,15 +50,14 @@ var App = new Application();
 
     var url = "ajax/reports.php";
     let reportId = +this.getAttribute('data-report-id');
-    let report = new ReportStorage();
+    let storage = new ReportStorage();
     console.log(reportId);
 
+    storage.settings = reportId;
 
-    report.settings = reportId;
-
-    console.log(report.settings);
+    console.log(storage.settings);
     // return;
-    let params = "datamart="+report.settings;
+    let params = "datamart="+storage.settings;
     console.log(params);
     // visualizzo il template relativo al layout selezionato
     console.log(this);
@@ -70,7 +69,7 @@ var App = new Application();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, reportId, report.name);
+          app.createReport(response, reportId, storage.name);
 
         } else {
           // TODO:
