@@ -1,8 +1,7 @@
-/* global Application, Cube, Timeline, Page, CubeStorage */
+/* global Application, Cube, Timeline, Page, DimensionStorage, CubeStorage */
 // TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
 // TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
-var oStorage = new Storage();
 var oCube = new Cube();
 // TODO: dichiarare qui le altre Classi
 (() => {
@@ -30,7 +29,8 @@ var oCube = new Cube();
   app.getDimensionsList = function() {
     // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
     let ul = document.getElementById('dimensionsList');
-    oStorage.getDimensionsList().forEach((name) => {
+    const dimension = new DimensionStorage();
+    dimension.getDimensionsList().forEach((name) => {
       // console.log(name);
       let element = document.createElement('div');
       element.classList.add('element');
@@ -77,7 +77,9 @@ var oCube = new Cube();
           var response = JSON.parse(request.response);
           console.table(response);
           // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
-          // app.createReport(response);
+          app.dialogReportList.close();
+          document.getElementById('mdc-preview-report').disabled = false;
+          // TODO: vado sullo step 2
 
         } else {
           // TODO:
@@ -168,7 +170,7 @@ var oCube = new Cube();
     request.send();
   };
 
-  app.handlerTableSelected = function(e) {
+  app.handlerTableSelected = function() {
     // console.log('handlerTableSelected');
     this.toggleAttribute('selected');
     // oCube.activeCard = document.querySelector('.card-table[active]');
@@ -190,7 +192,7 @@ var oCube = new Cube();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
 
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
@@ -249,7 +251,7 @@ var oCube = new Cube();
     this.setAttribute('active', true);
   };
 
-  app.handlerAddTable = function(e) {
+  app.handlerAddTable = function() {
     /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
     ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
     app.TimelineHier.add();
@@ -272,7 +274,7 @@ var oCube = new Cube();
     let objTimeline = new Timeline(e.path[4].id);
     // console.log(Timeline);
     objTimeline.activeElements().forEach((element) => {
-      console.log(element);
+      // console.log(element);
       let card = element.querySelector('section.card-table')
 
       let help = card.querySelector('.help');
@@ -374,7 +376,7 @@ var oCube = new Cube();
     app.TimelineFact.addCircle();
   };
 
-  app.handlerFunctionMetricList = function(e) {
+  app.handlerFunctionMetricList = function() {
     // console.log(this);
     // questo elenco deve avere sempre almeno un elemento selezionato
     if (this.hasAttribute('selected')) {return;}
@@ -443,7 +445,7 @@ var oCube = new Cube();
   document.querySelector('#fact-card section[options] > span > i[metrics]').onclick = app.handlerAddMetrics;
 
   /* tasto OK nella dialog*/
-  document.getElementById('btnDimensionSaveName').onclick = function(e) {
+  document.getElementById('btnDimensionSaveName').onclick = function() {
     /*
       Salvo la dimensione, senza il legame con la FACT.
       Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
@@ -451,6 +453,7 @@ var oCube = new Cube();
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
     oCube.dimensionTitle = document.getElementById('dimensionName').value;
+    const storage = new DimensionStorage();
     let from = [];
     let objDimension = {};
     document.querySelectorAll('.card-table').forEach((card) => {
@@ -473,16 +476,16 @@ var oCube = new Cube();
     oCube.dimension[oCube.dimensionTitle] = objDimension;
     console.log(oCube.dimension);
 
-    oStorage.dimension = oCube.dimension;
+    storage.dimension = oCube.dimension;
 
     app.cloneLastTable();
     app.dialogDimensionName.close();
   };
 
-  document.getElementById('saveDimension').onclick = function(e) {app.dialogDimensionName.showModal();};
+  document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
-  document.getElementById('btnCubeSaveName').onclick = function(e) {
+  document.getElementById('btnCubeSaveName').onclick = function() {
     oCube.cubeTitle = document.getElementById('cubeName').value;
     oCube.cube.dimensions = oCube.dimension;
     oCube.cube.type = "CUBE";
@@ -504,10 +507,10 @@ var oCube = new Cube();
 
     // salvo il cubo in localStorage
     cubeStorage.save = oCube.cube;
-    cubeStorage.stringify = oCube.cube;
+    cubeStorage.stringifyObject = oCube.cube;
 
     var url = "ajax/cube.php";
-    let params = "cube="+cubeStorage.stringify;
+    let params = "cube="+cubeStorage.stringifyObject;
     console.log(params);
 
     var request = new XMLHttpRequest();
@@ -516,6 +519,9 @@ var oCube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
+          app.dialogCubeName.close();
+          // abilito il tasto REPORT PREVIEW
+          document.getElementById('mdc-preview-report').disabled = false;
         } else {
           // TODO:
         }

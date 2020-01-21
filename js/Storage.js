@@ -1,8 +1,7 @@
 /*
 La classe recupera il local storage ad ogni accesso alla pagina e contiene Metodi per recuperare ad esempio solo i CUBE o solo le PAGE, DIMENSION, ecc...
 */
-class Storage {
-  // _cubeId = 0;
+class Storages {
 
   constructor() {
     this.storage = window.localStorage;
@@ -36,7 +35,7 @@ class Storage {
 
 }
 
-class CubeStorage extends Storage {
+class CubeStorage extends Storages {
   constructor() {
     super();
     this.id = 0; // default
@@ -114,11 +113,11 @@ class CubeStorage extends Storage {
   //   this._stringify = JSON.stringify(value);
   // }
 
-  set stringify(value) {
+  set stringifyObject(value) {
     this._stringify = JSON.stringify(value);
   }
 
-  get stringify() {return this._stringify;}
+  get stringifyObject() {return this._stringify;}
 
   json(cubeName) {
     // un object del cube convertito in json, questo mi servirà per ricostruire la struttura (non per ajax request o DB)
@@ -127,7 +126,7 @@ class CubeStorage extends Storage {
 
 }
 
-class ReportStorage extends Storage {
+class ReportStorage extends Storages {
   // Metodi per leggere/scrivere Report nello Storage
   constructor() {
     super();
@@ -246,13 +245,19 @@ class ReportStorage extends Storage {
   }
 }
 
-class DimensionStorage extends Storage {
+class DimensionStorage extends Storages {
   // Metodi per leggere/scrivere Dimensioni nello Storage
   // TODO: da completare in base alla logica di PageStorage
   constructor() {
     super();
     this.id = 0; // default
   }
+
+  set dimensionId(value) {
+    this.id = value;
+  }
+
+  get dimensionId() { return this.id; }
 
   list() {
     let dimensions = [];
@@ -266,9 +271,42 @@ class DimensionStorage extends Storage {
     });
     return dimensions;
   }
+
+  getIdAvailable() {
+    // ottengo il primo Id disponibile
+    console.log(this.storageKeys);
+    this.dimensionsElement = [];
+    this.storageKeys.forEach((key, index) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+
+      if (jsonStorage.type === "DIMENSION") {
+        // ottengo il numero di elementi PAGE nello storage
+        this.dimensionsElement.push(jsonStorage.id);
+      }
+    });
+
+    // ordino l'array
+    this.dimensionsElement.sort(function (a, b) {
+      console.log(a);
+      console.log(b);
+      // TODO: cosa sono a e b ?
+      return a - b;
+    })
+    // this.dimensionsElement.sort((a, b) => a - b); versione compatta
+
+    for (let i = 0; i < this.dimensionsElement.length; i++) {
+      if (this.dimensionsElement.includes(i)) {
+        this.id++;
+      } else {
+        this.id = i;
+      }
+    }
+    return this.id;
+  }
 }
 
-class PageStorage extends Storage {
+class PageStorage extends Storages {
   constructor() {
     super();
     this.id = 0; // default

@@ -1,3 +1,4 @@
+/* global Application, Storages, ReportStorage*/
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,7 +10,7 @@ var App = new Application();
   var app = {
     // Cube : new Cube(),
     Draw : null,
-    Storage: new Storage(),
+    Storage: new Storages(),
     btnCreatePage : document.getElementById('mdc-create-page'),
     report_id : 0,
     reports : {},
@@ -43,7 +44,7 @@ var App = new Application();
         1- Inserisco il nome del Report selezionato in lyt-report
         */
         console.log(app.activeSection);
-        
+
         app.activeSection.querySelector('h5').innerText = li.innerHTML;
         app.dialogReports.close();
         // sezione già occupata dall'oggetto (report, chart, indicator, ecc...) appena selezionato
@@ -62,9 +63,9 @@ var App = new Application();
         let report_section_association = arrSections;
         app.pageParams.layoutParams = report_section_association;
       }
-      
+
     })
-    
+
   };
 
   app.handlerAddObject = function(e) {
@@ -121,8 +122,8 @@ var App = new Application();
     // console.log(pageStorage.getIdAvailable());
     let pageId = pageStorage.getIdAvailable();
     console.log(pageId);
-    
-    
+
+
     app.pageParams.id = pageId;
     app.pageParams.layoutId = app.layoutId;
     app.pageParams.type = "PAGE";

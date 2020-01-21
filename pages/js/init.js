@@ -1,3 +1,4 @@
+/* global Application, PageStorage, ReportStorage, Report */
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,11 +11,10 @@ var App = new Application();
     Draw : null,
     pageParams : Object.keys(window.localStorage),
     pageSelectedTitle : null
-    // Storage : new Storage()
   };
   // console.log(app.pageParams);
 
-  app.getPages = function () { 
+  app.getPages = function () {
     // visualizzo elenco delle pagine sulla sinistra
     // let ulPages = document.getElementById('pages');
     let storage = new PageStorage();
@@ -29,7 +29,7 @@ var App = new Application();
       element.setAttribute('data-layout-id', page.layoutId);
       element.setAttribute('data-id', page.id);
       console.log(page.layoutParams);
-      page.layoutParams.forEach((sections, index) => { 
+      page.layoutParams.forEach((sections, index) => {
         // ogni layoutParams può avere più section e quindi più reports al suo interno per creare la pagina
         // TODO: probabilmente dovrò utilizzare index inserendolo come attributo [data-report-id-index]=reportid
         element.setAttribute('data-report-id', sections.reportId);
@@ -38,7 +38,7 @@ var App = new Application();
       element.onclick = app.handlerPageSelect;
 
     });
-    
+
   };
 
   app.handlerPageSelect = function(e) {
@@ -47,15 +47,15 @@ var App = new Application();
     let layout = app.loadLayoutTemplate(this.getAttribute('data-layout-id'));
     layout.querySelector('h3').innerText = this.querySelector('span').innerText;
     app.pageSelectedTitle = this.querySelector('span').innerText;
-    
+
     var url = "ajax/reports.php";
     let reportId = +this.getAttribute('data-report-id');
     let report = new ReportStorage();
     console.log(reportId);
-    
-    
+
+
     report.settings = reportId;
-    
+
     console.log(report.settings);
     // return;
     let params = "datamart="+report.settings;
@@ -73,9 +73,10 @@ var App = new Application();
           app.createReport(response, reportId, report.name);
 
         } else {
-
+          // TODO:
         }
       } else {
+        // TODO:
 
       }
     };
@@ -106,7 +107,7 @@ var App = new Application();
     report.data = response;
     // imposto le options recuperate dallo storage tramite il reportId
     report.settings = reportId;
-    
+
     report.addColumns();
 
     report.addRows();

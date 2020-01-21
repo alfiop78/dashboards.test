@@ -273,7 +273,7 @@ class Application {
   }
 
   searchInList(e) {
-    console.log(e.path);
+    // console.log(e.path);
     // Ricerca in una lista
     (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
