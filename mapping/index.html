@@ -132,7 +132,7 @@
 
     <dialog id="filter-setting" class="dialog-filters">
       <section>
-        <h4>Inserisci qui la condizione di filtro per la colonna <span id="fieldName" class="highlight"></span></h4>
+        <h4>Inserisci qui la condizione di filtro per la colonna <span id="fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;<span id="fieldType" class="highlight"></span></h4>
         <div class="md-field">
           <input type="text" id="filter-name" value=""/>
           <label for="filter-name" class="">Nome</label>
@@ -165,7 +165,6 @@
                 <input type="text" id="filter-values" value=""/>
                 <label for="filter-values" class="">Valore</label>
               </div>
-              <!-- questa input dovrà essere utilizzata per il BETWEEN -->
               <div id="between" hidden>
                 <div class="md-field">
                   <input type="text" id="filter-values-from" value=""/>
@@ -177,11 +176,15 @@
                   <label for="filter-values-to" class="">Al</label>
                 </div>
               </div>
+
+              <div id="in" hidden>
+                <div class="md-field">
+                  <textarea id="arrayValues" placeholder="Valori separati da virgola (es.: 23, 43, 234, 43...) " name="in" rows="12" cols="60"></textarea>
+                </div>
+              </div>
             </div>
 
-            <div id="in" hidden>
-              <textarea name="in" rows="12" cols="60"></textarea>
-            </div>
+
             <!-- TODO: recuperare i possibili valori da inserire dalla query distinct della colonna selezionata -->
 
           </section>

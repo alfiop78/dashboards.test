@@ -150,11 +150,11 @@ dialog h4{font-size: .9rem;}
 .formulaDefine > .alias, .formulaDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
 .formulaDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}
 .formulaDefine > .filtersList{padding: 16px;}
-.listContent{align-items: center;display: flex;}
-dialog .values{display: flex;flex-direction: column;padding: 16px;}
+.listContent{align-items: center;display: flex;min-height: 200px;}
+dialog .values{display: flex;flex-direction: column;padding: 8px;}
 dialog .filtersList{display: flex;flex-direction: column;}
-dialog .miniList{max-height: 100px;overflow-y: auto;}
-dialog .formula{padding: 16px;}
+dialog .miniList{max-height: 150px;overflow-y: auto;}
+dialog .formula{padding: 8px;}
 
 .name-alias{display: grid;grid-template-columns: auto auto;}
 dialog h6{font-size: .85rem;font-weight: normal;padding: 4px;margin: 0;color: #52524e}

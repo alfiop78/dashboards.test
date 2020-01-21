@@ -187,10 +187,18 @@ class Cube {
   }
 
   handlerFilterSetting(e) {
-    // console.log(e);
+    // console.log(e.target);
     // appro la dialog per filters
     let fieldName = this.dialogFilters.querySelector('#fieldName');
+    let fieldType = this.dialogFilters.querySelector('#fieldType');
+    // recupero il nome della colonna selezionata
     this.currentFieldSetting = e.target;
+    // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
+    // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
+    // ... invece delle input type text, ecc..
+    // imposto l datatype sul fieldName
+    fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
+    // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
     this.dialogFilters.showModal();

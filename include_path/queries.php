@@ -31,6 +31,15 @@ class Queries {
     return $this->_result;
   }
 
+  // public function getDataType() {
+  //   /*
+  //   SELECT COLUMN_NAME, DATA_TYPE
+  //     FROM `COLUMNS`
+  //     WHERE `TABLE_SCHEMA` = 'automotive_bi_data'
+  //     AND `TABLE_NAME` = 'AggiornamentoDati'
+  //     AND COLUMN_NAME = 'id_Azienda'*/
+  // }
+
   public function getDatamartDefault($reportId) {
     $l = new ConnectDB("decisyon_cache");
     $datamartName = "FX".$reportId;
@@ -43,7 +52,7 @@ class Queries {
 
     $datamartName = "FX".$datamart->{'datamartId'};
     $options = $datamart->{'options'};
-    
+
     // return $options->{'positioning'};
     foreach ($options->{'positioning'} as $key => $value) {
       // echo $key;
@@ -52,10 +61,10 @@ class Queries {
       }
     }
     var_dump($this->_SELECT);
-    
+
     $fields = implode(', ', $this->_SELECT);
     // var_dump($fields);
-    
+
     $sql = "SELECT $fields FROM $datamartName";
     // echo $sql;
     // return;

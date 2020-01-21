@@ -190,15 +190,19 @@ var oCube = new Cube();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          // console.table(response);
+          console.table(response);
 
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
             let element = tmplContent.querySelector('.element');
             let li = element.querySelector('li');
-            let iElement = element.querySelector('i');
+            // let iElement = element.querySelector('i');
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
+            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+            let pos = response[i][1].indexOf("(");
+            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+            li.setAttribute('data-type', type);
             li.id = i;
             ulContainer.appendChild(element);
             li.onclick = oCube.handlerColumns.bind(oCube);
