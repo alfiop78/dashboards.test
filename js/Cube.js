@@ -191,6 +191,9 @@ class Cube {
     // appro la dialog per filters
     let fieldName = this.dialogFilters.querySelector('#fieldName');
     let fieldType = this.dialogFilters.querySelector('#fieldType');
+    this.field = e.path[1].querySelector('li').getAttribute('label');
+    this.table = e.path[1].querySelector('li').getAttribute('data-table');
+
     // recupero il nome della colonna selezionata
     this.currentFieldSetting = e.target;
     // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
@@ -200,10 +203,39 @@ class Cube {
     fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
     // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+    this.getDistinctValues(this.table, this.field);
 
     this.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
+  }
+
+  getDistinctValues(tableName, fieldName) {
+    // ottengo i valori distinti per la colonna selezionata
+    // TODO: utilizzare le promise
+    var url = 'ajax/columnInfo.php';
+    let params = 'table='+tableName+'&field='+fieldName;
+    console.log(params);
+    // return;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
   }
 
   handlerMetricSetting(e) {

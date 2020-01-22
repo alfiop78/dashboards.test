@@ -31,6 +31,16 @@ class Queries {
     return $this->_result;
   }
 
+  public function distinctValues($table, $field) {
+    $l = new ConnectDB('automotive_bi_data');
+    // $l = new ConnectDB('Sql1073234_1');
+    $query = "SELECT DISTINCT($field) FROM $table LIMIT 100;";
+    // return $query;
+    $this->_result = $l->getResultArray($query);
+    // $this->_result = $l->getResultAssoc("SHOW TABLES;");
+    return $this->_result;
+  }
+
   // public function getDataType() {
   //   /*
   //   SELECT COLUMN_NAME, DATA_TYPE
