@@ -65,9 +65,9 @@ var oCube = new Cube();
     // ricreo un datamart
 
     let data = window.localStorage.getItem(this.getAttribute('label'));
-    var url = "ajax/cube.php";
+    var url = 'ajax/cube.php';
     // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
-    let params = "cube="+data;
+    let params = 'cube='+data;
     console.log(params);
     // return;
     var request = new XMLHttpRequest();
@@ -132,7 +132,7 @@ var oCube = new Cube();
 
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
-    var url = "ajax/database.php";
+    var url = 'ajax/database.php';
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -185,8 +185,8 @@ var oCube = new Cube();
     ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
     app.dialogTableList.close();
 
-    var url = "ajax/tableInfo.php";
-    let params = "tableName="+oCube.table;
+    var url = 'ajax/tableInfo.php';
+    let params = 'tableName='+oCube.table;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -202,9 +202,10 @@ var oCube = new Cube();
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
             // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-            let pos = response[i][1].indexOf("(");
+            let pos = response[i][1].indexOf('(');
             let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
             li.setAttribute('data-type', type);
+            li.setAttribute('data-table',oCube.table);
             li.id = i;
             ulContainer.appendChild(element);
             li.onclick = oCube.handlerColumns.bind(oCube);
@@ -239,8 +240,8 @@ var oCube = new Cube();
   app.handlerCardSelected = function(e) {
     // console.log('handlerCardSelected');
     // se il viene avviene sull'elemento h5 apro la dialog
-    if (e.target.localName === "h6") {
-      document.getElementById('tableSearch').value = "";
+    if (e.target.localName === 'h6') {
+      document.getElementById('tableSearch').value = '';
       app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
       app.dialogTableList.showModal();
     }
@@ -275,17 +276,17 @@ var oCube = new Cube();
     // console.log(Timeline);
     objTimeline.activeElements().forEach((element) => {
       // console.log(element);
-      let card = element.querySelector('section.card-table')
+      let card = element.querySelector('section.card-table');
 
       let help = card.querySelector('.help');
       if (element.querySelectorAll('ul li').length === 0) {
         help.setAttribute('alert', true);
         card.removeAttribute('hierarchies');
-        help.innerText = "Necessario aggiungere una tabella per creare una relazione";
+        help.innerText = 'Necessario aggiungere una tabella per creare una relazione';
       } else {
         help.removeAttribute('alert');
         card.setAttribute('hierarchies', true);
-        help.innerText = "Seleziona le colonne da mettere in relazione";
+        help.innerText = 'Seleziona le colonne da mettere in relazione';
       }
     });
     // NOTE: Utilizzo di for...of in una Collection
@@ -301,7 +302,7 @@ var oCube = new Cube();
     let upCard = e.path[3].querySelector('section.card-table');
     oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
-    help.innerHTML = "Seleziona le colonne da mettere nel corpo della tabella";
+    help.innerHTML = 'Seleziona le colonne da mettere nel corpo della tabella';
     upCard.setAttribute('columns', true);
     // NOTE: esempio utilizzo di for...of
     // for (let name of upCard.getAttributeNames()) {
@@ -317,7 +318,7 @@ var oCube = new Cube();
     let upCard = e.path[3].querySelector('section.card-table');
     oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
-    help.innerHTML = "Seleziona le colonne su cui verranno applicati dei filtri";
+    help.innerHTML = 'Seleziona le colonne su cui verranno applicati dei filtri';
     upCard.setAttribute('filters', true);
   };
 
@@ -327,7 +328,7 @@ var oCube = new Cube();
     let upCard = e.path[3].querySelector('section.card-table');
     oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
-    help.innerHTML = "Seleziona le colonne su cui applicare il GROUP BY";
+    help.innerHTML = 'Seleziona le colonne su cui applicare il GROUP BY';
     upCard.setAttribute('groupby', true);
   };
 
@@ -337,7 +338,7 @@ var oCube = new Cube();
     let upCard = e.path[3].querySelector('section.card-table');
     oCube.activeCard = upCard;
     let help = upCard.querySelector('.help');
-    help.innerHTML = "Seleziona le colonne da impostare come Metriche";
+    help.innerHTML = 'Seleziona le colonne da impostare come Metriche';
     upCard.setAttribute('metrics', true);
   };
 
@@ -398,14 +399,14 @@ var oCube = new Cube();
     this.toggleAttribute('selected');
     console.log(e.target);
     switch (e.target.getAttribute('label')) {
-      case "BETWEEN":
+      case 'BETWEEN':
         document.getElementById('between').hidden = false;
         // nascondo la input stanrdard
         app.dialogFilters.querySelector('.md-field[value]').hidden = true;
 
         break;
-      case "IN":
-      case "NOT IN":
+      case 'IN':
+      case 'NOT IN':
         document.getElementById('in').hidden = false;
         app.dialogFilters.querySelector('.md-field[value]').hidden = true;
         document.getElementById('between').hidden = true;
@@ -488,7 +489,7 @@ var oCube = new Cube();
   document.getElementById('btnCubeSaveName').onclick = function() {
     oCube.cubeTitle = document.getElementById('cubeName').value;
     oCube.cube.dimensions = oCube.dimension;
-    oCube.cube.type = "CUBE";
+    oCube.cube.type = 'CUBE';
     oCube.cube['columns'] = oCube.columns;
     oCube.cube['filters'] = oCube.filters;
     oCube.cube['metrics'] = oCube.metrics;
@@ -509,8 +510,8 @@ var oCube = new Cube();
     cubeStorage.save = oCube.cube;
     cubeStorage.stringifyObject = oCube.cube;
 
-    var url = "ajax/cube.php";
-    let params = "cube="+cubeStorage.stringifyObject;
+    var url = 'ajax/cube.php';
+    let params = 'cube='+cubeStorage.stringifyObject;
     console.log(params);
 
     var request = new XMLHttpRequest();
@@ -550,7 +551,7 @@ var oCube = new Cube();
   app.btnFact.onclick = function(e) {app.Page.next();};
 
   // vado alla pagina reports/index.html
-  app.btnPreviewReport.onclick = function(e) {location.href = "/reports/"};
+  app.btnPreviewReport.onclick = function(e) {location.href = '/reports/';};
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
 

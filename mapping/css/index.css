@@ -145,7 +145,7 @@ section[options] > span > small{top: 32px;z-index: 5;}
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
 dialog h4{font-size: .9rem;}
 
-.formulaDefine{display: grid;grid-template-columns: auto auto;margin: 1em 0;}
+.formulaDefine{display: grid;grid-template-columns: auto auto auto;margin: 1em 0;}
 .formulaDefine > .options{align-items: center;display: flex;}
 .formulaDefine > .alias, .formulaDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
 .formulaDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}

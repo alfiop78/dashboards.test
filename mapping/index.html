@@ -158,7 +158,7 @@
           </section>
 
           <section class="values">
-            <h6>Valori</h6>
+            <h6>Valore</h6>
             <div class="listContent">
 
               <div class="md-field" value>
@@ -187,6 +187,24 @@
 
             <!-- TODO: recuperare i possibili valori da inserire dalla query distinct della colonna selezionata -->
 
+          </section>
+
+          <section class="valuesList">
+            <!-- TODO: ottengo la lista dei valori (DISTINCT) della colonna selezionata -->
+            <h6>Elenco valori</h6><small>Scorri la lista degli operatori</small>
+            <div class="listContent">
+              <ul id="values-list" class="miniList">
+                <li label="=" selected>&equals;</li>
+                <li label="<>">&lt;&gt;</li>
+                <li label="<">&lt;</li>
+                <li label=">">&gt;</li>
+                <li label="BETWEEN">BETWEEN</li>
+                <li label="IN">IN()</li>
+                <li label="NOT IN">NOT IN()</li>
+                <li label="IS NULL">IS NULL</li>
+                <li label="IS NOT NULL">IS NOT NULL</li>
+              </ul>
+            </div>
           </section>
 
         </div>
