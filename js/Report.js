@@ -72,7 +72,7 @@ class Report {
         this.th.setAttribute(key, true);
         // console.log(key);
         // console.log(value);
-        if (key === "columns") {
+        if (key === 'columns') {
           //TODO: aggiungo il pageBy
           this.addPageBy(colName, index);
         }
@@ -88,10 +88,10 @@ class Report {
     this.params = this.tmplContent.querySelector('div[data-param-id]');
     this.params.setAttribute('col', index);
     this.params.setAttribute('data-param-id', index);
-    this.params.querySelector('ul').id = "datalist-" + index;
-    this.params.querySelector('label').setAttribute('for', "param-"+index);
+    this.params.querySelector('ul').id = 'datalist-' + index;
+    this.params.querySelector('label').setAttribute('for', 'param-'+index);
     this.params.querySelector('label').innerText = col;
-    this.params.querySelector('input').id = "param-"+index;
+    this.params.querySelector('input').id = 'param-'+index;
     this.params.querySelector('input').setAttribute('data-param-id', index);
     this.params.querySelector('.elements').setAttribute('col', index);
 
@@ -124,7 +124,7 @@ class Report {
       parentElement.setAttribute('activated', true);
       input.setAttribute('activated', true);
       label.classList.add('has-content');
-      input.value = "[MULTISELECT]";
+      input.value = '[MULTISELECT]';
     } else {
       label.classList.remove('has-content');
     }
@@ -223,7 +223,7 @@ class Report {
           this.iconDone = document.createElement('i');
           this.iconDone.innerText = 'done';
           // iconDone.hidden = true; // default non è multiselezione
-          this.iconDone.classList.add("material-icons", "md-18");
+          this.iconDone.classList.add('material-icons', 'md-18');
 
           this.li = document.createElement('li');
           this.li.id = i;
@@ -290,7 +290,7 @@ class Report {
           this.td.setAttribute(key, true);
           // (!data) ? console.log('NULL'): this.td.innerHTML = data.toUpperCase().trim();
           // this.tr.appendChild(this.td);
-          if (key === "metrics") {
+          if (key === 'metrics') {
             // TODO: format della metrica con "decimal", "currency", "percent" oppure "unit"
             // console.log(new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(data));
             // this.formatNumber = new Intl.NumberFormat('it-IT', {style: 'currency', currency: 'EUR'}).format(data);
@@ -310,7 +310,7 @@ class Report {
     console.log('search');
     let cols = [], multiSelectElements = [];
     // recupero i filtri che sono stati impostati
-    let filters = Array.from(document.querySelectorAll("input[type='search'][activated]"));
+    let filters = Array.from(document.querySelectorAll('input[type="search"][activated]'));
     // console.log(filters);
     filters.forEach(function(item) {
       // per ogni filtro impostato, inserisco nell'array cols i valori selezionati nei filtri
@@ -453,7 +453,7 @@ class Report {
       let founded = false;
       // console.log(table.rows[i]);
       // console.log(table.rows[i].cells[1]);
-      this.tbody.rows[i].style.backgroundColor = "initial"; // reimposto il colore iniziale dopo ogni carattere inserito
+      this.tbody.rows[i].style.backgroundColor = 'initial'; // reimposto il colore iniziale dopo ogni carattere inserito
       this.tbody.rows[i].removeAttribute('found');
       this.tbody.rows[i].removeAttribute('hidden');
 
@@ -524,7 +524,7 @@ class Report {
           this.thead.rows[0].cells[columnId].setAttribute(property, value);
           // applico l'attributo a tutta la colonna
           for (let i = 0; i < this.tbody.rows.length; i++) {
-            if (property === "format") {
+            if (property === 'format') {
               console.log('format');
               // valore della cella da modificare
               // OPTIMIZE: Impostare anche altri formati (decimal, percent, ecc...)
@@ -556,7 +556,7 @@ class Report {
           console.log(property);
           console.log(value);
           // i parametri e/o le opzioni dei filtri le imposto sull'elemento div.elements[options]
-          this.paramsRef.querySelector(".elements[col='"+columnId+"']").setAttribute(property, value);
+          this.paramsRef.querySelector('.elements[col="'+columnId+'"]').setAttribute(property, value);
         }
       } else {
         console.log('CONTROLLO PAGEBY FALSE');
@@ -734,7 +734,7 @@ class Options extends Report{
 
   saveReport() {
     this.reportOptions.id = this.report;
-    this.reportOptions.type = "REPORT";
+    this.reportOptions.type = 'REPORT';
     this.reportOptions.datamartId = this.datamart;
     this.reportOptions.name = this.reportName;
     this.reportOptions.options = this._options;
@@ -760,7 +760,7 @@ class Options extends Report{
         this.th.setAttribute(key, true);
         // console.log(key);
         // console.log(value);
-        if (key === "columns") {
+        if (key === 'columns') {
           //TODO: aggiungo il pageBy
           this.addPageBy(colName, index);
         }
@@ -841,10 +841,10 @@ class Options extends Report{
     // console.log(this.params);
     this.params.setAttribute('col', index);
     this.params.setAttribute('data-param-id', index);
-    this.params.querySelector('ul').id = "datalist-"+index;
-    this.params.querySelector('label').setAttribute('for', "param-"+index);
+    this.params.querySelector('ul').id = 'datalist-'+index;
+    this.params.querySelector('label').setAttribute('for', 'param-'+index);
     this.params.querySelector('label').innerText = col;
-    this.params.querySelector('input').id = "param-"+index;
+    this.params.querySelector('input').id = 'param-'+index;
     this.params.querySelector('input').setAttribute('data-param-id', index);
     this.params.querySelector('.elements').setAttribute('col', index);
     this.paramsRef.appendChild(this.params);
@@ -884,7 +884,7 @@ class Options extends Report{
     console.log('positioning');
 
     Array.from(Object.keys(cube)).forEach((element) => {
-      if (element === "columns" || element === "metrics" || element === "filteredMetrics") {
+      if (element === 'columns' || element === 'metrics' || element === 'filteredMetrics') {
         // console.log(element);
         Array.from(Object.keys(cube[element])).forEach((table) => {
           // console.log(table);
