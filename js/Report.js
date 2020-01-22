@@ -572,6 +572,7 @@ class Report {
     this.info();
     this.applyStyles();
     this.applyAttributes();
+    this.applyPageBy();
 
     // visualizzo il page-by
     document.querySelector('section[params]').hidden = false;
