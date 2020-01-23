@@ -36,7 +36,7 @@ class Queries {
     // $l = new ConnectDB('Sql1073234_1');
     $query = "SELECT DISTINCT($field) FROM $table LIMIT 100;";
     // return $query;
-    $this->_result = $l->getResultArray($query);
+    $this->_result = $l->getResultAssoc($query);
     // $this->_result = $l->getResultAssoc("SHOW TABLES;");
     return $this->_result;
   }

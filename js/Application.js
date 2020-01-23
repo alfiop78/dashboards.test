@@ -1,34 +1,34 @@
 /** In questo file ci saranno tutte le funzioni di supporto all'applicazione
  * es.: la funzione logout(che distruggerà le variabili di sessione
  */
-/* jshint esversion : 6 */
 
 class Application {
   constructor() {}
 
   init() {
-  	// var main = document.getElementsByTagName("main")[0];
+    // var main = document.getElementsByTagName("main")[0];
     console.log('init');
 
     let body = document.getElementById('body');
-  	// console.log(main);
-  	var spinner = document.querySelector('.loader');
-  	spinner.setAttribute('hidden', true);
+    // console.log(main);
+    var spinner = document.querySelector('.loader');
+    spinner.setAttribute('hidden', true);
     body.removeAttribute('hidden');
     // console.log('initLoader');
-  	// main.removeAttribute('hidden');
+    // main.removeAttribute('hidden');
 
-  	var i = document.querySelector("i.md-circle");
+    // var i = document.querySelector('i.md-circle');
     // gestore dell'evento scroll
     document.querySelector('main').addEventListener('scroll', this.handlerScroll, true);
     document.getElementById('container').addEventListener('click', this.containerClick, true);
 
-  	/*console.log(window.screen.height);
+    /* console.log(window.screen.height);
   	console.log(window.screen.availHeight);
-  	console.log(window.screenTop);*/
+  	console.log(window.screenTop);
+    */
 
-  	//document.getElementById("testTop").innerText = i.offsetTop+" - "+window.screen.availHeight;
-      //document.getElementById("testTop").innerText = window.screenTop;
+    // document.getElementById("testTop").innerText = i.offsetTop+" - "+window.screen.availHeight;
+    //document.getElementById("testTop").innerText = window.screenTop;
     // console.log(main.offsetHeight);
   }
 
@@ -36,10 +36,10 @@ class Application {
     // console.log('handlerScroll');
     // se ci sono tooltip aperti li chiudo
     let openedTooltips = document.querySelector('.tooltip[open]');
-  	if (openedTooltips) {
-  	  console.log('tooltip aperti');
-  	  openedTooltips.removeAttribute('open');
-  	}
+    if (openedTooltips) {
+      console.log('tooltip aperti');
+      openedTooltips.removeAttribute('open');
+    }
   }
 
   getSessionName() {
@@ -96,10 +96,10 @@ class Application {
       document.getElementById('container').removeEventListener('click', this.containerClick, true);
     }
     let openedTooltips = document.querySelector('.tooltip[open]');
-  	if (openedTooltips) {
-  	  // console.log('tooltip aperti');
-  	  openedTooltips.removeAttribute('open');
-  	}
+    if (openedTooltips) {
+      // console.log('tooltip aperti');
+      openedTooltips.removeAttribute('open');
+    }
     // chiudo i filtri che non sono multiselezione, per chiudere quelli muiltiselezione c'è il tasto OK
     document.querySelectorAll('div.elements[show]:not([multi])').forEach((el) => {
       el.removeAttribute('show');
@@ -112,7 +112,7 @@ class Application {
 
   toggleButtonMDC(fieldId, toggle) {
     // utilizzata per tasti materialdesign e <i>
-    (toggle === 1) ? fieldId.removeAttribute("disabled") : fieldId.setAttribute("disabled", "true");
+    (toggle === 1) ? fieldId.removeAttribute('disabled') : fieldId.setAttribute('disabled', 'true');
   }
 
   toggleButtonMaterial(idField, toggle) {
@@ -124,10 +124,10 @@ class Application {
         /* active
         * in futuro posso controllare se una delle Class esiste con
         * contains(class)	Returns a Boolean value, indicating whether an element has the specified class name.*/
-       idField.classList.remove("md-inactive");
+       idField.classList.remove('md-inactive');
        //idField.classList.add("md-active");
     } else {
-       idField.classList.add("md-inactive");
+       idField.classList.add('md-inactive');
        //idField.classList.remove("md-active");
     }
   }
@@ -136,7 +136,7 @@ class Application {
 
     /* modalType è il tipo di modal all'interno di .modal-window chhe verrà visualizzata (removeAttribute/setAttribute hidden)
     * vedere la pagina operations/index dove ci sono due modal*/
-    document.getElementsByClassName("modal-window")[0].classList.toggle("show");
+    document.getElementsByClassName('modal-window')[0].classList.toggle('show');
 
     //let elementRef = modalType.attributes;
     //  in fase di chiusura modal, vado a vedere quella che non ha  attributo hidden (che sarebbe quella che è stata aperta.)
@@ -200,14 +200,14 @@ class Application {
     (date) ? dateObj = new Date(date) : dateObj = new Date();
     var month = dateObj.getMonth()+1;
     var year = dateObj.getFullYear();
-    var day = (dateObj.getDate() < 10) ? "0"+dateObj.getDate(): dateObj.getDate();
-    month = (dateObj.getMonth()+1 < 10) ? "0"+month:month;
+    var day = (dateObj.getDate() < 10) ? '0'+dateObj.getDate(): dateObj.getDate();
+    month = (dateObj.getMonth()+1 < 10) ? '0'+month:month;
     // REVIEW: valutare la possibiltà di restituire un oggetto Date per poter poi fare i confronti tra date
     /*
     let dateObject = new Date(year, month, day);
     console.log(dateObject);
     return dateObject;*/
-    return {date: year+"-"+month+"-"+day};
+    return {date: year+'-'+month+'-'+day};
 
   }
 
@@ -216,9 +216,9 @@ class Application {
     (date) ? dateObj = new Date(date) : dateObj = new Date();
     let year = dateObj.getFullYear();
     let month = dateObj.getMonth()+1;
-    month = (dateObj.getMonth()+1 < 10) ? "0"+month:month;
+    month = (dateObj.getMonth()+1 < 10) ? '0'+month:month;
     // console.log(year+month);
-    return year+"-"+month;
+    return year+'-'+month;
     // return new Date(year, month);
   }
 
@@ -231,9 +231,9 @@ class Application {
     dateObj.setTime(dateObj.getTime()-(dayValue*monthSub));
     var month = dateObj.getMonth()+1;
     var year = dateObj.getFullYear();
-    var day = (dateObj.getDate() < 10) ? "0"+dateObj.getDate(): dateObj.getDate();
-    month = (dateObj.getMonth()+1 < 10) ? "0"+month:month;
-    return {dateSub: year+"-"+month+"-"+day};
+    var day = (dateObj.getDate() < 10) ? '0'+dateObj.getDate(): dateObj.getDate();
+    month = (dateObj.getMonth()+1 < 10) ? '0'+month:month;
+    return {dateSub: year+'-'+month+'-'+day};
   }
 
   handlerConsole(message, icon, time) {
@@ -242,17 +242,17 @@ class Application {
     document.querySelector('#console p').innerText = message;
     document.querySelector('#console i').classList.add(icon);
     document.querySelector('#console i').innerText = icon;
-    document.getElementById("console").setAttribute('open',true);
+    document.getElementById('console').setAttribute('open',true);
 
     setTimeout(function() {
-      document.getElementById("console").removeAttribute('open');
+      document.getElementById('console').removeAttribute('open');
     }, time);
 
     setTimeout(function() {
       // dopo un secondo rimuovo il contenuto del messaggio insieme alla class icon (done, error, warning, ecc..)
-      document.querySelector('#console p').innerText = "";
-  	  document.querySelector('#console i').innerText = "";
-  	  document.querySelector('#console i').classList.remove(icon);
+      document.querySelector('#console p').innerText = '';
+      document.querySelector('#console i').innerText = '';
+      document.querySelector('#console i').classList.remove(icon);
     }, time+1000);
   }
 
@@ -274,18 +274,17 @@ class Application {
 
   searchInList(e) {
     // console.log(e.path);
+    console.log(e.target);
     // Ricerca in una lista
     (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
     let listElement = Array.from(e.path[2].querySelectorAll('.element > li'));
 
-  	for (let i in listElement) {
-  	  let li = listElement[i];
-  	  (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
+    for (let i in listElement) {
+      let li = listElement[i];
+      (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
         li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
-
-  	}
+      }
   }
-
 
 } // end Class

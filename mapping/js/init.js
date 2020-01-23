@@ -19,7 +19,8 @@ var oCube = new Cube();
     btnFact : document.getElementById('mdc-next'),
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
-    btnPreviewReport : document.getElementById('mdc-preview-report')
+    btnPreviewReport : document.getElementById('mdc-preview-report'),
+    inputValueSearch : document.getElementById('valuesSearch')
   };
 
   // App.getSessionName();
@@ -555,6 +556,8 @@ var oCube = new Cube();
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
 
+
+
   // app.btnNewReport.onclick = function(e) {
   //   // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
   //   app.Page.restart();
@@ -569,6 +572,8 @@ var oCube = new Cube();
 
   // icona openReport apre la dialog con la lista di reports già creati
   document.querySelector('#openReport').onclick = app.openReportList;
+
+  app.inputValueSearch.oninput = App.searchInList;
   /*events */
 
   app.getDatabaseTable();

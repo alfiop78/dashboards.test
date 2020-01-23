@@ -217,12 +217,29 @@ class Cube {
     let params = 'table='+tableName+'&field='+fieldName;
     console.log(params);
     // return;
+    const ul = this.dialogFilters.querySelector('#values-list');
+    // pulisco la ul
+    Array.from(ul.querySelectorAll('li')).forEach((item, i) => {
+      console.log(item);
+      item.remove();
+    });
+
+    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
+          for (let i in response) {
+            // console.log(i);
+            // console.log(response[i][fieldName]);
+            let li = document.createElement('li');
+            li.id = i;
+            li.setAttribute('label', response[i][fieldName]);
+            li.innerHTML = response[i][fieldName];
+            ul.appendChild(li);
+          }
         } else {
           // TODO:
         }

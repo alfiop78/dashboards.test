@@ -191,19 +191,13 @@
 
           <section class="valuesList">
             <!-- TODO: ottengo la lista dei valori (DISTINCT) della colonna selezionata -->
-            <h6>Elenco valori</h6><small>Scorri la lista degli operatori</small>
+            <h6>Elenco valori</h6><small>Scorri la lista dei valori</small>
+            <div class="md-field" value>
+              <input type="search" id="valuesSearch" value=""/>
+              <label for="valuesSearch" class="">Ricerca</label>
+            </div>
             <div class="listContent">
-              <ul id="values-list" class="miniList">
-                <li label="=" selected>&equals;</li>
-                <li label="<>">&lt;&gt;</li>
-                <li label="<">&lt;</li>
-                <li label=">">&gt;</li>
-                <li label="BETWEEN">BETWEEN</li>
-                <li label="IN">IN()</li>
-                <li label="NOT IN">NOT IN()</li>
-                <li label="IS NULL">IS NULL</li>
-                <li label="IS NOT NULL">IS NOT NULL</li>
-              </ul>
+              <ul id="values-list" class="miniList"></ul>
             </div>
           </section>
 
@@ -266,8 +260,6 @@
           </section>
 
         </div>
-
-
 
         <div class="dialog-buttons">
           <button type="button" name="cancel" class="md-button">annulla</button>
