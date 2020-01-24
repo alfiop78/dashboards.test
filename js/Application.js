@@ -44,7 +44,7 @@ class Application {
 
   getSessionName() {
     // recupeero il nome dell'utente da inserire nel drawer
-    var url = "/w/aj/ajUserName.php";
+    var url = '/w/aj/ajUserName.php';
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -66,14 +66,14 @@ class Application {
 
   loading() {
     // visualizzo lo snipper nei loading di ricerca
-    var main = document.getElementsByTagName("main")[0];
+    var main = document.getElementsByTagName('main')[0];
     let snipper = document.querySelector('.loader');
     main.setAttribute('hidden', true);
     snipper.removeAttribute('hidden');
   }
 
   back() {
-    window.location.href="../";
+    window.location.href='../';
   }
 
   menu() {
@@ -86,7 +86,7 @@ class Application {
 
   containerClick(e) {
     // console.log('containerClick');
-    // console.log(e.target);
+    console.log(e.target);
     this.drawerOpen = document.querySelector('#drawer[open]');
     // console.log(this.drawerOpen);
     // chiudo il drawer
@@ -256,7 +256,6 @@ class Application {
     }, time+1000);
   }
 
-
   validityForm(inputs) {
     // inputs deve essere inviato come Array.from()
     this.fieldError = false;
@@ -274,11 +273,12 @@ class Application {
 
   searchInList(e) {
     // console.log(e.path);
-    console.log(e.target);
+    // console.log(e.target.value);
     // Ricerca in una lista
     (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
     let listElement = Array.from(e.path[2].querySelectorAll('.element > li'));
+    console.log(listElement);
 
     for (let i in listElement) {
       let li = listElement[i];

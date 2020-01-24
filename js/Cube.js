@@ -189,7 +189,7 @@ class Cube {
   handlerFilterSetting(e) {
     // console.log(e.target);
     // appro la dialog per filters
-    let fieldName = this.dialogFilters.querySelector('#fieldName');
+    let fieldName = this.dialogFilters.querySelector('#filter-fieldName');
     let fieldType = this.dialogFilters.querySelector('#fieldType');
     this.field = e.path[1].querySelector('li').getAttribute('label');
     this.table = e.path[1].querySelector('li').getAttribute('data-table');
@@ -203,7 +203,9 @@ class Cube {
     fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
     // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
-    this.getDistinctValues(this.table, this.field);
+    // this.getDistinctValues(this.table, this.field);
+    // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
+    this.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', this.table);
 
     this.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
@@ -220,11 +222,10 @@ class Cube {
     const ul = this.dialogFilters.querySelector('#values-list');
     // pulisco la ul
     Array.from(ul.querySelectorAll('li')).forEach((item, i) => {
-      console.log(item);
+      // console.log(item);
       item.remove();
     });
 
-    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -234,11 +235,14 @@ class Cube {
           for (let i in response) {
             // console.log(i);
             // console.log(response[i][fieldName]);
+            let element = document.createElement('div');
+            element.className = 'element';
+            ul.appendChild(element);
             let li = document.createElement('li');
             li.id = i;
             li.setAttribute('label', response[i][fieldName]);
             li.innerHTML = response[i][fieldName];
-            ul.appendChild(li);
+            element.appendChild(li);
           }
         } else {
           // TODO:

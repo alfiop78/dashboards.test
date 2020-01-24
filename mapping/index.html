@@ -132,7 +132,7 @@
 
     <dialog id="filter-setting" class="dialog-filters">
       <section>
-        <h4>Inserisci qui la condizione di filtro per la colonna <span id="fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;<span id="fieldType" class="highlight"></span></h4>
+        <h4>Inserisci qui la condizione di filtro per la colonna <span id="filter-fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;<span id="fieldType" class="highlight"></span></h4>
         <div class="md-field">
           <input type="text" id="filter-name" value=""/>
           <label for="filter-name" class="">Nome</label>
@@ -182,21 +182,23 @@
                   <textarea id="arrayValues" placeholder="Valori separati da virgola (es.: 23, 43, 234, 43...) " name="in" rows="12" cols="60"></textarea>
                 </div>
               </div>
-            </div>
 
+              <span class="popupContent"><i id="btnColumnValues" class="material-icons md-24" data-tableName>playlist_add</i><small class="popup">Nuova gerarchia</small></span>
+
+            </div>
 
             <!-- TODO: recuperare i possibili valori da inserire dalla query distinct della colonna selezionata -->
 
           </section>
 
-          <section class="valuesList">
+          <section id="filterValuesList" class="valuesList" hidden>
             <!-- TODO: ottengo la lista dei valori (DISTINCT) della colonna selezionata -->
             <h6>Elenco valori</h6><small>Scorri la lista dei valori</small>
-            <div class="md-field" value>
-              <input type="search" id="valuesSearch" value=""/>
-              <label for="valuesSearch" class="">Ricerca</label>
-            </div>
             <div class="listContent">
+              <div class="md-field" value>
+                <input type="search" id="valuesSearch" value=""/>
+                <label for="valuesSearch" class="">Ricerca</label>
+              </div>
               <ul id="values-list" class="miniList"></ul>
             </div>
           </section>

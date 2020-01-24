@@ -20,7 +20,8 @@ var oCube = new Cube();
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
-    inputValueSearch : document.getElementById('valuesSearch')
+    inputValueSearch : document.getElementById('valuesSearch'),
+    btnColumnValues : document.getElementById('btnColumnValues')
   };
 
   // App.getSessionName();
@@ -469,10 +470,10 @@ var oCube = new Cube();
     oCube.cube['hierarchies'] = oCube.hierarchyFact;
     let hierarchies = {};
     // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
-    Object.keys(oCube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === "hier_") {hierarchies[rel] = oCube.hierarchyTable[rel];}});
+    Object.keys(oCube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = oCube.hierarchyTable[rel];}});
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
-    objDimension.type = "DIMENSION";
+    objDimension.type = 'DIMENSION';
     // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da oCube.dimension
 
     oCube.dimension[oCube.dimensionTitle] = objDimension;
@@ -556,8 +557,6 @@ var oCube = new Cube();
 
   app.btnBack.onclick = function(e) {app.Page.previous();};
 
-
-
   // app.btnNewReport.onclick = function(e) {
   //   // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
   //   app.Page.restart();
@@ -574,6 +573,58 @@ var oCube = new Cube();
   document.querySelector('#openReport').onclick = app.openReportList;
 
   app.inputValueSearch.oninput = App.searchInList;
+
+  app.btnColumnValues.onclick = function(e) {
+    console.log(e.target);
+    let tableName = e.target.getAttribute('data-tableName');
+    let fieldName = document.getElementById('filter-filedName').value;
+    // return;
+    // TODO: getDistinctValues
+    // ottengo i valori distinti per la colonna selezionata
+    // TODO: utilizzare le promise
+    var url = 'ajax/columnInfo.php';
+    let params = 'table='+tableName+'&field='+fieldName;
+    console.log(params);
+    // return;
+    const ul = document.getElementById('filterValuesList');
+    // pulisco la ul
+    Array.from(ul.querySelectorAll('li')).forEach((item) => {
+      // console.log(item);
+      item.remove();
+    });
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          // console.table(response);
+          for (let i in response) {
+            // console.log(i);
+            // console.log(response[i][fieldName]);
+            let element = document.createElement('div');
+            element.className = 'element';
+            ul.appendChild(element);
+            let li = document.createElement('li');
+            li.id = i;
+            li.setAttribute('label', response[i][fieldName]);
+            li.innerHTML = response[i][fieldName];
+            element.appendChild(li);
+          }
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+  };
   /*events */
 
   app.getDatabaseTable();
