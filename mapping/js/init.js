@@ -21,7 +21,8 @@ var oCube = new Cube();
     btnNewReport: document.getElementById('mdc-new-report'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     inputValueSearch : document.getElementById('valuesSearch'),
-    btnColumnValues : document.getElementById('btnColumnValues')
+    btnColumnValues : document.getElementById('btnColumnValues'),
+    btnFilterIcon : document.getElementById('filters-icon')
   };
 
   // App.getSessionName();
@@ -211,6 +212,7 @@ var oCube = new Cube();
             li.id = i;
             ulContainer.appendChild(element);
             li.onclick = oCube.handlerColumns.bind(oCube);
+            element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
           }
           // se ci sono poche colonne in questa tabella non attivo la input search
           if (Object.keys(response).length > 10) {
@@ -237,6 +239,36 @@ var oCube = new Cube();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+  };
+
+  app.handlerFilterSetting = function(e) {
+    console.log('apro la dialog Filter');
+    // l'elemento nel DOM dove verrà inserito il nome del campo selezionato
+    const fieldName = app.dialogFilters.querySelector('#filter-fieldName');
+    // ... e il datatype del campo selezionato
+    const fieldType = app.dialogFilters.querySelector('#fieldType');
+    // nome del campo selezionato
+    const field = e.path[1].querySelector('li').getAttribute('label');
+    // ... e della tabella
+    const table = e.path[1].querySelector('li').getAttribute('data-table');
+    let operator = app.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
+    // imposto il nome del campo selezionato in currentFieldSetting (questo servirà per impostare l'icon colorata, tramite l'attr defined)
+    oCube.currentFieldSetting = e.target;
+    // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
+    // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
+    // ... invece delle input type text, ecc..
+    // imposto l datatype sul fieldName
+    fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
+    // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
+    fieldName.innerHTML = field;
+    // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
+    app.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', table);
+    // TODO: creo un'anteprima della formula
+    app.dialogFilters.querySelector('#formula > span.field').innerText = e.path[1].querySelector('li').getAttribute('label');
+    app.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
+    app.dialogFilters.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
   };
 
   app.handlerCardSelected = function(e) {
@@ -577,7 +609,7 @@ var oCube = new Cube();
   app.btnColumnValues.onclick = function(e) {
     console.log(e.target);
     let tableName = e.target.getAttribute('data-tableName');
-    let fieldName = document.getElementById('filter-filedName').value;
+    let fieldName = document.getElementById('filter-fieldName').innerText;
     // return;
     // TODO: getDistinctValues
     // ottengo i valori distinti per la colonna selezionata
@@ -586,9 +618,9 @@ var oCube = new Cube();
     let params = 'table='+tableName+'&field='+fieldName;
     console.log(params);
     // return;
-    const ul = document.getElementById('filterValuesList');
+    const ul = document.getElementById('valuesList');
     // pulisco la ul
-    Array.from(ul.querySelectorAll('li')).forEach((item) => {
+    Array.from(ul.querySelectorAll('.element')).forEach((item) => {
       // console.log(item);
       item.remove();
     });
@@ -625,6 +657,7 @@ var oCube = new Cube();
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
   };
+
   /*events */
 
   app.getDatabaseTable();

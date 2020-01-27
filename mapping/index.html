@@ -159,7 +159,7 @@
 
           <section class="values">
             <h6>Valore</h6>
-            <div class="listContent">
+            <div class="valueContent">
 
               <div class="md-field" value>
                 <input type="text" id="filter-values" value=""/>
@@ -183,7 +183,7 @@
                 </div>
               </div>
 
-              <span class="popupContent"><i id="btnColumnValues" class="material-icons md-24" data-tableName>playlist_add</i><small class="popup">Nuova gerarchia</small></span>
+              <span class="popupContent"><i id="btnColumnValues" class="material-icons md-24" data-tableName>search</i><small class="popup">Elenco valori</small></span>
 
             </div>
 
@@ -199,10 +199,14 @@
                 <input type="search" id="valuesSearch" value=""/>
                 <label for="valuesSearch" class="">Ricerca</label>
               </div>
-              <ul id="values-list" class="miniList"></ul>
+              <ul id="valuesList" class="miniList"></ul>
             </div>
           </section>
 
+        </div>
+
+        <div id='formula'>
+          <span class="field"></span><span class="operator"></span><span class="value"></span>
         </div>
 
         <div class="dialog-buttons">
@@ -427,6 +431,7 @@
                                       <template id="template-list-columns">
                                         <div class="element">
                                           <li></li>
+                                          <!-- TODO: per non duplicare gli elementi <i id...> dovrò inserire degli attributi data-id -->
                                           <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
                                           <i id="columns-icon" class="material-icons md-18">view_list</i>
                                           <i id="filters-icon" class="material-icons md-18">filter_list</i>

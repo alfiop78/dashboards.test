@@ -151,6 +151,7 @@ dialog h4{font-size: .9rem;}
 .formulaDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}
 .formulaDefine > .filtersList{padding: 16px;}
 .listContent{align-items: center;display: flex;min-height: 200px;flex-flow: column;}
+.valueContent{align-items: center;display: flex;min-height: 200px;flex-flow: row;}
 dialog .values{display: flex;flex-direction: column;padding: 8px;}
 dialog .valuesList{display: flex;flex-direction: column;padding: 8px;}
 dialog .filtersList{display: flex;flex-direction: column;}
@@ -165,3 +166,7 @@ dialog #between[hidden]{display: none;}
 dialog #between{display: flex;flex-direction: column;}
 dialog #between > span{padding: 16px;}
 /* end dialog */
+
+#formula{background-color: #be7575;padding: 16px;border-radius: 4px;margin: 16px auto;color: white;font-weight: bold;font-size: 1rem;
+  display: grid;grid-template-columns: auto auto auto;}
+#formula > span{justify-self: center;}

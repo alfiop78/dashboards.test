@@ -120,7 +120,7 @@ class Cube {
         case 'filters':
           console.log('filters');
           e.target.toggleAttribute('filters');
-          e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
+          // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
           if (!e.target.hasAttribute('filters')) {
             // elimino il filtro impostato
             delete this.filters[tableName][fieldName];
@@ -186,78 +186,34 @@ class Cube {
     this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
   }
 
-  handlerFilterSetting(e) {
-    // console.log(e.target);
-    // appro la dialog per filters
-    let fieldName = this.dialogFilters.querySelector('#filter-fieldName');
-    let fieldType = this.dialogFilters.querySelector('#fieldType');
-    this.field = e.path[1].querySelector('li').getAttribute('label');
-    this.table = e.path[1].querySelector('li').getAttribute('data-table');
-
-    // recupero il nome della colonna selezionata
-    this.currentFieldSetting = e.target;
-    // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
-    // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
-    // ... invece delle input type text, ecc..
-    // imposto l datatype sul fieldName
-    fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
-    // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
-    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
-    // this.getDistinctValues(this.table, this.field);
-    // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
-    this.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', this.table);
-
-    this.dialogFilters.showModal();
-    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
-  }
-
-  getDistinctValues(tableName, fieldName) {
-    // ottengo i valori distinti per la colonna selezionata
-    // TODO: utilizzare le promise
-    var url = 'ajax/columnInfo.php';
-    let params = 'table='+tableName+'&field='+fieldName;
-    console.log(params);
-    // return;
-    const ul = this.dialogFilters.querySelector('#values-list');
-    // pulisco la ul
-    Array.from(ul.querySelectorAll('li')).forEach((item, i) => {
-      // console.log(item);
-      item.remove();
-    });
-
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          // console.table(response);
-          for (let i in response) {
-            // console.log(i);
-            // console.log(response[i][fieldName]);
-            let element = document.createElement('div');
-            element.className = 'element';
-            ul.appendChild(element);
-            let li = document.createElement('li');
-            li.id = i;
-            li.setAttribute('label', response[i][fieldName]);
-            li.innerHTML = response[i][fieldName];
-            element.appendChild(li);
-          }
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  }
+  // handlerFilterSetting(e) {
+  //   // console.log(e.target);
+  //   // appro la dialog per filters
+  //   let fieldName = this.dialogFilters.querySelector('#filter-fieldName');
+  //   let fieldType = this.dialogFilters.querySelector('#fieldType');
+  //   this.field = e.path[1].querySelector('li').getAttribute('label');
+  //   this.table = e.path[1].querySelector('li').getAttribute('data-table');
+  //
+  //   // recupero il nome della colonna selezionata
+  //   this.currentFieldSetting = e.target;
+  //   // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
+  //   // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
+  //   // ... invece delle input type text, ecc..
+  //   // imposto l datatype sul fieldName
+  //   fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
+  //   // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
+  //   fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+  //   // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
+  //   this.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', this.table);
+  //   // TODO: creo un'anteprima della formula
+  //   this.dialogFilters.querySelector('#formula > span.field').innerText = e.path[1].querySelector('li').getAttribute('label');
+  //   let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
+  //   this.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
+  //
+  //   this.dialogFilters.showModal();
+  //   // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+  //   this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
+  // }
 
   handlerMetricSetting(e) {
     // appro la dialog per filters
@@ -337,8 +293,10 @@ class Cube {
   }
 
   handlerBtnFilterDone() {
+    console.log(this);
+    debugger;
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = this.dialogFilters.querySelector('#fieldName').innerText;
+    let fieldName = this.dialogFilters.querySelector('#filter-fieldName').innerText;
     let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
     console.log(operator);
     // return;
