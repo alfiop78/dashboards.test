@@ -316,10 +316,10 @@ class Cube {
         // console.log(value);
         values = value.split(",");
         // console.log(values);
-        // return;
+        
         break;
       default:
-        values.push(document.getElementById('filter-values').value);
+        values.push(document.querySelector('#filter-setting #formula > span.value').innerHTML);
     }
 
     let filterName = document.getElementById('filter-name').value;

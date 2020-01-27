@@ -132,7 +132,8 @@
 
     <dialog id="filter-setting" class="dialog-filters">
       <section>
-        <h4>Inserisci qui la condizione di filtro per la colonna <span id="filter-fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;<span id="fieldType" class="highlight"></span></h4>
+        <!-- <h4>Inserisci qui la condizione di filtro per la colonna <span id="filter-fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;
+          </h4> -->
         <div class="md-field">
           <input type="text" id="filter-name" value=""/>
           <label for="filter-name" class="">Nome</label>
@@ -140,8 +141,33 @@
 
         <div class="formulaDefine">
 
+          <fieldset>
+            <legend>Nome colonna</legend>
+            <div class="">
+              <span id="filter-fieldName" class="highlight"></span>
+              <span id="fieldType" class="highlight"></span>
+            </div>
+          </fieldset>
+
+          <!-- <fieldset>
+            <legend>Nome colonna</legend>
+          </fieldset> -->
+
+
+          <!-- <section class="field">
+            <div class="title"><h6>Nome colonna</h6></div>
+
+            <div class="">
+              <span id="filter-fieldName" class="highlight"></span>
+              <span id="fieldType" class="highlight"></span>
+            </div>
+          </section> -->
+
           <section class="formula">
-            <h6>SQL operatori</h6><small>Scorri la lista degli operatori</small>
+            <div class="title">
+              <h6>SQL operatori</h6><small>Scorri la lista degli operatori</small>
+            </div>
+
             <div class="listContent">
               <ul id="operator-list" class="miniList">
                 <li label="=" selected>&equals;</li>
@@ -158,7 +184,12 @@
           </section>
 
           <section class="values">
-            <h6>Valore</h6>
+
+            <div class="title">
+              <h6>Valore</h6>
+              <small>Inserisci il valore da filtrare</small>
+            </div>
+
             <div class="valueContent">
 
               <div class="md-field" value>
@@ -183,17 +214,25 @@
                 </div>
               </div>
 
-              <span class="popupContent"><i id="btnColumnValues" class="material-icons md-24" data-tableName>search</i><small class="popup">Elenco valori</small></span>
-
             </div>
 
-            <!-- TODO: recuperare i possibili valori da inserire dalla query distinct della colonna selezionata -->
+            <div id="filterValuesList" class="valuesList" hidden>
+              <small>Scorri la lista dei valori</small>
+              <div class="listContent">
+                <div class="md-field" value>
+                  <input type="search" id="valuesSearch" value=""/>
+                  <label for="valuesSearch" class="">Ricerca</label>
+                </div>
+                <ul id="valuesList" class="miniList"></ul>
+              </div>
+            </div>
+
+
 
           </section>
 
-          <section id="filterValuesList" class="valuesList" hidden>
-            <!-- TODO: ottengo la lista dei valori (DISTINCT) della colonna selezionata -->
-            <h6>Elenco valori</h6><small>Scorri la lista dei valori</small>
+          <!-- <section id="filterValuesList" class="valuesList" hidden>
+             <h6>Elenco valori</h6><small>Scorri la lista dei valori</small>
             <div class="listContent">
               <div class="md-field" value>
                 <input type="search" id="valuesSearch" value=""/>
@@ -201,7 +240,7 @@
               </div>
               <ul id="valuesList" class="miniList"></ul>
             </div>
-          </section>
+          </section> -->
 
         </div>
 
@@ -211,7 +250,7 @@
 
         <div class="dialog-buttons">
           <button type="button" name="cancel" class="md-button">annulla</button>
-          <button id="btnFilterDone" type="button" name="done" class="md-button">ok</button>
+          <button id="btnFilterDone" type="button" name="done" class="md-button" disabled>ok</button>
         </div>
       </section>
       <!-- <div> -->

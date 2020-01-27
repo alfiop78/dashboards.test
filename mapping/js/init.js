@@ -22,7 +22,10 @@ var oCube = new Cube();
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     inputValueSearch : document.getElementById('valuesSearch'),
     btnColumnValues : document.getElementById('btnColumnValues'),
-    btnFilterIcon : document.getElementById('filters-icon')
+    btnFilterIcon : document.getElementById('filters-icon'),
+    inputFilterName : document.getElementById('filter-name'),
+    btnFilterDone : document.getElementById('btnFilterDone'),
+    inputFilterValues : document.getElementById('filter-values')
   };
 
   // App.getSessionName();
@@ -261,14 +264,65 @@ var oCube = new Cube();
     fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
     // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
     fieldName.innerHTML = field;
-    // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
-    app.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', table);
-    // TODO: creo un'anteprima della formula
+    // creo un'anteprima della formula
     app.dialogFilters.querySelector('#formula > span.field').innerText = e.path[1].querySelector('li').getAttribute('label');
     app.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
     app.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
+    // TODO: qui posso caricare direttamente i valori distinti
+    app.getDistinctValues(table, field);
+  };
+
+  app.getDistinctValues = function(table, field) {
+
+    // let tableName = e.target.getAttribute('data-tableName');
+    // let fieldName = document.getElementById('filter-fieldName').innerText;
+    // return;
+    // TODO: getDistinctValues
+    // ottengo i valori distinti per la colonna selezionata
+    // TODO: utilizzare le promise
+    var url = 'ajax/columnInfo.php';
+    let params = 'table='+table+'&field='+field;
+    console.log(params);
+    const ul = document.getElementById('valuesList');
+    // pulisco la ul
+    Array.from(ul.querySelectorAll('.element')).forEach((item) => {
+      // console.log(item);
+      item.remove();
+    });
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          // console.table(response);
+          for (let i in response) {
+            // console.log(i);
+            // console.log(response[i][fieldName]);
+            let element = document.createElement('div');
+            element.className = 'element';
+            ul.appendChild(element);
+            let li = document.createElement('li');
+            li.id = i;
+            li.setAttribute('label', response[i][field]);
+            li.innerHTML = response[i][field];
+            element.appendChild(li);
+          }
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
   };
 
   app.handlerCardSelected = function(e) {
@@ -469,6 +523,7 @@ var oCube = new Cube();
     // console.log(btnHierarchies);
     btnHierarchies.onclick = app.handlerAddHierarchy;
   });
+
   Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
     // console.log(btnHierarchiesRemove);
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
@@ -606,56 +661,26 @@ var oCube = new Cube();
 
   app.inputValueSearch.oninput = App.searchInList;
 
-  app.btnColumnValues.onclick = function(e) {
-    console.log(e.target);
-    let tableName = e.target.getAttribute('data-tableName');
-    let fieldName = document.getElementById('filter-fieldName').innerText;
-    // return;
-    // TODO: getDistinctValues
-    // ottengo i valori distinti per la colonna selezionata
-    // TODO: utilizzare le promise
-    var url = 'ajax/columnInfo.php';
-    let params = 'table='+tableName+'&field='+fieldName;
-    console.log(params);
-    // return;
-    const ul = document.getElementById('valuesList');
-    // pulisco la ul
-    Array.from(ul.querySelectorAll('.element')).forEach((item) => {
-      // console.log(item);
-      item.remove();
-    });
+  app.inputFilterName.oninput = function(e) {
+    // console.log(e.target.value);
+    (e.target.value.length > 0) ? app.btnFilterDone.disabled = false : app.btnFilterDone.disabled = true;
+  };
 
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          // console.table(response);
-          for (let i in response) {
-            // console.log(i);
-            // console.log(response[i][fieldName]);
-            let element = document.createElement('div');
-            element.className = 'element';
-            ul.appendChild(element);
-            let li = document.createElement('li');
-            li.id = i;
-            li.setAttribute('label', response[i][fieldName]);
-            li.innerHTML = response[i][fieldName];
-            element.appendChild(li);
-          }
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
+  app.inputFilterValues.oninput = function(e) {
+    // console.log(e.target.value);
+    // copio il valore che sto inserendo nella input, in #formula > span.value
+    // TODO: verifico anche il datatype per poter impostare una stringa/ numero/ ecc...
+    // se datatype = varchar imposto gli apici
+    let datatype = document.getElementById('fieldType').innerHTML;
+    console.log(datatype);
+    switch (datatype) {
+      case 'varchar':
+        app.dialogFilters.querySelector('#formula > span.value').innerHTML = `'${e.target.value}'`;
+        break;
+      default:
+        app.dialogFilters.querySelector('#formula > span.value').innerHTML = e.target.value;
 
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
+    }
   };
 
   /*events */
