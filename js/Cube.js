@@ -45,9 +45,22 @@ class Cube {
 
   get table() {return this.tableSelected;}
 
-  set activeCard(cardRef) {this.activeCardRef = cardRef;}
+  set activeCard(cardRef) {
+    // rimuovo l'attriubto active dalla card-table attiva
+    document.querySelector('.card-table[active]').removeAttribute('active');
+    this.activeCardRef = cardRef;
+    this.activeCardRef.setAttribute('active', true);
+    this.sectionOption = cardRef;
+  }
 
   get activeCard() {return this.activeCardRef;}
+
+  set sectionOption(cardRef) {
+    // imposto il ref per la section option, dove ci sono i tasti "laterali/nascosti" della card
+    this._sectionOption = cardRef.parentElement.querySelector('section[options]');
+  }
+
+  get sectionOption() {return this._sectionOption;}
 
   handlerColumns(e) {
     // console.log(e.path);
@@ -303,27 +316,27 @@ class Cube {
     // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
     let values = [];
     let value;
-    switch (operator) {
-      // TODO: aggiungere altri operatori
-      case 'BETWEEN':
-        // recupero i valori di filter-values-from e filter-values-to
-        values.push(document.getElementById('filter-values-from').value);
-        values.push(document.getElementById('filter-values-to').value);
-        break;
-      case 'IN':
-      case 'NOT IN':
-        value = document.getElementsByName('in')[0].value;
-        // console.log(value);
-        values = value.split(",");
-        // console.log(values);
-        
-        break;
-      default:
-        values.push(document.querySelector('#filter-setting #formula > span.value').innerHTML);
-    }
+    // switch (operator) {
+    //   // TODO: aggiungere altri operatori
+    //   case 'BETWEEN':
+    //     // recupero i valori di filter-values-from e filter-values-to
+    //     values.push(document.getElementById('filter-values-from').value);
+    //     values.push(document.getElementById('filter-values-to').value);
+    //     break;
+    //   case 'IN':
+    //   case 'NOT IN':
+    //     value = document.getElementsByName('in')[0].value;
+    //     // console.log(value);
+    //     values = value.split(",");
+    //     // console.log(values);
+    //     break;
+    //   default:
+    //     values.push(document.querySelector('#filter-setting #formula > span.value').innerHTML);
+    // }
+
 
     let filterName = document.getElementById('filter-name').value;
-
+    debugger;
     if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
 
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});

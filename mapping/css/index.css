@@ -145,7 +145,7 @@ section[options] > span > small{top: 32px;z-index: 5;}
 .dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
 dialog h4{font-size: .9rem;}
 
-.formulaDefine{display: grid;grid-template-columns: auto auto auto;grid-template-rows: auto auto;grid-gap: 16px;margin: 1em 0;align-items: center;}
+.formulaDefine{display: grid;grid-template-columns: auto auto auto;grid-gap: 16px;margin: 1em 0;align-items: center;}
 .formulaDefine .field, .formulaDefine .formula, .formulaDefine .values{display: grid;grid-template-rows: 15% auto;align-items: center;height: 100%;}
 .formulaDefine .title{align-self: flex-start;}
 
@@ -159,6 +159,7 @@ dialog .values{display: flex;flex-direction: column;padding: 8px;}
 dialog .valuesList{display: flex;flex-direction: column;padding: 8px;max-width: 300px;}
 dialog .filtersList{display: flex;flex-direction: column;}
 dialog .miniList{max-height: 150px;overflow-y: auto;}
+dialog .middleList{max-height: 200px;overflow-y: auto;}
 dialog .formula, dialog .field, dialog .values{padding: 8px;}
 
 .name-alias{display: grid;grid-template-columns: auto auto;}
@@ -173,3 +174,11 @@ dialog #between > span{padding: 16px;}
 #formula{background-color: #be7575;padding: 16px;border-radius: 4px;margin: 16px auto;color: white;font-weight: bold;font-size: 1rem;
   display: grid;grid-template-columns: auto auto auto;}
 #formula > span{justify-self: center;}
+
+.logicalOperator {display: flex;flex-flow: row;justify-content: space-evenly;padding: 16px;}
+
+div[contenteditable] {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;}
+div[contenteditable] > span{padding: 4px;border-radius: 4px;color: #494949;}
+div[contenteditable] > span.formulaOperator{background: #f9c4aa;}
+/* div[contenteditable] > span.formulaField{background: #d2e1c8;} */
+/* div[contenteditable] > span{background: #fee4a6;} */

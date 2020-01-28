@@ -182,6 +182,11 @@ var oCube = new Cube();
     // oCube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
     oCube.table = this.getAttribute('label');
+    // inserisco il nome della tabella anche sull'icona i[filters]
+    // console.log(oCube.sectionOption);
+    // console.log(oCube.sectionOption.querySelector('i[filters]'));
+    let iconFilter = oCube.sectionOption.querySelector('i[filters]');
+    iconFilter.setAttribute('data-table', this.getAttribute('label'));
 
     let tmplList = document.getElementById('template-list-columns');
 
@@ -253,7 +258,6 @@ var oCube = new Cube();
     // nome del campo selezionato
     const field = e.path[1].querySelector('li').getAttribute('label');
     // ... e della tabella
-    const table = e.path[1].querySelector('li').getAttribute('data-table');
     let operator = app.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
     // imposto il nome del campo selezionato in currentFieldSetting (questo servirà per impostare l'icon colorata, tramite l'attr defined)
     oCube.currentFieldSetting = e.target;
@@ -270,8 +274,19 @@ var oCube = new Cube();
     app.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
     app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
-    // TODO: qui posso caricare direttamente i valori distinti
-    app.getDistinctValues(table, field);
+
+  };
+
+  app.handlerValueFilterSelected = function(e) {
+    // selezione di un valore dall'elenco nella dialog filters
+    // inserisco il valore nella textarea
+    console.log(e.target);
+    // TODO: inserisco la colonna selezionata nella textarea
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaValues';
+    span.innerText = e.target.getAttribute('label');
+    textarea.appendChild(span);
   };
 
   app.getDistinctValues = function(table, field) {
@@ -309,6 +324,7 @@ var oCube = new Cube();
             li.setAttribute('label', response[i][field]);
             li.innerHTML = response[i][field];
             element.appendChild(li);
+            li.onclick = app.handlerValueFilterSelected;
           }
         } else {
           // TODO:
@@ -334,10 +350,7 @@ var oCube = new Cube();
       app.dialogTableList.showModal();
     }
     oCube.activeCard = this;
-    // rimuovo l'attriubto active dalla card-table attiva
-    document.querySelector('.card-table[active]').removeAttribute('active');
 
-    this.setAttribute('active', true);
   };
 
   app.handlerAddTable = function() {
@@ -400,14 +413,37 @@ var oCube = new Cube();
     // }
   };
 
+  app.handlerColumnFilterSelected = function(e) {
+    // selezione della colonna nella dialogFilters
+    console.log(e.target);
+    // TODO: inserisco la colonna selezionata nella textarea
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaField';
+    span.innerText = e.target.getAttribute('label');
+    textarea.appendChild(span);
+    app.getDistinctValues(e.target.getAttribute('data-table'), e.target.getAttribute('label'));
+  };
+
   app.handlerAddFilters = function(e) {
-    // console.log(this);
-    oCube.changeMode();
-    let upCard = e.path[3].querySelector('section.card-table');
-    oCube.activeCard = upCard;
-    let help = upCard.querySelector('.help');
-    help.innerHTML = 'Seleziona le colonne su cui verranno applicati dei filtri';
-    upCard.setAttribute('filters', true);
+    oCube.activeCard = e.path[3].querySelector('section.card-table');
+    // TODO: recupero gli elementi in <ul id='columns'> per metterli nella dialogFilters
+    // console.log(oCube.activeCard);
+    // console.log(oCube.activeCard.querySelectorAll('#columns > .element'));
+    let ulFieldsList = document.getElementById('fieldsList');
+    // pulisco la ul per non duplicare la lista delle colonne
+    Array.from(ulFieldsList.querySelectorAll('li')).forEach((item) => {item.remove();});
+    // popolo la ul con la lista delle colonne
+    Array.from(oCube.activeCard.querySelectorAll('#columns > .element')).forEach((item, i) => {
+      // console.log(item);
+      let liElement = item.querySelector('li');
+      let li = liElement.cloneNode(true);
+      ulFieldsList.appendChild(li);
+      li.onclick = app.handlerColumnFilterSelected;
+    });
+
+    app.dialogFilters.showModal();
+    app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
   };
 
   app.handlerAddGroupBy = function(e) {
@@ -486,25 +522,33 @@ var oCube = new Cube();
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
     this.toggleAttribute('selected');
     console.log(e.target);
-    switch (e.target.getAttribute('label')) {
-      case 'BETWEEN':
-        document.getElementById('between').hidden = false;
-        // nascondo la input stanrdard
-        app.dialogFilters.querySelector('.md-field[value]').hidden = true;
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaOperator';
+    span.innerText = e.target.getAttribute('label');
+    textarea.appendChild(span);
+    // TODO: ottenere la posizione dell'operatore e posizionare il cursore nella posizione apposita
 
-        break;
-      case 'IN':
-      case 'NOT IN':
-        document.getElementById('in').hidden = false;
-        app.dialogFilters.querySelector('.md-field[value]').hidden = true;
-        document.getElementById('between').hidden = true;
 
-        break;
-      default:
-        document.getElementById('in').hidden = true;
-        app.dialogFilters.querySelector('.md-field[value]').hidden = false;
-        document.getElementById('between').hidden = true;
-    }
+    // switch (e.target.getAttribute('label')) {
+    //   case 'BETWEEN':
+    //     document.getElementById('between').hidden = false;
+    //     // nascondo la input stanrdard
+    //     app.dialogFilters.querySelector('.md-field[value]').hidden = true;
+    //
+    //     break;
+    //   case 'IN':
+    //   case 'NOT IN':
+    //     document.getElementById('in').hidden = false;
+    //     app.dialogFilters.querySelector('.md-field[value]').hidden = true;
+    //     document.getElementById('between').hidden = true;
+    //
+    //     break;
+    //   default:
+    //     document.getElementById('in').hidden = true;
+    //     app.dialogFilters.querySelector('.md-field[value]').hidden = false;
+    //     document.getElementById('between').hidden = true;
+    // }
   };
 
   app.openReportList = function() {
@@ -666,22 +710,22 @@ var oCube = new Cube();
     (e.target.value.length > 0) ? app.btnFilterDone.disabled = false : app.btnFilterDone.disabled = true;
   };
 
-  app.inputFilterValues.oninput = function(e) {
-    // console.log(e.target.value);
-    // copio il valore che sto inserendo nella input, in #formula > span.value
-    // TODO: verifico anche il datatype per poter impostare una stringa/ numero/ ecc...
-    // se datatype = varchar imposto gli apici
-    let datatype = document.getElementById('fieldType').innerHTML;
-    console.log(datatype);
-    switch (datatype) {
-      case 'varchar':
-        app.dialogFilters.querySelector('#formula > span.value').innerHTML = `'${e.target.value}'`;
-        break;
-      default:
-        app.dialogFilters.querySelector('#formula > span.value').innerHTML = e.target.value;
-
-    }
-  };
+  // app.inputFilterValues.oninput = function(e) {
+  //   // console.log(e.target.value);
+  //   // copio il valore che sto inserendo nella input, in #formula > span.value
+  //   // TODO: verifico anche il datatype per poter impostare una stringa/ numero/ ecc...
+  //   // se datatype = varchar imposto gli apici
+  //   let datatype = document.getElementById('fieldType').innerHTML;
+  //   console.log(datatype);
+  //   switch (datatype) {
+  //     case 'varchar':
+  //       app.dialogFilters.querySelector('#formula > span.value').innerHTML = `'${e.target.value}'`;
+  //       break;
+  //     default:
+  //       app.dialogFilters.querySelector('#formula > span.value').innerHTML = e.target.value;
+  //
+  //   }
+  // };
 
   /*events */
 

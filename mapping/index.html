@@ -132,8 +132,7 @@
 
     <dialog id="filter-setting" class="dialog-filters">
       <section>
-        <!-- <h4>Inserisci qui la condizione di filtro per la colonna <span id="filter-fieldName" class="highlight"></span>&nbsp;di tipo&nbsp;
-          </h4> -->
+        <h4>Inserisci qui la condizione di filtro
         <div class="md-field">
           <input type="text" id="filter-name" value=""/>
           <label for="filter-name" class="">Nome</label>
@@ -141,27 +140,19 @@
 
         <div class="formulaDefine">
 
-          <fieldset>
-            <legend>Nome colonna</legend>
-            <div class="">
-              <span id="filter-fieldName" class="highlight"></span>
-              <span id="fieldType" class="highlight"></span>
+          <section class="formula">
+            <div class="title">
+              <h6>Colonne</h6><small>Seleziona le colonne da filtrare</small>
             </div>
-          </fieldset>
 
-          <!-- <fieldset>
-            <legend>Nome colonna</legend>
-          </fieldset> -->
-
-
-          <!-- <section class="field">
-            <div class="title"><h6>Nome colonna</h6></div>
-
-            <div class="">
-              <span id="filter-fieldName" class="highlight"></span>
-              <span id="fieldType" class="highlight"></span>
+            <div class="listContent">
+              <div class="md-field" value>
+                <input type="search" id="fieldSearch" value=""/>
+                <label for="fieldSearch" class="">Ricerca</label>
+              </div>
+              <ul id="fieldsList" class="middleList"></ul>
             </div>
-          </section> -->
+          </section>
 
           <section class="formula">
             <div class="title">
@@ -170,27 +161,25 @@
 
             <div class="listContent">
               <ul id="operator-list" class="miniList">
-                <li label="=" selected>&equals;</li>
+                <li label="=">&equals;</li>
                 <li label="<>">&lt;&gt;</li>
                 <li label="<">&lt;</li>
                 <li label=">">&gt;</li>
-                <li label="BETWEEN">BETWEEN</li>
-                <li label="IN">IN()</li>
-                <li label="NOT IN">NOT IN()</li>
+                <li label="BETWEEN AND">BETWEEN&nbsp;AND&nbsp;</li>
+                <li label="IN()">IN()</li>
+                <li label="NOT IN()">NOT IN()</li>
                 <li label="IS NULL">IS NULL</li>
                 <li label="IS NOT NULL">IS NOT NULL</li>
               </ul>
             </div>
           </section>
-
-          <section class="values">
-
+          <!-- TODO: rinominare la .formula in section.... -->
+          <section class="formula">
             <div class="title">
-              <h6>Valore</h6>
-              <small>Inserisci il valore da filtrare</small>
+              <h6>Lista valori</h6><small>Seleziona i valori per creare il filtro</small>
             </div>
 
-            <div class="valueContent">
+            <!-- <div class="valueContent">
 
               <div class="md-field" value>
                 <input type="text" id="filter-values" value=""/>
@@ -214,34 +203,35 @@
                 </div>
               </div>
 
-            </div>
+            </div> -->
 
             <div id="filterValuesList" class="valuesList" hidden>
-              <small>Scorri la lista dei valori</small>
               <div class="listContent">
                 <div class="md-field" value>
                   <input type="search" id="valuesSearch" value=""/>
                   <label for="valuesSearch" class="">Ricerca</label>
                 </div>
-                <ul id="valuesList" class="miniList"></ul>
+                <ul id="valuesList" class="middleList"></ul>
               </div>
             </div>
-
-
 
           </section>
 
-          <!-- <section id="filterValuesList" class="valuesList" hidden>
-             <h6>Elenco valori</h6><small>Scorri la lista dei valori</small>
-            <div class="listContent">
-              <div class="md-field" value>
-                <input type="search" id="valuesSearch" value=""/>
-                <label for="valuesSearch" class="">Ricerca</label>
-              </div>
-              <ul id="valuesList" class="miniList"></ul>
-            </div>
-          </section> -->
+        </div>
 
+        <div class="formulaDefined">
+          <div class="logicalOperator">
+            <span>AND</span>
+            <span>OR</span>
+            <span>AND NOT</span>
+            <span>OR NOT</span>
+          </div>
+
+          <div id="filterFormula" class="textarea" contenteditable="true">
+            <!-- <span class="formulaField">id</span>
+            <span class="formulaOperator">=</span>
+            <span class="formulaValues">443</span> -->
+          </div>
         </div>
 
         <div id='formula'>
@@ -253,10 +243,6 @@
           <button id="btnFilterDone" type="button" name="done" class="md-button" disabled>ok</button>
         </div>
       </section>
-      <!-- <div> -->
-      <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
-        <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
-      </div> -->
     </dialog>
 
     <dialog id="metric-setting" class="dialog-metrics">
