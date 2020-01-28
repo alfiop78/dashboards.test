@@ -527,6 +527,33 @@ var oCube = new Cube();
     span.className = 'formulaOperator';
     span.innerText = e.target.getAttribute('label');
     textarea.appendChild(span);
+    debugger;
+    let openPar, closePar, formulaValues;
+    switch (e.target.getAttribute('label')) {
+      case 'IN':
+      case 'NOT IN':
+        openPar = document.createElement('span');
+        closePar = document.createElement('span');
+        formulaValues = document.createElement('span');
+        // inserisco anche formulaValues tra le parentesi della IN/NOT IN
+        openPar.className = 'openPar';
+        formulaValues.className = 'formulaValues';
+        closePar.className = 'closePar';
+        openPar.innerText = '( ';
+
+        closePar.innerText = ' )';
+
+        textarea.appendChild(openPar);
+        textarea.appendChild(formulaValues);
+        textarea.appendChild(closePar);
+
+        break;
+      default:
+
+    }
+    debugger;
+
+
     // TODO: ottenere la posizione dell'operatore e posizionare il cursore nella posizione apposita
 
 

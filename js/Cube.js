@@ -199,35 +199,6 @@ class Cube {
     this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
   }
 
-  // handlerFilterSetting(e) {
-  //   // console.log(e.target);
-  //   // appro la dialog per filters
-  //   let fieldName = this.dialogFilters.querySelector('#filter-fieldName');
-  //   let fieldType = this.dialogFilters.querySelector('#fieldType');
-  //   this.field = e.path[1].querySelector('li').getAttribute('label');
-  //   this.table = e.path[1].querySelector('li').getAttribute('data-table');
-  //
-  //   // recupero il nome della colonna selezionata
-  //   this.currentFieldSetting = e.target;
-  //   // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
-  //   // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
-  //   // ... invece delle input type text, ecc..
-  //   // imposto l datatype sul fieldName
-  //   fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
-  //   // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
-  //   fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
-  //   // imposto, sull'icona btnColumnValues, il nome della tabella selezionata, per consentire di recuperare i valori distinti della colonna
-  //   this.dialogFilters.querySelector('#btnColumnValues').setAttribute('data-tableName', this.table);
-  //   // TODO: creo un'anteprima della formula
-  //   this.dialogFilters.querySelector('#formula > span.field').innerText = e.path[1].querySelector('li').getAttribute('label');
-  //   let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
-  //   this.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
-  //
-  //   this.dialogFilters.showModal();
-  //   // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-  //   this.dialogFilters.querySelector('#btnFilterDone').onclick = this.handlerBtnFilterDone.bind(this);
-  // }
-
   handlerMetricSetting(e) {
     // appro la dialog per filters
     // console.log(e);
@@ -307,36 +278,30 @@ class Cube {
 
   handlerBtnFilterDone() {
     console.log(this);
-    debugger;
+    let filterName = document.getElementById('filter-name').value;
     let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = this.dialogFilters.querySelector('#filter-fieldName').innerText;
-    let operator = this.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
-    console.log(operator);
-    // return;
+    let fieldName = this.dialogFilters.querySelector('#filterFormula .formulaField').innerText;
+    let operator = this.dialogFilters.querySelector('#filterFormula .formulaOperator').innerText;
     // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
     let values = [];
     let value;
-    // switch (operator) {
-    //   // TODO: aggiungere altri operatori
-    //   case 'BETWEEN':
-    //     // recupero i valori di filter-values-from e filter-values-to
-    //     values.push(document.getElementById('filter-values-from').value);
-    //     values.push(document.getElementById('filter-values-to').value);
-    //     break;
-    //   case 'IN':
-    //   case 'NOT IN':
-    //     value = document.getElementsByName('in')[0].value;
-    //     // console.log(value);
-    //     values = value.split(",");
-    //     // console.log(values);
-    //     break;
-    //   default:
-    //     values.push(document.querySelector('#filter-setting #formula > span.value').innerHTML);
-    // }
+    console.log(operator);
 
+    switch (operator) {
+      case 'IN':
+      case 'NOT IN':
+        value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
+        console.log(value);
+        console.log('IN / NOT IN');
+        values = value.split(',');
 
-    let filterName = document.getElementById('filter-name').value;
+        break;
+      default:
+        values.push(value);
+    }
+    console.log(values);
     debugger;
+
     if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
 
     this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});
@@ -345,7 +310,7 @@ class Cube {
 
     this.filters[tableName] = objParam;
     console.log(this.filters);
-    this.currentFieldSetting.setAttribute('defined', true);
+    // this.currentFieldSetting.setAttribute('defined', true);
     this.dialogFilters.close();
   }
 
