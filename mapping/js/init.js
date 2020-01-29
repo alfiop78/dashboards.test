@@ -453,6 +453,11 @@ var oCube = new Cube();
   app.handlerColumnFilterSelected = function(e) {
     // selezione della colonna nella dialogFilters
     console.log(e.target);
+    if (e.target.hasAttribute('selected')) {return;}
+
+    // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
+    document.querySelectorAll('#fieldsList li').forEach((li) => {li.removeAttribute('selected');});
+    e.target.toggleAttribute('selected');
     // inserisco la colonna selezionata nella textarea, la colonna non è editabile
     const textarea = document.getElementById('filterFormula');
     let span = document.createElement('span');
@@ -553,7 +558,7 @@ var oCube = new Cube();
   app.handlerFunctionOperatorList = function(e) {
     // console.log(this);
     // questo elenco deve avere sempre almeno un elemento selezionato
-    if (this.hasAttribute('selected')) {return;}
+    if (e.target.hasAttribute('selected')) {return;}
 
     // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
@@ -588,34 +593,8 @@ var oCube = new Cube();
         app.dialogFilters.querySelector('#valuesList').setAttribute('multi', true);
         break;
       default:
-
-
+        // TODO: valutare le operazioni da svolgere per questo blocco
     }
-
-
-
-    // TODO: ottenere la posizione dell'operatore e posizionare il cursore nella posizione apposita
-
-
-    // switch (e.target.getAttribute('label')) {
-    //   case 'BETWEEN':
-    //     document.getElementById('between').hidden = false;
-    //     // nascondo la input stanrdard
-    //     app.dialogFilters.querySelector('.md-field[value]').hidden = true;
-    //
-    //     break;
-    //   case 'IN':
-    //   case 'NOT IN':
-    //     document.getElementById('in').hidden = false;
-    //     app.dialogFilters.querySelector('.md-field[value]').hidden = true;
-    //     document.getElementById('between').hidden = true;
-    //
-    //     break;
-    //   default:
-    //     document.getElementById('in').hidden = true;
-    //     app.dialogFilters.querySelector('.md-field[value]').hidden = false;
-    //     document.getElementById('between').hidden = true;
-    // }
   };
 
   app.openReportList = function() {

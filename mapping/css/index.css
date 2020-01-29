@@ -177,6 +177,7 @@ dialog #between > span{padding: 16px;}
 
 .logicalOperator {display: flex;flex-flow: row;justify-content: space-evenly;padding: 16px;}
 
+.formulaContent {display: flex;}
 div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
 div.textarea > span{padding: 4px;color: #494949;}
 div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}

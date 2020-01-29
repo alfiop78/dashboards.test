@@ -181,32 +181,6 @@
               <h6>Lista valori</h6><small>Seleziona i valori per creare il filtro</small>
             </div>
 
-            <!-- <div class="valueContent">
-
-              <div class="md-field" value>
-                <input type="text" id="filter-values" value=""/>
-                <label for="filter-values" class="">Valore</label>
-              </div>
-              <div id="between" hidden>
-                <div class="md-field">
-                  <input type="text" id="filter-values-from" value=""/>
-                  <label for="filter-values-from" class="">Dal</label>
-                </div>
-                <span>AND</span>
-                <div class="md-field">
-                  <input type="text" id="filter-values-to" value=""/>
-                  <label for="filter-values-to" class="">Al</label>
-                </div>
-              </div>
-
-              <div id="in" hidden>
-                <div class="md-field">
-                  <textarea id="arrayValues" placeholder="Valori separati da virgola (es.: 23, 43, 234, 43...) " name="in" rows="12" cols="60"></textarea>
-                </div>
-              </div>
-
-            </div> -->
-
             <div id="filterValuesList" class="valuesList" hidden>
               <div class="listContent">
                 <div class="md-field" value>
@@ -229,16 +203,19 @@
             <span>OR NOT</span>
           </div>
 
-          <div id="filterFormula" class="textarea">
-            <!-- <span class="formulaField">id</span>
-            <span class="formulaOperator"> =</span>
-            <span class="formulaValues">443</span> -->
+          <div class="formulaContent">
+            <div id="filterFormula" class="textarea">
+              <!-- <span class="formulaField">id</span>
+              <span class="formulaOperator"> =</span>
+              <span class="formulaValues">443</span> -->
+            </div>
+            <div class="formulaIcons">
+              <span class="popupContent"><i class="material-icons md-18">clear</i><small class="popup">Rimuovi</small></span>
+              <span class="popupContent"><i class="material-icons md-18">edit</i><small class="popup">Modifica</small></span>
+            </div>
           </div>
-        </div>
 
-        <!-- <div id='formula'>
-          <span class="field"></span><span class="operator"></span><span class="value"></span>
-        </div> -->
+        </div>
 
         <div class="dialog-buttons">
           <button type="button" name="cancel" class="md-button">annulla</button>
