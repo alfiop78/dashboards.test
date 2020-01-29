@@ -282,9 +282,27 @@ var oCube = new Cube();
     // inserisco il valore nella textarea
     // console.log(e.target);
     // inserisco la colonna selezionata nella textarea
+    let ul = app.dialogFilters.querySelector('ul#valuesList');
+    if (!ul.hasAttribute('multi')) {
+      // selezione singola
+      console.log('single');
+      // se l'elemento target è già selezionato faccio il return
+      if (e.target.hasAttribute('selected')) return;
+      // ...altrimenti elimino tutte le selezioni fatte (single) e imposto il target selezionato
+      console.log('imposto elemento selected');
+      document.querySelectorAll('#valuesList li').forEach((li) => {li.removeAttribute('selected');});
+      e.target.toggleAttribute('selected');
+    } else {
+      console.log('multi');
+      console.log('imposto elemento selected, senza eliminare gli altri');
+      // selezione multipla, quindi seleziono tutti gli elementi su cui si attiva il click
+      e.target.toggleAttribute('selected');
+    }
+    return;
+
     const textarea = document.getElementById('filterFormula');
     let span;
-    // TODO: se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
+    // se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
     if (textarea.querySelector('.formulaValues')) {
       // console.log('esiste');
       span = textarea.querySelector('.formulaValues');
@@ -528,7 +546,7 @@ var oCube = new Cube();
     // console.log(this);
     // questo elenco deve avere sempre almeno un elemento selezionato
     if (this.hasAttribute('selected')) {return;}
-    // TODO: quando inserisco between bisogna far comparire anche la seconda input
+
     // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
     this.toggleAttribute('selected');
@@ -558,7 +576,8 @@ var oCube = new Cube();
         textarea.appendChild(formulaValues);
         textarea.appendChild(closePar);
         formulaValues.focus();
-
+        //  imposto la lista dei valori in multiselezione (una IN può avere un elenco di valori separati da virgola)
+        app.dialogFilters.querySelector('#valuesList').setAttribute('multi', true);
         break;
       default:
 
