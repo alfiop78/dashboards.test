@@ -280,13 +280,24 @@ var oCube = new Cube();
   app.handlerValueFilterSelected = function(e) {
     // selezione di un valore dall'elenco nella dialog filters
     // inserisco il valore nella textarea
-    console.log(e.target);
-    // TODO: inserisco la colonna selezionata nella textarea
+    // console.log(e.target);
+    // inserisco la colonna selezionata nella textarea
     const textarea = document.getElementById('filterFormula');
-    let span = document.createElement('span');
-    span.className = 'formulaValues';
-    span.innerText = e.target.getAttribute('label');
-    textarea.appendChild(span);
+    let span;
+    // TODO: se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
+    if (textarea.querySelector('.formulaValues')) {
+      // console.log('esiste');
+      span = textarea.querySelector('.formulaValues');
+      span.innerText = e.target.getAttribute('label');
+    } else {
+      // console.log('non eiste');
+      span = document.createElement('span');
+      span.className = 'formulaValues';
+      span.setAttribute('contenteditable', true);
+      span.innerText = e.target.getAttribute('label');
+      textarea.appendChild(span);
+    }
+    span.focus();
   };
 
   app.getDistinctValues = function(table, field) {
@@ -416,7 +427,7 @@ var oCube = new Cube();
   app.handlerColumnFilterSelected = function(e) {
     // selezione della colonna nella dialogFilters
     console.log(e.target);
-    // TODO: inserisco la colonna selezionata nella textarea
+    // inserisco la colonna selezionata nella textarea, la colonna non è editabile
     const textarea = document.getElementById('filterFormula');
     let span = document.createElement('span');
     span.className = 'formulaField';
@@ -527,7 +538,7 @@ var oCube = new Cube();
     span.className = 'formulaOperator';
     span.innerText = e.target.getAttribute('label');
     textarea.appendChild(span);
-    debugger;
+    // debugger;
     let openPar, closePar, formulaValues;
     switch (e.target.getAttribute('label')) {
       case 'IN':
@@ -538,20 +549,22 @@ var oCube = new Cube();
         // inserisco anche formulaValues tra le parentesi della IN/NOT IN
         openPar.className = 'openPar';
         formulaValues.className = 'formulaValues';
+        formulaValues.setAttribute('contenteditable', true);
         closePar.className = 'closePar';
         openPar.innerText = '( ';
-
         closePar.innerText = ' )';
 
         textarea.appendChild(openPar);
         textarea.appendChild(formulaValues);
         textarea.appendChild(closePar);
+        formulaValues.focus();
 
         break;
       default:
 
+
     }
-    debugger;
+
 
 
     // TODO: ottenere la posizione dell'operatore e posizionare il cursore nella posizione apposita
@@ -708,12 +721,12 @@ var oCube = new Cube();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  app.btnFact.onclick = function(e) {app.Page.next();};
+  app.btnFact.onclick = function() {app.Page.next();};
 
   // vado alla pagina reports/index.html
-  app.btnPreviewReport.onclick = function(e) {location.href = '/reports/';};
+  app.btnPreviewReport.onclick = function() {location.href = '/reports/';};
 
-  app.btnBack.onclick = function(e) {app.Page.previous();};
+  app.btnBack.onclick = function() {app.Page.previous();};
 
   // app.btnNewReport.onclick = function(e) {
   //   // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)

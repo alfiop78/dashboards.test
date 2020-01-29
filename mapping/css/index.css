@@ -177,8 +177,7 @@ dialog #between > span{padding: 16px;}
 
 .logicalOperator {display: flex;flex-flow: row;justify-content: space-evenly;padding: 16px;}
 
-div[contenteditable] {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;}
-div[contenteditable] > span{padding: 4px;border-radius: 4px;color: #494949;}
-div[contenteditable] > span.formulaOperator{background: #f9c4aa;}
-/* div[contenteditable] > span.formulaField{background: #d2e1c8;} */
-/* div[contenteditable] > span{background: #fee4a6;} */
+div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
+div.textarea > span{padding: 4px;color: #494949;}
+div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
+div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid thin gray;padding: 4px 16px;}
