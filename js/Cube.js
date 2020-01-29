@@ -285,22 +285,23 @@ class Cube {
     // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
     let values = [];
     let value;
-    console.log(operator);
+    // console.log(operator);
 
     switch (operator) {
       case 'IN':
       case 'NOT IN':
         value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
-        console.log(value);
-        console.log('IN / NOT IN');
+        // console.log(value);
+        // console.log('IN / NOT IN');
         values = value.split(',');
 
         break;
       default:
+        value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
         values.push(value);
     }
-    console.log(values);
-    debugger;
+    // console.log(values);
+    // debugger;
 
     if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
 

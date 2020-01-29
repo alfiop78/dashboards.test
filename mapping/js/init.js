@@ -282,39 +282,47 @@ var oCube = new Cube();
     // inserisco il valore nella textarea
     // console.log(e.target);
     // inserisco la colonna selezionata nella textarea
-    let ul = app.dialogFilters.querySelector('ul#valuesList');
+    const ul = app.dialogFilters.querySelector('ul#valuesList');
+    const textarea = document.getElementById('filterFormula');
+    let span;
+    let valuesArr = [];
+
     if (!ul.hasAttribute('multi')) {
       // selezione singola
-      console.log('single');
       // se l'elemento target è già selezionato faccio il return
       if (e.target.hasAttribute('selected')) return;
       // ...altrimenti elimino tutte le selezioni fatte (single) e imposto il target selezionato
-      console.log('imposto elemento selected');
       document.querySelectorAll('#valuesList li').forEach((li) => {li.removeAttribute('selected');});
       e.target.toggleAttribute('selected');
+
+      // se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
+      if (textarea.querySelector('.formulaValues')) {
+        // console.log('esiste');
+        span = textarea.querySelector('.formulaValues');
+        span.innerText = e.target.getAttribute('label');
+      } else {
+        // console.log('non eiste');
+        span = document.createElement('span');
+        span.className = 'formulaValues';
+        span.setAttribute('contenteditable', true);
+        span.innerText = e.target.getAttribute('label');
+        textarea.appendChild(span);
+      }
+
     } else {
-      console.log('multi');
-      console.log('imposto elemento selected, senza eliminare gli altri');
       // selezione multipla, quindi seleziono tutti gli elementi su cui si attiva il click
       e.target.toggleAttribute('selected');
-    }
-    return;
-
-    const textarea = document.getElementById('filterFormula');
-    let span;
-    // se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
-    if (textarea.querySelector('.formulaValues')) {
-      // console.log('esiste');
       span = textarea.querySelector('.formulaValues');
-      span.innerText = e.target.getAttribute('label');
-    } else {
-      // console.log('non eiste');
-      span = document.createElement('span');
-      span.className = 'formulaValues';
-      span.setAttribute('contenteditable', true);
-      span.innerText = e.target.getAttribute('label');
-      textarea.appendChild(span);
+      // TODO: recupero l'elenco dei valori selezionati nella multi
+      let liSelected = app.dialogFilters.querySelectorAll('#valuesList li[selected]');
+      // console.log(liSelected);
+      liSelected.forEach((item) => {valuesArr.push(item.getAttribute('label'));});
+      span.innerText = valuesArr;
     }
+
+
+
+
     span.focus();
   };
 
