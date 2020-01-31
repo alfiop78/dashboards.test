@@ -6,11 +6,11 @@ var oCube = new Cube();
 // TODO: dichiarare qui le altre Classi
 (() => {
   var app = {
-    TimelineHier : new Timeline('layout-timeline-0'),
-    TimelineFact : new Timeline('layout-timeline-1'),
+    // TimelineHier : new Timeline('layout-timeline-0'),
+    // TimelineFact : new Timeline('layout-timeline-1'),
     // passo al Costruttore il contenitore di tutte le page
-    Page : new Page(document.getElementById('pages')),
-    dialogTableList : document.getElementById('table-list'),
+    tmplElementMenu : document.getElementById('elementMenu'),
+    // Page : new Page(document.getElementById('pages')),
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
@@ -25,12 +25,170 @@ var oCube = new Cube();
     btnFilterIcon : document.getElementById('filters-icon'),
     inputFilterName : document.getElementById('filter-name'),
     btnFilterDone : document.getElementById('btnFilterDone'),
-    inputFilterValues : document.getElementById('filter-values')
+    inputFilterValues : document.getElementById('filter-values'),
+
+    card : null,
+    cardTitle : null,
+    content : document.getElementById('content'),
+    body : document.getElementById('body'),
+    currentX : 0,
+    currentY : 0,
+    initialX : 0,
+    initialY : 0,
+    active : false,
+    xOffset : 0,
+    yOffset : 0,
+    dragElement : null,
+    elementMenu : null
   };
 
-  // App.getSessionName();
-
   App.init();
+
+  app.dragStart = function(e) {
+    // mousedown da utilizzare per lo spostamento dell'elemento
+    if (e.target.localName === 'h6') {
+      app.cardTitle = e.target;
+      app.card = e.path[4];
+      // recupero la posizione attuale della card tramite l'attributo x-y impostato su .cardTable
+      app.xOffset = e.path[4].getAttribute('x');
+      app.yOffset = e.path[4].getAttribute('y');
+    }
+    // cardTitle = document.querySelector('.card.table .title > h6');
+    if (e.type === 'touchstart') {
+        app.initialX = e.touches[0].clientX - app.xOffset;
+        app.initialY = e.touches[0].clientY - app.yOffset;
+      } else {
+        app.initialX = e.clientX - app.xOffset;
+        app.initialY = e.clientY - app.yOffset;
+      }
+
+      if (e.target === app.cardTitle) {
+        app.active = true;
+      }
+  };
+
+  app.dragEnd = function() {
+    // console.log(e.target);
+    // mouseup, elemento rilasciato dopo lo spostamento
+    app.initialX = app.currentX;
+    app.initialY = app.currentY;
+    app.active = false;
+  };
+
+  app.drag = function(e) {
+    // mousemove elemento si sta spostato
+    // console.log(e.target);
+    // console.log(e);
+    if (app.active) {
+      e.preventDefault();
+
+      if (e.type === 'touchmove') {
+          app.currentX = e.touches[0].clientX - app.initialX;
+          app.currentY = e.touches[0].clientY - app.initialY;
+        } else {
+          app.currentX = e.clientX - app.initialX;
+          app.currentY = e.clientY - app.initialY;
+        }
+
+        app.xOffset = app.currentX;
+        app.yOffset = app.currentY;
+        // imposto sulla .cardTable le posizioni dove è 'stato lasciato'  dopo il drag in modo da "riprendere" lo
+        // spostamento da dove era rimasto
+        app.card.setAttribute('x', app.xOffset);
+        app.card.setAttribute('y', app.yOffset);
+
+        app.card.style.transform = 'translate3d(' + app.currentX + 'px, ' + app.currentY + 'px, 0)';
+      }
+  };
+
+  app.body.onmousedown = app.dragStart;
+  app.body.onmouseup = app.dragEnd;
+  app.body.onmousemove = app.drag;
+
+  // TODO: aggiungere anhce eventi touch...
+
+  app.handlerDragStart = function(e) {
+    // console.log('start');
+    // dragStart
+    console.log(e.target.id);
+    e.dataTransfer.setData('text/plain', e.target.id);
+    app.dragElement = document.getElementById(e.target.id);
+    console.log(e.path);
+    app.elementMenu = e.path[1]; // elemento da eliminare al termine drl drag&drop
+    // console.log(e.dataTransfer);
+  };
+
+  app.handlerDragOver = function(e) {
+    console.log('dragOver');
+    e.preventDefault();
+    // console.log(e.clientX);
+    // console.log(e.clientY);
+
+    // console.log(e.target);
+  };
+
+  app.handlerDragEnter = function(e) {
+    console.log('dragEnter');
+    e.preventDefault();
+    // elimino .menu per trasformarla in .card.table
+    // app.dragElement.classList.remove('menu');
+    // app.dragElement.classList.add('table');
+
+    console.log(e.target);
+    if (e.target.className === 'dropzone') {
+      console.log('dropzone');
+      e.target.classList.add('dragging');
+      // app.dragElement.classList.remove('menu');
+      // app.dragElement.classList.add('table');
+      // TODO: inserire un effetto css sulla dropzone
+
+    }
+  };
+
+  app.handlerDragLeave = function(e) {
+    e.preventDefault();
+    console.log('dragLeave');
+    // console.log(e.target);
+    app.content.classList.remove('dragging');
+  };
+
+  app.handlerDragEnd = function(e) {
+    e.preventDefault();
+    console.log('dragEnd');
+    console.log(e.target);
+    app.content.classList.remove('dragging');
+  };
+
+  app.handlerDrop = function(e) {
+    e.preventDefault();
+    console.log('drop');
+    console.log(e);
+    let data = e.dataTransfer.getData('text/plain');
+    console.log(e.dataTransfer);
+    app.body.appendChild(document.getElementById(data));
+    app.dragElement.classList.remove('menu');
+    app.dragElement.classList.add('table');
+    app.dragElement.removeAttribute('draggable');
+    // recupero l'id dell'elemento che sto spostando, l'id mi ervirà per eliminare .elementMenu dall'elenco di sinista
+    // terminato il drop elimino l'elemento .elementMenu dall'elenco di sinistra
+    app.elementMenu.remove();
+    // imposto la card draggata nella posizione dove si trova il mouse
+    console.log(app.dragElement);
+    app.dragElement.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
+    app.dragElement.setAttribute('x', e.offsetX);
+    app.dragElement.setAttribute('y', e.offsetY);
+    // TODO: aggiungo il tasto close
+    // TODO: carico i campi della tabella dragged
+
+  };
+
+  app.content.ondragover = app.handlerDragOver;
+  app.content.ondragenter = app.handlerDragEnter;
+  app.content.ondragleave = app.handlerDragLeave;
+  app.content.ondrop = app.handlerDrop;
+  app.content.ondragend = app.handlerDragEnd;
+
+  // App.getSessionName();
 
   app.getDimensionsList = function() {
     // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
@@ -66,7 +224,7 @@ var oCube = new Cube();
     });
   };
 
-  app.handlerCubeSelected = function(e) {
+  app.handlerCubeSelected = function() {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
     // ricreo un datamart
 
@@ -136,6 +294,10 @@ var oCube = new Cube();
     // request.send(params);
   };
 
+  app.handlerFACTSelected = function(e) {
+    console.log(e.target);
+  };
+
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
     var url = 'ajax/database.php';
@@ -146,20 +308,17 @@ var oCube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           // console.table(response);
-
-          let ul = document.getElementById('tables');
-          // console.log(ulContainer);
-
+          // let parent = document.getElementsByClassName('drawerList')[0];
+          let parent = document.getElementsByTagName('nav')[0];
           for (let i in response) {
-            let element = document.createElement('div');
-            element.classList.add('element');
-            let li = document.createElement('li');
-            li.setAttribute('label', response[i][0]);
-            li.innerText = response[i][0];
-            li.id = i;
-            ul.appendChild(element);
-            element.appendChild(li);
-            li.onclick = app.handlerTableSelected;
+            let tmplElementMenu = app.tmplElementMenu.content.cloneNode(true);
+            let element = tmplElementMenu.querySelector('.elementMenu');
+            element.querySelector('.menu').setAttribute('id', 'table-' + i);
+            element.querySelector('.title > h6').innerHTML = response[i][0];
+            parent.appendChild(element);
+            element.querySelector('.menu').ondragstart = app.handlerDragStart;
+            element.querySelector('.menu h6').onclick = app.handlerFACTSelected;
+
           }
 
         } else {
@@ -607,7 +766,7 @@ var oCube = new Cube();
     card.onclick = app.handlerCardSelected;
   });
   // evento su icona per aggiungere una tabella alla gerarchia
-  document.querySelector('.icon-relation > span > i[add]').onclick = app.handlerAddTable;
+  // document.querySelector('.icon-relation > span > i[add]').onclick = app.handlerAddTable;
   // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
   Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies]')).forEach((btnHierarchies) => {
     // console.log(btnHierarchies);
@@ -619,10 +778,10 @@ var oCube = new Cube();
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
   });
   // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
-  document.querySelector('section[options] > span > i[columns]').onclick = app.handlerAddColumns;
-  document.querySelector('section[options] > span > i[filters]').onclick = app.handlerAddFilters;
-  document.querySelector('section[options] > span > i[groupby]').onclick = app.handlerAddGroupBy;
-  document.querySelector('#fact-card section[options] > span > i[metrics]').onclick = app.handlerAddMetrics;
+  // document.querySelector('section[options] > span > i[columns]').onclick = app.handlerAddColumns;
+  // document.querySelector('section[options] > span > i[filters]').onclick = app.handlerAddFilters;
+  // document.querySelector('section[options] > span > i[groupby]').onclick = app.handlerAddGroupBy;
+  // document.querySelector('#fact-card section[options] > span > i[metrics]').onclick = app.handlerAddMetrics;
 
   /* tasto OK nella dialog*/
   document.getElementById('btnDimensionSaveName').onclick = function() {
@@ -662,61 +821,61 @@ var oCube = new Cube();
     app.dialogDimensionName.close();
   };
 
-  document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
+  // document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
-  document.getElementById('btnCubeSaveName').onclick = function() {
-    oCube.cubeTitle = document.getElementById('cubeName').value;
-    oCube.cube.dimensions = oCube.dimension;
-    oCube.cube.type = 'CUBE';
-    oCube.cube['columns'] = oCube.columns;
-    oCube.cube['filters'] = oCube.filters;
-    oCube.cube['metrics'] = oCube.metrics;
-    oCube.cube['filteredMetrics'] = oCube.filteredMetrics;
-    oCube.cube['groupby'] = oCube.groupBy;
-    oCube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
-    oCube.cube.name = oCube.cubeTitle;
-    let cubeStorage = new CubeStorage();
+  // document.getElementById('btnCubeSaveName').onclick = function() {
+  //   oCube.cubeTitle = document.getElementById('cubeName').value;
+  //   oCube.cube.dimensions = oCube.dimension;
+  //   oCube.cube.type = 'CUBE';
+  //   oCube.cube['columns'] = oCube.columns;
+  //   oCube.cube['filters'] = oCube.filters;
+  //   oCube.cube['metrics'] = oCube.metrics;
+  //   oCube.cube['filteredMetrics'] = oCube.filteredMetrics;
+  //   oCube.cube['groupby'] = oCube.groupBy;
+  //   oCube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
+  //   oCube.cube.name = oCube.cubeTitle;
+  //   let cubeStorage = new CubeStorage();
+  //
+  //   // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
+  //   oCube.cube.cubeId = cubeStorage.getIdAvailable();
+  //   console.log(oCube.cube.cubeId);
+  //
+  //   // oCube.cube.cube_id = oStorage.cubeId;
+  //   console.log(oCube.cube);
+  //
+  //   // salvo il cubo in localStorage
+  //   cubeStorage.save = oCube.cube;
+  //   cubeStorage.stringifyObject = oCube.cube;
+  //
+  //   var url = 'ajax/cube.php';
+  //   let params = 'cube='+cubeStorage.stringifyObject;
+  //   console.log(params);
+  //
+  //   var request = new XMLHttpRequest();
+  //   request.onreadystatechange = function() {
+  //     if (request.readyState === XMLHttpRequest.DONE) {
+  //       if (request.status === 200) {
+  //         var response = JSON.parse(request.response);
+  //         console.table(response);
+  //         app.dialogCubeName.close();
+  //         // abilito il tasto REPORT PREVIEW
+  //         document.getElementById('mdc-preview-report').disabled = false;
+  //       } else {
+  //         // TODO:
+  //       }
+  //     } else {
+  //       // TODO:
+  //     }
+  //   };
+  //
+  //   request.open('POST', url);
+  //   // request.setRequestHeader('Content-Type','application/json');
+  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  //   request.send(params);
+  // };
 
-    // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-    oCube.cube.cubeId = cubeStorage.getIdAvailable();
-    console.log(oCube.cube.cubeId);
-
-    // oCube.cube.cube_id = oStorage.cubeId;
-    console.log(oCube.cube);
-
-    // salvo il cubo in localStorage
-    cubeStorage.save = oCube.cube;
-    cubeStorage.stringifyObject = oCube.cube;
-
-    var url = 'ajax/cube.php';
-    let params = 'cube='+cubeStorage.stringifyObject;
-    console.log(params);
-
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          console.table(response);
-          app.dialogCubeName.close();
-          // abilito il tasto REPORT PREVIEW
-          document.getElementById('mdc-preview-report').disabled = false;
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  };
-
-  document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
+  // document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
 
   // document.getElementById('saveHierarchy').onclick = function(e) {
   //   // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
@@ -747,7 +906,7 @@ var oCube = new Cube();
   document.getElementById('tableSearch').oninput = App.searchInList;
 
   // icona openReport apre la dialog con la lista di reports già creati
-  document.querySelector('#openReport').onclick = app.openReportList;
+  // document.querySelector('#openReport').onclick = app.openReportList;
 
   app.inputValueSearch.oninput = App.searchInList;
 
@@ -779,5 +938,5 @@ var oCube = new Cube();
 
   // app.getDimensionsList();
 
-  app.getDatamartList();
+  // app.getDatamartList();
 })();

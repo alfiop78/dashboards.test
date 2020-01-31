@@ -182,3 +182,30 @@ div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size:
 div.textarea > span{padding: 4px;color: #494949;}
 div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
 div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid thin gray;padding: 4px 16px;}
+
+/*new*/
+#content.dragging{opacity: .6;box-shadow: inset 0px 0px 10px 2px grey;}
+
+.card.table{width: 300px;height: 350px;background: white;position: absolute;font-size: .8rem; border-radius: 4px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
+
+.card.table > .cardLayout{display: grid;grid-template-columns: 100%;position: relative;height: 100%}
+.card.table > .cardLayout > .cardTable{position: relative;height: fit-content;display: grid;grid-template-areas: "title" "input" "body";}
+
+.card.table .cardTable > .title{grid-area: title;height: fit-content;background: tan;border-top-left-radius: 4px;
+  border-top-right-radius: 4px;display: flex;align-items: flex-start;justify-content: space-between;}
+.card.table .cardTable > .title > h6{padding: 8px 8px 16px 8px; margin: 0;font-size: .75rem;width: 100%;}
+.card.table .cardTable > .title > h6:hover{padding: 8px 8px 16px 8px;margin: 0;cursor: move;width: 100%;}
+
+.card.table .cardTable > .input{grid-area: input;}
+
+.card.table .cardTable > .body{grid-area: : body;}
+
+.elementMenu{margin: 8px 0;position: relative;height: 30px;display: flex;align-items: center;width: 100%;}
+.elementMenu > .card.menu{position: absolute;width: inherit;}
+.card.menu{position: absolute;}
+.card.menu .cardTable > .title{}
+.card.menu .cardTable > .title > h6{margin: 0;font-size: .75rem;padding: 8px;}
+.title > h6.dr{background-color: yellow;}
+.card.menu .cardTable > .title > h6:hover{margin: 0;font-size: .75rem;padding: 8px;background: gainsboro;cursor: grab;}
+/*new*/

@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="css/timeline.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/Application.js"></script>
-    <script src="/js/Timeline.js"></script>
+    <!-- <script src="/js/Timeline.js"></script> -->
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
     <script src="/js/Page.js"></script>
@@ -285,23 +285,6 @@
       </div> -->
     </dialog>
 
-    <dialog id="table-list">
-      <div class="lists">
-        <div class="list">
-          <div class="md-field">
-            <input type="search" id="tableSearch" name="tableSearch" value=""/>
-            <label for="tableSearch" class="">Ricerca</label>
-          </div>
-
-          <ul id="tables"></ul>
-        </div>
-      </div>
-
-      <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button">annulla</button>
-      </div>
-    </dialog>
-
     <dialog id="dialog-report-list">
       <div class="lists">
         <div class="list">
@@ -328,12 +311,27 @@
 
         <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
 
+        <div class="md-field">
+          <input type="search" id="tableSearch" name="tableSearch" value=""/>
+          <label for="tableSearch" class="">Ricerca</label>
+        </div>
+
         <nav>
-          <a href="#" title="Il mio Profilo" onclick="App.menuOpen('profile/')"><i class="material-icons md-18">person</i><span>elem 1</span></a>
 
-          <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a>
+          <template id="elementMenu">
+            <div class="elementMenu">
+              <div id="table-0" class="card menu" draggable="true">
+                <div class="cardLayout">
+                  <section class="cardTable">
+                    <div class="title">
+                      <h6>table 1</h6>
 
-          <!-- <a href="" title="Logout"><i class="material-icons md-18">power_settings_new</i><span>Logout</span></a> -->
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </template>
 
         </nav>
 
@@ -351,35 +349,67 @@
 
       <div id="container" data-page="1">
 
-        <div id="content">
+        <div id="content" class="dropzone">
           <div id="body" hidden>
 
+            <div class="card table">
+              <div class="cardLayout">
+                <section class="cardTable" fact>
+                  <div class="title">
+                    <h6>FACT</h6>
+                    <span class="popupContent"><i class="material-icons md-18">fiber_manual_record</i><small class="popup">Tabella attiva</small></span>
+                    <span class="popupContent"><i class="material-icons md-18">post_add</i><small class="popup">Seleziona tabella</small></span>
+                    <span class="popupContent"><i class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
+                  </div>
+                  <div class="inputSearch">
+                    <div class="md-field">
+                      <input type="text" value=""/>
+                      <label for="searchColumns" class="">Ricerca</label>
+                    </div>
+                  </div>
+                  <div id="columns">
+                    <template id="templateListColumns">
+                      <div class="element">
+                        <li></li>
+                        <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+                        <i id="columns-icon" class="material-icons md-18">view_list</i>
+                        <!-- <i id="filters-icon" class="material-icons md-18">filter_list</i> -->
+                        <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+                        <i id="metrics-icon" class="material-icons md-18">show_chart</i>
+                      </div>
+                    </template>
+                  </div>
+
+                </section>
+              </div>
+            </div>
+
             <!-- Creazione gerarchie -->
-            <div id="pages" data-step="1">
+            <!-- <div id="pages" data-step="1"> -->
 
-              <section class="page" selected data-step="1">
-                <h2>Step 1 - Map dimensioni</h2>
-                <section>
-                  <h3>Creazione della struttura gerarchica</h3>
-                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5>
+              <!-- <section class="page" selected data-step="1"> -->
+                <!-- <h2>Step 1 - Map dimensioni</h2> -->
+                <!-- <section> -->
+                  <!-- <h3>Creazione della struttura gerarchica</h3>
+                  <h5>Selezionare le tabelle da includere per completare la struttura fino alla tabella dei fatti</h5> -->
 
-                  <div class="actions">
+                  <!-- <div class="actions">
                     <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova gerarchia</small></span>
                     <span class="popupContent"><i class="material-icons md-24">playlist_add_check</i><small class="popup">Salva gerarchia</small></span>
                     <span class="popupContent"><i id="saveDimension" class="material-icons md-24 brown">save</i><small class="popup">Salva dimensione</small></span>
                     <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri Report</small></span>
-                  </div>
+                  </div> -->
 
-                  <div class="timelineContent" id="layout-timeline-0">
+                  <!-- <div class="timelineContent" id="layout-timeline-0"> -->
 
-                    <div class="timelineContainer">
-                      <template id="circle-timeline">
+                    <!-- <div class="timelineContainer"> -->
+                      <!-- <template id="circle-timeline">
                         <span id=""><span class="infoCircle"><small class="popup">reference 1</small><small class="popup">reference 2</small></span></span>
                       </template>
-                      <div class="timeline"></div>
+                      <div class="timeline"></div> -->
 
-                      <div class="timelineOverflow" data-elements="1">
-                        <template id="template-element">
+                      <!-- <div class="timelineOverflow" data-elements="1"> -->
+                        <!-- <template id="template-element">
                           <div class="" data-id="" element info>
                             <div class="" sub-element>
                               <div class="card">
@@ -416,9 +446,9 @@
                               </div>
                             </div>
                           </div>
-                        </template>
+                        </template> -->
 
-                        <div class="timelineTranslate" data-x="0">
+                        <!-- <div class="timelineTranslate" data-x="0">
                           <div class="" data-id="1" element info>
                             <div class="" sub-element>
                               <div class="card">
@@ -435,7 +465,7 @@
                                       <template id="template-list-columns">
                                         <div class="element">
                                           <li></li>
-                                          <!-- TODO: per non duplicare gli elementi <i id...> dovrò inserire degli attributi data-id -->
+                                          TODO: per non duplicare gli elementi <i id...> dovrò inserire degli attributi data-id
                                           <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
                                           <i id="columns-icon" class="material-icons md-18">view_list</i>
                                           <i id="filters-icon" class="material-icons md-18">filter_list</i>
@@ -455,13 +485,13 @@
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div> -->
 
-                      </div>
+                      <!-- </div> -->
 
-                    </div>
+                    <!-- </div> -->
 
-                    <div class="relation">
+                    <!-- <div class="relation">
                       <div class="icon-relation">
                         <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup">Aggiungi tabella</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
@@ -469,14 +499,14 @@
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
                       </div>
-                    </div>
+                    </div> -->
 
-                  </div>
+                  <!-- </div> -->
 
-                </section>
-              </section>
+                <!-- </section> -->
+              <!-- </section> -->
 
-              <section class="page" data-step="2">
+              <!-- <section class="page" data-step="2">
                 <h2>Step 2 - Tabella FACT</h2>
                 <section>
                   <h3>Associazione con la FACT table</h3>
@@ -496,7 +526,7 @@
                       <div class="timelineOverflow" data-elements="1">
 
                         <div class="timelineTranslate" data-x="0">
-                          <!-- qui verrà inserita la tabella clonata (ultima tabella della relazione) -->
+                           qui verrà inserita la tabella clonata (ultima tabella della relazione)
                           <div class="" data-id="2" element info>
                             <div class="" sub-element>
                               <div class="card" id="fact-card">
@@ -527,7 +557,7 @@
 
                     <div class="relation">
                       <div class="icon-relation">
-                        <!-- <span class="popupContent"><i id="add" class="material-icons md-24" add>add</i><small class="popup"></small></span> -->
+
                         <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
                         <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
@@ -538,9 +568,9 @@
 
                 </section>
 
-              </section>
+              </section> -->
 
-            </div>
+            <!-- </div> -->
 
           </div>
 

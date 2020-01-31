@@ -1,4 +1,4 @@
-nav{font-size: .9rem;}
+nav{font-size: .9rem;height: 100%;overflow-y: auto;}
 #drawer{background: #fff;width: 256px;flex-shrink: 0;position: relative;z-index: 100;display: flex;flex-direction: column;background: #F8F9FA;}
 
 .account{display: flex;flex-direction: column;align-items: center;background: var(--main-secondary-color);color: var(--main-bg-color);}
