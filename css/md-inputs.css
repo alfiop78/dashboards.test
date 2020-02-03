@@ -42,7 +42,7 @@ select:focus ~ label, select:valid ~ label{top: 12px;color: dimgrey; padding: 0 
 /*~*/
 /*label:not([class='mdc-checkbox']):not[class='mdc-radio']{color:#999; left: 1em; margin:0;font-weight:normal;position:absolute;pointer-events:none; padding: 0em .5em;
       top:30px;transition: all .2s ease-in-out; text-overflow: ellipsis; white-space: nowrap;}*/
-label[for]{color:#999; left: 4px; margin:0;font-weight:normal;position:absolute;pointer-events:none;
+label[for]{color:#999; left: 4px; margin:0;font-weight:normal;position:absolute;pointer-events:none;font-size: .85rem;
   padding: 0 8px;transition: all .2s ease-in-out; text-overflow: ellipsis; white-space: nowrap;}
 
 .selectList{transition: transform 200ms;transform: scaleY(0);transform-origin: top;

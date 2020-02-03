@@ -28,7 +28,8 @@ var cube = new Cube();
     inputFilterValues : document.getElementById('filter-values'),
 
     tmplCloseTable : document.getElementById('closeTable'), // tasto close table
-    tmplInputSearch : document.getElementById('inputSearch'),
+    tmplInputSearch : document.getElementById('inputSearch'), // input per ricerca fields nelle tabelle
+    tmplSectionOption : document.getElementById('sectionOption'), // options laterale per ogni tabella
 
     card : null,
     cardTitle : null,
@@ -160,18 +161,27 @@ var cube = new Cube();
     console.log('dragEnd');
     console.log(e.target);
     app.content.classList.remove('dragging');
+    // carico i campi della tabella dragged
     // aggiungo il tasto close
-    // TODO: carico i campi della tabella dragged
-
     let contentCloseTable = app.tmplCloseTable.content.cloneNode(true);
-    let span = contentCloseTable.querySelector('span');
-    app.dragElement.querySelector('.title').appendChild(span);
+    let btnCloseCard = contentCloseTable.querySelector('span');
+    app.dragElement.querySelector('.title').appendChild(btnCloseCard);
+    btnCloseCard.onclick = app.handlerCloseCard;
+    // associo evento al button closeTable
     // aggiungo la input di ricerca
     let contentInputSearch = app.tmplInputSearch.content.cloneNode(true);
     let input = contentInputSearch.querySelector('div');
     app.dragElement.querySelector('.inputSearch').appendChild(input);
+    input.oninput = App.searchInList;
+    // creo section options
+    let contentSectionOption = app.tmplSectionOption.content.cloneNode(true);
+    let options = contentSectionOption.querySelector('section');
+    app.dragElement.querySelector('.cardLayout').appendChild(options);
+    // aggiungo il div info
+    app.dragElement.querySelector('.info').removeAttribute('hidden');
+
     // carico elenco colonne
-    cube.activeCard = app.dragElement;
+    cube.activeCard = app.dragElement.querySelector('.cardTable');
     // console.log(cube.activeCard);
     // debugger;
     // inserisco il nome della tabella selezionata nella card [active]
@@ -181,7 +191,7 @@ var cube = new Cube();
     let tmplList = document.getElementById('templateListColumns');
     // elemento dove inserire le colonne della tabella
     let ulContainer = cube.activeCard.querySelector('#columns');
-    console.log(cube.table);
+    // console.log(cube.table);
     var url = 'ajax/tableInfo.php';
     let params = 'tableName='+cube.table;
     var request = new XMLHttpRequest();
@@ -189,7 +199,8 @@ var cube = new Cube();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          console.table(response);
+          // console.table(response);
+          ulContainer.removeAttribute('hidden');
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
             let element = tmplContent.querySelector('.element');
@@ -207,6 +218,10 @@ var cube = new Cube();
             li.onclick = cube.handlerColumns.bind(cube);
             // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
           }
+
+          // console.log(app.dragElement);
+          // elimino l'evento click su h6
+          app.dragElement.querySelector('h6').removeEventListener('click', app.handlerFACTSelected, true);
 
           // lego eventi ai tasti i[....] nascosti
           cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
@@ -260,6 +275,13 @@ var cube = new Cube();
 
   // App.getSessionName();
 
+  app.handlerCloseCard = function(e) {
+    // elimino la card e la rivisualizzo nel drawer (spostata durante il drag&drop)
+    console.log(e.target);
+    console.log(e.path);
+    // TODO: rimettere la card chiusa al suo posto originario, nel drawer
+    e.path[5].remove();
+  };
 
   app.getDimensionsList = function() {
     // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
@@ -411,6 +433,8 @@ var cube = new Cube();
             // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
           }
 
+          cube.activeCardRef.querySelector('input').oninput = App.searchInList;
+
           // lego eventi ai tasti i[....] nascosti
           cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
           cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
@@ -452,7 +476,8 @@ var cube = new Cube();
             element.querySelector('.title > h6').setAttribute('label', response[i][0]);
             parent.appendChild(element);
             element.querySelector('.menu').ondragstart = app.handlerDragStart;
-            element.querySelector('.menu h6').onclick = app.handlerFACTSelected;
+            element.querySelector('.menu h6').addEventListener('click', app.handlerFACTSelected, true);
+            // element.querySelector('.menu h6').onclick = app.handlerFACTSelected;
 
           }
 
@@ -672,18 +697,6 @@ var cube = new Cube();
     request.send(params);
   };
 
-  app.handlerCardSelected = function(e) {
-    // console.log('handlerCardSelected');
-    // se il viene avviene sull'elemento h5 apro la dialog
-    if (e.target.localName === 'h6') {
-      document.getElementById('tableSearch').value = '';
-      app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
-      app.dialogTableList.showModal();
-    }
-    cube.activeCard = this;
-
-  };
-
   app.handlerAddTable = function() {
     /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
     ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
@@ -728,20 +741,13 @@ var cube = new Cube();
   };
 
   app.handlerAddColumns = function(e) {
-    // console.log(this);
+    // console.log(e.target);
+    console.log(e.path);
 
-    cube.changeMode();
-    let upCard = e.path[3].querySelector('section.card-table');
-    cube.activeCard = upCard;
-    let help = upCard.querySelector('.help');
-    help.innerHTML = 'Seleziona le colonne da mettere nel corpo della tabella';
-    upCard.setAttribute('columns', true);
-    // NOTE: esempio utilizzo di for...of
-    // for (let name of upCard.getAttributeNames()) {
-    //   // let value = upCard.getAttribute(name);
-    //   // console.log(name);
-    //   if (name === 'hierarchies' || name === 'filters') {upCard.removeAttribute(name);}
-    // }
+    let cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = cardTable;
+    console.log(cardTable);
+    cube.changeMode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
   };
 
   app.handlerColumnFilterSelected = function(e) {
@@ -783,59 +789,53 @@ var cube = new Cube();
   };
 
   app.handlerAddGroupBy = function(e) {
-    // console.log(this);
-    cube.changeMode();
-    let upCard = e.path[3].querySelector('section.card-table');
-    cube.activeCard = upCard;
-    let help = upCard.querySelector('.help');
-    help.innerHTML = 'Seleziona le colonne su cui applicare il GROUP BY';
-    upCard.setAttribute('groupby', true);
+    // imposto il groupby mode
+    let cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = cardTable;
+    cube.changeMode('groupby', 'Seleziona le colonne su cui applicare il GROUP BY');
   };
 
   app.handlerAddMetrics = function(e) {
-    // console.log(this);
-    cube.changeMode();
-    let upCard = e.path[3].querySelector('section.card-table');
-    cube.activeCard = upCard;
-    let help = upCard.querySelector('.help');
-    help.innerHTML = 'Seleziona le colonne da impostare come Metriche';
-    upCard.setAttribute('metrics', true);
+    // imposto il metrics mode
+    let cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = cardTable;
+    cube.changeMode('metrics', 'Seleziona le colonne da impostare come Metriche');
   };
 
-  app.cloneLastTable = function() {
-    // BUG: se si torna indietro a fare una modifica alla gerarchia, dopo aver cliccato "Salva dimensione", viene clonata di nuovo la tabella, invece di
-    //....modificare quella già clonata
-    // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
-    // ultima card nella gerarchia
-    let lastTableInHierarchy = app.TimelineHier.translateRef.querySelector('div[element]:last-child .card');
-    // console.log(lastTableInHierarchy);
-    // dove va inserita l'ultima card della gerarchia, prima della fact. La Fact ha data-id =2 perchè sicuramente ce ne sarà una a sinistra, con data-id=1
-    let factElement = app.TimelineFact.translateRef.querySelector('div[element][data-id="2"]');
-    // console.log(factElement);
-    // creo l'elemento div[element] e [sub-element]
-    let divElement = document.createElement('div');
-    divElement.setAttribute('data-id', 1);
-    divElement.setAttribute('element', true);
-    divElement.setAttribute('info', true);
-    let divSubElement = document.createElement('div');
-    divSubElement.setAttribute('sub-element', true);
-    // aggiuno l'elemento div[element] prima del div[element] che contiene la fact (ottenuto in factElement)
-    app.TimelineFact.translateRef.insertBefore(divElement, factElement);
-    // in questo div[element] aggiungo div[sub-element] ...successivamente tutta la card
-    divElement.appendChild(divSubElement);
-    let newCard = lastTableInHierarchy.cloneNode(true);
-    divSubElement.appendChild(newCard);
-
-    newCard.querySelectorAll('li').forEach((li) => {
-      li.onclick = cube.handlerColumns.bind(cube);
-    });
-    // evento oninput sulla searchColumns
-    newCard.querySelector('.md-field > input').oninput = App.searchInList;
-    // elimino la sezione section[options]
-    newCard.querySelector('.card-layout').removeChild(newCard.querySelector('section[options]'));
-    // aggiungo la timeline circle
-    app.TimelineFact.addCircle();
-  };
+  // app.cloneLastTable = function() {
+  //   // BUG: se si torna indietro a fare una modifica alla gerarchia, dopo aver cliccato "Salva dimensione", viene clonata di nuovo la tabella, invece di
+  //   //....modificare quella già clonata
+  //   // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
+  //   // ultima card nella gerarchia
+  //   let lastTableInHierarchy = app.TimelineHier.translateRef.querySelector('div[element]:last-child .card');
+  //   // console.log(lastTableInHierarchy);
+  //   // dove va inserita l'ultima card della gerarchia, prima della fact. La Fact ha data-id =2 perchè sicuramente ce ne sarà una a sinistra, con data-id=1
+  //   let factElement = app.TimelineFact.translateRef.querySelector('div[element][data-id="2"]');
+  //   // console.log(factElement);
+  //   // creo l'elemento div[element] e [sub-element]
+  //   let divElement = document.createElement('div');
+  //   divElement.setAttribute('data-id', 1);
+  //   divElement.setAttribute('element', true);
+  //   divElement.setAttribute('info', true);
+  //   let divSubElement = document.createElement('div');
+  //   divSubElement.setAttribute('sub-element', true);
+  //   // aggiuno l'elemento div[element] prima del div[element] che contiene la fact (ottenuto in factElement)
+  //   app.TimelineFact.translateRef.insertBefore(divElement, factElement);
+  //   // in questo div[element] aggiungo div[sub-element] ...successivamente tutta la card
+  //   divElement.appendChild(divSubElement);
+  //   let newCard = lastTableInHierarchy.cloneNode(true);
+  //   divSubElement.appendChild(newCard);
+  //
+  //   newCard.querySelectorAll('li').forEach((li) => {
+  //     li.onclick = cube.handlerColumns.bind(cube);
+  //   });
+  //   // evento oninput sulla searchColumns
+  //   newCard.querySelector('.md-field > input').oninput = App.searchInList;
+  //   // elimino la sezione section[options]
+  //   newCard.querySelector('.card-layout').removeChild(newCard.querySelector('section[options]'));
+  //   // aggiungo la timeline circle
+  //   app.TimelineFact.addCircle();
+  // };
 
   app.handlerFunctionMetricList = function() {
     // console.log(this);
@@ -1038,7 +1038,7 @@ var cube = new Cube();
   /* ricerca cubi in elenco di sinitra*/
   // document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
-  document.getElementById('tableSearch').oninput = App.searchInList;
+  document.getElementById('tableSearch').oninput = App.searchInDrawer;
 
   // icona openReport apre la dialog con la lista di reports già creati
   // document.querySelector('#openReport').onclick = app.openReportList;

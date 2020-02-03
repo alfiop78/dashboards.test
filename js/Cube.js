@@ -65,6 +65,7 @@ class Cube {
   handlerColumns(e) {
     // console.log(e.path);
     this.activeCard = e.path[3];
+    console.log(this.activeCard);
     // console.log(e.target);
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = e.target.getAttribute('label');
@@ -74,103 +75,197 @@ class Cube {
     // [filter] : consente di impostare le colonne che saranno utilizzate come filtri nella query
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
-    let attributes = this.activeCardRef.attributes;
-    // console.log(this.activeCardRef);
-    for (let i = 1; i < attributes.length; i++) {
-      // i = 1 perchè il primo attributo è certamente [class]
-      // console.log(attributes[i].name);
-      switch (attributes[i].name) {
-        case 'hierarchies':
-          // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
-          // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
-          // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
-          // ...entrambe le tabelle tramite un identificatifo di relazione
+    
+    // let attributes = this.activeCardRef.attributes;
+    let attrs = this.activeCardRef.getAttribute('mode');
+    switch (attrs) {
+      case 'hierarchies':
+        // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
+        // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
+        // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
+        // ...entrambe le tabelle tramite un identificatifo di relazione
 
-          if (e.target.hasAttribute('data-relation-id')) {
-            /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
-            relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
-            Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
-            */
-            e.target.toggleAttribute('selected');
-            // TODO: recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
-            for (let name of e.target.getAttributeNames()) {
-              // console.log(name);
-              let relationId, value;
-              if (name.substring(0, 9) === "data-rel-") {
-                relationId = name;
-                value = e.target.getAttribute(name);
-                this.removeHierarchy(relationId, value);
-              }
-
+        if (e.target.hasAttribute('data-relation-id')) {
+          /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+          relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+          Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+          */
+          e.target.toggleAttribute('selected');
+          // TODO: recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+          for (let name of e.target.getAttributeNames()) {
+            // console.log(name);
+            let relationId, value;
+            if (name.substring(0, 9) === "data-rel-") {
+              relationId = name;
+              value = e.target.getAttribute(name);
+              this.removeHierarchy(relationId, value);
             }
 
-          } else {
-            let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
-            // console.log(liRelationSelected);
-            e.target.toggleAttribute('hierarchy');
-            e.target.toggleAttribute('selected');
-            // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
-            // se è stata selezionata una colonna già selezionata la deseleziono
-            if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
-              liRelationSelected.toggleAttribute('hierarchy');
-              liRelationSelected.toggleAttribute('selected');
-            }
           }
-          this.createHierarchy();
-          break;
-        case 'columns':
-          // console.log('columns');
-          e.target.toggleAttribute('columns');
-          e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
-          if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
-            delete this.columns[tableName][fieldName];
-            // elimino l'attributo defined utile a colorare l'icona
-            e.target.parentElement.querySelector('#columns-icon').removeAttribute('defined');
-            if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
+
+        } else {
+          let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
+          // console.log(liRelationSelected);
+          e.target.toggleAttribute('hierarchy');
+          e.target.toggleAttribute('selected');
+          // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+          // se è stata selezionata una colonna già selezionata la deseleziono
+          if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+            liRelationSelected.toggleAttribute('hierarchy');
+            liRelationSelected.toggleAttribute('selected');
           }
-          console.log(this.columns);
-          break;
-        case 'filters':
-          console.log('filters');
-          e.target.toggleAttribute('filters');
-          // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
-          if (!e.target.hasAttribute('filters')) {
-            // elimino il filtro impostato
-            delete this.filters[tableName][fieldName];
-            // elimino l'attributo defined utile a colorare l'icona
-            e.target.parentElement.querySelector('#filters-icon').removeAttribute('defined');
-            // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
-          }
-          console.log(this.filters);
-          break;
-        case 'groupby':
-          console.log('groupby');
-          e.target.toggleAttribute('groupby');
-          e.target.parentElement.querySelector('#groupby-icon').onclick = this.handlerGroupBySetting.bind(this);
-          if (!e.target.hasAttribute('groupby')) {
-            // elimino la colonna selezionata per il groupby
-            delete this.groupBy[tableName][fieldName];
-            // elimino l'attributo defined utile a colorare l'icona
-            e.target.parentElement.querySelector('#groupby-icon').removeAttribute('defined');
-            if (Object.keys(this.groupBy[tableName]).length === 0) {delete this.groupBy[tableName];}
-          }
-          console.log(this.groupBy);
-          break;
-        case 'metrics':
-          console.log('metrics');
-          e.target.toggleAttribute('metrics');
-          e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
-          if (!e.target.hasAttribute('metrics')) {
-            // elimino l'attributo defined utile a colorare l'icona
-            e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
-            delete this.metrics[tableName][fieldName];
-            // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
-          }
-          console.log(this.metrics);
-          break;
-      }
+        }
+        this.createHierarchy();
+        break;
+      case 'columns':
+        e.target.toggleAttribute('columns');
+        e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
+        if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
+          delete this.columns[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#columns-icon').removeAttribute('defined');
+          if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
+        }
+        console.log(this.columns);
+        break;
+      case 'filters':
+        console.log('filters');
+        e.target.toggleAttribute('filters');
+        // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
+        if (!e.target.hasAttribute('filters')) {
+          // elimino il filtro impostato
+          delete this.filters[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#filters-icon').removeAttribute('defined');
+          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+        }
+        console.log(this.filters);
+        break;
+      case 'groupby':
+        console.log('groupby');
+        e.target.toggleAttribute('groupby');
+        e.target.parentElement.querySelector('#groupby-icon').onclick = this.handlerGroupBySetting.bind(this);
+        if (!e.target.hasAttribute('groupby')) {
+          // elimino la colonna selezionata per il groupby
+          delete this.groupBy[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#groupby-icon').removeAttribute('defined');
+          if (Object.keys(this.groupBy[tableName]).length === 0) {delete this.groupBy[tableName];}
+        }
+        console.log(this.groupBy);
+        break;
+      case 'metrics':
+        console.log('metrics');
+        e.target.toggleAttribute('metrics');
+        e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
+        if (!e.target.hasAttribute('metrics')) {
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
+          delete this.metrics[tableName][fieldName];
+          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+        }
+        console.log(this.metrics);
+        break;
+      default:
 
     }
+
+    // console.log(this.activeCardRef);
+    // for (let i = 1; i < attributes.length; i++) {
+    //   // i = 1 perchè il primo attributo è certamente [class]
+    //   // console.log(attributes[i].name);
+    //   switch (attributes[i].name) {
+    //     case 'hierarchies':
+    //       // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
+    //       // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
+    //       // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
+    //       // ...entrambe le tabelle tramite un identificatifo di relazione
+    //
+    //       // if (e.target.hasAttribute('data-relation-id')) {
+    //       //   /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+    //       //   relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+    //       //   Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+    //       //   */
+    //       //   e.target.toggleAttribute('selected');
+    //       //   // TODO: recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+    //       //   for (let name of e.target.getAttributeNames()) {
+    //       //     // console.log(name);
+    //       //     let relationId, value;
+    //       //     if (name.substring(0, 9) === "data-rel-") {
+    //       //       relationId = name;
+    //       //       value = e.target.getAttribute(name);
+    //       //       this.removeHierarchy(relationId, value);
+    //       //     }
+    //       //
+    //       //   }
+    //       //
+    //       // } else {
+    //       //   let liRelationSelected = this.activeCardRef.querySelector('li[hierarchy]:not([data-relation-id])');
+    //       //   // console.log(liRelationSelected);
+    //       //   e.target.toggleAttribute('hierarchy');
+    //       //   e.target.toggleAttribute('selected');
+    //       //   // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+    //       //   // se è stata selezionata una colonna già selezionata la deseleziono
+    //       //   if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+    //       //     liRelationSelected.toggleAttribute('hierarchy');
+    //       //     liRelationSelected.toggleAttribute('selected');
+    //       //   }
+    //       // }
+    //       // this.createHierarchy();
+    //       // break;
+    //     // case 'columns':
+    //     //   // console.log('columns');
+    //     //   e.target.toggleAttribute('columns');
+    //     //   e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
+    //     //   if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
+    //     //     delete this.columns[tableName][fieldName];
+    //     //     // elimino l'attributo defined utile a colorare l'icona
+    //     //     e.target.parentElement.querySelector('#columns-icon').removeAttribute('defined');
+    //     //     if (Object.keys(this.columns[tableName]).length === 0) {delete this.columns[tableName];}
+    //     //   }
+    //     //   console.log(this.columns);
+    //     //   break;
+    //     // case 'filters':
+    //     //   console.log('filters');
+    //     //   e.target.toggleAttribute('filters');
+    //     //   // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
+    //     //   if (!e.target.hasAttribute('filters')) {
+    //     //     // elimino il filtro impostato
+    //     //     delete this.filters[tableName][fieldName];
+    //     //     // elimino l'attributo defined utile a colorare l'icona
+    //     //     e.target.parentElement.querySelector('#filters-icon').removeAttribute('defined');
+    //     //     // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+    //     //   }
+    //     //   console.log(this.filters);
+    //     //   break;
+    //     // case 'groupby':
+    //     //   console.log('groupby');
+    //     //   e.target.toggleAttribute('groupby');
+    //     //   e.target.parentElement.querySelector('#groupby-icon').onclick = this.handlerGroupBySetting.bind(this);
+    //     //   if (!e.target.hasAttribute('groupby')) {
+    //     //     // elimino la colonna selezionata per il groupby
+    //     //     delete this.groupBy[tableName][fieldName];
+    //     //     // elimino l'attributo defined utile a colorare l'icona
+    //     //     e.target.parentElement.querySelector('#groupby-icon').removeAttribute('defined');
+    //     //     if (Object.keys(this.groupBy[tableName]).length === 0) {delete this.groupBy[tableName];}
+    //     //   }
+    //     //   console.log(this.groupBy);
+    //     //   break;
+    //     // case 'metrics':
+    //     //   console.log('metrics');
+    //     //   e.target.toggleAttribute('metrics');
+    //     //   e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
+    //     //   if (!e.target.hasAttribute('metrics')) {
+    //     //     // elimino l'attributo defined utile a colorare l'icona
+    //     //     e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
+    //     //     delete this.metrics[tableName][fieldName];
+    //     //     // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+    //     //   }
+    //     //   console.log(this.metrics);
+    //     //   break;
+    //   }
+    //
+    // }
   }
 
   handlerColumnSetting(e) {
@@ -497,19 +592,13 @@ class Cube {
     });
   }
 
-  changeMode() {
-    /*
-    * quando si imposta la modalità tra hierarchies, columns e filters resetto tutte le card-table
-    */
-    document.querySelectorAll('.timelineTranslate .card-table').forEach((card) => {
-      console.log(card);
-      if (card.hasAttribute("hierarchies")) {card.removeAttribute('hierarchies');}
-      if (card.hasAttribute("columns")) {card.removeAttribute('columns');}
-      if (card.hasAttribute("filters")) {card.removeAttribute('filters');}
-      if (card.hasAttribute("groupby")) {card.removeAttribute('groupby');}
-      if (card.hasAttribute("metrics")) {card.removeAttribute('metrics');}
-      card.querySelector('.help').innerText = "";
-    });
+  changeMode(value, text) {
+    // imposto la modalità della card (hierarchies, columns, filters, groupby,metrics)
+    // console.log(this.activeCardRef);
+
+    this.activeCardRef.setAttribute('mode', value);
+    let info = this.activeCardRef.parentElement.querySelector('.info');
+    info.innerHTML = text;
 
   }
 
