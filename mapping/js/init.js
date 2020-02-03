@@ -2,7 +2,7 @@
 // TODO: Nelle input di ricerca all'interno delle tabelle modificarle in input type='search'
 // TODO: aggiungere le popup sulle icone all'interno della tabella
 var App = new Application();
-var oCube = new Cube();
+var cube = new Cube();
 // TODO: dichiarare qui le altre Classi
 (() => {
   var app = {
@@ -26,6 +26,9 @@ var oCube = new Cube();
     inputFilterName : document.getElementById('filter-name'),
     btnFilterDone : document.getElementById('btnFilterDone'),
     inputFilterValues : document.getElementById('filter-values'),
+
+    tmplCloseTable : document.getElementById('closeTable'), // tasto close table
+    tmplInputSearch : document.getElementById('inputSearch'),
 
     card : null,
     cardTitle : null,
@@ -157,6 +160,74 @@ var oCube = new Cube();
     console.log('dragEnd');
     console.log(e.target);
     app.content.classList.remove('dragging');
+    // aggiungo il tasto close
+    // TODO: carico i campi della tabella dragged
+
+    let contentCloseTable = app.tmplCloseTable.content.cloneNode(true);
+    let span = contentCloseTable.querySelector('span');
+    app.dragElement.querySelector('.title').appendChild(span);
+    // aggiungo la input di ricerca
+    let contentInputSearch = app.tmplInputSearch.content.cloneNode(true);
+    let input = contentInputSearch.querySelector('div');
+    app.dragElement.querySelector('.inputSearch').appendChild(input);
+    // carico elenco colonne
+    cube.activeCard = app.dragElement;
+    // console.log(cube.activeCard);
+    // debugger;
+    // inserisco il nome della tabella selezionata nella card [active]
+    cube.table = app.dragElement.querySelector('.title h6').getAttribute('label');
+    // console.log(cube.table);
+    // debugger;
+    let tmplList = document.getElementById('templateListColumns');
+    // elemento dove inserire le colonne della tabella
+    let ulContainer = cube.activeCard.querySelector('#columns');
+    console.log(cube.table);
+    var url = 'ajax/tableInfo.php';
+    let params = 'tableName='+cube.table;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          for (let i in response) {
+            let tmplContent = tmplList.content.cloneNode(true);
+            let element = tmplContent.querySelector('.element');
+            let li = element.querySelector('li');
+            // let iElement = element.querySelector('i');
+            li.innerText = response[i][0];
+            li.setAttribute('label', response[i][0]);
+            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+            let pos = response[i][1].indexOf('(');
+            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+            li.setAttribute('data-type', type);
+            li.setAttribute('data-table',cube.table);
+            li.id = i;
+            ulContainer.appendChild(element);
+            li.onclick = cube.handlerColumns.bind(cube);
+            // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
+          }
+
+          // lego eventi ai tasti i[....] nascosti
+          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+
+
   };
 
   app.handlerDrop = function(e) {
@@ -177,8 +248,7 @@ var oCube = new Cube();
     app.dragElement.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
     app.dragElement.setAttribute('x', e.offsetX);
     app.dragElement.setAttribute('y', e.offsetY);
-    // TODO: aggiungo il tasto close
-    // TODO: carico i campi della tabella dragged
+
 
   };
 
@@ -189,6 +259,7 @@ var oCube = new Cube();
   app.content.ondragend = app.handlerDragEnd;
 
   // App.getSessionName();
+
 
   app.getDimensionsList = function() {
     // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
@@ -230,7 +301,7 @@ var oCube = new Cube();
 
     let data = window.localStorage.getItem(this.getAttribute('label'));
     var url = 'ajax/cube.php';
-    // let params = "cube="+data+"&dimension="+JSON.stringify(oCube.dimension);
+    // let params = "cube="+data+"&dimension="+JSON.stringify(cube.dimension);
     let params = 'cube='+data;
     console.log(params);
     // return;
@@ -295,7 +366,70 @@ var oCube = new Cube();
   };
 
   app.handlerFACTSelected = function(e) {
+    // selezione della fact dall'elenco nel drawer
     console.log(e.target);
+    const nav = document.getElementsByTagName('nav')[0];
+    // se nav ha l'attributo selectable proseguo altrimenti esco da questa function (vuol dire che dovrò fare il drag&drop)
+    if (!nav.hasAttribute('selectable')) {return;}
+    // inserisco le colonne della tabella nella card FACT
+    // inserisco l'elemento selezionato nella FACT
+    const fact = document.querySelector('.cardTable[fact]');
+    // imposto la card attiva
+
+    cube.activeCard = fact;
+    // inserisco il nome della tabella selezionata nella card [active]
+    cube.table = e.target.getAttribute('label');
+    // template lista field
+    let tmplList = document.getElementById('templateListColumns');
+    // elemento dove inserire le colonne della tabella
+    let ulContainer = cube.activeCard.querySelector('#columns');
+    // carico elenco colonne
+    var url = 'ajax/tableInfo.php';
+    let params = 'tableName='+cube.table;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          // console.table(response);
+          // debugger;
+          for (let i in response) {
+            let tmplContent = tmplList.content.cloneNode(true);
+            let element = tmplContent.querySelector('.element');
+            let li = element.querySelector('li');
+            // let iElement = element.querySelector('i');
+            li.innerText = response[i][0];
+            li.setAttribute('label', response[i][0]);
+            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+            let pos = response[i][1].indexOf('(');
+            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+            li.setAttribute('data-type', type);
+            li.setAttribute('data-table',cube.table);
+            li.id = i;
+            ulContainer.appendChild(element);
+            li.onclick = cube.handlerColumns.bind(cube);
+            // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
+          }
+
+          // lego eventi ai tasti i[....] nascosti
+          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+
   };
 
   app.getDatabaseTable = function() {
@@ -315,6 +449,7 @@ var oCube = new Cube();
             let element = tmplElementMenu.querySelector('.elementMenu');
             element.querySelector('.menu').setAttribute('id', 'table-' + i);
             element.querySelector('.title > h6').innerHTML = response[i][0];
+            element.querySelector('.title > h6').setAttribute('label', response[i][0]);
             parent.appendChild(element);
             element.querySelector('.menu').ondragstart = app.handlerDragStart;
             element.querySelector('.menu h6').onclick = app.handlerFACTSelected;
@@ -338,25 +473,25 @@ var oCube = new Cube();
   app.handlerTableSelected = function() {
     // console.log('handlerTableSelected');
     this.toggleAttribute('selected');
-    // oCube.activeCard = document.querySelector('.card-table[active]');
+    // cube.activeCard = document.querySelector('.card-table[active]');
     // inserisco il nome della tabella selezionata nella card [active]
-    oCube.table = this.getAttribute('label');
+    cube.table = this.getAttribute('label');
     // inserisco il nome della tabella anche sull'icona i[filters]
-    // console.log(oCube.sectionOption);
-    // console.log(oCube.sectionOption.querySelector('i[filters]'));
-    let iconFilter = oCube.sectionOption.querySelector('i[filters]');
+    // console.log(cube.sectionOption);
+    // console.log(cube.sectionOption.querySelector('i[filters]'));
+    let iconFilter = cube.sectionOption.querySelector('i[filters]');
     iconFilter.setAttribute('data-table', this.getAttribute('label'));
 
     let tmplList = document.getElementById('template-list-columns');
 
     // let ulContainer = document.getElementById('columns');
-    let ulContainer = oCube.activeCard.querySelector('#columns');
+    let ulContainer = cube.activeCard.querySelector('#columns');
     // pulisco l'elenco delle colonne in base alla selezione della tabella
     ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
     app.dialogTableList.close();
 
     var url = 'ajax/tableInfo.php';
-    let params = 'tableName='+oCube.table;
+    let params = 'tableName='+cube.table;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -375,24 +510,24 @@ var oCube = new Cube();
             let pos = response[i][1].indexOf('(');
             let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
             li.setAttribute('data-type', type);
-            li.setAttribute('data-table',oCube.table);
+            li.setAttribute('data-table',cube.table);
             li.id = i;
             ulContainer.appendChild(element);
-            li.onclick = oCube.handlerColumns.bind(oCube);
+            li.onclick = cube.handlerColumns.bind(cube);
             element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
           }
           // se ci sono poche colonne in questa tabella non attivo la input search
           if (Object.keys(response).length > 10) {
-            oCube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
+            cube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
             // visualizzo la input per la ricerca delle colonne
-            oCube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
+            cube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
           }
 
           // lego eventi ai tasti i[....] nascosti
-          oCube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          oCube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          oCube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          oCube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
           // TODO:
@@ -419,7 +554,7 @@ var oCube = new Cube();
     // ... e della tabella
     let operator = app.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
     // imposto il nome del campo selezionato in currentFieldSetting (questo servirà per impostare l'icon colorata, tramite l'attr defined)
-    oCube.currentFieldSetting = e.target;
+    cube.currentFieldSetting = e.target;
     // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
     // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
     // ... invece delle input type text, ecc..
@@ -432,7 +567,7 @@ var oCube = new Cube();
     app.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
     app.dialogFilters.showModal();
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
+    app.dialogFilters.querySelector('#btnFilterDone').onclick = cube.handlerBtnFilterDone.bind(cube);
 
   };
 
@@ -545,7 +680,7 @@ var oCube = new Cube();
       app.dialogTableList.querySelectorAll('ul .element').forEach((el) => {el.removeAttribute('hide');});
       app.dialogTableList.showModal();
     }
-    oCube.activeCard = this;
+    cube.activeCard = this;
 
   };
 
@@ -566,7 +701,7 @@ var oCube = new Cube();
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
 
     // BUG: quando si assovia la FACT la timeline attiva non è app.TimelineHier ma app.TimelineFact
-    oCube.changeMode();
+    cube.changeMode();
     // su quale timeline sto operando ?
     // console.log(e.path[4]);
     let objTimeline = new Timeline(e.path[4].id);
@@ -595,9 +730,9 @@ var oCube = new Cube();
   app.handlerAddColumns = function(e) {
     // console.log(this);
 
-    oCube.changeMode();
+    cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    oCube.activeCard = upCard;
+    cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = 'Seleziona le colonne da mettere nel corpo della tabella';
     upCard.setAttribute('columns', true);
@@ -627,15 +762,15 @@ var oCube = new Cube();
   };
 
   app.handlerAddFilters = function(e) {
-    oCube.activeCard = e.path[3].querySelector('section.card-table');
+    cube.activeCard = e.path[3].querySelector('section.card-table');
     // TODO: recupero gli elementi in <ul id='columns'> per metterli nella dialogFilters
-    // console.log(oCube.activeCard);
-    // console.log(oCube.activeCard.querySelectorAll('#columns > .element'));
+    // console.log(cube.activeCard);
+    // console.log(cube.activeCard.querySelectorAll('#columns > .element'));
     let ulFieldsList = document.getElementById('fieldsList');
     // pulisco la ul per non duplicare la lista delle colonne
     Array.from(ulFieldsList.querySelectorAll('li')).forEach((item) => {item.remove();});
     // popolo la ul con la lista delle colonne
-    Array.from(oCube.activeCard.querySelectorAll('#columns > .element')).forEach((item, i) => {
+    Array.from(cube.activeCard.querySelectorAll('#columns > .element')).forEach((item, i) => {
       // console.log(item);
       let liElement = item.querySelector('li');
       let li = liElement.cloneNode(true);
@@ -644,14 +779,14 @@ var oCube = new Cube();
     });
 
     app.dialogFilters.showModal();
-    app.dialogFilters.querySelector('#btnFilterDone').onclick = oCube.handlerBtnFilterDone.bind(oCube);
+    app.dialogFilters.querySelector('#btnFilterDone').onclick = cube.handlerBtnFilterDone.bind(cube);
   };
 
   app.handlerAddGroupBy = function(e) {
     // console.log(this);
-    oCube.changeMode();
+    cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    oCube.activeCard = upCard;
+    cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = 'Seleziona le colonne su cui applicare il GROUP BY';
     upCard.setAttribute('groupby', true);
@@ -659,9 +794,9 @@ var oCube = new Cube();
 
   app.handlerAddMetrics = function(e) {
     // console.log(this);
-    oCube.changeMode();
+    cube.changeMode();
     let upCard = e.path[3].querySelector('section.card-table');
-    oCube.activeCard = upCard;
+    cube.activeCard = upCard;
     let help = upCard.querySelector('.help');
     help.innerHTML = 'Seleziona le colonne da impostare come Metriche';
     upCard.setAttribute('metrics', true);
@@ -692,7 +827,7 @@ var oCube = new Cube();
     divSubElement.appendChild(newCard);
 
     newCard.querySelectorAll('li').forEach((li) => {
-      li.onclick = oCube.handlerColumns.bind(oCube);
+      li.onclick = cube.handlerColumns.bind(cube);
     });
     // evento oninput sulla searchColumns
     newCard.querySelector('.md-field > input').oninput = App.searchInList;
@@ -791,7 +926,7 @@ var oCube = new Cube();
       Salvo in localStorage la dimensione creata
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
     */
-    oCube.dimensionTitle = document.getElementById('dimensionName').value;
+    cube.dimensionTitle = document.getElementById('dimensionName').value;
     const storage = new DimensionStorage();
     let from = [];
     let objDimension = {};
@@ -802,20 +937,20 @@ var oCube = new Cube();
       }
     });
 
-    // in oCube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
-    oCube.cube['hierarchies'] = oCube.hierarchyFact;
+    // in cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
+    cube.cube['hierarchies'] = cube.hierarchyFact;
     let hierarchies = {};
     // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
-    Object.keys(oCube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = oCube.hierarchyTable[rel];}});
+    Object.keys(cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = cube.hierarchyTable[rel];}});
     // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
     objDimension.hierarchies = hierarchies;
     objDimension.type = 'DIMENSION';
-    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da oCube.dimension
+    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da cube.dimension
 
-    oCube.dimension[oCube.dimensionTitle] = objDimension;
-    console.log(oCube.dimension);
+    cube.dimension[cube.dimensionTitle] = objDimension;
+    console.log(cube.dimension);
 
-    storage.dimension = oCube.dimension;
+    storage.dimension = cube.dimension;
 
     app.cloneLastTable();
     app.dialogDimensionName.close();
@@ -825,28 +960,28 @@ var oCube = new Cube();
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
   // document.getElementById('btnCubeSaveName').onclick = function() {
-  //   oCube.cubeTitle = document.getElementById('cubeName').value;
-  //   oCube.cube.dimensions = oCube.dimension;
-  //   oCube.cube.type = 'CUBE';
-  //   oCube.cube['columns'] = oCube.columns;
-  //   oCube.cube['filters'] = oCube.filters;
-  //   oCube.cube['metrics'] = oCube.metrics;
-  //   oCube.cube['filteredMetrics'] = oCube.filteredMetrics;
-  //   oCube.cube['groupby'] = oCube.groupBy;
-  //   oCube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
-  //   oCube.cube.name = oCube.cubeTitle;
+  //   cube.cubeTitle = document.getElementById('cubeName').value;
+  //   cube.cube.dimensions = cube.dimension;
+  //   cube.cube.type = 'CUBE';
+  //   cube.cube['columns'] = cube.columns;
+  //   cube.cube['filters'] = cube.filters;
+  //   cube.cube['metrics'] = cube.metrics;
+  //   cube.cube['filteredMetrics'] = cube.filteredMetrics;
+  //   cube.cube['groupby'] = cube.groupBy;
+  //   cube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
+  //   cube.cube.name = cube.cubeTitle;
   //   let cubeStorage = new CubeStorage();
   //
   //   // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-  //   oCube.cube.cubeId = cubeStorage.getIdAvailable();
-  //   console.log(oCube.cube.cubeId);
+  //   cube.cube.cubeId = cubeStorage.getIdAvailable();
+  //   console.log(cube.cube.cubeId);
   //
-  //   // oCube.cube.cube_id = oStorage.cubeId;
-  //   console.log(oCube.cube);
+  //   // cube.cube.cube_id = oStorage.cubeId;
+  //   console.log(cube.cube);
   //
   //   // salvo il cubo in localStorage
-  //   cubeStorage.save = oCube.cube;
-  //   cubeStorage.stringifyObject = oCube.cube;
+  //   cubeStorage.save = cube.cube;
+  //   cubeStorage.stringifyObject = cube.cube;
   //
   //   var url = 'ajax/cube.php';
   //   let params = 'cube='+cubeStorage.stringifyObject;
@@ -931,6 +1066,16 @@ var oCube = new Cube();
   //
   //   }
   // };
+
+  document.getElementById('addTable').onclick = function(e) {
+    console.log(e.target);
+    // attivo l'elenco di sinistra per aggiungere la FACT
+    let inputSearch = document.getElementById('tableSearch');
+    inputSearch.focus();
+    // imposto la lista in modalità click (invece del default drag)
+    document.querySelector('nav').setAttribute('selectable', true);
+
+  };
 
   /*events */
 

@@ -327,10 +327,25 @@
                       <h6>table 1</h6>
 
                     </div>
+                    <div class="inputSearch"></div>
+                    <ul id="columns"></ul>
                   </section>
                 </div>
               </div>
             </div>
+          </template>
+
+          <template id="closeTable">
+            <span class="popupContent"><i id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
+          </template>
+
+          <template id="inputSearch">
+            <!-- <div class="inputSearch"> -->
+              <div class="md-field">
+                <input type="text" value=""/>
+                <label for="searchColumns" class="">Ricerca</label>
+              </div>
+            <!-- </div> -->
           </template>
 
         </nav>
@@ -351,15 +366,23 @@
 
         <div id="content" class="dropzone">
           <div id="body" hidden>
+            <h2>Mapping</h2>
+            <h5>Trascina qui le tabelle da aggiungere</h5>
+            <div class="actions">
+              <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova gerarchia</small></span>
+              <span class="popupContent"><i class="material-icons md-24">playlist_add_check</i><small class="popup">Salva gerarchia</small></span>
+              <span class="popupContent"><i id="saveDimension" class="material-icons md-24 brown">save</i><small class="popup">Salva dimensione</small></span>
+              <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri Report</small></span>
+            </div>
 
             <div class="card table">
               <div class="cardLayout">
                 <section class="cardTable" fact>
                   <div class="title">
                     <h6>FACT</h6>
-                    <span class="popupContent"><i class="material-icons md-18">fiber_manual_record</i><small class="popup">Tabella attiva</small></span>
-                    <span class="popupContent"><i class="material-icons md-18">post_add</i><small class="popup">Seleziona tabella</small></span>
-                    <span class="popupContent"><i class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
+                    <!-- <span class="popupContent"><i class="material-icons md-18">fiber_manual_record</i><small class="popup">Tabella attiva</small></span> -->
+                    <span class="popupContent"><i id="addTable" class="material-icons md-18">post_add</i><small class="popup">Seleziona tabella</small></span>
+                    <span class="popupContent"><i id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
                   </div>
                   <div class="inputSearch">
                     <div class="md-field">
@@ -367,7 +390,7 @@
                       <label for="searchColumns" class="">Ricerca</label>
                     </div>
                   </div>
-                  <div id="columns">
+                  <ul id="columns">
                     <template id="templateListColumns">
                       <div class="element">
                         <li></li>
@@ -378,9 +401,16 @@
                         <i id="metrics-icon" class="material-icons md-18">show_chart</i>
                       </div>
                     </template>
-                  </div>
+                  </ul>
 
                 </section>
+                <section options>
+                  <span class="popupContent"><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
+                  <span class="popupContent"><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
+                  <span class="popupContent"><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
+                  <span class="popupContent"><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
+                </section>
+                <div class="info">Seleziona una tabella dall'elenco per definire la FACT table del Cubo</div>
               </div>
             </div>
 

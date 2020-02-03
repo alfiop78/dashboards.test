@@ -31,32 +31,32 @@ h5{font-size: .9rem;padding: 8px;margin: 0;}
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.card-table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
+.card.table ul{padding-inline-start: 0; font-size: .65rem; border-radius: 4px; min-height: 200px; overflow: auto; max-height: 200px;}
+
+.card.table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
   white-space: nowrap;}
 
-.card-table > h5:hover{text-decoration: underline;}
+.card.table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;}
+/* .card.table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;} */
+.card.table[groupby] ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;}
+.card.table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
+.card.table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
+/* .card.table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;color: white;} */
+.card.table[groupby] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;color: white;}
+.card.table[metrics] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
 
-.card-table[columns] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;}
-.card-table[filters] ul > .element li[selected]{background-color: #3b7096;border-radius: 4px;}
-.card-table[groupby] ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;}
-.card-table[hierarchies] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
-.card-table[columns] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
-.card-table[filters] ul > .element li:hover{background-color: #3b7096;border-radius: 4px;color: white;}
-.card-table[groupby] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;color: white;}
-.card-table[metrics] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
+.card.table ul > .element li ~ i{color: grey;visibility: hidden;}
+.card.table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
+.card.table ul > .element li[columns] ~ #columns-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[columns] ~ #columns-icon[defined='true']{color: #9a6a6a;visibility: visible;}
+/* .card-table ul > .element li[filters] ~ #filters-icon:not([defined='true']){visibility: visible;}
+.card-table ul > .element li[filters] ~ #filters-icon[defined='true']{color: #3b7096;visibility: visible;} */
+.card.table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
+.card.table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
 
-.card-table ul > .element li ~ i{color: grey;visibility: hidden;}
-.card-table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
-.card-table ul > .element li[columns] ~ #columns-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[columns] ~ #columns-icon[defined='true']{color: #9a6a6a;visibility: visible;}
-.card-table ul > .element li[filters] ~ #filters-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[filters] ~ #filters-icon[defined='true']{color: #3b7096;visibility: visible;}
-.card-table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
-.card-table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
-
-.card-table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
+.card.table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
@@ -64,21 +64,20 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 
 .card-table{border-radius: 4px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   background: white;color: #494949;padding: 4px;position: relative;transition: height 1s;}
-.card-table[fact-table]{background: var(--main-third-color);}
 
-.card-table > .help{font-size: .65rem;padding: 4px;height: 36px;border-radius: 3px; box-shadow: 0 2px 6px -2px #757575;background: var(--main-primary-color);}
-.card-table > .help[alert]{background: indianred;color: white;}
-.card-table[hierarchies] > .help{background: #99b19c;color: white;}
+/* .card-table > .help{font-size: .65rem;padding: 4px;height: 36px;border-radius: 3px; box-shadow: 0 2px 6px -2px #757575;background: var(--main-primary-color);}
+.card-table > .help[alert]{background: indianred;color: white;} */
+/* .card-table[hierarchies] > .help{background: #99b19c;color: white;}
 .card-table[columns] > .help{background: #9a6a6a;color: white;}
 .card-table[filters] > .help{background: #3b7096;color: white;}
 .card-table[groupby] > .help{background: #c7b198;color: black;}
-.card-table[metrics] > .help{background: #587850;color: white;}
+.card-table[metrics] > .help{background: #587850;color: white;} */
 
-.card-table[active]{opacity: 1;}
-.card-table[hierarchies]{opacity: 1;}
+/* .card-table[active]{opacity: 1;}
+.card-table[hierarchies]{opacity: 1;} */
 
-.card-table[fact-table]:hover{cursor: pointer;opacity: 1;}
-.card-table:hover{cursor: pointer;}
+/* .card-table[fact-table]:hover{cursor: pointer;opacity: 1;}
+.card-table:hover{cursor: pointer;} */
 
 .relation{align-items: center;display: flex;flex-direction: column;margin: 8px 0;}
 
@@ -126,8 +125,8 @@ small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem
 .structure .hierarchies::-webkit-scrollbar{display: none;}
 
 .card-layout{display: grid;grid-template-columns: 100%;position: relative;}
-.card-layout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
-.card-layout:hover .card-table[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
+.cardLayout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);transition: left 200ms, opacity 200ms;opacity: 0;}
+.cardLayout:hover .cardTable[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;}
 section[options] i{color: dimgrey;}
 section[options] > span > i[metrics]{color: #587850;}
 section[options] > span > i[columns]{color: #9a6a6a;}
@@ -189,8 +188,9 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 .card.table{width: 300px;height: 350px;background: white;position: absolute;font-size: .8rem; border-radius: 4px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
 
-.card.table > .cardLayout{display: grid;grid-template-columns: 100%;position: relative;height: 100%}
+.card.table > .cardLayout{display: grid;grid-template-columns: 100%;position: relative;height: 100%;grid-template-rows: auto 15%;}
 .card.table > .cardLayout > .cardTable{position: relative;height: fit-content;display: grid;grid-template-areas: "title" "input" "body";}
+.card.table > .cardLayout > .info{font-size: .65rem;padding: 8px;background: chocolate;}
 
 .card.table .cardTable > .title{grid-area: title;height: fit-content;background: tan;border-top-left-radius: 4px;
   border-top-right-radius: 4px;display: flex;align-items: flex-start;justify-content: space-between;}
@@ -201,11 +201,13 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 
 .card.table .cardTable > .body{grid-area: : body;}
 
-.elementMenu{margin: 8px 0;position: relative;height: 30px;display: flex;align-items: center;width: 100%;}
+nav[selectable] .menu .cardTable > .title > h6:hover{cursor: pointer;}
+
+.elementMenu{margin: 4px 0;position: relative;height: 30px;display: flex;align-items: center;width: 100%;}
 .elementMenu > .card.menu{position: absolute;width: inherit;}
 .card.menu{position: absolute;}
 .card.menu .cardTable > .title{}
-.card.menu .cardTable > .title > h6{margin: 0;font-size: .75rem;padding: 8px;}
+.card.menu .cardTable > .title > h6{margin: 0;font-size: .65rem;padding: 8px;}
 .title > h6.dr{background-color: yellow;}
-.card.menu .cardTable > .title > h6:hover{margin: 0;font-size: .75rem;padding: 8px;background: gainsboro;cursor: grab;}
+.card.menu .cardTable > .title > h6:hover{margin: 0;font-size: .65rem;padding: 8px;background: gainsboro;cursor: grab;}
 /*new*/

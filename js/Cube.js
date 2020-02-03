@@ -47,10 +47,10 @@ class Cube {
 
   set activeCard(cardRef) {
     // rimuovo l'attriubto active dalla card-table attiva
-    document.querySelector('.card-table[active]').removeAttribute('active');
+    // document.querySelector('.cardTable[active]').removeAttribute('active');
     this.activeCardRef = cardRef;
     this.activeCardRef.setAttribute('active', true);
-    this.sectionOption = cardRef;
+    // this.sectionOption = cardRef;
   }
 
   get activeCard() {return this.activeCardRef;}
