@@ -306,58 +306,34 @@
       </section>
     </dialog>
 
+    <template id="cardLayout">
+      <div class="cardLayout">
+        <section class="cardTable">
+          <div class="title">
+            <h6></h6>
+          </div>
+          <div class="md-field">
+            <input type="text" value=""/>
+            <label for="searchColumns" class="">Ricerca</label>
+          </div>
+          <ul id="columns" hidden></ul>
+          <div class="info" hidden></div>
+        </section>
+
+      </div>
+    </template>
+
+    <template id="el">
+      <div class="element card" id="" draggable="true" label=""></div>
+    </template>
+
     <main>
       <div id="drawer">
 
         <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
 
-        <!-- <div class="md-field">
-          <input type="search" id="tableSearch" name="tableSearch" value=""/>
-          <label for="tableSearch" class="">Ricerca</label>
-        </div> -->
-
         <nav>
 
-          <template id="elementMenu">
-            <div class="elementMenu">
-              <div id="table-0" class="card menu" draggable="true">
-                <div class="cardLayout">
-                  <section class="cardTable">
-                    <div class="title">
-                      <h6>table 1</h6>
-
-                    </div>
-                    <!-- <div class="inputSearch"></div> -->
-                    <ul id="columns" hidden></ul>
-                    <div class="info" hidden></div>
-                  </section>
-
-                </div>
-              </div>
-            </div>
-          </template>
-
-          <template id="closeTable">
-            <span class="popupContent"><i id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
-          </template>
-
-          <template id="inputSearch">
-            <!-- <div class="inputSearch"> -->
-              <div class="md-field">
-                <input type="text" value=""/>
-                <label for="searchColumns" class="">Ricerca</label>
-              </div>
-            <!-- </div> -->
-          </template>
-
-          <template id="sectionOption">
-            <section options>
-              <span class="popupContent"><i class="material-icons md-18" columns>view_list</i><small class="popup">Colonna</small></span>
-              <span class="popupContent"><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
-              <span class="popupContent"><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
-              <span class="popupContent"><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
-            </section>
-          </template>
 
         </nav>
 
@@ -408,7 +384,7 @@
                     <span class="popupContent"><i id="addTable" class="material-icons md-18">post_add</i><small class="popup">Seleziona tabella</small></span>
                     <!-- <span class="popupContent"><i id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span> -->
                   </div>
-                  
+
                   <div class="md-field">
                     <input type="text" value=""/>
                     <label for="searchColumns" class="">Ricerca</label>

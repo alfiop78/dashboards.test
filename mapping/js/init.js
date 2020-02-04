@@ -115,6 +115,7 @@ var cube = new Cube();
     // console.log('start');
     // dragStart
     console.log(e.target.id);
+    // return;
     e.dataTransfer.setData('text/plain', e.target.id);
     app.dragElement = document.getElementById(e.target.id);
     console.log(e.path);
@@ -161,25 +162,26 @@ var cube = new Cube();
     console.log('dragEnd');
     console.log(e.target);
     app.content.classList.remove('dragging');
+    // return;
     // carico i campi della tabella dragged
     // aggiungo il tasto close
-    let contentCloseTable = app.tmplCloseTable.content.cloneNode(true);
+    /*let contentCloseTable = app.tmplCloseTable.content.cloneNode(true);
     let btnCloseCard = contentCloseTable.querySelector('span');
     app.dragElement.querySelector('.title').appendChild(btnCloseCard);
-    btnCloseCard.onclick = app.handlerCloseCard;
+    btnCloseCard.onclick = app.handlerCloseCard;*/
     // associo evento al button closeTable
     // aggiungo la input di ricerca
-    let contentInputSearch = app.tmplInputSearch.content.cloneNode(true);
+    /*let contentInputSearch = app.tmplInputSearch.content.cloneNode(true);
     let input = contentInputSearch.querySelector('div');
     app.dragElement.querySelector('.inputSearch').appendChild(input);
-    input.oninput = App.searchInList;
+    input.oninput = App.searchInList;*/
     // creo section options
-    let contentSectionOption = app.tmplSectionOption.content.cloneNode(true);
+    /*let contentSectionOption = app.tmplSectionOption.content.cloneNode(true);
     let options = contentSectionOption.querySelector('section');
-    app.dragElement.querySelector('.cardLayout').appendChild(options);
+    app.dragElement.querySelector('.cardLayout').appendChild(options);*/
     // aggiungo il div info
-    app.dragElement.querySelector('.info').removeAttribute('hidden');
-
+    /*app.dragElement.querySelector('.info').removeAttribute('hidden');*/
+    return;
     // carico elenco colonne
     cube.activeCard = app.dragElement.querySelector('.cardTable');
     // console.log(cube.activeCard);
@@ -248,23 +250,35 @@ var cube = new Cube();
   app.handlerDrop = function(e) {
     e.preventDefault();
     console.log('drop');
-    console.log(e);
+    // console.log(e);
     let data = e.dataTransfer.getData('text/plain');
-    console.log(e.dataTransfer);
-    app.body.appendChild(document.getElementById(data));
-    app.dragElement.classList.remove('menu');
-    app.dragElement.classList.add('table');
-    app.dragElement.removeAttribute('draggable');
-    // recupero l'id dell'elemento che sto spostando, l'id mi ervirà per eliminare .elementMenu dall'elenco di sinista
-    // terminato il drop elimino l'elemento .elementMenu dall'elenco di sinistra
-    app.elementMenu.remove();
+    // console.log(e.dataTransfer);
+
+    let card = document.getElementById(data);
+    // TODO: dopo il drop elimino l'elemento <li> e imposto il template #cardLayout
+    // TODO: la .card .draggable diventa .card .table
+    card.className = 'card table';
+    card.removeAttribute('draggable');
+    // associo gli eventi mouse
+    card.onmousedown = app.dragStart;
+    card.onmouseup = app.dragEnd;
+    card.onmousemove = app.drag;
+    // TODO: prendo il template cardLayout e lo inserisco nella card table
+    let tmpl = document.getElementById('cardLayout');
+    let content = tmpl.content.cloneNode(true);
+    let cardLayout = content.querySelector('.cardLayout');
+    // imposto il titolo in h6
+    cardLayout.querySelector('h6').innerHTML = card.getAttribute('label');
+    card.appendChild(cardLayout);
+
+    app.body.appendChild(card);
+
     // imposto la card draggata nella posizione dove si trova il mouse
-    console.log(app.dragElement);
-    app.dragElement.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
-    app.dragElement.setAttribute('x', e.offsetX);
-    app.dragElement.setAttribute('y', e.offsetY);
-
-
+    // console.log(app.dragElement);
+    card.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
+    card.setAttribute('x', e.offsetX);
+    card.setAttribute('y', e.offsetY);
+  
   };
 
   app.content.ondragover = app.handlerDragOver;
@@ -468,14 +482,18 @@ var cube = new Cube();
           // console.table(response);
           let ul = document.getElementById('tables');
           for (let i in response) {
-            let tmplElementMenu = app.tmplElementMenu.content.cloneNode(true);
-            let element = tmplElementMenu.querySelector('.elementMenu');
-            element.querySelector('.menu').setAttribute('id', 'table-' + i);
-            element.querySelector('.title > h6').innerHTML = response[i][0];
-            element.querySelector('.title > h6').setAttribute('label', response[i][0]);
+            let tmpl = document.getElementById('el');
+            let tmplContent = tmpl.content.cloneNode(true);
+            let element = tmplContent.querySelector('.element.card');
+            element.ondragstart = app.handlerDragStart;
+            element.id = 'table-' + i;
+            element.setAttribute('label', response[i][0]);
             ul.appendChild(element);
-            element.querySelector('.menu').ondragstart = app.handlerDragStart;
-            element.querySelector('.menu h6').addEventListener('click', app.handlerFACTSelected, true);
+            let span = document.createElement('span');
+            span.setAttribute('label', response[i][0]);
+            span.innerHTML = response[i][0];
+            element.appendChild(span);
+
           }
 
         } else {
