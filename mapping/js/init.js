@@ -31,6 +31,10 @@ var cube = new Cube();
     tmplInputSearch : document.getElementById('inputSearch'), // input per ricerca fields nelle tabelle
     tmplSectionOption : document.getElementById('sectionOption'), // options laterale per ogni tabella
 
+    // tasto openTableList
+    btnTableList : document.getElementById('openTableList'),
+    tableList : document.getElementById('tableList'),
+
     card : null,
     cardTitle : null,
     content : document.getElementById('content'),
@@ -160,36 +164,15 @@ var cube = new Cube();
   app.handlerDragEnd = function(e) {
     e.preventDefault();
     console.log('dragEnd');
-    console.log(e.target);
-    app.content.classList.remove('dragging');
-    // return;
-    // carico i campi della tabella dragged
-    // aggiungo il tasto close
-    /*let contentCloseTable = app.tmplCloseTable.content.cloneNode(true);
-    let btnCloseCard = contentCloseTable.querySelector('span');
-    app.dragElement.querySelector('.title').appendChild(btnCloseCard);
-    btnCloseCard.onclick = app.handlerCloseCard;*/
-    // associo evento al button closeTable
-    // aggiungo la input di ricerca
-    /*let contentInputSearch = app.tmplInputSearch.content.cloneNode(true);
-    let input = contentInputSearch.querySelector('div');
-    app.dragElement.querySelector('.inputSearch').appendChild(input);
-    input.oninput = App.searchInList;*/
-    // creo section options
-    /*let contentSectionOption = app.tmplSectionOption.content.cloneNode(true);
-    let options = contentSectionOption.querySelector('section');
-    app.dragElement.querySelector('.cardLayout').appendChild(options);*/
-    // aggiungo il div info
-    /*app.dragElement.querySelector('.info').removeAttribute('hidden');*/
-    return;
+    // evento sul tasto close della card
+    app.dragElement.querySelector('i[data-id="closeTable"]').onclick = app.handlerCloseCard; // XXX: da testare
+    app.dragElement.querySelector('input').oninput = App.searchInList;
     // carico elenco colonne
     cube.activeCard = app.dragElement.querySelector('.cardTable');
     // console.log(cube.activeCard);
-    // debugger;
     // inserisco il nome della tabella selezionata nella card [active]
-    cube.table = app.dragElement.querySelector('.title h6').getAttribute('label');
+    cube.table = app.dragElement.getAttribute('label');
     // console.log(cube.table);
-    // debugger;
     let tmplList = document.getElementById('templateListColumns');
     // elemento dove inserire le colonne della tabella
     let ulContainer = cube.activeCard.querySelector('#columns');
@@ -223,13 +206,13 @@ var cube = new Cube();
 
           // console.log(app.dragElement);
           // elimino l'evento click su h6
-          app.dragElement.querySelector('h6').removeEventListener('click', app.handlerFACTSelected, true);
+          // app.dragElement.querySelector('h6').removeEventListener('click', app.handlerFACTSelected, true);
 
           // lego eventi ai tasti i[....] nascosti
-          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+          // cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+          // cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+          // cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+          // cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
           // TODO:
@@ -255,10 +238,14 @@ var cube = new Cube();
     // console.log(e.dataTransfer);
 
     let card = document.getElementById(data);
+    console.log(card);
+    console.log(app.dragElement);
     // TODO: dopo il drop elimino l'elemento <li> e imposto il template #cardLayout
     // TODO: la .card .draggable diventa .card .table
     card.className = 'card table';
     card.removeAttribute('draggable');
+    // elimino lo span all'interno della card
+    card.querySelector('span[label]').remove();
     // associo gli eventi mouse
     card.onmousedown = app.dragStart;
     card.onmouseup = app.dragEnd;
@@ -267,6 +254,7 @@ var cube = new Cube();
     let tmpl = document.getElementById('cardLayout');
     let content = tmpl.content.cloneNode(true);
     let cardLayout = content.querySelector('.cardLayout');
+
     // imposto il titolo in h6
     cardLayout.querySelector('h6').innerHTML = card.getAttribute('label');
     card.appendChild(cardLayout);
@@ -274,11 +262,13 @@ var cube = new Cube();
     app.body.appendChild(card);
 
     // imposto la card draggata nella posizione dove si trova il mouse
-    // console.log(app.dragElement);
     card.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
     card.setAttribute('x', e.offsetX);
     card.setAttribute('y', e.offsetY);
-  
+    // chiudo la list openTableList
+    app.btnTableList.removeAttribute('open');
+    app.tableList.toggleAttribute('hidden');
+
   };
 
   app.content.ondragover = app.handlerDragOver;
