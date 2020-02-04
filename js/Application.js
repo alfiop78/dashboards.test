@@ -272,35 +272,18 @@ class Application {
   }
 
   searchInList(e) {
-    // console.log(e.path);
-    // console.log(e.target.value);
+    console.log(e.path);
+    console.log(e.target.value);
     // Ricerca in una lista
     (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
 
-    let listElement = Array.from(e.path[3].querySelectorAll('.element > li'));
+    let listElement = Array.from(e.path[2].querySelectorAll('.element > li'));
     console.log(listElement);
 
     for (let i in listElement) {
       let li = listElement[i];
       (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
         li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
-      }
-  }
-
-  searchInDrawer(e) {
-    console.log(e.path);
-    // console.log(e.target.value);
-    // Ricerca in una lista di tabelle nel drawer
-    (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
-    let listElement = Array.from(e.path[2].querySelectorAll('nav .elementMenu h6'));
-    // console.log(listElement);
-    // debugger;
-
-    for (let i in listElement) {
-      console.log(listElement[i]);
-      let h6 = listElement[i];
-      (h6.getAttribute('label').indexOf(this.value) === -1 && h6.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
-        h6.parentElement.setAttribute('hide', true) : h6.parentElement.removeAttribute('hide');
       }
   }
 

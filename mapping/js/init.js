@@ -283,39 +283,39 @@ var cube = new Cube();
     e.path[5].remove();
   };
 
-  app.getDimensionsList = function() {
-    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
-    let ul = document.getElementById('dimensionsList');
-    const dimension = new DimensionStorage();
-    dimension.getDimensionsList().forEach((name) => {
-      // console.log(name);
-      let element = document.createElement('div');
-      element.classList.add('element');
-      let li = document.createElement('li');
-      li.innerText = name;
-      li.setAttribute('label', name);
-      ul.appendChild(element);
-      element.appendChild(li);
-      // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
-    });
-  };
+  // app.getDimensionsList = function() {
+  //   // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
+  //   let ul = document.getElementById('dimensionsList');
+  //   const dimension = new DimensionStorage();
+  //   dimension.getDimensionsList().forEach((name) => {
+  //     // console.log(name);
+  //     let element = document.createElement('div');
+  //     element.classList.add('element');
+  //     let li = document.createElement('li');
+  //     li.innerText = name;
+  //     li.setAttribute('label', name);
+  //     ul.appendChild(element);
+  //     element.appendChild(li);
+  //     // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
+  //   });
+  // };
 
-  app.getDatamartList = function() {
-    let ul = document.getElementById('cubesList');
-    const storage = new CubeStorage();
-    storage.list.forEach((cube) => {
-      // console.log(name);
-      let element = document.createElement('div');
-      element.classList.add('element');
-      let li = document.createElement('li');
-      li.innerText = cube.key;
-      li.id = cube.cubeId;
-      li.setAttribute('label', cube.key);
-      ul.appendChild(element);
-      element.appendChild(li);
-      li.onclick = app.handlerCubeSelected;
-    });
-  };
+  // app.getDatamartList = function() {
+  //   let ul = document.getElementById('cubesList');
+  //   const storage = new CubeStorage();
+  //   storage.list.forEach((cube) => {
+  //     // console.log(name);
+  //     let element = document.createElement('div');
+  //     element.classList.add('element');
+  //     let li = document.createElement('li');
+  //     li.innerText = cube.key;
+  //     li.id = cube.cubeId;
+  //     li.setAttribute('label', cube.key);
+  //     ul.appendChild(element);
+  //     element.appendChild(li);
+  //     li.onclick = app.handlerCubeSelected;
+  //   });
+  // };
 
   app.handlerCubeSelected = function() {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
@@ -466,19 +466,16 @@ var cube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           // console.table(response);
-          // let parent = document.getElementsByClassName('drawerList')[0];
-          let parent = document.getElementsByTagName('nav')[0];
+          let ul = document.getElementById('tables');
           for (let i in response) {
             let tmplElementMenu = app.tmplElementMenu.content.cloneNode(true);
             let element = tmplElementMenu.querySelector('.elementMenu');
             element.querySelector('.menu').setAttribute('id', 'table-' + i);
             element.querySelector('.title > h6').innerHTML = response[i][0];
             element.querySelector('.title > h6').setAttribute('label', response[i][0]);
-            parent.appendChild(element);
+            ul.appendChild(element);
             element.querySelector('.menu').ondragstart = app.handlerDragStart;
             element.querySelector('.menu h6').addEventListener('click', app.handlerFACTSelected, true);
-            // element.querySelector('.menu h6').onclick = app.handlerFACTSelected;
-
           }
 
         } else {
@@ -1038,7 +1035,7 @@ var cube = new Cube();
   /* ricerca cubi in elenco di sinitra*/
   // document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
-  document.getElementById('tableSearch').oninput = App.searchInDrawer;
+  document.getElementById('tableSearch').oninput = App.searchInList;
 
   // icona openReport apre la dialog con la lista di reports già creati
   // document.querySelector('#openReport').onclick = app.openReportList;
@@ -1075,6 +1072,13 @@ var cube = new Cube();
     // imposto la lista in modalità click (invece del default drag)
     document.querySelector('nav').setAttribute('selectable', true);
 
+  };
+
+  document.getElementById('openTableList').onclick = function(e) {
+    // visualizzo la lista delle tabelle
+    const tableList = document.getElementById('tableList');
+    tableList.toggleAttribute('hidden');
+    e.target.toggleAttribute('open');
   };
 
   /*events */
