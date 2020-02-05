@@ -75,7 +75,7 @@ class Cube {
     // [filter] : consente di impostare le colonne che saranno utilizzate come filtri nella query
     // [columns] : consente di selezionare le colonne che verranno mostrate nella SELECT della query (quindi nel corpo della table, sul dashboard)
     // console.log(this.activeCardRef.attributes);
-    
+
     // let attributes = this.activeCardRef.attributes;
     let attrs = this.activeCardRef.getAttribute('mode');
     switch (attrs) {
@@ -118,6 +118,7 @@ class Cube {
         this.createHierarchy();
         break;
       case 'columns':
+        // console.log(e.target);
         e.target.toggleAttribute('columns');
         e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
         if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
@@ -598,6 +599,7 @@ class Cube {
 
     this.activeCardRef.setAttribute('mode', value);
     let info = this.activeCardRef.parentElement.querySelector('.info');
+    info.removeAttribute('hidden');
     info.innerHTML = text;
 
   }

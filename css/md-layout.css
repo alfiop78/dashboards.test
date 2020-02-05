@@ -101,7 +101,8 @@ ul:not([id='columns']) > .element:not([hide]):hover{display: flex;justify-conten
 ul > .element[hide] {display: none;}
 
 ul:not(.filters) li{list-style: none;padding: 6px;margin: 2px 8px;}
-ul:not(.filters) li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var(--main-primary-color);border-radius: 4px;cursor: pointer;}
+ul:not(.filters) li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var(--main-primary-color);border-radius: 4px;
+  cursor: pointer;color: white;}
 ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: center;padding: 6px;}
 /* lists */
 

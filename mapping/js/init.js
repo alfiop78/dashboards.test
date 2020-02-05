@@ -184,13 +184,10 @@ var cube = new Cube();
             ulContainer.appendChild(element);
             li.onclick = cube.handlerColumns.bind(cube);
             // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
+            // TODO: se ci sono più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
+            let cardTotal = document.querySelectorAll('.card.table').length;
+            if (cardTotal > 1) document.querySelector('.relation').removeAttribute('hide');
           }
-
-          // lego eventi ai tasti i[....] nascosti
-          // cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          // cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          // cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          // cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
         } else {
           // TODO:
@@ -204,20 +201,6 @@ var cube = new Cube();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
-    return;
-    // evento sul tasto close della card
-    // app.dragElement.querySelector('input').oninput = App.searchInList;
-    // carico elenco colonne
-    // cube.activeCard = app.dragElement.querySelector('.cardTable');
-    // console.log(cube.activeCard);
-    // inserisco il nome della tabella selezionata nella card [active]
-    // cube.table = app.dragElement.getAttribute('label');
-    // console.log(cube.table);
-
-    // console.log(cube.table);
-
-
-
   };
 
   app.handlerDrop = function(e) {
@@ -270,6 +253,12 @@ var cube = new Cube();
     cube.activeCard = card.querySelector('.cardTable');
     // inserisco il nome della tabella selezionata nella card [active]
     cube.table = card.getAttribute('label');
+
+    // lego eventi ai tasti i[....] nascosti
+    cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+    cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+    cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+    cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
 
 
   };
@@ -394,75 +383,6 @@ var cube = new Cube();
     // request.send(params);
   };
 
-  // app.handlerFACTSelected = function(e) {
-  //   // selezione della fact dall'elenco tableList
-  //   console.log(e.target);
-  //
-  //   // inserisco le colonne della tabella nella card FACT
-  //   // inserisco l'elemento selezionato nella FACT
-  //   const fact = document.querySelector('.cardTable[fact]');
-  //   // imposto la card attiva
-  //
-  //   cube.activeCard = fact;
-  //   // inserisco il nome della tabella selezionata nella card [active]
-  //   cube.table = e.target.getAttribute('label');
-  //   fact.setAttribute('label', cube.table);
-  //   debugger;
-  //   // template lista field
-  //   let tmplList = document.getElementById('templateListColumns');
-  //   // elemento dove inserire le colonne della tabella
-  //   let ulContainer = cube.activeCard.querySelector('#columns');
-  //   // carico elenco colonne
-  //   var url = 'ajax/tableInfo.php';
-  //   let params = 'tableName='+cube.table;
-  //   var request = new XMLHttpRequest();
-  //   request.onreadystatechange = function() {
-  //     if (request.readyState === XMLHttpRequest.DONE) {
-  //       if (request.status === 200) {
-  //         var response = JSON.parse(request.response);
-  //         // console.table(response);
-  //         // debugger;
-  //         for (let i in response) {
-  //           let tmplContent = tmplList.content.cloneNode(true);
-  //           let element = tmplContent.querySelector('.element');
-  //           let li = element.querySelector('li');
-  //           // let iElement = element.querySelector('i');
-  //           li.innerText = response[i][0];
-  //           li.setAttribute('label', response[i][0]);
-  //           // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-  //           let pos = response[i][1].indexOf('(');
-  //           let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
-  //           li.setAttribute('data-type', type);
-  //           li.setAttribute('data-table',cube.table);
-  //           li.id = i;
-  //           ulContainer.appendChild(element);
-  //           li.onclick = cube.handlerColumns.bind(cube);
-  //           // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-  //         }
-  //
-  //         cube.activeCardRef.querySelector('input').oninput = App.searchInList;
-  //
-  //         // lego eventi ai tasti i[....] nascosti
-  //         cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-  //         cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-  //         cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-  //         cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
-  //
-  //       } else {
-  //         // TODO:
-  //       }
-  //     } else {
-  //       // TODO:
-  //     }
-  //   };
-  //
-  //   request.open('POST', url);
-  //   // request.setRequestHeader('Content-Type','application/json');
-  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-  //   request.send(params);
-  //
-  // };
-
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
     var url = 'ajax/database.php';
@@ -480,7 +400,6 @@ var cube = new Cube();
             let element = tmplContent.querySelector('.element.card');
             element.ondragstart = app.handlerDragStart;
             element.id = 'table-' + i;
-            // element.setAttribute('name', 'tableSearch');
             element.setAttribute('label', response[i][0]);
             ul.appendChild(element);
             let span = document.createElement('span');
@@ -504,79 +423,6 @@ var cube = new Cube();
     request.setRequestHeader('Content-Type','application/json');
     request.send();
   };
-
-  // app.handlerTableSelected = function() {
-  //   // console.log('handlerTableSelected');
-  //   this.toggleAttribute('selected');
-  //   // cube.activeCard = document.querySelector('.card-table[active]');
-  //   // inserisco il nome della tabella selezionata nella card [active]
-  //   cube.table = this.getAttribute('label');
-  //   // inserisco il nome della tabella anche sull'icona i[filters]
-  //   // console.log(cube.sectionOption);
-  //   // console.log(cube.sectionOption.querySelector('i[filters]'));
-  //   let iconFilter = cube.sectionOption.querySelector('i[filters]');
-  //   iconFilter.setAttribute('data-table', this.getAttribute('label'));
-  //
-  //   let tmplList = document.getElementById('template-list-columns');
-  //
-  //   // let ulContainer = document.getElementById('columns');
-  //   let ulContainer = cube.activeCard.querySelector('#columns');
-  //   // pulisco l'elenco delle colonne in base alla selezione della tabella
-  //   ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
-  //   app.dialogTableList.close();
-  //
-  //   var url = 'ajax/tableInfo.php';
-  //   let params = 'tableName='+cube.table;
-  //   var request = new XMLHttpRequest();
-  //   request.onreadystatechange = function() {
-  //     if (request.readyState === XMLHttpRequest.DONE) {
-  //       if (request.status === 200) {
-  //         var response = JSON.parse(request.response);
-  //         // console.table(response);
-  //
-  //         for (let i in response) {
-  //           let tmplContent = tmplList.content.cloneNode(true);
-  //           let element = tmplContent.querySelector('.element');
-  //           let li = element.querySelector('li');
-  //           // let iElement = element.querySelector('i');
-  //           li.innerText = response[i][0];
-  //           li.setAttribute('label', response[i][0]);
-  //           // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-  //           let pos = response[i][1].indexOf('(');
-  //           let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
-  //           li.setAttribute('data-type', type);
-  //           li.setAttribute('data-table',cube.table);
-  //           li.id = i;
-  //           ulContainer.appendChild(element);
-  //           li.onclick = cube.handlerColumns.bind(cube);
-  //           element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-  //         }
-  //         // se ci sono poche colonne in questa tabella non attivo la input search
-  //         if (Object.keys(response).length > 10) {
-  //           cube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
-  //           // visualizzo la input per la ricerca delle colonne
-  //           cube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
-  //         }
-  //
-  //         // lego eventi ai tasti i[....] nascosti
-  //         cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-  //         cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-  //         cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-  //         cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
-  //
-  //       } else {
-  //         // TODO:
-  //       }
-  //     } else {
-  //       // TODO:
-  //     }
-  //   };
-  //
-  //   request.open('POST', url);
-  //   // request.setRequestHeader('Content-Type','application/json');
-  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-  //   request.send(params);
-  // };
 
   app.handlerFilterSetting = function(e) {
     console.log('apro la dialog Filter');
@@ -774,8 +620,7 @@ var cube = new Cube();
   };
 
   app.handlerAddFilters = function(e) {
-    cube.activeCard = e.path[3].querySelector('section.card-table');
-    // TODO: recupero gli elementi in <ul id='columns'> per metterli nella dialogFilters
+    cube.activeCard = e.path[3].querySelector('.cardTable');
     // console.log(cube.activeCard);
     // console.log(cube.activeCard.querySelectorAll('#columns > .element'));
     let ulFieldsList = document.getElementById('fieldsList');
@@ -883,11 +728,6 @@ var cube = new Cube();
     // console.log(btnHierarchiesRemove);
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
   });
-  // OPTIMIZE: forse questi 2 sotto li devo mettere dopo aver definito la tabella
-  // document.querySelector('section[options] > span > i[columns]').onclick = app.handlerAddColumns;
-  // document.querySelector('section[options] > span > i[filters]').onclick = app.handlerAddFilters;
-  // document.querySelector('section[options] > span > i[groupby]').onclick = app.handlerAddGroupBy;
-  // document.querySelector('#fact-card section[options] > span > i[metrics]').onclick = app.handlerAddMetrics;
 
   /* tasto OK nella dialog*/
   document.getElementById('btnDimensionSaveName').onclick = function() {
@@ -1056,6 +896,7 @@ var cube = new Cube();
     const tableList = document.getElementById('tableList');
     tableList.toggleAttribute('hidden');
     e.target.toggleAttribute('open');
+    document.getElementById('tableSearch').focus();
   };
 
   /*events */
