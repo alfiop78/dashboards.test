@@ -272,10 +272,9 @@ class Application {
   }
 
   searchInList(e) {
-    console.log(e.path);
+    // console.log(e.path);
     console.log(e.target.value);
-    let name = e.target.name;
-    console.log(name);
+
     // Ricerca in una lista
     (this.value.length > 0) ?
       this.parentElement.querySelector('label').classList.add('has-content') :
@@ -283,14 +282,13 @@ class Application {
 
     // let listElement = Array.from(e.path[2].querySelectorAll('.element[name="'+name+'"] > .elementSearch'));
     let listElement = Array.from(e.path[2].querySelectorAll('.elementSearch'));
-    console.log(listElement);
+    // console.log(listElement);
     // TODO: foreach
+    listElement.forEach((item) => {
+      (item.getAttribute('label').indexOf(e.target.value) === -1 && item.getAttribute('label').toLowerCase().indexOf(e.target.value) === -1) ?
+      item.parentElement.setAttribute('hide', true) : item.parentElement.removeAttribute('hide');
+    });
 
-    for (let i in listElement) {
-      let element = listElement[i];
-      (element.getAttribute('label').indexOf(this.value) === -1 && element.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
-        element.parentElement.setAttribute('hide', true) : element.parentElement.removeAttribute('hide');
-      }
   }
 
 } // end Class
