@@ -96,9 +96,10 @@ section > h3 ~ h5{font-weight: lighter;}
 /* lists */
 .lists{display: flex;}
 ul > .element:not([hide]){display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;padding: 4px;}
-ul > .element:not([hide]):hover{display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;padding: 4px;
+ul:not([id='columns']) > .element:not([hide]):hover{display: flex;justify-content: space-between;align-items: center;margin: 2px 6px;padding: 4px;
   background: tan;cursor: pointer;border-radius: 4px;}
 ul > .element[hide] {display: none;}
+
 ul:not(.filters) li{list-style: none;padding: 6px;margin: 2px 8px;}
 ul:not(.filters) li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var(--main-primary-color);border-radius: 4px;cursor: pointer;}
 ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: center;padding: 6px;}
@@ -170,11 +171,12 @@ tr.tr-right{display: flex;justify-content: flex-end;}
 /*tfoot*/
 
 /*actions*/
-.actions{display: flex; flex-flow: row;margin: 16px 32px;}
+.actions{display: flex; flex-flow: row;margin: 8px 16px;}
 /* .actions > span{display: flex;justify-content: center;position: relative;} */
 span.popupContent:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}
 /*actions*/
 /* lo span che contiene l'icona e lo small della popup*/
+span.popupContent[hide]{display: none;}
 span.popupContent{display: flex;justify-content: center;align-items: center;position: relative;}
 span.popupContent small{z-index: 5;}
 small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem;visibility: hidden;white-space: nowrap;

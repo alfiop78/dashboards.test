@@ -73,7 +73,6 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 
 /*popup*/
 /* lo span che contiene l'icona e lo small della popup*/
-span.popupContent{display: flex;justify-content: center;}
 span.popupContent small{z-index: 5;}
 small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem;visibility: hidden;white-space: nowrap;
   box-shadow: 0 2px 4px 0 black;padding: 4px 8px;position: absolute;}

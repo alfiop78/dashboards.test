@@ -274,16 +274,22 @@ class Application {
   searchInList(e) {
     console.log(e.path);
     console.log(e.target.value);
+    let name = e.target.name;
+    console.log(name);
     // Ricerca in una lista
-    (this.value.length > 0) ? this.parentElement.querySelector('label').classList.add('has-content') : this.parentElement.querySelector('label').classList.remove('has-content');
+    (this.value.length > 0) ?
+      this.parentElement.querySelector('label').classList.add('has-content') :
+      this.parentElement.querySelector('label').classList.remove('has-content');
 
-    let listElement = Array.from(e.path[2].querySelectorAll('.element > li'));
+    // let listElement = Array.from(e.path[2].querySelectorAll('.element[name="'+name+'"] > .elementSearch'));
+    let listElement = Array.from(e.path[2].querySelectorAll('.elementSearch'));
     console.log(listElement);
+    // TODO: foreach
 
     for (let i in listElement) {
-      let li = listElement[i];
-      (li.getAttribute('label').indexOf(this.value) === -1 && li.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
-        li.parentElement.setAttribute('hide', true) : li.parentElement.removeAttribute('hide');
+      let element = listElement[i];
+      (element.getAttribute('label').indexOf(this.value) === -1 && element.getAttribute('label').toLowerCase().indexOf(this.value) === -1) ?
+        element.parentElement.setAttribute('hide', true) : element.parentElement.removeAttribute('hide');
       }
   }
 

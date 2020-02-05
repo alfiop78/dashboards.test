@@ -118,65 +118,45 @@ var cube = new Cube();
   app.handlerDragStart = function(e) {
     // console.log('start');
     // dragStart
-    console.log(e.target.id);
+    // console.log(e.target.id);
     // return;
     e.dataTransfer.setData('text/plain', e.target.id);
     app.dragElement = document.getElementById(e.target.id);
-    console.log(e.path);
+    // console.log(e.path);
     app.elementMenu = e.path[1]; // elemento da eliminare al termine drl drag&drop
     // console.log(e.dataTransfer);
   };
 
   app.handlerDragOver = function(e) {
-    console.log('dragOver');
+    // console.log('dragOver');
     e.preventDefault();
-    // console.log(e.clientX);
-    // console.log(e.clientY);
-
-    // console.log(e.target);
   };
 
   app.handlerDragEnter = function(e) {
-    console.log('dragEnter');
+    // console.log('dragEnter');
     e.preventDefault();
-    // elimino .menu per trasformarla in .card.table
-    // app.dragElement.classList.remove('menu');
-    // app.dragElement.classList.add('table');
-
     console.log(e.target);
-    if (e.target.className === 'dropzone') {
-      console.log('dropzone');
-      e.target.classList.add('dragging');
-      // app.dragElement.classList.remove('menu');
-      // app.dragElement.classList.add('table');
-      // TODO: inserire un effetto css sulla dropzone
 
+    if (e.target.className === 'dropzone') {
+      console.info('DROPZONE');
+      // TODO: css effect
     }
   };
 
   app.handlerDragLeave = function(e) {
     e.preventDefault();
-    console.log('dragLeave');
-    // console.log(e.target);
-    app.content.classList.remove('dragging');
+    // console.log('dragLeave');
   };
 
   app.handlerDragEnd = function(e) {
     e.preventDefault();
     console.log('dragEnd');
-    // evento sul tasto close della card
-    app.dragElement.querySelector('i[data-id="closeTable"]').onclick = app.handlerCloseCard; // XXX: da testare
-    app.dragElement.querySelector('input').oninput = App.searchInList;
-    // carico elenco colonne
-    cube.activeCard = app.dragElement.querySelector('.cardTable');
-    // console.log(cube.activeCard);
-    // inserisco il nome della tabella selezionata nella card [active]
-    cube.table = app.dragElement.getAttribute('label');
-    // console.log(cube.table);
+    // console.log(e.target);
     let tmplList = document.getElementById('templateListColumns');
     // elemento dove inserire le colonne della tabella
     let ulContainer = cube.activeCard.querySelector('#columns');
-    // console.log(cube.table);
+    console.log(ulContainer);
+
     var url = 'ajax/tableInfo.php';
     let params = 'tableName='+cube.table;
     var request = new XMLHttpRequest();
@@ -189,7 +169,9 @@ var cube = new Cube();
           for (let i in response) {
             let tmplContent = tmplList.content.cloneNode(true);
             let element = tmplContent.querySelector('.element');
+            // element.setAttribute('name', 'columnSearch');
             let li = element.querySelector('li');
+            li.className = 'elementSearch';
             // let iElement = element.querySelector('i');
             li.innerText = response[i][0];
             li.setAttribute('label', response[i][0]);
@@ -203,10 +185,6 @@ var cube = new Cube();
             li.onclick = cube.handlerColumns.bind(cube);
             // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
           }
-
-          // console.log(app.dragElement);
-          // elimino l'evento click su h6
-          // app.dragElement.querySelector('h6').removeEventListener('click', app.handlerFACTSelected, true);
 
           // lego eventi ai tasti i[....] nascosti
           // cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
@@ -226,6 +204,18 @@ var cube = new Cube();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+    return;
+    // evento sul tasto close della card
+    // app.dragElement.querySelector('input').oninput = App.searchInList;
+    // carico elenco colonne
+    // cube.activeCard = app.dragElement.querySelector('.cardTable');
+    // console.log(cube.activeCard);
+    // inserisco il nome della tabella selezionata nella card [active]
+    // cube.table = app.dragElement.getAttribute('label');
+    // console.log(cube.table);
+
+    // console.log(cube.table);
+
 
 
   };
@@ -235,15 +225,17 @@ var cube = new Cube();
     console.log('drop');
     // console.log(e);
     let data = e.dataTransfer.getData('text/plain');
-    // console.log(e.dataTransfer);
-
     let card = document.getElementById(data);
+    // console.log(e.dataTransfer);
+    // console.log(e.target);
+    // nuova tabella droppata
     console.log(card);
     console.log(app.dragElement);
     // TODO: dopo il drop elimino l'elemento <li> e imposto il template #cardLayout
     // TODO: la .card .draggable diventa .card .table
     card.className = 'card table';
     card.removeAttribute('draggable');
+    card.removeAttribute('name');
     // elimino lo span all'interno della card
     card.querySelector('span[label]').remove();
     // associo gli eventi mouse
@@ -268,6 +260,17 @@ var cube = new Cube();
     // chiudo la list openTableList
     app.btnTableList.removeAttribute('open');
     app.tableList.toggleAttribute('hidden');
+
+    // evento sul tasto close della card
+    card.querySelector('i[data-id="closeTable"]').onclick = app.handlerCloseCard;
+    // evento sulla input di ricerca nella card
+    card.querySelector('input').oninput = App.searchInList;
+    card.querySelector('input').oninput = App.searchInList;
+
+    cube.activeCard = card.querySelector('.cardTable');
+    // inserisco il nome della tabella selezionata nella card [active]
+    cube.table = card.getAttribute('label');
+
 
   };
 
@@ -391,74 +394,74 @@ var cube = new Cube();
     // request.send(params);
   };
 
-  app.handlerFACTSelected = function(e) {
-    // selezione della fact dall'elenco nel drawer
-    console.log(e.target);
-    const nav = document.getElementsByTagName('nav')[0];
-    // se nav ha l'attributo selectable proseguo altrimenti esco da questa function (vuol dire che dovrò fare il drag&drop)
-    if (!nav.hasAttribute('selectable')) {return;}
-    // inserisco le colonne della tabella nella card FACT
-    // inserisco l'elemento selezionato nella FACT
-    const fact = document.querySelector('.cardTable[fact]');
-    // imposto la card attiva
-
-    cube.activeCard = fact;
-    // inserisco il nome della tabella selezionata nella card [active]
-    cube.table = e.target.getAttribute('label');
-    // template lista field
-    let tmplList = document.getElementById('templateListColumns');
-    // elemento dove inserire le colonne della tabella
-    let ulContainer = cube.activeCard.querySelector('#columns');
-    // carico elenco colonne
-    var url = 'ajax/tableInfo.php';
-    let params = 'tableName='+cube.table;
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          // console.table(response);
-          // debugger;
-          for (let i in response) {
-            let tmplContent = tmplList.content.cloneNode(true);
-            let element = tmplContent.querySelector('.element');
-            let li = element.querySelector('li');
-            // let iElement = element.querySelector('i');
-            li.innerText = response[i][0];
-            li.setAttribute('label', response[i][0]);
-            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-            let pos = response[i][1].indexOf('(');
-            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
-            li.setAttribute('data-type', type);
-            li.setAttribute('data-table',cube.table);
-            li.id = i;
-            ulContainer.appendChild(element);
-            li.onclick = cube.handlerColumns.bind(cube);
-            // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-          }
-
-          cube.activeCardRef.querySelector('input').oninput = App.searchInList;
-
-          // lego eventi ai tasti i[....] nascosti
-          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
-
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-
-  };
+  // app.handlerFACTSelected = function(e) {
+  //   // selezione della fact dall'elenco tableList
+  //   console.log(e.target);
+  //
+  //   // inserisco le colonne della tabella nella card FACT
+  //   // inserisco l'elemento selezionato nella FACT
+  //   const fact = document.querySelector('.cardTable[fact]');
+  //   // imposto la card attiva
+  //
+  //   cube.activeCard = fact;
+  //   // inserisco il nome della tabella selezionata nella card [active]
+  //   cube.table = e.target.getAttribute('label');
+  //   fact.setAttribute('label', cube.table);
+  //   debugger;
+  //   // template lista field
+  //   let tmplList = document.getElementById('templateListColumns');
+  //   // elemento dove inserire le colonne della tabella
+  //   let ulContainer = cube.activeCard.querySelector('#columns');
+  //   // carico elenco colonne
+  //   var url = 'ajax/tableInfo.php';
+  //   let params = 'tableName='+cube.table;
+  //   var request = new XMLHttpRequest();
+  //   request.onreadystatechange = function() {
+  //     if (request.readyState === XMLHttpRequest.DONE) {
+  //       if (request.status === 200) {
+  //         var response = JSON.parse(request.response);
+  //         // console.table(response);
+  //         // debugger;
+  //         for (let i in response) {
+  //           let tmplContent = tmplList.content.cloneNode(true);
+  //           let element = tmplContent.querySelector('.element');
+  //           let li = element.querySelector('li');
+  //           // let iElement = element.querySelector('i');
+  //           li.innerText = response[i][0];
+  //           li.setAttribute('label', response[i][0]);
+  //           // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+  //           let pos = response[i][1].indexOf('(');
+  //           let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+  //           li.setAttribute('data-type', type);
+  //           li.setAttribute('data-table',cube.table);
+  //           li.id = i;
+  //           ulContainer.appendChild(element);
+  //           li.onclick = cube.handlerColumns.bind(cube);
+  //           // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
+  //         }
+  //
+  //         cube.activeCardRef.querySelector('input').oninput = App.searchInList;
+  //
+  //         // lego eventi ai tasti i[....] nascosti
+  //         cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+  //         cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+  //         cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+  //         cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+  //
+  //       } else {
+  //         // TODO:
+  //       }
+  //     } else {
+  //       // TODO:
+  //     }
+  //   };
+  //
+  //   request.open('POST', url);
+  //   // request.setRequestHeader('Content-Type','application/json');
+  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  //   request.send(params);
+  //
+  // };
 
   app.getDatabaseTable = function() {
     // TODO: utilizzare le promise
@@ -477,9 +480,11 @@ var cube = new Cube();
             let element = tmplContent.querySelector('.element.card');
             element.ondragstart = app.handlerDragStart;
             element.id = 'table-' + i;
+            // element.setAttribute('name', 'tableSearch');
             element.setAttribute('label', response[i][0]);
             ul.appendChild(element);
             let span = document.createElement('span');
+            span.classList = 'elementSearch';
             span.setAttribute('label', response[i][0]);
             span.innerHTML = response[i][0];
             element.appendChild(span);
@@ -500,78 +505,78 @@ var cube = new Cube();
     request.send();
   };
 
-  app.handlerTableSelected = function() {
-    // console.log('handlerTableSelected');
-    this.toggleAttribute('selected');
-    // cube.activeCard = document.querySelector('.card-table[active]');
-    // inserisco il nome della tabella selezionata nella card [active]
-    cube.table = this.getAttribute('label');
-    // inserisco il nome della tabella anche sull'icona i[filters]
-    // console.log(cube.sectionOption);
-    // console.log(cube.sectionOption.querySelector('i[filters]'));
-    let iconFilter = cube.sectionOption.querySelector('i[filters]');
-    iconFilter.setAttribute('data-table', this.getAttribute('label'));
-
-    let tmplList = document.getElementById('template-list-columns');
-
-    // let ulContainer = document.getElementById('columns');
-    let ulContainer = cube.activeCard.querySelector('#columns');
-    // pulisco l'elenco delle colonne in base alla selezione della tabella
-    ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
-    app.dialogTableList.close();
-
-    var url = 'ajax/tableInfo.php';
-    let params = 'tableName='+cube.table;
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          // console.table(response);
-
-          for (let i in response) {
-            let tmplContent = tmplList.content.cloneNode(true);
-            let element = tmplContent.querySelector('.element');
-            let li = element.querySelector('li');
-            // let iElement = element.querySelector('i');
-            li.innerText = response[i][0];
-            li.setAttribute('label', response[i][0]);
-            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-            let pos = response[i][1].indexOf('(');
-            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
-            li.setAttribute('data-type', type);
-            li.setAttribute('data-table',cube.table);
-            li.id = i;
-            ulContainer.appendChild(element);
-            li.onclick = cube.handlerColumns.bind(cube);
-            element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-          }
-          // se ci sono poche colonne in questa tabella non attivo la input search
-          if (Object.keys(response).length > 10) {
-            cube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
-            // visualizzo la input per la ricerca delle colonne
-            cube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
-          }
-
-          // lego eventi ai tasti i[....] nascosti
-          cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
-          cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
-          cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
-          cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
-
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  };
+  // app.handlerTableSelected = function() {
+  //   // console.log('handlerTableSelected');
+  //   this.toggleAttribute('selected');
+  //   // cube.activeCard = document.querySelector('.card-table[active]');
+  //   // inserisco il nome della tabella selezionata nella card [active]
+  //   cube.table = this.getAttribute('label');
+  //   // inserisco il nome della tabella anche sull'icona i[filters]
+  //   // console.log(cube.sectionOption);
+  //   // console.log(cube.sectionOption.querySelector('i[filters]'));
+  //   let iconFilter = cube.sectionOption.querySelector('i[filters]');
+  //   iconFilter.setAttribute('data-table', this.getAttribute('label'));
+  //
+  //   let tmplList = document.getElementById('template-list-columns');
+  //
+  //   // let ulContainer = document.getElementById('columns');
+  //   let ulContainer = cube.activeCard.querySelector('#columns');
+  //   // pulisco l'elenco delle colonne in base alla selezione della tabella
+  //   ulContainer.querySelectorAll('.element').forEach((el) => {ulContainer.removeChild(el);});
+  //   app.dialogTableList.close();
+  //
+  //   var url = 'ajax/tableInfo.php';
+  //   let params = 'tableName='+cube.table;
+  //   var request = new XMLHttpRequest();
+  //   request.onreadystatechange = function() {
+  //     if (request.readyState === XMLHttpRequest.DONE) {
+  //       if (request.status === 200) {
+  //         var response = JSON.parse(request.response);
+  //         // console.table(response);
+  //
+  //         for (let i in response) {
+  //           let tmplContent = tmplList.content.cloneNode(true);
+  //           let element = tmplContent.querySelector('.element');
+  //           let li = element.querySelector('li');
+  //           // let iElement = element.querySelector('i');
+  //           li.innerText = response[i][0];
+  //           li.setAttribute('label', response[i][0]);
+  //           // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+  //           let pos = response[i][1].indexOf('(');
+  //           let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+  //           li.setAttribute('data-type', type);
+  //           li.setAttribute('data-table',cube.table);
+  //           li.id = i;
+  //           ulContainer.appendChild(element);
+  //           li.onclick = cube.handlerColumns.bind(cube);
+  //           element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
+  //         }
+  //         // se ci sono poche colonne in questa tabella non attivo la input search
+  //         if (Object.keys(response).length > 10) {
+  //           cube.activeCardRef.querySelector('.md-field > input').oninput = App.searchInList;
+  //           // visualizzo la input per la ricerca delle colonne
+  //           cube.activeCardRef.querySelector('.md-field > input').parentElement.removeAttribute('hidden');
+  //         }
+  //
+  //         // lego eventi ai tasti i[....] nascosti
+  //         cube.activeCardRef.parentElement.querySelector('i[columns]').onclick = app.handlerAddColumns;
+  //         cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
+  //         cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
+  //         cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+  //
+  //       } else {
+  //         // TODO:
+  //       }
+  //     } else {
+  //       // TODO:
+  //     }
+  //   };
+  //
+  //   request.open('POST', url);
+  //   // request.setRequestHeader('Content-Type','application/json');
+  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  //   request.send(params);
+  // };
 
   app.handlerFilterSetting = function(e) {
     console.log('apro la dialog Filter');
@@ -643,10 +648,6 @@ var cube = new Cube();
       liSelected.forEach((item) => {valuesArr.push(item.getAttribute('label'));});
       span.innerText = valuesArr;
     }
-
-
-
-
     span.focus();
   };
 
@@ -806,41 +807,6 @@ var cube = new Cube();
     cube.activeCard = cardTable;
     cube.changeMode('metrics', 'Seleziona le colonne da impostare come Metriche');
   };
-
-  // app.cloneLastTable = function() {
-  //   // BUG: se si torna indietro a fare una modifica alla gerarchia, dopo aver cliccato "Salva dimensione", viene clonata di nuovo la tabella, invece di
-  //   //....modificare quella già clonata
-  //   // prendo l'ultima tabella della gerarchia e la clono per inserirla nella seconda pagina, associazione con la FACT
-  //   // ultima card nella gerarchia
-  //   let lastTableInHierarchy = app.TimelineHier.translateRef.querySelector('div[element]:last-child .card');
-  //   // console.log(lastTableInHierarchy);
-  //   // dove va inserita l'ultima card della gerarchia, prima della fact. La Fact ha data-id =2 perchè sicuramente ce ne sarà una a sinistra, con data-id=1
-  //   let factElement = app.TimelineFact.translateRef.querySelector('div[element][data-id="2"]');
-  //   // console.log(factElement);
-  //   // creo l'elemento div[element] e [sub-element]
-  //   let divElement = document.createElement('div');
-  //   divElement.setAttribute('data-id', 1);
-  //   divElement.setAttribute('element', true);
-  //   divElement.setAttribute('info', true);
-  //   let divSubElement = document.createElement('div');
-  //   divSubElement.setAttribute('sub-element', true);
-  //   // aggiuno l'elemento div[element] prima del div[element] che contiene la fact (ottenuto in factElement)
-  //   app.TimelineFact.translateRef.insertBefore(divElement, factElement);
-  //   // in questo div[element] aggiungo div[sub-element] ...successivamente tutta la card
-  //   divElement.appendChild(divSubElement);
-  //   let newCard = lastTableInHierarchy.cloneNode(true);
-  //   divSubElement.appendChild(newCard);
-  //
-  //   newCard.querySelectorAll('li').forEach((li) => {
-  //     li.onclick = cube.handlerColumns.bind(cube);
-  //   });
-  //   // evento oninput sulla searchColumns
-  //   newCard.querySelector('.md-field > input').oninput = App.searchInList;
-  //   // elimino la sezione section[options]
-  //   newCard.querySelector('.card-layout').removeChild(newCard.querySelector('section[options]'));
-  //   // aggiungo la timeline circle
-  //   app.TimelineFact.addCircle();
-  // };
 
   app.handlerFunctionMetricList = function() {
     // console.log(this);
@@ -1072,15 +1038,18 @@ var cube = new Cube();
   //   }
   // };
 
-  document.getElementById('addTable').onclick = function(e) {
-    console.log(e.target);
-    // attivo l'elenco di sinistra per aggiungere la FACT
-    let inputSearch = document.getElementById('tableSearch');
-    inputSearch.focus();
-    // imposto la lista in modalità click (invece del default drag)
-    document.querySelector('nav').setAttribute('selectable', true);
-
-  };
+  // document.getElementById('addTable').onclick = function(e) {
+  //   console.log(e.target);
+  //   // visualizzo l'elenco di sinistra per aggiungere la FACT
+  //   // visualizzo la lista 'tableList'
+  //   app.tableList.toggleAttribute('hidden');
+  //   // imposto il tasto 'openTableList' su open
+  //   app.btnTableList.toggleAttribute('open');
+  //   // focus sulla input di ricerca della lista tabelle
+  //   let inputSearch = document.getElementById('tableSearch');
+  //   inputSearch.focus();
+  //
+  // };
 
   document.getElementById('openTableList').onclick = function(e) {
     // visualizzo la lista delle tabelle

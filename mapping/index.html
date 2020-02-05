@@ -311,10 +311,12 @@
         <section class="cardTable">
           <div class="title">
             <h6></h6>
+            <span class="popupContent"><i data-id="setFact" class="material-icons md-18">star_border</i><small class="popup">Imposta FACT</small></span>
+            <span class="popupContent" hide><i data-id="setFact" class="material-icons md-18">star</i><small class="popup">FACT Table</small></span>
             <span class="popupContent"><i data-id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
           </div>
           <div class="md-field">
-            <input type="text" value=""/>
+            <input type="text" value="" name="columnSearch"/>
             <label for="searchColumns" class="">Ricerca</label>
           </div>
           <ul id="columns" hidden></ul>
@@ -332,6 +334,17 @@
 
     <template id="el">
       <div class="element card" id="" draggable="true" label=""></div>
+    </template>
+
+    <template id="templateListColumns">
+      <div class="element" name="">
+        <li></li>
+        <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
+        <i id="columns-icon" class="material-icons md-18">view_list</i>
+        <!-- <i id="filters-icon" class="material-icons md-18">filter_list</i> -->
+        <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
+        <i id="metrics-icon" class="material-icons md-18">show_chart</i>
+      </div>
     </template>
 
     <main>
@@ -375,21 +388,19 @@
 
               <div class="absList" id="tableList" hidden>
                 <div class="md-field">
-                  <input type="search" id="tableSearch" name="tableSearch" value=""/>
+                  <input type="search" id="tableSearch" value=""/>
                   <label for="tableSearch" class="">Ricerca</label>
                 </div>
                 <ul id="tables"></ul>
               </div>
             </div>
 
-            <div class="card table">
+            <!-- <div class="card table">
               <div class="cardLayout">
                 <section class="cardTable" fact>
                   <div class="title">
                     <h6>FACT</h6>
-                    <!-- <span class="popupContent"><i class="material-icons md-18">fiber_manual_record</i><small class="popup">Tabella attiva</small></span> -->
                     <span class="popupContent"><i id="addTable" class="material-icons md-18">post_add</i><small class="popup">Seleziona tabella</small></span>
-                    <!-- <span class="popupContent"><i id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span> -->
                   </div>
 
                   <div class="md-field">
@@ -397,18 +408,9 @@
                     <label for="searchColumns" class="">Ricerca</label>
                   </div>
                   <ul id="columns">
-                    <template id="templateListColumns">
-                      <div class="element">
-                        <li></li>
-                        <i id="hierarchy-icon" class="material-icons md-18">insert_link</i>
-                        <i id="columns-icon" class="material-icons md-18">view_list</i>
-                        <!-- <i id="filters-icon" class="material-icons md-18">filter_list</i> -->
-                        <i id="groupby-icon" class="material-icons md-18">dynamic_feed</i>
-                        <i id="metrics-icon" class="material-icons md-18">show_chart</i>
-                      </div>
-                    </template>
+
                   </ul>
-                  <div class="info">Seleziona una tabella dall'elenco per definire la FACT table del Cubo</div>
+                  <div class="info">Sleziona una tabella dall'elenco per definire la FACT table del Cubo</div>
 
                 </section>
                 <section options>
@@ -419,7 +421,7 @@
                 </section>
 
               </div>
-            </div>
+            </div> -->
 
             <!-- Creazione gerarchie -->
             <!-- <div id="pages" data-step="1"> -->
