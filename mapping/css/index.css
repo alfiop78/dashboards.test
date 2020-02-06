@@ -1,4 +1,4 @@
-/* #content,#body::-webkit-scrollbar{display: none;} */
+
 /*pages*/
 #pages{display: flex;transition: all 250ms;}
 .page{align-items: center;display: flex;flex-direction: column;min-width: 100%;margin: 8px;}
@@ -31,36 +31,12 @@ i[open]{color: red;}
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 .hierarchies > h6{font-size: .9rem;margin: 8px;font-weight: lighter;}
-.card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
+
 
 .table-selected{background: #dbd7cb;padding: 8px;border-radius: 4px;margin: 1em;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.card.table ul{padding-inline-start: 0; font-size: .65rem; border-radius: 4px; min-height: auto; overflow: auto; max-height: 200px;}
-
-.card.table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
-  white-space: nowrap;}
-
-.card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;}
-.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;}
-.card.table > .cardLayout > .cardTable[mode='hierarchies'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
-.card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
-.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;color: white;}
-.card.table > .cardLayout > .cardTable[mode='metrics'] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
-
-.card.table ul > .element li ~ i{color: grey;visibility: hidden;}
-.card.table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
-.card.table ul > .element li[columns] ~ #columns-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[columns] ~ #columns-icon[defined='true']{color: #9a6a6a;visibility: visible;}
-/* .card-table ul > .element li[filters] ~ #filters-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[filters] ~ #filters-icon[defined='true']{color: #3b7096;visibility: visible;} */
-.card.table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
-.card.table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
-
-.card.table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
@@ -71,19 +47,13 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 .relation > .line{background: grey;width: 1px;height: 40px;}
 .icon-relation{display: flex;justify-content: center;position: relative;margin-top: 4px;margin-bottom: 4px;}
 
-/*popup*/
-/* lo span che contiene l'icona e lo small della popup*/
-span.popupContent small{z-index: 5;}
-small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem;visibility: hidden;white-space: nowrap;
-  box-shadow: 0 2px 4px 0 black;padding: 4px 8px;position: absolute;}
-/*popup*/
 
 .relation{display: flex;justify-content: center;position: fixed;right: 20px;}
 .relation[hide] {display: none;}
-.relation .icon-relation{position: relative;display: flex;justify-content: center;}
+/* .relation .icon-relation{position: relative;display: flex;justify-content: center;} */
 /* .relation .icon-relation > span{display: flex;justify-content: center;} */
-.relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;background-color: #deb881;z-index: 1;
-  border-radius: 50%;color: dimgrey;box-shadow: 0 1px 4px 0px #717171;}
+.relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;background-color: var(--main-primary-color);z-index: 1;
+  border-radius: 50%;color: white;box-shadow: 0 1px 4px 0px #717171;}
 .relation .icon-relation span:not(:first-child){position: absolute;left: auto;top: 0;transition: top 150ms, bottom 150ms;z-index: 0;}
 /* relazione*/
 .relation > .icon-relation:hover span:nth-child(2){left: auto; top: calc(-36px - 24px);padding: 12px 0;color: #99b19c;z-index: 100;}
@@ -102,7 +72,7 @@ small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem
 /* rimuovi relazione*/
 /* .relation > .icon-relation:hover span:nth-child(5){left: calc(36px + 60px * 2);padding: 0 12px;color: #3b7096;} */
 
-.relation > .icon-relation > span > small{top: 46px;}
+/* .relation > .icon-relation > span > small{top: 46px;} */
 /* opacity sull'icona */
 .relation > .icon-relation:hover > span i{opacity: .5;}
 .relation > .icon-relation:hover > span:hover i{opacity: 1;}
@@ -122,7 +92,7 @@ small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem
 /* .card-layout{display: grid;grid-template-columns: 100%;position: relative;} */
 .cardLayout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);
   transition: left 200ms, opacity 200ms;opacity: 0;z-index: 0;}
-.cardLayout:hover .cardTable[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;z-index: 5;}
+.card.table:not([mode='edit']):hover .cardTable[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;z-index: 5;}
 section[options] i{color: dimgrey;}
 section[options] > span > i[metrics]{color: #587850;}
 section[options] > span > i[columns]{color: #9a6a6a;}
@@ -178,8 +148,36 @@ div.textarea > span{padding: 4px;color: #494949;}
 div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
 div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid thin gray;padding: 4px 16px;}
 
-/*new*/
 #content.dragging{opacity: .6;box-shadow: inset 0px 0px 10px 2px grey;}
+
+/*card*/
+.card-table ul{max-height: 160px;overflow-y: auto;font-size: .7rem;}
+
+/* colonne all'interno della card/tabella*/
+.card.table ul{padding-inline-start: 0; font-size: .65rem; border-radius: 4px; min-height: auto; overflow: auto; max-height: 200px;}
+
+.card.table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
+  white-space: nowrap;}
+
+.card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li[selected]{background-color: #9a6a6a;border-radius: 4px;}
+.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li[selected]{background-color: #c7b198;border-radius: 4px;}
+.card.table > .cardLayout > .cardTable[mode='hierarchies'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
+.card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
+.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;color: white;}
+.card.table > .cardLayout > .cardTable[mode='metrics'] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
+.card.table ul > .element li ~ i{color: grey;visibility: hidden;}
+.card.table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
+.card.table ul > .element li[columns] ~ #columns-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[columns] ~ #columns-icon[defined='true']{color: #9a6a6a;visibility: visible;}
+/* .card-table ul > .element li[filters] ~ #filters-icon:not([defined='true']){visibility: visible;}
+.card-table ul > .element li[filters] ~ #filters-icon[defined='true']{color: #3b7096;visibility: visible;} */
+.card.table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
+.card.table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
+.card.table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
+
+.card.table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
+/* colonne all'interno della card/tabella*/
 
 .card.table{width: 300px;background: white;position: absolute;font-size: .8rem; border-radius: 4px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
@@ -197,8 +195,9 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 
 .card.table .cardTable > .title{grid-area: title;height: fit-content;background: tan;border-top-left-radius: 4px;
   border-top-right-radius: 4px;display: flex;align-items: flex-start;justify-content: space-between;}
+
 .card.table .cardTable > .title > h6{padding: 8px 8px 16px 8px; margin: 0;font-size: .75rem;width: 100%;}
-.card.table .cardTable > .title > h6:hover{padding: 8px 8px 16px 8px;margin: 0;cursor: move;width: 100%;}
+.card.table .cardTable > .title > h6:hover{cursor: grab;}
 
 .card.table .cardTable[fact] > .title{background: var(--main-primary-color);color: white;}
 
@@ -206,13 +205,5 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 .card.table .cardTable > ul{grid-area: body;}
 .card.table .cardTable > .info{grid-area: footer;}
 
-nav[selectable] .menu .cardTable > .title > h6:hover{cursor: pointer;}
-
-.elementMenu{margin: 4px 0;position: relative;height: 30px;display: flex;align-items: center;width: 100%;}
-.elementMenu > .card.menu{position: absolute;width: inherit;}
-.card.menu{position: absolute;}
-.card.menu .cardTable > .title{}
-.card.menu .cardTable > .title > h6{margin: 0;font-size: .65rem;padding: 8px;}
-.title > h6.dr{background-color: yellow;}
-.card.menu .cardTable > .title > h6:hover{margin: 0;font-size: .65rem;padding: 8px;background: gainsboro;cursor: grab;}
-/*new*/
+/*icona bookmark su tabelle selezionate*/
+.card.table[selected] i[data-id="selectTable"]{color: var(--main-primary-color);}

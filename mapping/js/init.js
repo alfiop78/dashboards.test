@@ -184,7 +184,7 @@ var cube = new Cube();
             ulContainer.appendChild(element);
             li.onclick = cube.handlerColumns.bind(cube);
             // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-            // TODO: se ci sono più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
+            // se ci sono più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
             let cardTotal = document.querySelectorAll('.card.table').length;
             if (cardTotal > 1) document.querySelector('.relation').removeAttribute('hide');
           }
@@ -277,6 +277,9 @@ var cube = new Cube();
     console.log(e.path);
     // TODO: rimettere la card chiusa al suo posto originario, nel drawer
     e.path[5].remove();
+    // controllo il numero delle tabelle presenti, più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
+    let cardTotal = document.querySelectorAll('.card.table').length;
+    (cardTotal > 1) ? document.querySelector('.relation').removeAttribute('hide') : document.querySelector('.relation').setAttribute('hide', true);
   };
 
   // app.getDimensionsList = function() {
@@ -549,12 +552,36 @@ var cube = new Cube();
     request.send(params);
   };
 
-  app.handlerAddTable = function() {
-    /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
-    ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
-    app.TimelineHier.add();
-    // imposto evento onclick sulla card appena aggiunta
-    app.TimelineHier.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
+  // app.handlerAddTable = function() {
+  //   /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
+  //   ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
+  //   app.TimelineHier.add();
+  //   // imposto evento onclick sulla card appena aggiunta
+  //   app.TimelineHier.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
+  // };
+
+  app.handlerSelectCard = function(e) {
+    console.log(e.target);
+    // console.log(e.path);
+
+    const cardLayout = e.path[4]; // cardLayout
+    const cardTable = e.path[3]; // cardTable
+    cardLayout.setAttribute('selected', true);
+    cardTable.setAttribute('mode', 'hierarchies');
+    cardTable.querySelector('span[data-id="popupSelectedTable"]').removeAttribute('hide');
+    cardTable.querySelector('span[data-id="popupSelectTable"]').setAttribute('hide', true);
+  };
+
+  app.handlerDeselectCard = function(e) {
+    console.log(e.target);
+    // console.log(e.path);
+    console.log(e.path[4]); // cardLayout
+    const cardLayout = e.path[4];
+    const cardTable = e.path[3];
+    cardLayout.removeAttribute('selected');
+    cardTable.removeAttribute('mode');
+    cardTable.querySelector('span[data-id="popupSelectedTable"]').setAttribute('hide', true);
+    cardTable.querySelector('span[data-id="popupSelectTable"]').removeAttribute('hide');
   };
 
   app.handlerAddHierarchy = function(e) {
@@ -562,11 +589,30 @@ var cube = new Cube();
     // console.log(e.path);
     // console.log(e.path[3]);
     // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
-    // recupero le due card dove in mezzo c'è questo tasto
+    // seleziono le due card da mettere in relazione
     // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
+    App.handlerConsole('Seleziona le due tabelle da mettere in relazione', 'info', 4000);
+    // imposto il mode=edit sulle cardLayout, ha uno style diverso per consentirne la selezione
+    Array.from(document.querySelectorAll('#body .cardLayout')).forEach((card, i) => {
+      console.log(card);
+      card.setAttribute('mode', 'edit');
+      // imposto evento click su h6 per selezionare una tabella
+      // visualizzo l'icona bookmark per poter selezionare le tabelle
+      card.querySelector('span[data-id="popupSelectTable"]').removeAttribute('hide');
+      card.querySelector('span[data-id="popupSelectTable"]').onclick = app.handlerSelectCard;
+      card.querySelector('span[data-id="popupSelectedTable"]').onclick = app.handlerDeselectCard;
 
-    // BUG: quando si assovia la FACT la timeline attiva non è app.TimelineHier ma app.TimelineFact
-    cube.changeMode();
+      // nascondo le altre due icone
+      card.querySelector('span[data-id="popupSetFact"]').setAttribute('hide', true);
+      card.querySelector('span[data-id="popuppCloseTable"]').setAttribute('hide', true);
+    });
+
+
+    return;
+
+
+
+    // cube.changeMode('hierarchies');
     // su quale timeline sto operando ?
     // console.log(e.path[4]);
     let objTimeline = new Timeline(e.path[4].id);
