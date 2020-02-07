@@ -261,15 +261,19 @@ class DimensionStorage extends Storages {
 
   list() {
     let dimensions = [];
+    let dimObj = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
       // console.log(jsonStorage[key]);
-      if (jsonStorage[key] && jsonStorage[key].type === "DIMENSION") {
-        dimensions.push(key);
+      if (jsonStorage[key] && jsonStorage[key].type === 'DIMENSION') {
+        // console.log(jsonStorage[key].from);
+        // dimensions.push(key, jsonStorage[key].from);
+        dimObj[key] = jsonStorage[key].from;
       }
     });
-    return dimensions;
+    // return dimensions;
+    return dimObj;
   }
 
   getIdAvailable() {
@@ -280,7 +284,7 @@ class DimensionStorage extends Storages {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
 
-      if (jsonStorage.type === "DIMENSION") {
+      if (jsonStorage.type === 'DIMENSION') {
         // ottengo il numero di elementi PAGE nello storage
         this.dimensionsElement.push(jsonStorage.id);
       }

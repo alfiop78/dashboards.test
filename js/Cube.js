@@ -65,7 +65,7 @@ class Cube {
   handlerColumns(e) {
     // console.log(e.path);
     this.activeCard = e.path[3];
-    console.log(this.activeCard);
+
     // console.log(e.target);
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = e.target.getAttribute('label');
@@ -80,12 +80,14 @@ class Cube {
     let attrs = this.activeCardRef.getAttribute('mode');
     switch (attrs) {
       case 'hierarchies':
+      console.log('hier');
         // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
         // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
         // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
         // ...entrambe le tabelle tramite un identificatifo di relazione
 
         if (e.target.hasAttribute('data-relation-id')) {
+          // debugger;
           /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
           relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
           Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
@@ -557,13 +559,16 @@ class Cube {
 
   createHierarchy() {
     // console.log('createHierarchy');
+
     let hier = [];
     this.colSelected = [];
-    document.querySelectorAll('.card-table[hierarchies]').forEach((card) => {
+    document.querySelectorAll('.cardTable[mode="hierarchies"]').forEach((card) => {
+      // debugger;
       let tableName = card.getAttribute('name');
       // let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
       let liRef = card.querySelector('li[hierarchy][selected]');
       if (liRef) {
+        // metto in un array gli elementi selezionati per la creazione della gerarchia
         this.colSelected.push(liRef);
         hier.push(tableName+"."+liRef.innerText);
       }
@@ -576,7 +581,7 @@ class Cube {
 
         // 15.11 - Le relazioni tra tabelle hier_n le inserisco direttamente in this.dimension
         // console.log(card);
-        (card.hasAttribute('fact-table')) ? this.hierarchyFact['hier_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
+        (card.hasAttribute('fact')) ? this.hierarchyFact['hier_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
         // (card.hasAttribute('fact-table')) ? this.hierarchyFact['fact_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
 
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne

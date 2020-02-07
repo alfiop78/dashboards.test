@@ -282,6 +282,34 @@ var cube = new Cube();
     (cardTotal > 1) ? document.querySelector('.relation').removeAttribute('hide') : document.querySelector('.relation').setAttribute('hide', true);
   };
 
+  app.getDimensions = function() {
+    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
+    // const tmplDimension = document.getElementById('dimension');
+    const dimension = new DimensionStorage();
+    let obj = dimension.list();
+    // console.log(obj);
+    const tmplDimension = document.getElementById('dimension');
+    Array.from(Object.keys(obj)).forEach((dimName, i) => {
+      // console.log(dimName);
+      let tmplContent = tmplDimension.content.cloneNode(true);
+      let section = tmplContent.querySelector('.dimensions');
+      section.querySelector('h5').innerHTML = dimName;
+      document.querySelector('#dimensions').appendChild(section);
+      // aggiungo anche le tabelle all'interno ella dimensione
+      // console.log(obj[dimName]); // valore/i
+      const tmplMiniCard = document.getElementById('miniCard');
+
+      obj[dimName].forEach((table, i) => {
+        let contentMiniCard = tmplMiniCard.content.cloneNode(true);
+        let miniCard = contentMiniCard.querySelector('.miniCard');
+        miniCard.querySelector('h6').innerHTML = table;
+        // console.log(table);
+        section.appendChild(miniCard);
+      });
+
+    });
+
+  };
   // app.getDimensionsList = function() {
   //   // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
   //   let ul = document.getElementById('dimensionsList');
@@ -606,36 +634,6 @@ var cube = new Cube();
       card.querySelector('span[data-id="popupSetFact"]').setAttribute('hide', true);
       card.querySelector('span[data-id="popuppCloseTable"]').setAttribute('hide', true);
     });
-
-
-    return;
-
-
-
-    // cube.changeMode('hierarchies');
-    // su quale timeline sto operando ?
-    // console.log(e.path[4]);
-    let objTimeline = new Timeline(e.path[4].id);
-    // console.log(Timeline);
-    objTimeline.activeElements().forEach((element) => {
-      // console.log(element);
-      let card = element.querySelector('section.card-table');
-
-      let help = card.querySelector('.help');
-      if (element.querySelectorAll('ul li').length === 0) {
-        help.setAttribute('alert', true);
-        card.removeAttribute('hierarchies');
-        help.innerText = 'Necessario aggiungere una tabella per creare una relazione';
-      } else {
-        help.removeAttribute('alert');
-        card.setAttribute('hierarchies', true);
-        help.innerText = 'Seleziona le colonne da mettere in relazione';
-      }
-    });
-    // NOTE: Utilizzo di for...of in una Collection
-    // for (let name of upCard.getAttributeNames()) {
-    //   if (name === 'filters' || name === 'columns') {upCard.removeAttribute(name);}
-    // }
   };
 
   app.handlerAddColumns = function(e) {
@@ -779,15 +777,15 @@ var cube = new Cube();
   document.getElementById('btnDimensionSaveName').onclick = function() {
     /*
       Salvo la dimensione, senza il legame con la FACT.
-      Clono l'ultima tabella e la inserisco a fianco della FACT per fare l'associazione.
       Salvo in localStorage la dimensione creata
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
+      // TODO: creo un contenitorre per le dimensioni salvate, con dentro le tabelle che ne fanno parte.
     */
     cube.dimensionTitle = document.getElementById('dimensionName').value;
     const storage = new DimensionStorage();
     let from = [];
     let objDimension = {};
-    document.querySelectorAll('.card-table').forEach((card) => {
+    document.querySelectorAll('.cardTable').forEach((card) => {
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
         objDimension.from = from;
@@ -809,11 +807,11 @@ var cube = new Cube();
 
     storage.dimension = cube.dimension;
 
-    app.cloneLastTable();
+    // app.cloneLastTable();
     app.dialogDimensionName.close();
   };
 
-  // document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
+  document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
   // document.getElementById('btnCubeSaveName').onclick = function() {
@@ -869,10 +867,11 @@ var cube = new Cube();
 
   // document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
 
-  // document.getElementById('saveHierarchy').onclick = function(e) {
-  //   // TODO: verifico se sono stati inseriti i parametri obbligatori, gerarchie,titolo del cubo
-  //
-  // };
+  document.getElementById('hierarchySave').onclick = function(e) {
+    console.log('hierarchySave');
+    // TODO: definire, da parte dell'utente, l'ordine gerarchico delle tabelle
+    
+  };
 
   document.querySelectorAll('#operator-list li').forEach((li) => {
     li.onclick = app.handlerFunctionOperatorList;
@@ -949,7 +948,7 @@ var cube = new Cube();
 
   app.getDatabaseTable();
 
-  // app.getDimensionsList();
+  app.getDimensions();
 
   // app.getDatamartList();
 })();
