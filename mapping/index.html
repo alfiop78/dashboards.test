@@ -311,7 +311,7 @@
         <section class="cardTable">
           <div class="title">
             <h6></h6>
-            <span data-id="popupSetFact" class="popupContent"><i data-id="setFact" class="material-icons md-18">star_border</i><small class="popup">Imposta FACT</small></span>
+            <!-- <span data-id="popupSetFact" class="popupContent"><i data-id="setFact" class="material-icons md-18">star_border</i><small class="popup">Imposta FACT</small></span> -->
             <span data-id="popupSelectTable" class="popupContent" hide><i data-id="selectTable" class="material-icons md-18">bookmark_border</i><small class="popup">Seleziona tabella</small></span>
             <span data-id="popupSelectedTable" class="popupContent" hide><i data-id="selectedTable" class="material-icons md-18">bookmark</i><small class="popup">Tabella selezionata</small></span>
             <span data-id="popuppCloseTable" class="popupContent"><i data-id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
@@ -354,6 +354,9 @@
         <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
 
         <nav>
+          <template id="cubeList">
+            <a href="#" title="" id=""><i class="material-icons">grid_on</i><span></span></a>
+          </template>
           <!-- TODO: qui i cubi già salvati -->
           <!-- <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>Impostazioni</span></a> -->
 
@@ -406,6 +409,36 @@
                 <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
               </div>
             </div>
+
+            <section class="guide">
+              <h5>Step</h5>
+              <div class="steps" active>
+                <span>1</span>
+                <div class="step">
+                  <span class="title">Definire i livelli dimensionali</span>
+                  <small>Selezionare la tabelle per creare le dimensioni</small>
+                </div>
+              </div>
+              <div class="steps">
+                <span>2</span>
+                <div class="step">
+                  <span class="title">Struttura gerarchica</span>
+                  <small>Definire la struttura gerarchica nell'elenco di destra. L'ultima tabella verrà associata alla FACT</small>
+                </div>
+              </div>
+              <div class="steps">
+                <span>3</span>
+                <div class="step">
+                  <span class="title">Imposta tabella Fact</span>
+                  <small>Impostare la relazione tra la dimensione e la tabella FACT. Creare le metriche nella tabella FACT</small>
+                </div>
+              </div>
+            </section>
+
+            <section id="hierarchies">
+              <h5>Struttura gerarchica</h5>
+
+            </section>
 
             <div id="dimensions">
 

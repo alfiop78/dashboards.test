@@ -21,6 +21,7 @@
 .absList > ul{height: 500px;overflow-y: auto;}
 i[open]{color: red;}
 
+div[draggable]{cursor: grab;}
 
 .highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
 /*pages*/
@@ -197,3 +198,24 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 /* dimensions*/
 #dimensions{position: absolute;}
 .dimensions{width: auto;background: white;border-radius: 4px;padding: 8px;margin: 4px;}
+/* dimensions*/
+
+/*guide*/
+.guide{position: absolute;max-width: 300px;}
+.guide > .steps{box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
+.guide > .steps[active]{display: flex;width: auto;background: white;padding: 8px; margin: 4px;}
+.guide > .steps:not([active]){display: flex;width: auto;background: white;padding: 8px; margin: 4px;opacity: .4;}
+.steps > span{color: var(--main-primary-color);font-size: larger; font-weight: bold;padding: 0 8px;}
+.step{display: flex;flex-direction: column;}
+.step > small{font-size: .72rem;margin: 8px;}
+.step > span.title{font-size: larger;color: var(--main-primary-color);}
+
+/*guide*/
+
+/*hierarchies */
+#hierarchies{position: relative;float: right;display: flex;flex-direction: column;align-items: center;}
+.hier.table{width: 170px;margin: 8px;text-align: center;margin: 4px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);}
+.hier.table{background: tan;padding: 8px;font-size: .8rem;border-radius: 4px;width: 170px;overflow: hidden;text-overflow: ellipsis;}
+.dropzone:last-child .hier.table{background: var(--main-primary-color);color: white;font-weight: bold;}
+/*hierarchies */

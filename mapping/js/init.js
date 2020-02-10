@@ -259,6 +259,19 @@ var cube = new Cube();
     cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
     cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
     cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
+    // TODO: inserisco il nome della tabella nella struttura gerarchica sulla destra
+    const hierarchies = document.getElementById('hierarchies');
+    let id = hierarchies.childElementCount;
+    let dropzone = document.createElement('div');
+    dropzone.classList = 'dropzone';
+    hierarchies.appendChild(dropzone);
+    let div = document.createElement('div');
+    div.className = 'hier table';
+    div.id = 'hier_' + id;
+    div.setAttribute('draggable', true);
+    div.innerHTML = cube.table;
+
+    dropzone.appendChild(div);
 
 
   };
@@ -308,6 +321,39 @@ var cube = new Cube();
       });
 
     });
+  };
+
+  app.getCubes = function() {
+    console.log('getCubes');
+    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
+    // const tmplDimension = document.getElementById('dimension');
+    const cubes = new CubeStorage();
+    let obj = cubes.list();
+    console.log(obj);
+    // debugger;
+    const nav = document.getElementsByTagName('nav')[0];
+    // console.log(obj);
+    const tmplCubeList = document.getElementById('cubeList');
+    let tmplContent = tmplCubeList.content.cloneNode(true);
+    let element = tmplContent.querySelector('a');
+    nav.appendChild(element);
+
+    for (let i in obj) {
+      // console.log(obj[i]['FACT']);
+      // console.log(obj[i]['key']);
+      // console.log(obj[i]['cubeId']);
+      element.querySelector('span').innerHTML = obj[i]['key'];
+      element.id = 'cubeId_' + obj[i]['cubeId'];
+
+    }
+
+    // Array.from(Object.keys(obj)).forEach((cubeName, i) => {
+    //   console.log(cubeName);
+    //   let tmplContent = tmplCubeList.content.cloneNode(true);
+    //   let element = tmplContent.querySelector('a');
+    //   element.querySelector('span').innerHTML = cubeName;
+    //   nav.appendChild(element);
+    // });
 
   };
   // app.getDimensionsList = function() {
@@ -870,7 +916,7 @@ var cube = new Cube();
   document.getElementById('hierarchySave').onclick = function(e) {
     console.log('hierarchySave');
     // TODO: definire, da parte dell'utente, l'ordine gerarchico delle tabelle
-    
+
   };
 
   document.querySelectorAll('#operator-list li').forEach((li) => {
@@ -948,7 +994,9 @@ var cube = new Cube();
 
   app.getDatabaseTable();
 
-  app.getDimensions();
+  // app.getDimensions();
+
+  app.getCubes();
 
   // app.getDatamartList();
 })();

@@ -85,19 +85,22 @@ class CubeStorage extends Storages {
     return this.id;
   }
 
-  get list() {
+  list() {
     // this.storageKeys = Object.keys(this.storage);
-    let cubes = [];
+    let cubeObj = {};
+    // let cubes = [];
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "CUBE") {
+      if (jsonStorage.type === 'CUBE') {
         // console.log("cubo : "+key);
-        let cubeProperties = {key, 'cubeId' : jsonStorage.cubeId};
-        cubes.push(cubeProperties);
+        // let cubeProperties = {key, 'cubeId' : jsonStorage.cubeId};
+        // cubes.push(cubeProperties);
+        cubeObj[key] = {'cubeId' : jsonStorage['cubeId'], 'FACT' : jsonStorage['FACT'], 'key' : key};
       }
     });
-    return cubes;
+    // return cubes;
+    return cubeObj;
   }
 
   set stringify(value) {this._stringify = value;}
@@ -260,7 +263,7 @@ class DimensionStorage extends Storages {
   get dimensionId() { return this.id; }
 
   list() {
-    let dimensions = [];
+    // let dimensions = [];
     let dimObj = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
