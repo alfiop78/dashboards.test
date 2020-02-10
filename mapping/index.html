@@ -311,10 +311,7 @@
         <section class="cardTable">
           <div class="title">
             <h6></h6>
-            <!-- <span data-id="popupSetFact" class="popupContent"><i data-id="setFact" class="material-icons md-18">star_border</i><small class="popup">Imposta FACT</small></span> -->
-            <span data-id="popupSelectTable" class="popupContent" hide><i data-id="selectTable" class="material-icons md-18">bookmark_border</i><small class="popup">Seleziona tabella</small></span>
-            <span data-id="popupSelectedTable" class="popupContent" hide><i data-id="selectedTable" class="material-icons md-18">bookmark</i><small class="popup">Tabella selezionata</small></span>
-            <span data-id="popuppCloseTable" class="popupContent"><i data-id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
+            <span data-id="popupCloseTable" class="popupContent"><i data-id="closeTable" class="material-icons md-18">close</i><small class="popup">Chiudi</small></span>
           </div>
           <div class="md-field">
             <input type="search" value=""/>
@@ -328,6 +325,11 @@
           <span class="popupContent"><i class="material-icons md-18" filters>filter_list</i><small class="popup">Filtro</small></span>
           <span class="popupContent"><i class="material-icons md-18" groupby>dynamic_feed</i><small class="popup">Raggruppamento</small></span>
           <span class="popupContent"><i class="material-icons md-18" metrics>show_chart</i><small class="popup">Metrica</small></span>
+          <br>
+          <span class="popupContent"><i class="material-icons md-18" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
+          <span class="popupContent"><i class="material-icons md-18" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
+          <span class="popupContent"><i class="material-icons md-18" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
+          <span class="popupContent"><i class="material-icons md-18" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
         </section>
 
       </div>
@@ -377,7 +379,8 @@
 
       <div id="container" data-page="1">
 
-        <div id="content" class="dropzone">
+        <div id="content"> <!--class="dropzone"-->
+
           <div id="body" hidden>
             <h2>Mapping</h2>
             <h5>Trascina qui le tabelle da aggiungere</h5>
@@ -401,14 +404,14 @@
               </div>
             </div>
 
-            <div class="relation" hide>
+            <!-- <div class="relation" hide>
               <div class="icon-relation">
                 <span class="popupContent"><i class="material-icons md-24" hierarchies>insert_link</i><small class="popup">Crea Relazione</small></span>
                 <span class="popupContent"><i class="material-icons md-24" hierarchies-left>flip</i><small class="popup">Left Join</small></span>
                 <span class="popupContent"><i class="material-icons md-24" hierarchies-right>flip</i><small class="popup">Right Join</small></span>
                 <span class="popupContent"><i class="material-icons md-24" hierarchies-remove>link_off</i><small class="popup">Rimuovi relazione</small></span>
               </div>
-            </div>
+            </div> -->
 
             <section class="guide">
               <h5>Step</h5>
@@ -430,7 +433,7 @@
                 <span>3</span>
                 <div class="step">
                   <span class="title">Imposta tabella Fact</span>
-                  <small>Impostare la relazione tra la dimensione e la tabella FACT. Creare le metriche nella tabella FACT</small>
+                  <small>Associare la dimensione al Cubo. E' possibile creare un nuovo cubo oppure selezionarlo dal menù laterale</small>
                 </div>
               </div>
             </section>
@@ -455,6 +458,10 @@
 
               </section>
             </template>
+
+            <!-- <section class="area dropzone">
+              <h5>Trascina qui le tabelle da aggiungere</h5>
+            </section> -->
 
           </div>
 

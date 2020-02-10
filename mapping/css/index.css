@@ -33,40 +33,12 @@ h5{font-size: .9rem;padding: 8px;margin: 0;}
 
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
-.relation{align-items: center;display: flex;flex-direction: column;margin: 8px 0;}
-
-.relation > .line{background: grey;width: 1px;height: 40px;}
-.icon-relation{display: flex;justify-content: center;position: relative;margin-top: 4px;margin-bottom: 4px;}
-
-.relation{display: flex;justify-content: center;position: fixed;right: 20px;}
-.relation[hide] {display: none;}
-/* .relation .icon-relation{position: relative;display: flex;justify-content: center;} */
-/* .relation .icon-relation > span{display: flex;justify-content: center;} */
-.relation .icon-relation span:first-child{display: flex;flex-direction: column;align-items: center;background-color: var(--main-primary-color);z-index: 1;
-  border-radius: 50%;color: white;box-shadow: 0 1px 4px 0px #717171;}
-.relation .icon-relation span:not(:first-child){position: absolute;left: auto;top: 0;transition: top 150ms, bottom 150ms;z-index: 0;}
-/* relazione*/
-.relation > .icon-relation:hover span:nth-child(2){left: auto; top: calc(-36px - 24px);padding: 12px 0;color: #99b19c;z-index: 100;}
-/* left join impostata a sulla sinistra di add*/
-.relation > .icon-relation:hover span:nth-child(3){left: auto; top: calc((-36px * 2) - 48px);padding: 12px 0;color: #99b19c;z-index: 100;}
-/* right join*/
-.relation > .icon-relation:hover span:nth-child(4){left: auto; top: 36px;padding: 12px 0;color: #99b19c;z-index: 100;}
-/* rimuovi relazione*/
-.relation > .icon-relation:hover span:nth-child(5){left: auto; top: calc(36px * 3);padding: 12px 0;color: #3b7096;z-index: 100;}
-
-/* .relation > .icon-relation:hover span:nth-child(2){left: 36px;padding: 0 12px;color: #99b19c;} */
-/* left join impostata a sulla sinistra di add*/
-/* .relation > .icon-relation:hover span:nth-child(3){left: calc(-36px - 24px);padding: 0 12px;color: #99b19c;} */
-/* right join*/
-/* .relation > .icon-relation:hover span:nth-child(4){left: calc(36px + 60px);padding: 0 12px;color: #99b19c;} */
-/* rimuovi relazione*/
-/* .relation > .icon-relation:hover span:nth-child(5){left: calc(36px + 60px * 2);padding: 0 12px;color: #3b7096;} */
-
-/* .relation > .icon-relation > span > small{top: 46px;} */
-/* opacity sull'icona */
-.relation > .icon-relation:hover > span i{opacity: .5;}
-.relation > .icon-relation:hover > span:hover i{opacity: 1;}
-.relation > .icon-relation:hover > span:hover > small{animation: popup 50ms ease;visibility: visible;}
+/*relations*/
+section[options] i[hierarchies]{color: #99b19c;}
+section[options] i[hierarchies-left]{color: #99b19c;}
+section[options] i[hierarchies-right]{color: #99b19c;}
+section[options] i[hierarchies-remove]{color: #3b7096;}
+/*relations*/
 
 @keyframes popup {
   0% {transform: scale(.2);}
@@ -77,7 +49,9 @@ div[tables-columns]{display: grid;grid-template-columns: max-content max-content
 /* .card-layout{display: grid;grid-template-columns: 100%;position: relative;} */
 .cardLayout > section[options]{position: absolute;display: flex;padding: 0 8px;flex-flow: column;left: calc(100% - 46px);
   transition: left 200ms, opacity 200ms;opacity: 0;z-index: 0;}
-.card.table:not([mode='edit']):hover .cardTable[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;z-index: 5;}
+.cardLayout:not([mode='edit']):hover .cardTable[name] ~ section[options]{left: 100%;opacity: 1;transition: left 200ms, opacity 200ms;z-index: 5;}
+.cardLayout[mode='edit']{opacity: .5;}
+
 section[options] i{color: dimgrey;}
 section[options] > span > i[metrics]{color: #587850;}
 section[options] > span > i[columns]{color: #9a6a6a;}
@@ -219,3 +193,6 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 .hier.table{background: tan;padding: 8px;font-size: .8rem;border-radius: 4px;width: 170px;overflow: hidden;text-overflow: ellipsis;}
 .dropzone:last-child .hier.table{background: var(--main-primary-color);color: white;font-weight: bold;}
 /*hierarchies */
+/*area*/
+.area{width: 100%;height: inherit;display: flex;justify-content: center;align-items: center;border: solid thin gainsboro;}
+/*area*/

@@ -39,6 +39,7 @@ var cube = new Cube();
     cardTitle : null,
     content : document.getElementById('content'),
     body : document.getElementById('body'),
+    // dropzone : document.getElementsByClassName('dropzone')[0],
     currentX : 0,
     currentY : 0,
     initialX : 0,
@@ -183,10 +184,6 @@ var cube = new Cube();
             li.id = i;
             ulContainer.appendChild(element);
             li.onclick = cube.handlerColumns.bind(cube);
-            // element.querySelector('#filters-icon').onclick = app.handlerFilterSetting;
-            // se ci sono più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
-            let cardTotal = document.querySelectorAll('.card.table').length;
-            if (cardTotal > 1) document.querySelector('.relation').removeAttribute('hide');
           }
 
         } else {
@@ -259,7 +256,7 @@ var cube = new Cube();
     cube.activeCardRef.parentElement.querySelector('i[filters]').onclick = app.handlerAddFilters;
     cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
     cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
-    // TODO: inserisco il nome della tabella nella struttura gerarchica sulla destra
+    // inserisco il nome della tabella nella struttura gerarchica sulla destra
     const hierarchies = document.getElementById('hierarchies');
     let id = hierarchies.childElementCount;
     let dropzone = document.createElement('div');
@@ -269,9 +266,14 @@ var cube = new Cube();
     div.className = 'hier table';
     div.id = 'hier_' + id;
     div.setAttribute('draggable', true);
+    div.setAttribute('label', cube.table);
     div.innerHTML = cube.table;
 
     dropzone.appendChild(div);
+
+    // event sui tasti section[options]
+    card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
+
 
 
   };
@@ -290,9 +292,7 @@ var cube = new Cube();
     console.log(e.path);
     // TODO: rimettere la card chiusa al suo posto originario, nel drawer
     e.path[5].remove();
-    // controllo il numero delle tabelle presenti, più di due tabelle visualizzo la sezione .relation (per le relazioni da creare)
-    let cardTotal = document.querySelectorAll('.card.table').length;
-    (cardTotal > 1) ? document.querySelector('.relation').removeAttribute('hide') : document.querySelector('.relation').setAttribute('hide', true);
+    // TODO: eliminare anche dal flusso delle gerarchie sulla destra
   };
 
   app.getDimensions = function() {
@@ -302,7 +302,7 @@ var cube = new Cube();
     let obj = dimension.list();
     // console.log(obj);
     const tmplDimension = document.getElementById('dimension');
-    Array.from(Object.keys(obj)).forEach((dimName, i) => {
+    Array.from(Object.keys(obj)).forEach((dimName) => {
       // console.log(dimName);
       let tmplContent = tmplDimension.content.cloneNode(true);
       let section = tmplContent.querySelector('.dimensions');
@@ -312,7 +312,7 @@ var cube = new Cube();
       // console.log(obj[dimName]); // valore/i
       const tmplMiniCard = document.getElementById('miniCard');
 
-      obj[dimName].forEach((table, i) => {
+      obj[dimName].forEach((table) => {
         let contentMiniCard = tmplMiniCard.content.cloneNode(true);
         let miniCard = contentMiniCard.querySelector('.miniCard');
         miniCard.querySelector('h6').innerHTML = table;
@@ -324,37 +324,18 @@ var cube = new Cube();
   };
 
   app.getCubes = function() {
-    console.log('getCubes');
-    // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
-    // const tmplDimension = document.getElementById('dimension');
+    // recupero la lista dei Cubi in localStorage
     const cubes = new CubeStorage();
     let obj = cubes.list();
-    console.log(obj);
-    // debugger;
     const nav = document.getElementsByTagName('nav')[0];
-    // console.log(obj);
     const tmplCubeList = document.getElementById('cubeList');
     let tmplContent = tmplCubeList.content.cloneNode(true);
     let element = tmplContent.querySelector('a');
     nav.appendChild(element);
-
     for (let i in obj) {
-      // console.log(obj[i]['FACT']);
-      // console.log(obj[i]['key']);
-      // console.log(obj[i]['cubeId']);
       element.querySelector('span').innerHTML = obj[i]['key'];
       element.id = 'cubeId_' + obj[i]['cubeId'];
-
     }
-
-    // Array.from(Object.keys(obj)).forEach((cubeName, i) => {
-    //   console.log(cubeName);
-    //   let tmplContent = tmplCubeList.content.cloneNode(true);
-    //   let element = tmplContent.querySelector('a');
-    //   element.querySelector('span').innerHTML = cubeName;
-    //   nav.appendChild(element);
-    // });
-
   };
   // app.getDimensionsList = function() {
   //   // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
@@ -659,27 +640,10 @@ var cube = new Cube();
   };
 
   app.handlerAddHierarchy = function(e) {
-    // console.log(this);
-    // console.log(e.path);
-    // console.log(e.path[3]);
-    // aggiungo l'attributo [hierarchies] alle due card (sopra-sotto)
-    // seleziono le due card da mettere in relazione
-    // elimino prima l'attributo [hierarchies] su eventuali altre card-table selezionate in precedenza
-    App.handlerConsole('Seleziona le due tabelle da mettere in relazione', 'info', 4000);
-    // imposto il mode=edit sulle cardLayout, ha uno style diverso per consentirne la selezione
-    Array.from(document.querySelectorAll('#body .cardLayout')).forEach((card, i) => {
-      console.log(card);
-      card.setAttribute('mode', 'edit');
-      // imposto evento click su h6 per selezionare una tabella
-      // visualizzo l'icona bookmark per poter selezionare le tabelle
-      card.querySelector('span[data-id="popupSelectTable"]').removeAttribute('hide');
-      card.querySelector('span[data-id="popupSelectTable"]').onclick = app.handlerSelectCard;
-      card.querySelector('span[data-id="popupSelectedTable"]').onclick = app.handlerDeselectCard;
-
-      // nascondo le altre due icone
-      card.querySelector('span[data-id="popupSetFact"]').setAttribute('hide', true);
-      card.querySelector('span[data-id="popuppCloseTable"]').setAttribute('hide', true);
-    });
+    let cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = cardTable;
+    console.log(cardTable);
+    cube.changeMode('hierarchies', 'Selezionare le colonne di questa e dell\'altra tabella da mettere in relazione');
   };
 
   app.handlerAddColumns = function(e) {
@@ -814,6 +778,8 @@ var cube = new Cube();
     btnHierarchies.onclick = app.handlerAddHierarchy;
   });
 
+  app.testONLOAD = function(e) {console.log(e.target);};
+
   Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
     // console.log(btnHierarchiesRemove);
     btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
@@ -912,12 +878,6 @@ var cube = new Cube();
   // };
 
   // document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
-
-  document.getElementById('hierarchySave').onclick = function(e) {
-    console.log('hierarchySave');
-    // TODO: definire, da parte dell'utente, l'ordine gerarchico delle tabelle
-
-  };
 
   document.querySelectorAll('#operator-list li').forEach((li) => {
     li.onclick = app.handlerFunctionOperatorList;
