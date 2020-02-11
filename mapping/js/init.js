@@ -565,6 +565,99 @@ var cube = new Cube();
     cube.dialogMetrics.close();
   };
 
+  app.createHierarchy = function(e) {
+    let hier = [];
+    let colSelected = [];
+    document.querySelectorAll('.cardTable[mode="hierarchies"]').forEach((card) => {
+      // debugger;
+      let tableName = card.getAttribute('name');
+      // let liRef = card.querySelector('li[hierarchy]:not([data-relation-id])');
+      let liRef = card.querySelector('li[hierarchy][selected]');
+      if (liRef) {
+        // metto in un array gli elementi selezionati per la creazione della gerarchia
+        colSelected.push(liRef);
+        hier.push(tableName+'.'+liRef.innerText);
+      }
+      // console.log(hier);
+      // per creare correttamente la relazione è necessario avere due elementi selezionati
+      if (hier.length === 2) {
+        cube.relationId++;
+        // se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
+        // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
+
+        // 15.11 - Le relazioni tra tabelle hier_n le inserisco direttamente in this.dimension
+        // console.log(card);
+        (card.hasAttribute('fact')) ? cube.hierarchyFact['hier_'+cube.relationId] = hier : cube.hierarchyTable['hier_'+cube.relationId] = hier;
+        // (card.hasAttribute('fact-table')) ? this.hierarchyFact['fact_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
+
+        // visualizzo l'icona per capire che c'è una relazione tra le due colonne
+        colSelected.forEach((el) => {
+          el.setAttribute('data-rel-'+cube.relationId, cube.relationId);
+          // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          el.setAttribute('data-relation-id', true);
+          // la relazione è stata creata, posso eliminare [selected]
+          el.removeAttribute('selected');
+        });
+        console.log(cube.hierarchyFact);
+        console.log(cube.hierarchyTable);
+        cube.dimension.hierarchies = cube.hierarchyTable;
+        console.log(cube.dimension);
+        // TODO: ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
+        Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
+          cube.hierarchyOrder[i] = table.getAttribute('label');
+        });
+        console.log(cube.hierarchyOrder);
+        cube.dimension.hierarchyOrder = cube.hierarchyOrder;
+        console.log(cube.dimension);
+      }
+    });
+  };
+
+  app.removeHierarchy = function(relationId, value) {
+    console.log(relationId);
+    console.log(value);
+    debugger;
+    console.log('delete hierarchy');
+    /* prima di eliminare la gerarchia devo stabilire se le due card, in questo momento, sono in modalità hierarchies
+    // ...(questo lo vedo dall'attributo presente su card-table)
+    // elimino la gerarchia solo se la relazione tra le due tabelle riguarda le due tabelle attualmente impostate in modalità [hierarchies]
+    // se la relazione riguarda le tabelle A e B e attualmente la modalità impostata è A e B allora elimino la gerarchia
+    // altrimenti se la relazione riguarda A e B e attualmente la modalità impostata [hierarchies] riguarda B e C aggiungo la relazione e non la elimino
+    */
+    // elementi li che hanno la relazione relationId
+    let liElementsRelated = document.querySelectorAll('.cardTable[hierarchies] li[data-relation-id]['+relationId+']').length;
+
+    if (liElementsRelated === 2) {
+      // tra le due tabelle .card-table[hiearachies] non esiste questa relazione, per cui si sta creando una nuova relazione
+      // ci sono due colonne che fanno parte di "questa relazione" (cioè delle due tabelle attualmente in modalità [hierarchies]) quindi possono essere eliminate
+      document.querySelectorAll('.cardTable[hierarchies] ul > .element > li[data-relation-id]['+relationId+']').forEach((li) => {
+        console.log('elimino li :'+li.innerText);
+        // TODO: se è presente un'altra relazione, quindi un altro attributo data-rel, NON elimino [hierarchy] e [data-relation-id]
+        //... (per non eliminare l'icona) che fa riferimento ad un'altra relazione sulla stessa colonna (doppia chiave)
+        li.removeAttribute(relationId);
+        li.removeAttribute('selected');
+        let relationFound = false; // altra relazione trovata ?
+        // console.log(li.getAttributeNames());
+        // console.log(li.getAttributeNames().indexOf('data-rel-'));
+        li.getAttributeNames().forEach((attr) => {
+          // console.log(attr.indexOf('data-rel-'));
+          if (attr.indexOf('data-rel-') !== -1) {
+            console.log('trovata altra relazione : '+attr);
+            relationFound = true;
+          }
+
+        });
+        if (!relationFound) {
+          li.removeAttribute('data-relation-id');
+          li.removeAttribute('hierarchy');
+        }
+      });
+      delete cube.hierarchyFact['hier_'+value];
+      delete cube.hierarchyTable['hier_'+value];
+      console.log(cube.hierarchyTable);
+    }
+  };
+
 
   // App.getSessionName();
 
