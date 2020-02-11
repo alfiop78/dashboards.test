@@ -20,8 +20,11 @@ class Storages {
   }
 
   set dimension(value) {
-    window.localStorage.setItem(Object.keys(value), JSON.stringify(value));
-    this.dimensionName = Object.keys(value);
+    // console.log(Object.keys(value));
+    // console.log(value.title);
+    //
+    window.localStorage.setItem(value.title, JSON.stringify(value));
+    this.dimensionName = value.title;
   }
 
   // restituisco il nome della dimensione

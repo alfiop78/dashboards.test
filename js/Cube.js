@@ -254,7 +254,7 @@ class Cube {
     this.columns[tableName] = objColumnsParam;
     console.log(this.columns);
     // salvo nella dimensione
-    this.dimension.from = this.columns;
+    this.dimension.columns = this.columns;
     console.log(this.dimension);
     this.currentFieldSetting.setAttribute('defined', true);
     this.dialogColumns.close();
@@ -277,6 +277,9 @@ class Cube {
 
     this.groupBy[tableName] = objParam;
     console.log(this.groupBy);
+    // salvo nella dimensione
+    this.dimension.groupBy = this.groupBy;
+    console.log(this.dimension);
     this.currentFieldSetting.setAttribute('defined', true);
     this.dialogGroupBy.close();
   }

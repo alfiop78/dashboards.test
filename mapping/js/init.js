@@ -715,9 +715,7 @@ var cube = new Cube();
     this.toggleAttribute('selected');
   };
 
-  document.querySelectorAll('#function-list li').forEach((li) => {
-    li.onclick = app.handlerFunctionMetricList;
-  });
+  document.querySelectorAll('#function-list li').forEach((li) => {li.onclick = app.handlerFunctionMetricList;});
 
   app.handlerFunctionOperatorList = function(e) {
     // console.log(this);
@@ -761,9 +759,7 @@ var cube = new Cube();
     }
   };
 
-  app.openReportList = function() {
-    app.dialogReportList.showModal();
-  };
+  app.openReportList = function() {app.dialogReportList.showModal();};
 
   /*events */
   document.querySelectorAll('.card-table').forEach((card) => {
@@ -777,8 +773,6 @@ var cube = new Cube();
     // console.log(btnHierarchies);
     btnHierarchies.onclick = app.handlerAddHierarchy;
   });
-
-  app.testONLOAD = function(e) {console.log(e.target);};
 
   Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
     // console.log(btnHierarchiesRemove);
@@ -794,33 +788,47 @@ var cube = new Cube();
       // TODO: creo un contenitorre per le dimensioni salvate, con dentro le tabelle che ne fanno parte.
     */
     cube.dimensionTitle = document.getElementById('dimensionName').value;
+    // cube.dimension
     const storage = new DimensionStorage();
+    // debugger;
     let from = [];
-    let objDimension = {};
+    // let fromObj = {};
     document.querySelectorAll('.cardTable').forEach((card) => {
       if (card.getAttribute('name')) {
         from.push(card.getAttribute('name'));
-        objDimension.from = from;
+        cube.dimension.from = from;
       }
     });
-
-    // in cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
-    cube.cube['hierarchies'] = cube.hierarchyFact;
-    let hierarchies = {};
-    // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
-    Object.keys(cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = cube.hierarchyTable[rel];}});
-    // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
-    objDimension.hierarchies = hierarchies;
-    objDimension.type = 'DIMENSION';
-    // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da cube.dimension
-
-    cube.dimension[cube.dimensionTitle] = objDimension;
-    console.log(cube.dimension);
-
+    cube.dimension.type = 'DIMENSION';
+    // console.log(obj);
+    // debugger;
+    // console.log(cube.dimension);
+    cube.dimension.title = cube.dimensionTitle;
+    // console.log(cube.dimension);
+    // debugger;
     storage.dimension = cube.dimension;
 
-    // app.cloneLastTable();
     app.dialogDimensionName.close();
+
+    // return;
+    //
+    // // in cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
+    // cube.cube['hierarchies'] = cube.hierarchyFact;
+    // let hierarchies = {};
+    // // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
+    // Object.keys(cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = cube.hierarchyTable[rel];}});
+    // // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
+    // objDimension.hierarchies = hierarchies;
+    // objDimension.type = 'DIMENSION';
+    // // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da cube.dimension
+    //
+    // cube.dimension[cube.dimensionTitle] = objDimension;
+    // console.log(cube.dimension);
+    //
+    // storage.dimension = cube.dimension;
+    //
+    // // app.cloneLastTable();
+    // app.dialogDimensionName.close();
   };
 
   document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
