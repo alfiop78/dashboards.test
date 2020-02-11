@@ -183,7 +183,8 @@ var cube = new Cube();
             li.setAttribute('data-table',cube.table);
             li.id = i;
             ulContainer.appendChild(element);
-            li.onclick = cube.handlerColumns.bind(cube);
+            // li.onclick = cube.handlerColumns.bind(cube);
+            li.onclick = app.handlerColumns;
           }
 
         } else {
@@ -274,8 +275,6 @@ var cube = new Cube();
     // event sui tasti section[options]
     card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
 
-
-
   };
 
   app.content.ondragover = app.handlerDragOver;
@@ -283,6 +282,289 @@ var cube = new Cube();
   app.content.ondragleave = app.handlerDragLeave;
   app.content.ondrop = app.handlerDrop;
   app.content.ondragend = app.handlerDragEnd;
+
+  app.handlerColumns = function(e) {
+    // selezione della colonna nella card table
+    console.log(e.target);
+    cube.activeCard = e.path[3];
+    console.log(cube.activeCard);
+
+    let tableName = cube.activeCard.getAttribute('name');
+    console.log(tableName);
+    let fieldName = e.target.getAttribute('label');
+    console.log(fieldName);
+
+    let attrs = cube.activeCard.getAttribute('mode');
+    console.log(attrs);
+    switch (attrs) {
+      case 'hierarchies':
+        console.log('hier');
+        // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
+        // ...[hierarchy] a quello appena selezionato. In questo modo posso selezionare solo una colonna per volta ad ogni relazione da creare
+        // se però, viene cliccato una colonna con già una relazione impostata (quindi ha [data-relationn-id]) elimino la relazione da
+        // ...entrambe le tabelle tramite un identificatifo di relazione
+
+        if (e.target.hasAttribute('data-relation-id')) {
+          // debugger;
+          /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+          relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+          Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+          */
+          e.target.toggleAttribute('selected');
+          // TODO: recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+          for (let name of e.target.getAttributeNames()) {
+            // console.log(name);
+            let relationId, value;
+            if (name.substring(0, 9) === 'data-rel-') {
+              relationId = name;
+              value = e.target.getAttribute(name);
+              debugger;
+              app.removeHierarchy(relationId, value);
+              // this.removeHierarchy(relationId, value);
+            }
+
+          }
+
+        } else {
+          let liRelationSelected = cube.activeCard.querySelector('li[hierarchy]:not([data-relation-id])');
+          // console.log(liRelationSelected);
+          e.target.toggleAttribute('hierarchy');
+          e.target.toggleAttribute('selected');
+          // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+          // se è stata selezionata una colonna già selezionata la deseleziono
+          if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+            liRelationSelected.toggleAttribute('hierarchy');
+            liRelationSelected.toggleAttribute('selected');
+          }
+        }
+        debugger;
+        app.createHierarchy();
+        // this.createHierarchy();
+
+        break;
+      case 'columns':
+        // console.log(e.target);
+        e.target.toggleAttribute('columns');
+        e.target.parentElement.querySelector('#columns-icon').onclick = app.handlerColumnSetting;
+        // e.target.parentElement.querySelector('#columns-icon').onclick = this.handlerColumnSetting.bind(this);
+        if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
+          delete cube.columns[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#columns-icon').removeAttribute('defined');
+          if (Object.keys(cube.columns[tableName]).length === 0) {delete cube.columns[tableName];}
+        }
+        console.log(cube.columns);
+        break;
+      case 'filters':
+        console.log('filters');
+        e.target.toggleAttribute('filters');
+        // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
+        if (!e.target.hasAttribute('filters')) {
+          // elimino il filtro impostato
+          delete cube.filters[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#filters-icon').removeAttribute('defined');
+          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+        }
+        console.log(cube.filters);
+        break;
+      case 'groupby':
+        console.log('groupby');
+        e.target.toggleAttribute('groupby');
+        e.target.parentElement.querySelector('#groupby-icon').onclick = app.handlerGroupBySetting;
+        // e.target.parentElement.querySelector('#groupby-icon').onclick = this.handlerGroupBySetting.bind(this);
+        if (!e.target.hasAttribute('groupby')) {
+          // elimino la colonna selezionata per il groupby
+          delete cube.groupBy[tableName][fieldName];
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#groupby-icon').removeAttribute('defined');
+          if (Object.keys(cube.groupBy[tableName]).length === 0) {delete cube.groupBy[tableName];}
+        }
+        console.log(cube.groupBy);
+        break;
+      case 'metrics':
+        console.log('metrics');
+        e.target.toggleAttribute('metrics');
+        e.target.parentElement.querySelector('#metrics-icon').onclick = app.handlerMetricSetting;
+        // e.target.parentElement.querySelector('#metrics-icon').onclick = this.handlerMetricSetting.bind(this);
+        if (!e.target.hasAttribute('metrics')) {
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
+          delete cube.metrics[tableName][fieldName];
+          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+        }
+        console.log(cube.metrics);
+        break;
+      default:
+
+    }
+  };
+
+  app.handlerColumnSetting = function(e) {
+    // apro la dialog column-setting
+    console.log(e.target);
+    cube.currentFieldSetting = e.target;
+    let fieldName = cube.dialogColumns.querySelector('#fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+    // reset della dialog
+    document.getElementById('alias-column').value = '';
+
+    cube.dialogColumns.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    cube.dialogColumns.querySelector('#btnColumnDone').onclick = app.handlerBtnColumnDone;
+    // this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
+  };
+
+  app.handlerGroupBySetting = function(e) {
+    // apro la dialog groupby-setting
+    // TODO: le dialog le posso anche impostare qui, invece di impostarle nella classe
+    let fieldName = cube.dialogGroupBy.querySelector('#fieldName');
+    cube.currentFieldSetting = e.target;
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+
+    cube.dialogGroupBy.showModal();
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    cube.dialogGroupBy.querySelector('#btnGroupByDone').onclick = app.handlerBtnGroupByDone;
+  };
+
+  app.handlerMetricSetting = function(e) {
+    // appro la dialog per filters
+    // console.log(e);
+    // visualizzo la lista dei filtri creati, per poterli associare alla metrica
+    this.createFiltersList();
+    cube.currentFieldSetting = e.target;
+    let fieldName = this.dialogMetrics.querySelector('#fieldName');
+    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+
+    cube.dialogMetrics.showModal();
+    // resetto i campi della dialog
+    // TODO: dovrò vedere se ho cliccato su una metrica già impostata, se già impostata, presente in this.metrics,
+    // ...ripropongo i dati precedentemente salvati, altrimenti azzero la dialog
+    document.getElementById('alias-metric').value = '';
+    document.getElementById('checkbox-distinct').checked = false;
+
+    document.querySelectorAll('#metric-filters > li').forEach((filter) => {
+      filter.removeAttribute('selected');
+    });
+    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+    cube.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
+    // this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
+  };
+
+  app.handlerBtnColumnDone = function(e) {
+    // TODO: salvo l'alias per la colonna
+    let tableName = cube.activeCard.getAttribute('name');
+    let fieldName = cube.dialogColumns.querySelector('#fieldName').innerText;
+    let alias = document.getElementById('alias-column').value;
+
+    // quando viene selezionata un'altra tabella, rispetto a quella che è stata già inserita nell'Object, deve resettare this.cols
+    // ...altrimenti le colonne contentute in this.cols vengono aggiunte anche alla nuova tabella
+    // TODO: verifico se la tabella su cui si sta operando è già inserita nell'object
+    // console.log(this.columns[tableName]);
+    // console.log(this.columns.hasOwnProperty(tableName));
+    if (!cube.columns.hasOwnProperty(tableName)) {cube.cols = [];}
+
+    cube.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
+    // console.log(this.cols);
+    let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+    cube.cols.forEach((col) => {
+      // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
+      // console.log(col);
+      // Inserisco come key il nome del campo, in modo da poter fare il delete this.columns[tablenName][fieldName] quando la colonna viene deselezionata
+      objColumnsParam[col.fieldName] = col;
+    });
+    // console.log(objColumnsParam);
+
+    // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}}; // TEST
+
+    cube.columns[tableName] = objColumnsParam;
+    console.log(cube.columns);
+    // salvo nella dimensione
+    cube.dimension.columns = cube.columns;
+    console.log(cube.dimension);
+    cube.currentFieldSetting.setAttribute('defined', true);
+    cube.dialogColumns.close();
+  };
+
+  app.handlerBtnGroupByDone = function(e) {
+    // TODO: salvo l'alias per il GroupBy
+    let tableName = cube.activeCard.getAttribute('name');
+    let fieldName = cube.dialogGroupBy.querySelector('#fieldName').innerText;
+
+    console.log(cube.groupBy.hasOwnProperty(tableName));
+    if (!cube.groupBy.hasOwnProperty(tableName)) {cube.colsGroupBy = [];}
+
+    cube.colsGroupBy.push({fieldName, 'sqlFORMAT': null});
+
+    let objParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+    cube.colsGroupBy.forEach((col) => {
+      objParam[col.fieldName] = col;
+    });
+
+    cube.groupBy[tableName] = objParam;
+    console.log(cube.groupBy);
+    // salvo nella dimensione
+    cube.dimension.groupBy = cube.groupBy;
+    console.log(cube.dimension);
+    cube.currentFieldSetting.setAttribute('defined', true);
+    cube.dialogGroupBy.close();
+  };
+
+  app.handlerBtnMetricDone = function(e) {
+    let tableName = cube.activeCard.getAttribute('name');
+    let metricName = cube.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
+    let fieldName = cube.dialogMetrics.querySelector('#fieldName').innerText;
+    let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
+    let distinctOption = document.getElementById('checkbox-distinct').checked;
+    let alias = document.getElementById('alias-metric').value;
+    let arrFilters = [];
+    let filters = {};
+    // TODO: recupero i filtri impostati per questa metrica e li inserisco nell'array
+    // document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
+    document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {
+      // inserisco in filters l'object del filtro selezionato (e non solo il nome), successivamente elimino questo filtro dall'object filters di origine
+      // quindi il filtro sarà applicato a livello metrica e non Report
+      // recupero da this.filters il filtro selezionato
+      console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+
+      arrFilters.push(cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+
+      arrFilters.forEach((filter) => {
+        filters[li.getAttribute('table-name')] = filter;
+      });
+      console.log(filters);
+
+      // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
+      if (Object.keys(cube.filters[li.getAttribute('table-name')]).length === 0) {
+        delete cube.filters[li.getAttribute('table-name')];
+      } else {
+        delete cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
+      }
+
+    });
+
+
+    // aggiungo i filtri da associare a questa metrica
+    if (!cube.metrics.hasOwnProperty(tableName)) {cube.colsMetrics = [];}
+    let objParam = {};
+    if (Object.keys(filters).length > 0) {
+      // questa è una metrica filtrata
+      cube.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
+      cube.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+      cube.filteredMetrics[tableName] = objParam;
+    } else {
+      cube.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias});
+      cube.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+      cube.metrics[tableName] = objParam;
+    }
+
+
+    console.log(cube.metrics);
+    console.log(cube.filteredMetrics);
+    cube.currentFieldSetting.setAttribute('defined', true);
+    cube.dialogMetrics.close();
+  };
+
 
   // App.getSessionName();
 
@@ -606,14 +888,6 @@ var cube = new Cube();
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
   };
-
-  // app.handlerAddTable = function() {
-  //   /* metodo per l'aggiunta di un elemento/card. In questo Metodo imposto this.addedElement per poterlo restituire (sotto).
-  //   ...Una volta restituito posso associare al nuovo elemento aggiungo i vari eventi*/
-  //   app.TimelineHier.add();
-  //   // imposto evento onclick sulla card appena aggiunta
-  //   app.TimelineHier.elementAdded.querySelector('.card-table').onclick = app.handlerCardSelected;
-  // };
 
   app.handlerSelectCard = function(e) {
     console.log(e.target);

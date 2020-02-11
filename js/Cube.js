@@ -175,114 +175,114 @@ class Cube {
     }
   }
 
-  handlerColumnSetting(e) {
-    // apro la dialog column-setting
-    console.log(e.target);
-    this.currentFieldSetting = e.target;
-    let fieldName = this.dialogColumns.querySelector('#fieldName');
-    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
-    // reset della dialog
-    document.getElementById('alias-column').value = '';
+  // handlerColumnSetting(e) {
+  //   // apro la dialog column-setting
+  //   console.log(e.target);
+  //   this.currentFieldSetting = e.target;
+  //   let fieldName = this.dialogColumns.querySelector('#fieldName');
+  //   fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+  //   // reset della dialog
+  //   document.getElementById('alias-column').value = '';
+  //
+  //   this.dialogColumns.showModal();
+  //   // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+  //   this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
+  //
+  // }
 
-    this.dialogColumns.showModal();
-    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    this.dialogColumns.querySelector('#btnColumnDone').onclick = this.handlerBtnColumnDone.bind(this);
+  // handlerGroupBySetting(e) {
+  //   // apro la dialog groupby-setting
+  //   let fieldName = this.dialogGroupBy.querySelector('#fieldName');
+  //   this.currentFieldSetting = e.target;
+  //   fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+  //
+  //   this.dialogGroupBy.showModal();
+  //   // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+  //   this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
+  // }
 
-  }
+  // handlerMetricSetting(e) {
+  //   // appro la dialog per filters
+  //   // console.log(e);
+  //   // visualizzo la lista dei filtri creati, per poterli associare alla metrica
+  //   this.createFiltersList();
+  //   this.currentFieldSetting = e.target;
+  //   let fieldName = this.dialogMetrics.querySelector('#fieldName');
+  //   fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+  //
+  //   this.dialogMetrics.showModal();
+  //   // resetto i campi della dialog
+  //   // TODO: dovrò vedere se ho cliccato su una metrica già impostata, se già impostata, presente in this.metrics,
+  //   // ...ripropongo i dati precedentemente salvati, altrimenti azzero la dialog
+  //   document.getElementById('alias-metric').value = "";
+  //   document.getElementById('checkbox-distinct').checked = false;
+  //
+  //   document.querySelectorAll('#metric-filters > li').forEach((filter) => {
+  //     filter.removeAttribute('selected');
+  //   });
+  //   // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+  //   this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
+  //
+  // }
 
-  handlerGroupBySetting(e) {
-    // apro la dialog groupby-setting
-    let fieldName = this.dialogGroupBy.querySelector('#fieldName');
-    this.currentFieldSetting = e.target;
-    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
+  // handlerBtnColumnDone(e) {
+  //   // TODO: salvo l'alias per la colonna
+  //   let tableName = this.activeCardRef.getAttribute('name');
+  //   let fieldName = this.dialogColumns.querySelector('#fieldName').innerText;
+  //   let alias = document.getElementById('alias-column').value;
+  //
+  //   // quando viene selezionata un'altra tabella, rispetto a quella che è stata già inserita nell'Object, deve resettare this.cols
+  //   // ...altrimenti le colonne contentute in this.cols vengono aggiunte anche alla nuova tabella
+  //   // TODO: verifico se la tabella su cui si sta operando è già inserita nell'object
+  //   // console.log(this.columns[tableName]);
+  //   // console.log(this.columns.hasOwnProperty(tableName));
+  //   if (!this.columns.hasOwnProperty(tableName)) {this.cols = [];}
+  //
+  //   this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
+  //   // console.log(this.cols);
+  //   let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+  //   this.cols.forEach((col) => {
+  //     // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
+  //     // console.log(col);
+  //     // Inserisco come key il nome del campo, in modo da poter fare il delete this.columns[tablenName][fieldName] quando la colonna viene deselezionata
+  //     objColumnsParam[col.fieldName] = col;
+  //   });
+  //   // console.log(objColumnsParam);
+  //
+  //   // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}}; // TEST
+  //
+  //   this.columns[tableName] = objColumnsParam;
+  //   console.log(this.columns);
+  //   // salvo nella dimensione
+  //   this.dimension.columns = this.columns;
+  //   console.log(this.dimension);
+  //   this.currentFieldSetting.setAttribute('defined', true);
+  //   this.dialogColumns.close();
+  // }
 
-    this.dialogGroupBy.showModal();
-    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    this.dialogGroupBy.querySelector('#btnGroupByDone').onclick = this.handlerBtnGroupByDone.bind(this);
-  }
-
-  handlerMetricSetting(e) {
-    // appro la dialog per filters
-    // console.log(e);
-    // visualizzo la lista dei filtri creati, per poterli associare alla metrica
-    this.createFiltersList();
-    this.currentFieldSetting = e.target;
-    let fieldName = this.dialogMetrics.querySelector('#fieldName');
-    fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
-
-    this.dialogMetrics.showModal();
-    // resetto i campi della dialog
-    // TODO: dovrò vedere se ho cliccato su una metrica già impostata, se già impostata, presente in this.metrics,
-    // ...ripropongo i dati precedentemente salvati, altrimenti azzero la dialog
-    document.getElementById('alias-metric').value = "";
-    document.getElementById('checkbox-distinct').checked = false;
-
-    document.querySelectorAll('#metric-filters > li').forEach((filter) => {
-      filter.removeAttribute('selected');
-    });
-    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
-
-  }
-
-  handlerBtnColumnDone(e) {
-    // TODO: salvo l'alias per la colonna
-    let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = this.dialogColumns.querySelector('#fieldName').innerText;
-    let alias = document.getElementById('alias-column').value;
-
-    // quando viene selezionata un'altra tabella, rispetto a quella che è stata già inserita nell'Object, deve resettare this.cols
-    // ...altrimenti le colonne contentute in this.cols vengono aggiunte anche alla nuova tabella
-    // TODO: verifico se la tabella su cui si sta operando è già inserita nell'object
-    // console.log(this.columns[tableName]);
-    // console.log(this.columns.hasOwnProperty(tableName));
-    if (!this.columns.hasOwnProperty(tableName)) {this.cols = [];}
-
-    this.cols.push({fieldName, 'sqlFORMAT': null, alias}); // OK 1
-    // console.log(this.cols);
-    let objColumnsParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
-    this.cols.forEach((col) => {
-      // col è un object contenente {fieldName, 'sqlFORMAT': null, alias}
-      // console.log(col);
-      // Inserisco come key il nome del campo, in modo da poter fare il delete this.columns[tablenName][fieldName] quando la colonna viene deselezionata
-      objColumnsParam[col.fieldName] = col;
-    });
-    // console.log(objColumnsParam);
-
-    // this.columns[tableName] = {'campo1': {'sqlFormat': 'DATE_FORMAT', alias}, 'campo2': {'sqlFormat': 'DATE_FORMAT', alias}}; // TEST
-
-    this.columns[tableName] = objColumnsParam;
-    console.log(this.columns);
-    // salvo nella dimensione
-    this.dimension.columns = this.columns;
-    console.log(this.dimension);
-    this.currentFieldSetting.setAttribute('defined', true);
-    this.dialogColumns.close();
-  }
-
-  handlerBtnGroupByDone(e) {
-    // TODO: salvo l'alias per il GroupBy
-    let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = this.dialogGroupBy.querySelector('#fieldName').innerText;
-
-    console.log(this.groupBy.hasOwnProperty(tableName));
-    if (!this.groupBy.hasOwnProperty(tableName)) {this.colsGroupBy = [];}
-
-    this.colsGroupBy.push({fieldName, 'sqlFORMAT': null});
-
-    let objParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
-    this.colsGroupBy.forEach((col) => {
-      objParam[col.fieldName] = col;
-    });
-
-    this.groupBy[tableName] = objParam;
-    console.log(this.groupBy);
-    // salvo nella dimensione
-    this.dimension.groupBy = this.groupBy;
-    console.log(this.dimension);
-    this.currentFieldSetting.setAttribute('defined', true);
-    this.dialogGroupBy.close();
-  }
+  // handlerBtnGroupByDone(e) {
+  //   // TODO: salvo l'alias per il GroupBy
+  //   let tableName = this.activeCardRef.getAttribute('name');
+  //   let fieldName = this.dialogGroupBy.querySelector('#fieldName').innerText;
+  //
+  //   console.log(this.groupBy.hasOwnProperty(tableName));
+  //   if (!this.groupBy.hasOwnProperty(tableName)) {this.colsGroupBy = [];}
+  //
+  //   this.colsGroupBy.push({fieldName, 'sqlFORMAT': null});
+  //
+  //   let objParam = {}; // qui inserisco i parametri della colonna (es.: formattazione, alias, ecc...)
+  //   this.colsGroupBy.forEach((col) => {
+  //     objParam[col.fieldName] = col;
+  //   });
+  //
+  //   this.groupBy[tableName] = objParam;
+  //   console.log(this.groupBy);
+  //   // salvo nella dimensione
+  //   this.dimension.groupBy = this.groupBy;
+  //   console.log(this.dimension);
+  //   this.currentFieldSetting.setAttribute('defined', true);
+  //   this.dialogGroupBy.close();
+  // }
 
   handlerBtnFilterDone() {
     console.log(this);
@@ -367,60 +367,60 @@ class Cube {
     this.toggleAttribute('selected');
   }
 
-  handlerBtnMetricDone() {
-    let tableName = this.activeCardRef.getAttribute('name');
-    let metricName = this.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
-    let fieldName = this.dialogMetrics.querySelector('#fieldName').innerText;
-    let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
-    let distinctOption = document.getElementById('checkbox-distinct').checked;
-    let alias = document.getElementById('alias-metric').value;
-    let arrFilters = [];
-    let filters = {};
-    // TODO: recupero i filtri impostati per questa metrica e li inserisco nell'array
-    // document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
-    document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {
-      // inserisco in filters l'object del filtro selezionato (e non solo il nome), successivamente elimino questo filtro dall'object filters di origine
-      // quindi il filtro sarà applicato a livello metrica e non Report
-      // recupero da this.filters il filtro selezionato
-      console.log(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
-
-      arrFilters.push(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
-
-      arrFilters.forEach((filter) => {
-        filters[li.getAttribute('table-name')] = filter;
-      });
-      console.log(filters);
-
-      // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
-      if (Object.keys(this.filters[li.getAttribute('table-name')]).length === 0) {
-        delete this.filters[li.getAttribute('table-name')];
-      } else {
-        delete this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
-      }
-
-    });
-
-
-    // aggiungo i filtri da associare a questa metrica
-    if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
-    let objParam = {};
-    if (Object.keys(filters).length > 0) {
-      // questa è una metrica filtrata
-      this.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
-      this.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
-      this.filteredMetrics[tableName] = objParam;
-    } else {
-      this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias});
-      this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
-      this.metrics[tableName] = objParam;
-    }
-
-
-    console.log(this.metrics);
-    console.log(this.filteredMetrics);
-    this.currentFieldSetting.setAttribute('defined', true);
-    this.dialogMetrics.close();
-  }
+  // handlerBtnMetricDone() {
+  //   let tableName = this.activeCardRef.getAttribute('name');
+  //   let metricName = this.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
+  //   let fieldName = this.dialogMetrics.querySelector('#fieldName').innerText;
+  //   let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
+  //   let distinctOption = document.getElementById('checkbox-distinct').checked;
+  //   let alias = document.getElementById('alias-metric').value;
+  //   let arrFilters = [];
+  //   let filters = {};
+  //   // TODO: recupero i filtri impostati per questa metrica e li inserisco nell'array
+  //   // document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {filters.push(li.getAttribute('filter-name'));});
+  //   document.querySelectorAll('#metric-filters > li[selected]').forEach((li) => {
+  //     // inserisco in filters l'object del filtro selezionato (e non solo il nome), successivamente elimino questo filtro dall'object filters di origine
+  //     // quindi il filtro sarà applicato a livello metrica e non Report
+  //     // recupero da this.filters il filtro selezionato
+  //     console.log(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+  //
+  //     arrFilters.push(this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+  //
+  //     arrFilters.forEach((filter) => {
+  //       filters[li.getAttribute('table-name')] = filter;
+  //     });
+  //     console.log(filters);
+  //
+  //     // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
+  //     if (Object.keys(this.filters[li.getAttribute('table-name')]).length === 0) {
+  //       delete this.filters[li.getAttribute('table-name')];
+  //     } else {
+  //       delete this.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
+  //     }
+  //
+  //   });
+  //
+  //
+  //   // aggiungo i filtri da associare a questa metrica
+  //   if (!this.metrics.hasOwnProperty(tableName)) {this.colsMetrics = [];}
+  //   let objParam = {};
+  //   if (Object.keys(filters).length > 0) {
+  //     // questa è una metrica filtrata
+  //     this.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
+  //     this.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+  //     this.filteredMetrics[tableName] = objParam;
+  //   } else {
+  //     this.colsMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias});
+  //     this.colsMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+  //     this.metrics[tableName] = objParam;
+  //   }
+  //
+  //
+  //   console.log(this.metrics);
+  //   console.log(this.filteredMetrics);
+  //   this.currentFieldSetting.setAttribute('defined', true);
+  //   this.dialogMetrics.close();
+  // }
 
   removeHierarchy(relationId, value) {
     console.log(relationId);
