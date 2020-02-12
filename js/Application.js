@@ -273,7 +273,7 @@ class Application {
 
   searchInList(e) {
     // console.log(e.path);
-    console.log(e.target.value);
+    // console.log(e.target.value);
 
     // Ricerca in una lista
     (this.value.length > 0) ?

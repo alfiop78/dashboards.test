@@ -136,7 +136,7 @@ var cube = new Cube();
   app.handlerDragEnter = function(e) {
     // console.log('dragEnter');
     e.preventDefault();
-    console.log(e.target);
+    // console.log(e.target);
 
     if (e.target.className === 'dropzone') {
       console.info('DROPZONE');
@@ -151,12 +151,12 @@ var cube = new Cube();
 
   app.handlerDragEnd = function(e) {
     e.preventDefault();
-    console.log('dragEnd');
+    // console.log('dragEnd');
     // console.log(e.target);
     let tmplList = document.getElementById('templateListColumns');
     // elemento dove inserire le colonne della tabella
     let ulContainer = cube.activeCard.querySelector('#columns');
-    console.log(ulContainer);
+    // console.log(ulContainer);
 
     var url = 'ajax/tableInfo.php';
     let params = 'tableName='+cube.table;
@@ -203,15 +203,15 @@ var cube = new Cube();
 
   app.handlerDrop = function(e) {
     e.preventDefault();
-    console.log('drop');
+    // console.log('drop');
     // console.log(e);
     let data = e.dataTransfer.getData('text/plain');
     let card = document.getElementById(data);
     // console.log(e.dataTransfer);
     // console.log(e.target);
     // nuova tabella droppata
-    console.log(card);
-    console.log(app.dragElement);
+    // console.log(card);
+    // console.log(app.dragElement);
     // TODO: dopo il drop elimino l'elemento <li> e imposto il template #cardLayout
     // TODO: la .card .draggable diventa .card .table
     card.className = 'card table';
@@ -258,11 +258,11 @@ var cube = new Cube();
     cube.activeCardRef.parentElement.querySelector('i[groupby]').onclick = app.handlerAddGroupBy;
     cube.activeCardRef.parentElement.querySelector('i[metrics]').onclick = app.handlerAddMetrics;
     // inserisco il nome della tabella nella struttura gerarchica sulla destra
-    const hierarchies = document.getElementById('hierarchies');
-    let id = hierarchies.childElementCount;
+    const hierarchiesTables = document.getElementById('hierTables');
+    let id = hierarchiesTables.childElementCount;
     let dropzone = document.createElement('div');
     dropzone.classList = 'dropzone';
-    hierarchies.appendChild(dropzone);
+    hierarchiesTables.appendChild(dropzone);
     let div = document.createElement('div');
     div.className = 'hier table';
     div.id = 'hier_' + id;
@@ -285,17 +285,17 @@ var cube = new Cube();
 
   app.handlerColumns = function(e) {
     // selezione della colonna nella card table
-    console.log(e.target);
+    // console.log(e.target);
     cube.activeCard = e.path[3];
-    console.log(cube.activeCard);
+    // console.log(cube.activeCard);
 
     let tableName = cube.activeCard.getAttribute('name');
-    console.log(tableName);
+    // console.log(tableName);
     let fieldName = e.target.getAttribute('label');
-    console.log(fieldName);
+    // console.log(fieldName);
 
     let attrs = cube.activeCard.getAttribute('mode');
-    console.log(attrs);
+    // console.log(attrs);
     switch (attrs) {
       case 'hierarchies':
         console.log('hier');
@@ -402,7 +402,7 @@ var cube = new Cube();
 
   app.handlerColumnSetting = function(e) {
     // apro la dialog column-setting
-    console.log(e.target);
+    // console.log(e.target);
     cube.currentFieldSetting = e.target;
     let fieldName = cube.dialogColumns.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
@@ -482,6 +482,8 @@ var cube = new Cube();
     // salvo nella dimensione
     cube.dimension.columns = cube.columns;
     console.log(cube.dimension);
+    // TODO: faccio un check su cube.dimension per vedere se ho completato il primo step (dall'elenco di sinistra)
+    app.checkStepGuide();
     cube.currentFieldSetting.setAttribute('defined', true);
     cube.dialogColumns.close();
   };
@@ -656,6 +658,19 @@ var cube = new Cube();
       delete cube.hierarchyTable['hier_'+value];
       console.log(cube.hierarchyTable);
     }
+  };
+
+  app.checkStepGuide = function() {
+    // per passare allo step successivo l'oggetto cube.dimension deve avere, al proprio interno, almeno un oggetto columns
+    console.log(cube.dimension);
+    const guide = document.getElementsByClassName('guide')[0];
+    const stepActive = guide.querySelector('.steps[active]');
+    if (Object.keys(cube.dimension.columns).length > 0) {
+      stepActive.removeAttribute('active');
+      stepActive.nextElementSibling.setAttribute('active', true);
+
+    }
+
   };
 
 
@@ -1015,11 +1030,12 @@ var cube = new Cube();
 
   app.handlerAddColumns = function(e) {
     // console.log(e.target);
-    console.log(e.path);
+    // console.log(e.path);
+    console.log('add columns');
 
     let cardTable = e.path[3].querySelector('.cardTable');
     cube.activeCard = cardTable;
-    console.log(cardTable);
+    // console.log(cardTable);
     cube.changeMode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
   };
 
@@ -1048,7 +1064,7 @@ var cube = new Cube();
     // pulisco la ul per non duplicare la lista delle colonne
     Array.from(ulFieldsList.querySelectorAll('li')).forEach((item) => {item.remove();});
     // popolo la ul con la lista delle colonne
-    Array.from(cube.activeCard.querySelectorAll('#columns > .element')).forEach((item, i) => {
+    Array.from(cube.activeCard.querySelectorAll('#columns > .element')).forEach((item) => {
       // console.log(item);
       let liElement = item.querySelector('li');
       let li = liElement.cloneNode(true);
@@ -1129,24 +1145,8 @@ var cube = new Cube();
   app.openReportList = function() {app.dialogReportList.showModal();};
 
   /*events */
-  document.querySelectorAll('.card-table').forEach((card) => {
-    // questo imposta l'evento sulla prima card e sulla fact che sono già presenti nel DOM
-    card.onclick = app.handlerCardSelected;
-  });
-  // evento su icona per aggiungere una tabella alla gerarchia
-  // document.querySelector('.icon-relation > span > i[add]').onclick = app.handlerAddTable;
-  // aggiungo onclick sulle icone [hierachies] per la creazione delle gerarchie
-  Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies]')).forEach((btnHierarchies) => {
-    // console.log(btnHierarchies);
-    btnHierarchies.onclick = app.handlerAddHierarchy;
-  });
 
-  Array.from(document.querySelectorAll('.icon-relation > span > i[hierarchies-remove]')).forEach((btnHierarchiesRemove) => {
-    // console.log(btnHierarchiesRemove);
-    btnHierarchiesRemove.onclick = app.handlerRemoveHierarchy;
-  });
-
-  /* tasto OK nella dialog*/
+  /* tasto OK nella dialog dimension name*/
   document.getElementById('btnDimensionSaveName').onclick = function() {
     /*
       Salvo la dimensione, senza il legame con la FACT.
@@ -1258,27 +1258,17 @@ var cube = new Cube();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  app.btnFact.onclick = function() {app.Page.next();};
+  // app.btnFact.onclick = function() {app.Page.next();};
 
   // vado alla pagina reports/index.html
   app.btnPreviewReport.onclick = function() {location.href = '/reports/';};
 
   app.btnBack.onclick = function() {app.Page.previous();};
 
-  // app.btnNewReport.onclick = function(e) {
-  //   // TODO: ritorno allo step 1 e pulisco tutto per creare un nuovo report (dimensioni/cubo)
-  //   app.Page.restart();
-  // };
-
-  /*ricerca dimensioni in elenco di sinistra*/
-  // document.getElementById('dimensionSearch').oninput = App.searchInList;
   /* ricerca cubi in elenco di sinitra*/
   // document.getElementById('cubeSearch').oninput = App.searchInList;
   /* ricerca in lista tabelle */
   document.getElementById('tableSearch').oninput = App.searchInList;
-
-  // icona openReport apre la dialog con la lista di reports già creati
-  // document.querySelector('#openReport').onclick = app.openReportList;
 
   app.inputValueSearch.oninput = App.searchInList;
 
