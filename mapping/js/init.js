@@ -204,7 +204,7 @@ var cube = new Cube();
   app.handlerDrop = function(e) {
     e.preventDefault();
     // console.log('drop');
-    // console.log(e);
+    console.log(e.target);
     let data = e.dataTransfer.getData('text/plain');
     let card = document.getElementById(data);
     // console.log(e.dataTransfer);
@@ -260,28 +260,91 @@ var cube = new Cube();
     // inserisco il nome della tabella nella struttura gerarchica sulla destra
     const hierarchiesTables = document.getElementById('hierTables');
     let id = hierarchiesTables.childElementCount;
-    let dropzone = document.createElement('div');
-    dropzone.classList = 'dropzone';
-    hierarchiesTables.appendChild(dropzone);
+    // let dropzone = document.createElement('div');
+    let hierTables = document.getElementById('hierTables');
+    // dropzone.classList = 'dropzoneHier';
+    // hierarchiesTables.appendChild(dropzone);
     let div = document.createElement('div');
-    div.className = 'hier table';
+    div.className = 'hier table dropzoneHier';
     div.id = 'hier_' + id;
     div.setAttribute('draggable', true);
     div.setAttribute('label', cube.table);
     div.innerHTML = cube.table;
 
-    dropzone.appendChild(div);
+    hierTables.appendChild(div);
+    // imposto sul div l'evento drag&drop
+    div.ondragstart = app.hierDragStart;
+    div.ondragover = app.hierDragOver;
+    div.ondragenter = app.hierDragEnter;
+    div.ondragleave = app.hierDragLeave;
+    div.ondragend = app.hierDragEnd;
+    div.ondrop = app.hierDrop;
 
     // event sui tasti section[options]
     card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
 
   };
 
+  app.hierDragStart = function(e) {
+    console.log('hier drag start');
+    e.dataTransfer.setData('text/plain', e.target.id);
+    // disattivo temporaneamente gli eventi drop e dragend su app.content
+    // OPTIMIZE:
+    app.content.removeEventListener('dragend', app.handlerDragEnd, true);
+    app.content.removeEventListener('drop', app.handlerDrop, true);
+  };
+
+  app.hierDragOver = function(e) {
+    console.log('dragover');
+    e.preventDefault();
+    // console.log(e.target);
+  };
+
+  app.hierDragEnter = function(e) {
+    e.preventDefault();
+    console.log(e.target);
+
+    if (e.target.className === 'dropzoneHier') {
+      console.info('DROPZONE');
+      // TODO: css effect
+    }
+  };
+
+  app.hierDragLeave = function(e) {e.preventDefault();};
+
+  app.hierDragEnd = function(e) {
+    e.preventDefault();
+    // reimposto gli eventi drop e dragend su app.content
+    app.content.addEventListener('dragend', app.handlerDragEnd, true);
+    app.content.addEventListener('drop', app.handlerDrop, true);
+  };
+
+  app.hierDrop = function(e) {
+    e.preventDefault();
+    let data = e.dataTransfer.getData('text/plain');
+    console.log(data);
+    const draggedCard = document.getElementById(data);
+    const nextCard = draggedCard.nextElementSibling;
+    // e.target.before(document.getElementById(data));
+    // TODO: verifico se il target è l'elemento successivo o precedente, se successivo effettuo un after() altrimenti un before()
+    if (e.target === nextCard) {
+      console.log('after');
+      e.target.after(document.getElementById(data));
+    } else {
+      console.log('before');
+      e.target.before(document.getElementById(data));
+    }
+    // let parent = document.getElementById('hierTables');
+    // parent.replaceChild(document.getElementById(data), e.target);
+  };
+
   app.content.ondragover = app.handlerDragOver;
   app.content.ondragenter = app.handlerDragEnter;
   app.content.ondragleave = app.handlerDragLeave;
-  app.content.ondrop = app.handlerDrop;
-  app.content.ondragend = app.handlerDragEnd;
+  // app.content.ondrop = app.handlerDrop;
+  app.content.addEventListener('drop', app.handlerDrop, true);
+  // app.content.ondragend = app.handlerDragEnd;
+  app.content.addEventListener('dragend', app.handlerDragEnd, true);
 
   app.handlerColumns = function(e) {
     // selezione della colonna nella card table
@@ -1314,6 +1377,8 @@ var cube = new Cube();
     e.target.toggleAttribute('open');
     document.getElementById('tableSearch').focus();
   };
+
+
 
   /*events */
 
