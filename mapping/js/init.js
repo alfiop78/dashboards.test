@@ -326,14 +326,9 @@ var cube = new Cube();
     const draggedCard = document.getElementById(data);
     const nextCard = draggedCard.nextElementSibling;
     // e.target.before(document.getElementById(data));
-    // TODO: verifico se il target è l'elemento successivo o precedente, se successivo effettuo un after() altrimenti un before()
-    if (e.target === nextCard) {
-      console.log('after');
-      e.target.after(document.getElementById(data));
-    } else {
-      console.log('before');
-      e.target.before(document.getElementById(data));
-    }
+    // verifico se il target è l'elemento successivo o precedente, se successivo effettuo un after() altrimenti un before()
+    (e.target === nextCard) ? e.target.after(document.getElementById(data)) : e.target.before(document.getElementById(data));
+
     // let parent = document.getElementById('hierTables');
     // parent.replaceChild(document.getElementById(data), e.target);
   };
@@ -514,7 +509,7 @@ var cube = new Cube();
     // this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
   };
 
-  app.handlerBtnColumnDone = function(e) {
+  app.handlerBtnColumnDone = function() {
     // TODO: salvo l'alias per la colonna
     let tableName = cube.activeCard.getAttribute('name');
     let fieldName = cube.dialogColumns.querySelector('#fieldName').innerText;
@@ -731,6 +726,8 @@ var cube = new Cube();
     if (Object.keys(cube.dimension.columns).length > 0) {
       stepActive.removeAttribute('active');
       stepActive.nextElementSibling.setAttribute('active', true);
+      // visualizzo anche hierarchiesContainer inizialmente nascosto
+      document.getElementById('hierarchiesContainer').removeAttribute('hidden');
 
     }
 
