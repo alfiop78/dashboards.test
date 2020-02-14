@@ -16,7 +16,7 @@ var cube = new Cube();
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogReportList : document.getElementById('dialog-report-list'),
     dialogFilters : document.getElementById('filter-setting'),
-    btnFact : document.getElementById('mdc-next'),
+    btnFact : document.getElementById('mdc-fact'),
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
@@ -1241,7 +1241,7 @@ var cube = new Cube();
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
       // TODO: creo un contenitorre per le dimensioni salvate, con dentro le tabelle che ne fanno parte.
     */
-    
+
     cube.dimensionTitle = document.getElementById('dimensionName').value;
     // cube.dimension
     const storage = new DimensionStorage();
@@ -1326,7 +1326,9 @@ var cube = new Cube();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  // app.btnFact.onclick = function() {app.Page.next();};
+  app.btnFact.onclick = function() {
+    console.log('FACT');
+  };
 
   // vado alla pagina reports/index.html
   app.btnPreviewReport.onclick = function() {location.href = '/reports/';};
