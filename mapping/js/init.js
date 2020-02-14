@@ -27,6 +27,8 @@ var cube = new Cube();
     btnFilterDone : document.getElementById('btnFilterDone'),
     inputFilterValues : document.getElementById('filter-values'),
 
+    btnSaveDimension : document.getElementById('saveDimension'),
+
     tmplCloseTable : document.getElementById('closeTable'), // tasto close table
     tmplInputSearch : document.getElementById('inputSearch'), // input per ricerca fields nelle tabelle
     tmplSectionOption : document.getElementById('sectionOption'), // options laterale per ogni tabella
@@ -669,6 +671,7 @@ var cube = new Cube();
         console.log(cube.hierarchyOrder);
         cube.dimension.hierarchyOrder = cube.hierarchyOrder;
         console.log(cube.dimension);
+        app.checkStepGuide();
       }
     });
   };
@@ -723,11 +726,33 @@ var cube = new Cube();
     console.log(cube.dimension);
     const guide = document.getElementsByClassName('guide')[0];
     const stepActive = guide.querySelector('.steps[active]');
-    if (Object.keys(cube.dimension.columns).length > 0) {
+    //verificare prima se è valorizzato cube.dimension.columns e anche cube.hierarchies
+    if (Object.keys(cube.dimension).length > 0) {
       stepActive.removeAttribute('active');
       stepActive.nextElementSibling.setAttribute('active', true);
       // visualizzo anche hierarchiesContainer inizialmente nascosto
       document.getElementById('hierarchiesContainer').removeAttribute('hidden');
+      // TODO: se ci sono due tabelle e nessuna relazione creata NON abilito saveDimension
+      // tabelle trovate
+      let tableFounded = app.body.querySelectorAll('.card.table').length;
+      // console.log((cube.dimension.hasOwnProperty('hierarchies')));
+      switch (tableFounded) {
+        case 1:
+          // console.log('una tabella');
+          // controllo solo se ci sono le colonne
+          if (cube.dimension.hasOwnProperty('columns')) {
+            // console.log('abilito btnSaveDimension');
+            app.btnSaveDimension.classList.remove('md-dark','md-inactive'); // NOTE: classList.remove rimuovere più elementi con classList
+          }
+          break;
+        default:
+          // console.log('due tabelle');
+          if (cube.dimension.hasOwnProperty('hierarchies') && cube.dimension.hasOwnProperty('columns')) {
+            // console.log('abilito btnSaveDimension');
+            app.btnSaveDimension.classList.remove('md-dark','md-inactive'); // NOTE: classList.remove rimuovere più elementi con classList
+          }
+
+      }
 
     }
 
@@ -1258,7 +1283,7 @@ var cube = new Cube();
     // app.dialogDimensionName.close();
   };
 
-  document.getElementById('saveDimension').onclick = function() {app.dialogDimensionName.showModal();};
+  app.btnSaveDimension.onclick = function() {app.dialogDimensionName.showModal();};
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
   // document.getElementById('btnCubeSaveName').onclick = function() {
