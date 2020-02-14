@@ -768,6 +768,8 @@ var cube = new Cube();
     // TODO: rimettere la card chiusa al suo posto originario, nel drawer
     e.path[5].remove();
     // TODO: eliminare anche dal flusso delle gerarchie sulla destra
+
+    // TODO: controllo struttura gerarchiiccaaa app.checkStepGuide
   };
 
   app.getDimensions = function() {
@@ -1239,6 +1241,7 @@ var cube = new Cube();
       // TODO: Visualizzo nell'elenco di sinistra la dimensione appena creata
       // TODO: creo un contenitorre per le dimensioni salvate, con dentro le tabelle che ne fanno parte.
     */
+    
     cube.dimensionTitle = document.getElementById('dimensionName').value;
     // cube.dimension
     const storage = new DimensionStorage();
@@ -1261,26 +1264,6 @@ var cube = new Cube();
     storage.dimension = cube.dimension;
 
     app.dialogDimensionName.close();
-
-    // return;
-    //
-    // // in cube.cube.hierarchies inserisco solo la/le relazione/i tra l'ultima tabella della gerarchia e la FACT
-    // cube.cube['hierarchies'] = cube.hierarchyFact;
-    // let hierarchies = {};
-    // // TODO: da rivedere perchè le gerarchie dovrebbero essere tutte hier_ e non più fact_ e hier_
-    // Object.keys(cube.hierarchyTable).forEach((rel) => {if (rel.substring(0, 5) === 'hier_') {hierarchies[rel] = cube.hierarchyTable[rel];}});
-    // // ... mentre, nella dimensione inserisco solo le relazioni tra tabelle e non la relazione con la FACT
-    // objDimension.hierarchies = hierarchies;
-    // objDimension.type = 'DIMENSION';
-    // // TODO: fare in modo che type viene inserito nella root del json, quindi eliminare un livello da cube.dimension
-    //
-    // cube.dimension[cube.dimensionTitle] = objDimension;
-    // console.log(cube.dimension);
-    //
-    // storage.dimension = cube.dimension;
-    //
-    // // app.cloneLastTable();
-    // app.dialogDimensionName.close();
   };
 
   app.btnSaveDimension.onclick = function() {app.dialogDimensionName.showModal();};
