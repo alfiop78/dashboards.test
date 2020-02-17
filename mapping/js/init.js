@@ -725,7 +725,10 @@ var cube = new Cube();
     // per passare allo step successivo l'oggetto cube.dimension deve avere, al proprio interno, almeno un oggetto columns
     console.log(cube.dimension);
     const guide = document.getElementsByClassName('guide')[0];
+    console.log(guide);
     const stepActive = guide.querySelector('.steps[active]');
+    console.log(stepActive);
+    debugger;
     //verificare prima se è valorizzato cube.dimension.columns e anche cube.hierarchies
     if (Object.keys(cube.dimension).length > 0) {
       stepActive.removeAttribute('active');
