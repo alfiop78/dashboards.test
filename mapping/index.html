@@ -387,6 +387,7 @@
 
             <div class="actions">
               <span class="popupContent"><i id="openTableList" class="material-icons md-24">view_list</i><small class="popup">Lista tabelle</small></span>
+              <span class="popupContent"><i id="openDimensionList" class="material-icons md-24">view_list</i><small class="popup">Lista Dimensioni</small></span>
               <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova dimensione</small></span>
               <span class="popupContent"><i id="openReport" class="material-icons md-24 md-dark md-inactive">folder_open</i><small class="popup">Apri Report</small></span>
             </div>
@@ -401,23 +402,39 @@
               </div>
             </div>
 
+            <div class="lists">
+              <template id="dimension">
+                <div class="element dimensions">
+                  <h5>dim title</h5>
+                  <template id="miniCard"><div class="miniCard"><h6></h6></div></template>
+                </div>
+              </template>
+              <div class="absList" id="dimensionList" hidden>
+                <div class="md-field">
+                  <input type="search" id="dimensionSearch" value=""/>
+                  <label for="dimensionSearch" class="">Ricerca</label>
+                </div>
+                <ul id="dimensions"></ul>
+              </div>
+            </div>
+
             <section class="guide">
               <h5>Step</h5>
-              <div class="steps" active>
+              <div id="step-1" class="steps" active>
                 <span>1</span>
                 <div class="step">
                   <span class="title">Definire i livelli dimensionali</span>
                   <small>Selezionare la tabelle per creare le dimensioni</small>
                 </div>
               </div>
-              <div class="steps">
+              <div id="step-2" class="steps">
                 <span>2</span>
                 <div class="step">
                   <span class="title">Struttura gerarchica</span>
                   <small>Definire la struttura gerarchica nell'elenco di destra. L'ultima tabella verrà associata alla FACT</small>
                 </div>
               </div>
-              <div class="steps">
+              <div id="step-3" class="steps">
                 <span>3</span>
                 <div class="step">
                   <span class="title">Imposta tabella Fact</span>
@@ -446,29 +463,10 @@
                   <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova gerarchia</small></span>
                 </div>
 
-
               </section>
             </div>
 
-            <div id="dimensions">
-
-            </div>
-
-            <template id="dimension">
-              <section class="dimensions">
-                <h5>dim title</h5>
-                <template id="miniCard">
-                  <div class="miniCard">
-                    <h6></h6>
-                  </div>
-                </template>
-
-              </section>
-            </template>
-
-            <!-- <section class="area dropzone">
-              <h5>Trascina qui le tabelle da aggiungere</h5>
-            </section> -->
+            <!-- <div id="dimensions"></div> -->
 
           </div>
 
@@ -478,7 +476,7 @@
           <div id="fabs">
             <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
-            <button id="mdc-fact" class="button dense raised" hidden data-associated-page="1">FACT</button>
+            <button id="mdc-newFact" class="button dense raised" hidden data-associated-page="1">Imposta nuovo Cubo</button>
             <button id="mdc-preview-report" class="button dense raised" hidden data-associated-page="2" disabled>report preview</button>
           </div>
         </div>

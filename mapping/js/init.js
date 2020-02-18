@@ -16,7 +16,8 @@ var cube = new Cube();
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogReportList : document.getElementById('dialog-report-list'),
     dialogFilters : document.getElementById('filter-setting'),
-    btnFact : document.getElementById('mdc-fact'),
+    dialogMetrics : document.getElementById('metric-setting'),
+
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
     btnPreviewReport : document.getElementById('mdc-preview-report'),
@@ -36,6 +37,11 @@ var cube = new Cube();
     // tasto openTableList
     btnTableList : document.getElementById('openTableList'),
     tableList : document.getElementById('tableList'),
+    // tasto openDimensionList per l'apertura dell'elenco delle dimensioni
+    btnDimensionList : document.getElementById('openDimensionList'),
+    dimensionList : document.getElementById('dimensionList'),
+
+    btnNewFact : document.getElementById('mdc-newFact'),
 
     card : null,
     cardTitle : null,
@@ -235,6 +241,8 @@ var cube = new Cube();
     card.appendChild(cardLayout);
 
     app.body.appendChild(card);
+    // tabella fact viene colorata in modo diverso
+    if (app.btnTableList.hasAttribute('fact')) card.setAttribute('fact', true);
 
     // imposto la card draggata nella posizione dove si trova il mouse
     card.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
@@ -488,15 +496,15 @@ var cube = new Cube();
   };
 
   app.handlerMetricSetting = function(e) {
-    // appro la dialog per filters
+    // appro la dialog per metrics
     // console.log(e);
     // visualizzo la lista dei filtri creati, per poterli associare alla metrica
-    this.createFiltersList();
+    app.createFiltersList();
     cube.currentFieldSetting = e.target;
-    let fieldName = this.dialogMetrics.querySelector('#fieldName');
+    let fieldName = app.dialogMetrics.querySelector('#fieldName');
     fieldName.innerHTML = e.path[1].querySelector('li').getAttribute('label');
 
-    cube.dialogMetrics.showModal();
+    app.dialogMetrics.showModal();
     // resetto i campi della dialog
     // TODO: dovrò vedere se ho cliccato su una metrica già impostata, se già impostata, presente in this.metrics,
     // ...ripropongo i dati precedentemente salvati, altrimenti azzero la dialog
@@ -507,8 +515,52 @@ var cube = new Cube();
       filter.removeAttribute('selected');
     });
     // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    cube.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
+    app.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
     // this.dialogMetrics.querySelector('#btnMetricDone').onclick = this.handlerBtnMetricDone.bind(this);
+  };
+
+  app.createFiltersList = function() {
+    // aggiungo il filtro creato alla dialog metric-setting in modo da poter associare i filtri a una determinata metrica
+    // recupero l'elenco dei filtri già presenti in metric-filters, lo inserisco in un array per confrontarlo con this.filters
+    let metricFiltersList = Array.from(app.dialogMetrics.querySelectorAll('#metric-filters > li'));
+    // console.log(metricFiltersList);
+    let arrMetricFilters = [];
+    metricFiltersList.forEach((filter) => {arrMetricFilters.push(filter.getAttribute('filter-name'));});
+    console.log(arrMetricFilters);
+
+    if (Object.keys(cube.filters).length > 0) {
+      let metricFiltersUl = document.getElementById('metric-filters');
+      console.log(cube.filters);
+
+      Array.from(Object.keys(cube.filters)).forEach((table) => {
+        console.log(table);
+        // console.log(this.filters[table]);
+        // per ogni tabella recupero i propri filtri per inserirli in un elenco
+        Array.from(Object.keys(cube.filters[table])).forEach((filter) => {
+          console.log(filter);
+          // verifico ogni filtro...
+          // ...se questo filtro è già presente nell'elenco non lo inserisco
+          if (!arrMetricFilters.includes(cube.filters[table][filter].filterName) ) {
+            let li = document.createElement('li');
+            li.innerText = cube.filters[table][filter].filterName;
+            li.setAttribute('filter-name', cube.filters[table][filter].filterName);
+            li.setAttribute('table-name', table);
+            li.setAttribute('field-name', cube.filters[table][filter].fieldName);
+            li.setAttribute('operator', cube.filters[table][filter].operator);
+            li.setAttribute('values', cube.filters[table][filter].values);
+            metricFiltersUl.appendChild(li);
+            li.onclick = app.handlerFilterMetric;
+          }
+        });
+      });
+    }
+
+  };
+
+  app.handlerFilterMetric = function(e) {
+    // selezione filtro da associare alla metrica
+    // console.log(this);
+    e.target.toggleAttribute('selected');
   };
 
   app.handlerBtnColumnDone = function() {
@@ -543,7 +595,7 @@ var cube = new Cube();
     cube.dimension.columns = cube.columns;
     console.log(cube.dimension);
     // TODO: faccio un check su cube.dimension per vedere se ho completato il primo step (dall'elenco di sinistra)
-    app.checkStepGuide();
+    app.checkStepGuide(2);
     cube.currentFieldSetting.setAttribute('defined', true);
     cube.dialogColumns.close();
   };
@@ -574,8 +626,8 @@ var cube = new Cube();
 
   app.handlerBtnMetricDone = function(e) {
     let tableName = cube.activeCard.getAttribute('name');
-    let metricName = cube.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
-    let fieldName = cube.dialogMetrics.querySelector('#fieldName').innerText;
+    let metricName = app.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
+    let fieldName = app.dialogMetrics.querySelector('#fieldName').innerText;
     let sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     let distinctOption = document.getElementById('checkbox-distinct').checked;
     let alias = document.getElementById('alias-metric').value;
@@ -602,9 +654,7 @@ var cube = new Cube();
       } else {
         delete cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
       }
-
     });
-
 
     // aggiungo i filtri da associare a questa metrica
     if (!cube.metrics.hasOwnProperty(tableName)) {cube.colsMetrics = [];}
@@ -624,7 +674,7 @@ var cube = new Cube();
     console.log(cube.metrics);
     console.log(cube.filteredMetrics);
     cube.currentFieldSetting.setAttribute('defined', true);
-    cube.dialogMetrics.close();
+    app.dialogMetrics.close();
   };
 
   app.createHierarchy = function(e) {
@@ -671,7 +721,7 @@ var cube = new Cube();
         console.log(cube.hierarchyOrder);
         cube.dimension.hierarchyOrder = cube.hierarchyOrder;
         console.log(cube.dimension);
-        app.checkStepGuide();
+        app.checkStepGuide(2);
       }
     });
   };
@@ -721,20 +771,19 @@ var cube = new Cube();
     }
   };
 
-  app.checkStepGuide = function() {
+  app.checkStepGuide = function(step) {
     // per passare allo step successivo l'oggetto cube.dimension deve avere, al proprio interno, almeno un oggetto columns
+    // se invece sono presenti più tabelle deve essere presente non solo cube.dimension.columns ma anche cube.dimension.hierarchies
     console.log(cube.dimension);
     const guide = document.getElementsByClassName('guide')[0];
     console.log(guide);
     const stepActive = guide.querySelector('.steps[active]');
+    const stepToActivate = document.getElementById('step-'+step); // step da attivare
     console.log(stepActive);
-    debugger;
+    let toActivate = false; // flag di controllo
     //verificare prima se è valorizzato cube.dimension.columns e anche cube.hierarchies
     if (Object.keys(cube.dimension).length > 0) {
-      stepActive.removeAttribute('active');
-      stepActive.nextElementSibling.setAttribute('active', true);
-      // visualizzo anche hierarchiesContainer inizialmente nascosto
-      document.getElementById('hierarchiesContainer').removeAttribute('hidden');
+
       // TODO: se ci sono due tabelle e nessuna relazione creata NON abilito saveDimension
       // tabelle trovate
       let tableFounded = app.body.querySelectorAll('.card.table').length;
@@ -746,6 +795,7 @@ var cube = new Cube();
           if (cube.dimension.hasOwnProperty('columns')) {
             // console.log('abilito btnSaveDimension');
             app.btnSaveDimension.classList.remove('md-dark','md-inactive'); // NOTE: classList.remove rimuovere più elementi con classList
+            toActivate = true;
           }
           break;
         default:
@@ -753,16 +803,21 @@ var cube = new Cube();
           if (cube.dimension.hasOwnProperty('hierarchies') && cube.dimension.hasOwnProperty('columns')) {
             // console.log('abilito btnSaveDimension');
             app.btnSaveDimension.classList.remove('md-dark','md-inactive'); // NOTE: classList.remove rimuovere più elementi con classList
+            toActivate = true;
           }
 
+      }
+      if (toActivate) {
+        stepActive.removeAttribute('active');
+        stepToActivate.setAttribute('active', true);
+        // stepActive.nextElementSibling.setAttribute('active', true);
+        // visualizzo anche hierarchiesContainer inizialmente nascosto
+        document.getElementById('hierarchiesContainer').removeAttribute('hidden');
       }
 
     }
 
   };
-
-
-  // App.getSessionName();
 
   app.handlerCloseCard = function(e) {
     // elimino la card e la rivisualizzo nel drawer (spostata durante il drag&drop)
@@ -780,10 +835,10 @@ var cube = new Cube();
     // const tmplDimension = document.getElementById('dimension');
     const dimension = new DimensionStorage();
     let obj = dimension.list();
-    // console.log(obj);
+    console.log(obj);
     const tmplDimension = document.getElementById('dimension');
     Array.from(Object.keys(obj)).forEach((dimName) => {
-      // console.log(dimName);
+      console.log(dimName);
       let tmplContent = tmplDimension.content.cloneNode(true);
       let section = tmplContent.querySelector('.dimensions');
       section.querySelector('h5').innerHTML = dimName;
@@ -1267,6 +1322,23 @@ var cube = new Cube();
     storage.dimension = cube.dimension;
 
     app.dialogDimensionName.close();
+    app.checkStepGuide(3);
+    // chiudo le card presenti
+    app.closeCards();
+    // visualizzo le dimensioni create
+    // imposto, sulla icona openTableList, il colore della fact
+    app.btnTableList.setAttribute('fact', true);
+    app.getDimensions(); // TODO: qui andrò ad aggiornare solo la dimensione appena salvata/modificata
+
+
+  };
+
+  app.closeCards = function() {
+    document.querySelectorAll('.card.table').forEach((item) => {
+      console.log(item);
+      item.remove();
+    });
+
   };
 
   app.btnSaveDimension.onclick = function() {app.dialogDimensionName.showModal();};
@@ -1329,9 +1401,10 @@ var cube = new Cube();
     li.onclick = app.handlerFunctionOperatorList;
   });
 
-  app.btnFact.onclick = function() {
-    console.log('FACT');
+  app.btnNewFact.onclick = function() {
+    app.btnTableList.setAttribute('fact', true);
   };
+
 
   // vado alla pagina reports/index.html
   app.btnPreviewReport.onclick = function() {location.href = '/reports/';};
@@ -1388,13 +1461,20 @@ var cube = new Cube();
     document.getElementById('tableSearch').focus();
   };
 
+  app.btnDimensionList.onclick = function(e) {
+    const dimensionList = document.getElementById('dimensionList');
+    dimensionList.toggleAttribute('hidden');
+    e.target.toggleAttribute('open');
+    document.getElementById('dimensionSearch').focus();
+  };
+
 
 
   /*events */
 
   app.getDatabaseTable();
 
-  // app.getDimensions();
+  app.getDimensions();
 
   app.getCubes();
 

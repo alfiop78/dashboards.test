@@ -269,13 +269,13 @@ class DimensionStorage extends Storages {
     // let dimensions = [];
     let dimObj = {};
     this.storageKeys.forEach((key) => {
+      // console.log(key);
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
-      // console.log(jsonStorage[key]);
-      if (jsonStorage[key] && jsonStorage[key].type === 'DIMENSION') {
-        // console.log(jsonStorage[key].from);
-        // dimensions.push(key, jsonStorage[key].from);
-        dimObj[key] = jsonStorage[key].from;
+      // console.log(jsonStorage.type);
+      if (jsonStorage.type === 'DIMENSION') {
+        console.log(key);
+        dimObj[key] = jsonStorage.from;
       }
     });
     // return dimensions;

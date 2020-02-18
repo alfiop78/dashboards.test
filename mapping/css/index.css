@@ -160,7 +160,7 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 .card.table .cardTable > .title > h6{padding: 8px 8px 16px 8px; margin: 0;font-size: .75rem;width: 100%;}
 .card.table .cardTable > .title > h6:hover{cursor: grab;}
 
-.card.table .cardTable[fact] > .title{background: var(--main-primary-color);color: white;}
+.card.table[fact] .title{background: var(--main-primary-color);color: white;}
 
 .card.table .cardTable > .md-field{grid-area: input;}
 .card.table .cardTable > ul{grid-area: body;}
@@ -169,10 +169,7 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 /*icona bookmark su tabelle selezionate*/
 .card.table[selected] i[data-id="selectTable"]{color: var(--main-primary-color);}
 
-/* dimensions*/
-#dimensions{position: absolute;}
-.dimensions{width: auto;background: white;border-radius: 4px;padding: 8px;margin: 4px;}
-/* dimensions*/
+.element.dimensions{flex-flow: column;background: burlywood;}
 
 /*guide*/
 .guide{position: absolute;max-width: 300px;}

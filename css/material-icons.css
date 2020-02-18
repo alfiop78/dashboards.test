@@ -13,7 +13,8 @@
 .material-icons.sale{border-radius: 6px;box-shadow: 0 1px 8px 1px #848484;background-color: darkgoldenrod;}
 .material-icons.md-important-medium{color: olivedrab;}
 
-.material-icons[open]{color: var(--main-primary-color);}
+.material-icons[open]{color: var(--main-secondary-color);}
+.material-icons[fact]{color: var(--main-primary-color);}
 
 
 /* Rules for using icons as white on a dark background. */
