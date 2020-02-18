@@ -257,6 +257,7 @@ class DimensionStorage extends Storages {
   constructor() {
     super();
     this.id = 0; // default
+    this._name;
   }
 
   set dimensionId(value) {
@@ -264,6 +265,15 @@ class DimensionStorage extends Storages {
   }
 
   get dimensionId() { return this.id; }
+
+  set selected(value) {
+    // imposto la dimensione selezionata
+    this._name = value;
+  }
+
+  get selected() {
+    return JSON.parse(this.storage.getItem(this._name));
+  }
 
   list() {
     // let dimensions = [];
@@ -274,7 +284,7 @@ class DimensionStorage extends Storages {
       // console.log(jsonStorage);
       // console.log(jsonStorage.type);
       if (jsonStorage.type === 'DIMENSION') {
-        console.log(key);
+        // console.log(key);
         dimObj[key] = jsonStorage.from;
       }
     });

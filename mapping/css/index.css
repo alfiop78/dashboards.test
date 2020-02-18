@@ -170,6 +170,7 @@ div.textarea > span.formulaValues{/*background: #d2e1c8;*/border-bottom: solid t
 .card.table[selected] i[data-id="selectTable"]{color: var(--main-primary-color);}
 
 .element.dimensions{flex-flow: column;background: burlywood;}
+.element.dimensions > h5:hover{cursor: pointer;color: var(--main-primary-color);}
 
 /*guide*/
 .guide{position: absolute;max-width: 300px;}
