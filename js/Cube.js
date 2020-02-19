@@ -23,6 +23,7 @@ class Cube {
     this.dialogColumns = document.getElementById('column-setting');
     this.dialogGroupBy = document.getElementById('groupby-setting');
     this.currentFieldSetting = null;
+    this.dimensions = [];
   }
 
   set cubeId(value) {
@@ -36,6 +37,10 @@ class Cube {
 
   set dimensionTitle(value) {this.dimension_title = value;}
   get dimensionTitle() {return this.dimension_title;}
+
+  set dimensionsSelected(value) {this.dimensions.push(value);}
+
+  get dimensionsSelected() {return this.dimensions;}
 
   set table(value) {
     this.tableSelected = value;

@@ -198,8 +198,11 @@ var cube = new Cube();
     card.appendChild(cardLayout);
 
     app.body.appendChild(card);
-    // tabella fact viene colorata in modo diverso
-    if (app.btnTableList.hasAttribute('fact')) card.setAttribute('fact', true);
+    // tabella fact viene colorata in modo diverso, imposto attributo fact sia sulla .card.table che sulla .cardTable
+    if (app.btnTableList.hasAttribute('fact')) {
+      card.setAttribute('fact', true);
+      card.querySelector('.cardTable').setAttribute('fact', true);
+    }
 
     // imposto la card draggata nella posizione dove si trova il mouse
     card.style.transform = 'translate3d(' + e.offsetX + 'px, ' + e.offsetY + 'px, 0)';
@@ -343,7 +346,7 @@ var cube = new Cube();
             if (name.substring(0, 9) === 'data-rel-') {
               relationId = name;
               value = e.target.getAttribute(name);
-              debugger;
+              // debugger;
               app.removeHierarchy(relationId, value);
               // this.removeHierarchy(relationId, value);
             }
@@ -362,7 +365,7 @@ var cube = new Cube();
             liRelationSelected.toggleAttribute('selected');
           }
         }
-        debugger;
+        // debugger;
         app.createHierarchy();
         // this.createHierarchy();
 
@@ -648,16 +651,29 @@ var cube = new Cube();
         colSelected.push(liRef);
         hier.push(tableName+'.'+liRef.innerText);
       }
-      // console.log(hier);
+      console.log(hier);
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
         cube.relationId++;
         // se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
         // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
-
-        // 15.11 - Le relazioni tra tabelle hier_n le inserisco direttamente in this.dimension
-        // console.log(card);
-        (card.hasAttribute('fact')) ? cube.hierarchyFact['hier_'+cube.relationId] = hier : cube.hierarchyTable['hier_'+cube.relationId] = hier;
+        if (card.hasAttribute('fact')) {
+          cube.hierarchyFact['hier_'+cube.relationId] = hier;
+          console.log(cube.hierarchyFact);
+        } else {
+          cube.hierarchyTable['hier_'+cube.relationId] = hier;
+          cube.dimension.hierarchies = cube.hierarchyTable;
+          console.log(cube.dimension);
+          // ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
+          Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
+            cube.hierarchyOrder[i] = table.getAttribute('label');
+          });
+          console.log(cube.hierarchyOrder);
+          cube.dimension.hierarchyOrder = cube.hierarchyOrder;
+          console.log(cube.dimension);
+          app.checkStepGuide(2);
+          console.log(cube.hierarchyTable);
+        }
         // (card.hasAttribute('fact-table')) ? this.hierarchyFact['fact_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
 
         // visualizzo l'icona per capire che c'è una relazione tra le due colonne
@@ -668,18 +684,6 @@ var cube = new Cube();
           // la relazione è stata creata, posso eliminare [selected]
           el.removeAttribute('selected');
         });
-        console.log(cube.hierarchyFact);
-        console.log(cube.hierarchyTable);
-        cube.dimension.hierarchies = cube.hierarchyTable;
-        console.log(cube.dimension);
-        // TODO: ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
-        Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
-          cube.hierarchyOrder[i] = table.getAttribute('label');
-        });
-        console.log(cube.hierarchyOrder);
-        cube.dimension.hierarchyOrder = cube.hierarchyOrder;
-        console.log(cube.dimension);
-        app.checkStepGuide(2);
       }
     });
   };
@@ -1339,7 +1343,6 @@ var cube = new Cube();
     app.btnTableList.setAttribute('fact', true);
     app.getDimensions(); // TODO: qui andrò ad aggiornare solo la dimensione appena salvata/modificata
 
-
   };
 
   app.closeCards = function() {
@@ -1356,6 +1359,38 @@ var cube = new Cube();
 
   app.btnSaveCubeName.onclick = function(e) {
     console.log('cube save');
+    cube.cubeTitle = document.getElementById('cubeName').value;
+    // recupero le dimensioni che sono state associate a queto cubo
+    const storage = new DimensionStorage();
+    console.log(cube.dimensionsSelected);
+    let dimensionObject = {};
+    cube.dimensionsSelected.forEach((dimensionName) => {
+      console.log(dimensionName);
+      storage.selected = dimensionName;
+      console.log(storage.selected);
+      dimensionObject[dimensionName] = storage.selected;
+      // TODO: salvo la/le dimenioni scelte nell'object cube
+      cube.cube.associatedDimensions = dimensionObject;
+    });
+    console.log(cube.cube);
+    console.log(cube.cube.associatedDimensions);
+
+
+    cube.cube.metrics = cube.metrics;
+    cube.cube.filteredMetrics = cube.filteredMetrics;
+    cube.cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
+    cube.cube.name = cube.cubeTitle;
+    let cubeStorage = new CubeStorage();
+
+    // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
+    cube.cube.cubeId = cubeStorage.getIdAvailable();
+    console.log(cube.cube.cubeId);
+    console.log(cube.cube);
+    // salvo il cubo in localStorage
+    cubeStorage.save = cube.cube;
+    cubeStorage.stringifyObject = cube.cube;
+    console.log('ajaxReq');
+
   };
 
   /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
@@ -1418,6 +1453,8 @@ var cube = new Cube();
 
   app.btnNewFact.onclick = function() {
     app.btnTableList.setAttribute('fact', true);
+    // nascondo .guide
+    document.getElementById('guide').setAttribute('hidden', true);
   };
 
 
@@ -1490,6 +1527,8 @@ var cube = new Cube();
     const storage = new DimensionStorage();
     let lastTableInHierarchy;
     storage.selected = e.target.getAttribute('label');
+    // memorizzo la dimensione selezionata per recuperarla nel salvataggio del cubo
+    cube.dimensionsSelected = e.target.getAttribute('label');
     // recupero tutta la dimensione selezionata, dallo storage
     console.log(storage.selected);
     // TODO: tramite questa dimensione vado a ricreare l'ultima tabella della relazione, reimpostando le colonne/filtri/groupBy impostati su questa tabella
@@ -1511,6 +1550,7 @@ var cube = new Cube();
     let tmpl = document.getElementById('cardLayoutLastTable');
     let content = tmpl.content.cloneNode(true);
     let cardLayout = content.querySelector('.cardLayout');
+    cardLayout.querySelector('.cardTable').setAttribute('fact', true);
     // imposto il titolo in h6
 
     cardLayout.querySelector('h6').innerHTML = lastTableInHierarchy;
