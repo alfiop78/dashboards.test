@@ -18,7 +18,7 @@ class Cube {
     this.groupBy = new Object();
     this.colsGroupBy = [];
     this.relationId = 0;
-    // this.dialogFilters = document.getElementById('filter-setting');
+    this.dialogFilters = document.getElementById('filter-setting');
     // this.dialogMetrics = document.getElementById('metric-setting');
     this.dialogColumns = document.getElementById('column-setting');
     this.dialogGroupBy = document.getElementById('groupby-setting');

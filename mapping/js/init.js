@@ -1326,6 +1326,7 @@ var cube = new Cube();
       }
     });
     cube.dimension.type = 'DIMENSION';
+    cube.dimension.filters = cube.filters;
     // console.log(obj);
     // debugger;
     // console.log(cube.dimension);
@@ -1342,6 +1343,10 @@ var cube = new Cube();
     // imposto, sulla icona openTableList, il colore della fact
     app.btnTableList.setAttribute('fact', true);
     app.getDimensions(); // TODO: qui andrò ad aggiornare solo la dimensione appena salvata/modificata
+
+    console.log(cube.dimension);
+    delete cube.dimension;
+    console.log(cube.dimension);
 
   };
 
@@ -1374,6 +1379,9 @@ var cube = new Cube();
     });
     console.log(cube.cube);
     console.log(cube.cube.associatedDimensions);
+    cube.cube.type = 'CUBE';
+    console.log(cube.hierarchyFact);
+    cube.cube.hierarchies = cube.hierarchyFact;
 
 
     cube.cube.metrics = cube.metrics;
@@ -1390,6 +1398,8 @@ var cube = new Cube();
     cubeStorage.save = cube.cube;
     cubeStorage.stringifyObject = cube.cube;
     console.log('ajaxReq');
+    app.dialogCubeName.close();
+    // TODO: visualizzo il tasto crea report che rimanda alla pagina /reports
 
   };
 
