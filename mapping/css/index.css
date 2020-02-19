@@ -1,20 +1,4 @@
 
-/*pages*/
-#pages{display: flex;transition: all 250ms;}
-.page{align-items: center;display: flex;flex-direction: column;min-width: 100%;margin: 8px;}
-#pages[data-step="1"]{transform: translateX(0px);}
-#pages[data-step="2"]{transform: translateX(-1000px);}
-#pages[data-step="3"]{transform: translateX(-2000px);}
-
-.page > section{width: 100%;}
-/* #hier-structure{display: flex;flex-direction: column;align-items: center;width: 100%;} */
-.page > .structure{display: flex;flex-direction: column;align-items: center;width: 100%;}
-
-/* associo il tasto con attributo data-associated-page alla pagina corrente*/
-#container[data-page="1"] > #controls button[data-associated-page="1"]{visibility: visible;display: inline-flex;}
-#container[data-page="2"] > #controls button[data-associated-page="2"]{visibility: visible;display: inline-flex;}
-#container[data-page="3"] > #controls button[data-associated-page="3"]{visibility: visible;display: inline-flex;}
-
 .lists{position: relative;}
 .absList{width: 250px;background: white;position: absolute;border-radius: 4px;z-index: 6;box-shadow: 0 4px 8px 0px #b5b5b5;
 /*box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);*/}

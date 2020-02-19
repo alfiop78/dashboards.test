@@ -20,7 +20,7 @@ var cube = new Cube();
 
     btnBack : document.getElementById('mdc-back'),
     btnNewReport: document.getElementById('mdc-new-report'),
-    btnPreviewReport : document.getElementById('mdc-preview-report'),
+
     inputValueSearch : document.getElementById('valuesSearch'),
     btnColumnValues : document.getElementById('btnColumnValues'),
     btnFilterIcon : document.getElementById('filters-icon'),
@@ -1344,9 +1344,7 @@ var cube = new Cube();
     app.btnTableList.setAttribute('fact', true);
     app.getDimensions(); // TODO: qui andrò ad aggiornare solo la dimensione appena salvata/modificata
 
-    console.log(cube.dimension);
     delete cube.dimension;
-    console.log(cube.dimension);
 
   };
 
@@ -1374,7 +1372,8 @@ var cube = new Cube();
       storage.selected = dimensionName;
       console.log(storage.selected);
       dimensionObject[dimensionName] = storage.selected;
-      // TODO: salvo la/le dimenioni scelte nell'object cube
+      // salvo la/le dimenioni scelte nell'object cube
+      // REVIEW: da verificare
       cube.cube.associatedDimensions = dimensionObject;
     });
     console.log(cube.cube);
@@ -1400,6 +1399,7 @@ var cube = new Cube();
     console.log('ajaxReq');
     app.dialogCubeName.close();
     // TODO: visualizzo il tasto crea report che rimanda alla pagina /reports
+    app.btnNewReport.removeAttribute('hidden');
 
   };
 
@@ -1469,9 +1469,9 @@ var cube = new Cube();
 
 
   // vado alla pagina reports/index.html
-  app.btnPreviewReport.onclick = function() {location.href = '/reports/';};
+  app.btnNewReport.onclick = function() {location.href = '/reports/';};
 
-  app.btnBack.onclick = function() {app.Page.previous();};
+  app.btnBack.onclick = function() {};
 
   /* ricerca cubi in elenco di sinitra*/
   // document.getElementById('cubeSearch').oninput = App.searchInList;
@@ -1500,19 +1500,6 @@ var cube = new Cube();
   //       app.dialogFilters.querySelector('#formula > span.value').innerHTML = e.target.value;
   //
   //   }
-  // };
-
-  // document.getElementById('addTable').onclick = function(e) {
-  //   console.log(e.target);
-  //   // visualizzo l'elenco di sinistra per aggiungere la FACT
-  //   // visualizzo la lista 'tableList'
-  //   app.tableList.toggleAttribute('hidden');
-  //   // imposto il tasto 'openTableList' su open
-  //   app.btnTableList.toggleAttribute('open');
-  //   // focus sulla input di ricerca della lista tabelle
-  //   let inputSearch = document.getElementById('tableSearch');
-  //   inputSearch.focus();
-  //
   // };
 
   document.getElementById('openTableList').onclick = function(e) {
@@ -1583,7 +1570,6 @@ var cube = new Cube();
     app.getTable(lastTableInHierarchy);
 
   };
-
 
   /*events */
 
