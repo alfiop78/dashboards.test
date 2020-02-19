@@ -31,7 +31,8 @@ var App = new Application();
     formatBold: document.getElementById('format-bold'),
     formatItalic: document.getElementById('format-italic'),
     radioSingleSelection: document.getElementsByName('selection-type'),
-    numberFormat : document.getElementById('numberFormat')
+    numberFormat : document.getElementById('numberFormat'),
+    openCubeList : document.getElementById('openCubeList')
 
   };
 
@@ -41,9 +42,9 @@ var App = new Application();
     let reportName = this.getAttribute('label');
 
     // recupero un datamart FX... già creato e visualizzo l'anteprima
-    var url = "ajax/reports.php";
+    var url = 'ajax/reports.php';
     let reportId = this.getAttribute('id');
-    let params = "reportId="+reportId;
+    let params = 'reportId=' + reportId;
 
     // console.log(params);
     var request = new XMLHttpRequest();
@@ -73,21 +74,40 @@ var App = new Application();
   app.loadCubes = () => {
     // carico elenco Cubi su cui creare il report
     console.log('loadCubes');
-    const storage = new CubeStorage();
+    const cubes = new CubeStorage();
     // console.log(storage.list);
-    let ul = document.getElementById('cubesList');
-    storage.list.forEach((cube) => {
-      // console.log(name);
-      let element = document.createElement('div');
-      element.classList.add('element');
+    let ul = document.getElementById('cubes');
+    let obj = cubes.list();
+    // console.log(obj);
+    let element = document.createElement('div');
+    element.classList.add('element');
+
+
+    for (let i in obj) {
+      // element.querySelector('span').innerHTML = obj[i]['key'];
+      // element.id = 'cubeId_' + obj[i]['cubeId'];
+      console.log(obj[i]['key']);
       let li = document.createElement('li');
-      li.innerText = cube.key;
-      li.id = cube.cubeId;
-      li.setAttribute('label', cube.key);
+      li.innerText = obj[i]['key'];
+      li.id = obj[i]['cubeId'];
+      li.setAttribute('label', obj[i]['key']);
       ul.appendChild(element);
       element.appendChild(li);
-      li.onclick = app.handlerCubeSelected;
-    });
+    }
+
+    return;
+    // storage.list.forEach((cube) => {
+    //   // console.log(name);
+    //   let element = document.createElement('div');
+    //   element.classList.add('element');
+    //   let li = document.createElement('li');
+    //   li.innerText = cube.key;
+    //   li.id = cube.cubeId;
+    //   li.setAttribute('label', cube.key);
+    //   ul.appendChild(element);
+    //   element.appendChild(li);
+    //   li.onclick = app.handlerCubeSelected;
+    // });
   };
 
   app.createReport = function(response, cubeName) {
@@ -120,7 +140,12 @@ var App = new Application();
 
 
   /* events */
-  app.btnDashboardLayout.onclick = function(e) {window.location.href = "/dashboards/";};
+
+  app.openCubeList.onclick = function(e) {
+    console.log(e.target);
+  };
+
+  app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
 
   app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
 
