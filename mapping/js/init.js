@@ -836,6 +836,7 @@ var cube = new Cube();
       element.setAttribute('label', obj[i]['key']);
       let li = document.createElement('li');
       li.innerText = obj[i]['key'];
+      li.setAttribute('label', obj[i]['key']);
       li.id = 'cubeId_' + obj[i]['cubeId'];
       ul.appendChild(element);
       element.appendChild(li);
@@ -843,12 +844,12 @@ var cube = new Cube();
     }
   };
 
-  app.handlerCubeSelected = function() {
+  app.handlerCubeSelected = function(e) {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
     // ricreo un datamart
 
-    let data = window.localStorage.getItem(this.getAttribute('label'));
-    console.log('cubeSelected');
+    let data = window.localStorage.getItem(e.target.getAttribute('label'));
+    // console.log(data);
     var url = 'ajax/cube.php';
     let params = 'cube='+data;
     console.log(params);
@@ -858,9 +859,6 @@ var cube = new Cube();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
-          app.dialogReportList.close();
-
 
         } else {
           // TODO:

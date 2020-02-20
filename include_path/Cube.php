@@ -14,6 +14,36 @@ class Cube {
 
   function getReportId() {return $this->_reportId;}
 
+  public function dimension($dimension) {
+    foreach ($dimension as $key => $value) {
+      echo "{$key}\n"; // dimension name
+
+      foreach ($value as $k => $param) {
+        // echo "{$k}\n";
+        switch ($k) {
+          case 'columns':
+            // var_dump($param);
+            $this->SELECT($param);
+
+            break;
+          case 'from':
+            var_dump($param);
+            $this->FROM($param);
+            break;
+          case 'hierarchies':
+            var_dump($param);
+            $this->WHERE($param);
+          default:
+            // code...
+            break;
+        }
+      }
+    }
+    var_dump($this->_select);
+    var_dump($this->_from);
+    var_dump($this->_where);
+  }
+
   public function SELECT($columns) {
     $fieldList = array();
     $this->_select = "SELECT ";
@@ -33,20 +63,26 @@ class Cube {
     // print_r($fieldList);
 
     $this->_select .= implode(", ", $fieldList);
-    return $this->_select;
+    // return $this->_select;
   }
 
-  public function FROM($dimensions) {
+  public function FROM($from) {
     // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
-    $this->_from = " FROM $this->fact, ";
-    foreach ($dimensions as $dimension) {
-      // var_dump($clause);
-      // var_dump($dimension);
-      // var_dump($dimension->from);
-      $this->_from .= implode(", ", $dimension->from);
-    }
-    return $this->_from;
+    $this->_from = " FROM ";
+    $this->_from .= implode(", ", $from);
+
   }
+  // public function FROM($dimensions) {
+  //   // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
+  //   $this->_from = " FROM $this->fact, ";
+  //   foreach ($dimensions as $dimension) {
+  //     // var_dump($clause);
+  //     // var_dump($dimension);
+  //     // var_dump($dimension->from);
+  //     $this->_from .= implode(", ", $dimension->from);
+  //   }
+  //   return $this->_from;
+  // }
 
   public function AND($dimensions) {
     $this->_and = " AND ";
@@ -70,6 +106,16 @@ class Cube {
     }
     return $this->_where;
   }
+  // public function WHERE($hierarchy) {
+  //   $i = 0;
+  //   foreach ($hierarchy as $hierarchies) {
+  //     $hier = array();
+  //     $hier = implode(" = ", $hierarchies);
+  //     ($i === 0) ? $this->_where .= " WHERE ".$hier : $this->_where .= " AND ".$hier;
+  //     $i++;
+  //   }
+  //   return $this->_where;
+  // }
 
   public function FILTERS($filters) {
     /* definisco i filtri del report*/

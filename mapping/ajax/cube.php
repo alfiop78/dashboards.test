@@ -15,8 +15,10 @@ $cube = json_decode($_POST['cube']); // object
 
 $q = new Cube($cube->{'FACT'});
 $q->setReportId($cube->{'cubeId'});
-echo $q->SELECT($cube->{'columns'});
+$q->dimension($cube->{'associatedDimensions'});
+
 return;
+$q->SELECT($cube->{'columns'});
 $q->METRICS($cube->{'metrics'});
 $q->FROM($cube->{'dimensions'});
 $q->AND($cube->{'dimensions'}); // gerarchie associazione con la FACT table
