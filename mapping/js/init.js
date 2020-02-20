@@ -32,6 +32,7 @@ var cube = new Cube();
     btnSaveCube : document.getElementById('saveCube'),
     btnSaveCubeName : document.getElementById('btnCubeSaveName'),
 
+
     tmplCloseTable : document.getElementById('closeTable'), // tasto close table
     tmplInputSearch : document.getElementById('inputSearch'), // input per ricerca fields nelle tabelle
     tmplSectionOption : document.getElementById('sectionOption'), // options laterale per ogni tabella
@@ -827,60 +828,30 @@ var cube = new Cube();
     // recupero la lista dei Cubi in localStorage
     const cubes = new CubeStorage();
     let obj = cubes.list();
-    const nav = document.getElementsByTagName('nav')[0];
-    const tmplCubeList = document.getElementById('cubeList');
-    let tmplContent = tmplCubeList.content.cloneNode(true);
-    let element = tmplContent.querySelector('a');
-    nav.appendChild(element);
+    const ul = document.getElementById('cubes');
+
     for (let i in obj) {
-      element.querySelector('span').innerHTML = obj[i]['key'];
-      element.id = 'cubeId_' + obj[i]['cubeId'];
+      let element = document.createElement('div');
+      element.className = 'element';
+      element.setAttribute('label', obj[i]['key']);
+      let li = document.createElement('li');
+      li.innerText = obj[i]['key'];
+      li.id = 'cubeId_' + obj[i]['cubeId'];
+      ul.appendChild(element);
+      element.appendChild(li);
+      li.onclick = app.handlerCubeSelected;
     }
   };
-  // app.getDimensionsList = function() {
-  //   // recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
-  //   let ul = document.getElementById('dimensionsList');
-  //   const dimension = new DimensionStorage();
-  //   dimension.getDimensionsList().forEach((name) => {
-  //     // console.log(name);
-  //     let element = document.createElement('div');
-  //     element.classList.add('element');
-  //     let li = document.createElement('li');
-  //     li.innerText = name;
-  //     li.setAttribute('label', name);
-  //     ul.appendChild(element);
-  //     element.appendChild(li);
-  //     // TODO: legare evento onclick, alla selezione di una dimensione vado a creare la struttura gerarchica a fianco
-  //   });
-  // };
-
-  // app.getDatamartList = function() {
-  //   let ul = document.getElementById('cubesList');
-  //   const storage = new CubeStorage();
-  //   storage.list.forEach((cube) => {
-  //     // console.log(name);
-  //     let element = document.createElement('div');
-  //     element.classList.add('element');
-  //     let li = document.createElement('li');
-  //     li.innerText = cube.key;
-  //     li.id = cube.cubeId;
-  //     li.setAttribute('label', cube.key);
-  //     ul.appendChild(element);
-  //     element.appendChild(li);
-  //     li.onclick = app.handlerCubeSelected;
-  //   });
-  // };
 
   app.handlerCubeSelected = function() {
     // TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
     // ricreo un datamart
 
     let data = window.localStorage.getItem(this.getAttribute('label'));
+    console.log('cubeSelected');
     var url = 'ajax/cube.php';
-    // let params = "cube="+data+"&dimension="+JSON.stringify(cube.dimension);
     let params = 'cube='+data;
     console.log(params);
-    // return;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -889,8 +860,7 @@ var cube = new Cube();
           console.table(response);
           // TODO: dovrò personalizzare il report, impostando le colonne da nascondere, quali sono le colonne, quali le metriche, ecc...
           app.dialogReportList.close();
-          document.getElementById('mdc-preview-report').disabled = false;
-          // TODO: vado sullo step 2
+
 
         } else {
           // TODO:
@@ -905,6 +875,8 @@ var cube = new Cube();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+    // return;
+
 
     // console.log(this.getAttribute('label'));
 
@@ -1508,6 +1480,14 @@ var cube = new Cube();
     tableList.toggleAttribute('hidden');
     e.target.toggleAttribute('open');
     document.getElementById('tableSearch').focus();
+  };
+
+  document.getElementById('processCube').onclick = function(e) {
+    // visualizzo la lista delle tabelle
+    const cubeList = document.getElementById('cubesList');
+    cubeList.toggleAttribute('hidden');
+    e.target.toggleAttribute('open');
+    document.getElementById('cubeSearch').focus();
   };
 
   app.btnDimensionList.onclick = function(e) {

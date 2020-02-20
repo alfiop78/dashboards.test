@@ -5,6 +5,7 @@ var App = new Application();
   var app = {
     report : null,
     btnOpenCubes: document.getElementById('openCube'),
+    dialogReportList : document.getElementById('dialog-reportList'),
     dialogTableList : document.getElementById('table-list'),
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
@@ -21,6 +22,8 @@ var App = new Application();
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
     btnSaveColOption: document.getElementById('btnSaveColOption'),
     table: document.getElementById('table-01'),
+    // btn in actions
+    btnOpenReport : document.getElementById('openReport'),
     // TODO: valutare se questi elementi, con i suoi eventi, bisogna inserirli nella classe Options
     propertyColHidden: document.getElementById('chkbox-hide-col'),
     fgColorInput : document.getElementById('fgColor'),
@@ -37,6 +40,28 @@ var App = new Application();
   };
 
   App.init();
+
+  app.getReports = function() {
+    // recupero la lista dei report già presenti
+    const reports = new ReportStorage();
+    console.log(reports.list());
+    let reportsObj = reports.list();
+    const ul = document.getElementById('reports');
+
+    for (let i in reportsObj) {
+      console.log(reportsObj[i]);
+      let element = document.createElement('div');
+      element.className = 'element';
+      element.setAttribute('label', reportsObj[i]['name']);
+
+      let li = document.createElement('li');
+      li.innerText = reportsObj[i]['name'];
+      li.setAttribute('report-id', reportsObj[i]['reportId']);
+      li.setAttribute('label', reportsObj[i]['name']);
+      element.appendChild(li);
+      ul.appendChild(element);
+    }
+  };
 
   app.handlerCubeSelected = function(e) {
     let reportName = this.getAttribute('label');
@@ -138,8 +163,16 @@ var App = new Application();
 
   app.loadCubes();
 
+  app.getReports();
+
+
 
   /* events */
+
+  app.btnOpenReport.onclick = function(e) {
+    // apro la dialog dialog-reportList
+    app.dialogReportList.showModal();
+  };
 
   app.openCubeList.onclick = function(e) {
     console.log(e.target);
@@ -147,7 +180,7 @@ var App = new Application();
 
   app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
 
-  app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
+  // app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
 
   app.btnSaveReport.onclick = function (e) {
     // apro dialog report-name

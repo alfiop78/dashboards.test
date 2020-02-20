@@ -285,19 +285,6 @@
       </div> -->
     </dialog>
 
-    <dialog id="dialog-report-list">
-      <div class="lists">
-        <div class="list">
-          <div class="md-field">
-            <input type="search" id="cubeSearch" value=""/>
-            <label for="cubeSearch" class="">Ricerca</label>
-          </div>
-
-          <ul id="cubesList"></ul>
-        </div>
-      </div>
-    </dialog>
-
     <dialog id="dialog-col-setting">
       <section>
         <h4>personalizzazione colonna</h4>
@@ -380,12 +367,8 @@
         <section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
 
         <nav>
-          <template id="cubeList">
-            <a href="#" title="" id=""><i class="material-icons">grid_on</i><span></span></a>
-          </template>
           <!-- TODO: qui i cubi già salvati -->
           <a href="/reports/" title="Report"><i class="material-icons md-18">settings</i><span>Report</span></a>
-
 
         </nav>
 
@@ -414,7 +397,7 @@
               <span class="popupContent"><i id="openDimensionList" class="material-icons md-24">view_list</i><small class="popup">Lista Dimensioni</small></span>
               <span class="popupContent"><i class="material-icons md-24">playlist_add</i><small class="popup">Nuova dimensione</small></span>
               <span class="popupContent"><i id="saveCube" class="material-icons md-24">save</i><small class="popup">Salva Cubo</small></span>
-              <span class="popupContent"><i id="openReport" class="material-icons md-24 md-dark md-inactive">folder_open</i><small class="popup">Apri Report</small></span>
+              <span class="popupContent"><i id="processCube" class="material-icons md-24">folder_open</i><small class="popup">Elabora cubo</small></span>
             </div>
 
             <div class="lists">
@@ -428,12 +411,23 @@
             </div>
 
             <div class="lists">
+              <div class="absList" id="cubesList" hidden>
+                <div class="md-field">
+                  <input type="search" id="cubeSearch" value=""/>
+                  <label for="cubeSearch" class="">Ricerca</label>
+                </div>
+                <ul id="cubes"></ul>
+              </div>
+            </div>
+
+            <div class="lists">
               <template id="dimension">
                 <div class="element dimensions">
                   <h5>dim title</h5>
                   <template id="miniCard"><div class="miniCard"><h6></h6></div></template>
                 </div>
               </template>
+
               <div class="absList" id="dimensionList" hidden>
                 <div class="md-field">
                   <input type="search" id="dimensionSearch" value=""/>
