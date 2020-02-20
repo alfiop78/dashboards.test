@@ -153,7 +153,7 @@ class ReportStorage extends Storages {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
 
-      if (jsonStorage.type === "REPORT") {
+      if (jsonStorage.type === 'REPORT') {
         // ottengo il numero di elementi PAGE nello storage
         this.elements.push(jsonStorage.id);
       }
@@ -190,7 +190,7 @@ class ReportStorage extends Storages {
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "REPORT") {
+      if (jsonStorage.type === 'REPORT') {
         // console.log("report : "+key);
         // console.log(jsonStorage.id);
         // console.log(report_id);
@@ -219,7 +219,7 @@ class ReportStorage extends Storages {
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "REPORT") {
+      if (jsonStorage.type === 'REPORT') {
         // console.log("report : "+key);
         // console.log(jsonStorage.id);
         // console.log(report_id);
@@ -236,15 +236,16 @@ class ReportStorage extends Storages {
   }
 
   list() {
-    // this.storageKeys = Object.keys(this.storage);
-    let reports = [];
+    // let reports = [];
+    let reports = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "REPORT") {
+      if (jsonStorage.type === 'REPORT') {
         // console.log("cubo : "+key);
         let reportProperties = {'name' : key, 'reportId' : jsonStorage.id, 'datamartId' : jsonStorage.datamartId};
-        reports.push(reportProperties);
+        // reports.push(reportProperties);
+        reports[key] = reportProperties;
       }
     });
     return reports;
