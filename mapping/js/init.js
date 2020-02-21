@@ -1077,30 +1077,6 @@ var cube = new Cube();
     request.send(params);
   };
 
-  // app.handlerSelectCard = function(e) {
-  //   console.log(e.target);
-  //   // console.log(e.path);
-  //
-  //   const cardLayout = e.path[4]; // cardLayout
-  //   const cardTable = e.path[3]; // cardTable
-  //   cardLayout.setAttribute('selected', true);
-  //   cardTable.setAttribute('mode', 'hierarchies');
-  //   cardTable.querySelector('span[data-id="popupSelectedTable"]').removeAttribute('hide');
-  //   cardTable.querySelector('span[data-id="popupSelectTable"]').setAttribute('hide', true);
-  // };
-  //
-  // app.handlerDeselectCard = function(e) {
-  //   console.log(e.target);
-  //   // console.log(e.path);
-  //   console.log(e.path[4]); // cardLayout
-  //   const cardLayout = e.path[4];
-  //   const cardTable = e.path[3];
-  //   cardLayout.removeAttribute('selected');
-  //   cardTable.removeAttribute('mode');
-  //   cardTable.querySelector('span[data-id="popupSelectedTable"]').setAttribute('hide', true);
-  //   cardTable.querySelector('span[data-id="popupSelectTable"]').removeAttribute('hide');
-  // };
-
   app.handlerAddHierarchy = function(e) {
     let cardTable = e.path[3].querySelector('.cardTable');
     cube.activeCard = cardTable;

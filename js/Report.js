@@ -594,7 +594,6 @@ class Options extends Report{
     // tasto ok nella dialog
     this.dialogOption.querySelector('#btnSaveColOption').onclick = this.btnDoneDialogOption.bind(this);
 
-
     /**
      * * 'cols':[
      * 2: {
@@ -665,9 +664,7 @@ class Options extends Report{
 
   get datamart() { return this.datamartId;}
 
-  set report(value) {
-    this.reportId = value;
-  }
+  set report(value) {this.reportId = value;}
 
   get report() { return this.reportId; }
 
@@ -746,6 +743,7 @@ class Options extends Report{
 
   addColumns() {
     Object.keys(this._data[0]).forEach((col, index) => {
+      console.log(col, index);
       this.th = document.createElement('th');
       this.th.setAttribute('col', index);
       this.th.classList.add('dropzone');
@@ -755,7 +753,10 @@ class Options extends Report{
       this.th.innerText = col;
       this.th.onclick = this.handlerColOption.bind(this);
       this.table.querySelector('thead tr').appendChild(this.th);
+
       for (let [key, colName] of Object.entries(this._options.positioning[index])) {
+        console.log(key);
+        console.log(colName);
         // imposto l'attributo columns/metrics sulle intestazioni di colonna
         this.th.setAttribute(key, true);
         // console.log(key);
@@ -884,23 +885,44 @@ class Options extends Report{
     console.log('positioning');
 
     Array.from(Object.keys(cube)).forEach((element) => {
-      if (element === 'columns' || element === 'metrics' || element === 'filteredMetrics') {
+      if (element === 'associatedDimensions') {
+        // recupero columns
         // console.log(element);
-        Array.from(Object.keys(cube[element])).forEach((table) => {
-          // console.log(table);
-          // console.log(cube.columns[table]);
-          Array.from(Object.keys(cube[element][table])).forEach((value) => {
+        // console.log(cube[element]);
+        // console.log(Object.keys(cube[element]));
+        for (let [dimName] of Object.entries(cube[element])) {
+          // console.log(dimName);
+          console.log(cube[element][dimName]['columns']);
+          Array.from(Object.keys(cube[element][dimName]['columns'])).forEach((table) => {
             // recupero l'alias per questo object
             let obj = {};
-            obj[element] = cube[element][table][value]['alias'];
+            console.log(table);
+            obj['columns'] = cube[element][dimName]['columns'][table]['alias'];
+            // obj[element] = cube[element][table][value]['alias'];
             this.positioning.push(obj);
           });
-        });
+
+        }
+      } else {
+        if (element === 'metrics' || element === 'filteredMetrics') {
+          // console.log(element);
+          Array.from(Object.keys(cube[element])).forEach((table) => {
+            // console.log(table);
+            // console.log(cube.columns[table]);
+            Array.from(Object.keys(cube[element][table])).forEach((value) => {
+              // recupero l'alias per questo object
+              let obj = {};
+              obj[element] = cube[element][table][value]['alias'];
+              this.positioning.push(obj);
+            });
+          });
+        }
       }
+
     });
     console.log(this.positioning);
     this._options.positioning = this.positioning;
-    console.log(this.reportOptions);
+    // console.log(this.reportOptions);
   }
 
   get defaultPositioning() { return this._options.positioning; }

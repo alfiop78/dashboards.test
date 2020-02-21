@@ -63,7 +63,7 @@ var App = new Application();
     }
   };
 
-  app.handlerCubeSelected = function(e) {
+  app.handlerCubeSelected = function() {
     let reportName = this.getAttribute('label');
 
     // recupero un datamart FX... già creato e visualizzo l'anteprima
@@ -80,7 +80,8 @@ var App = new Application();
           console.table(response);
 
           app.createReport(response, reportName);
-          app.dialogCubeList.close();
+          document.getElementById('cubeList').toggleAttribute('hidden');
+
 
         } else {
           // TODO:
@@ -118,21 +119,8 @@ var App = new Application();
       li.setAttribute('label', obj[i]['key']);
       ul.appendChild(element);
       element.appendChild(li);
+      li.onclick = app.handlerCubeSelected;
     }
-
-    return;
-    // storage.list.forEach((cube) => {
-    //   // console.log(name);
-    //   let element = document.createElement('div');
-    //   element.classList.add('element');
-    //   let li = document.createElement('li');
-    //   li.innerText = cube.key;
-    //   li.id = cube.cubeId;
-    //   li.setAttribute('label', cube.key);
-    //   ul.appendChild(element);
-    //   element.appendChild(li);
-    //   li.onclick = app.handlerCubeSelected;
-    // });
   };
 
   app.createReport = function(response, cubeName) {
@@ -167,6 +155,7 @@ var App = new Application();
 
 
 
+
   /* events */
 
   app.btnOpenReport.onclick = function(e) {
@@ -176,11 +165,13 @@ var App = new Application();
 
   app.openCubeList.onclick = function(e) {
     console.log(e.target);
+    const list = document.getElementById('cubeList');
+    list.toggleAttribute('hidden');
+    e.target.toggleAttribute('open');
+    document.getElementById('cubeSearch').focus();
   };
 
   app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
-
-  // app.btnOpenCubes.onclick = function(e) { app.dialogCubeList.showModal(); };
 
   app.btnSaveReport.onclick = function (e) {
     // apro dialog report-name
