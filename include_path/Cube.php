@@ -14,7 +14,7 @@ class Cube {
 
   function getReportId() {return $this->_reportId;}
 
-  public function dimension($dimension) {
+  public function dimension($dimension, $fact) {
     foreach ($dimension as $key => $value) {
       echo "{$key}\n"; // dimension name
 
@@ -23,31 +23,36 @@ class Cube {
         switch ($k) {
           case 'columns':
             // var_dump($param);
-            $this->SELECT($param);
+            $this->select($param);
 
             break;
           case 'from':
-            var_dump($param);
-            $this->FROM($param);
+            // var_dump($param);
+            $this->from($param, $fact);
             break;
           case 'hierarchies':
-            var_dump($param);
-            $this->WHERE($param);
+            // var_dump($param);
+            $this->where($param);
+            break;
+          case 'filters':
+            // var_dump($param);
+            $this->filters($param);
+            break;
+          case 'groupBy':
+            // var_dump($param);
+            $this->groupBy($param);
+            break;
           default:
             // code...
             break;
         }
       }
     }
-    var_dump($this->_select);
-    var_dump($this->_from);
-    var_dump($this->_where);
   }
 
-  public function SELECT($columns) {
+  public function select($columns) {
     $fieldList = array();
     $this->_select = "SELECT ";
-
     foreach ($columns as $table => $col) {
       // var_dump($table);
       // print_r($col);
@@ -58,17 +63,13 @@ class Cube {
         $fieldList[] = $table.".".$param->fieldName." AS '".$param->alias."'";
         $this->_columns[] = $param->alias;
       }
-
     }
-    // print_r($fieldList);
-
     $this->_select .= implode(", ", $fieldList);
-    // return $this->_select;
   }
 
-  public function FROM($from) {
+  public function from($from, $fact) {
     // per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
-    $this->_from = " FROM ";
+    $this->_from = " FROM {$fact}, ";
     $this->_from .= implode(", ", $from);
 
   }
@@ -84,19 +85,28 @@ class Cube {
   //   return $this->_from;
   // }
 
-  public function AND($dimensions) {
+  public function factRelation($hierarchies) {
+    $this->_ands = array();
     $this->_and = " AND ";
-    foreach ($dimensions as $dimension) {
-
-      foreach ($dimension->hierarchies as $value) {
-
-        $this->_and .= implode(" = ", $value);
-      }
+    foreach ($hierarchies as $hierarchy) {
+      $this->_ands[] = implode(" = ", $hierarchy);
     }
-    return $this->_and;
+    $this->_and .= implode(" AND ", $this->_ands);
+    // var_dump($this->_and);
   }
+  // public function AND($dimensions) {
+  //   $this->_and = " AND ";
+  //   foreach ($dimensions as $dimension) {
+  //
+  //     foreach ($dimension->hierarchies as $value) {
+  //
+  //       $this->_and .= implode(" = ", $value);
+  //     }
+  //   }
+  //   return $this->_and;
+  // }
 
-  public function WHERE($hierarchy) {
+  public function where($hierarchy) {
     $i = 0;
     foreach ($hierarchy as $hierarchies) {
       $hier = array();
@@ -104,7 +114,7 @@ class Cube {
       ($i === 0) ? $this->_where .= " WHERE ".$hier : $this->_where .= " AND ".$hier;
       $i++;
     }
-    return $this->_where;
+    // return $this->_where;
   }
   // public function WHERE($hierarchy) {
   //   $i = 0;
@@ -117,12 +127,17 @@ class Cube {
   //   return $this->_where;
   // }
 
-  public function FILTERS($filters) {
+  public function filters($filters) {
     /* definisco i filtri del report*/
     $and = " AND ";
     $or = " OR ";
     foreach ($filters as $table => $filter) {
+      // var_dump($filter);
+      // echo $table;
+
       foreach ($filter as $param) {
+        // var_dump($param);
+        // var_dump($param->operator);
         // TODO: aggiungere anche gli altri operatori (IN, NOT IN, ecc...)
         switch ($param->operator) {
           case 'BETWEEN':
@@ -140,12 +155,37 @@ class Cube {
         }
       }
     }
-    // var_dump($this->_reportFilters);
 
-    return $this->_reportFilters;
   }
+  // public function FILTERS($filters) {
+  //   /* definisco i filtri del report*/
+  //   $and = " AND ";
+  //   $or = " OR ";
+  //   foreach ($filters as $table => $filter) {
+  //     foreach ($filter as $param) {
+  //       // TODO: aggiungere anche gli altri operatori (IN, NOT IN, ecc...)
+  //       switch ($param->operator) {
+  //         case 'BETWEEN':
+  //           // var_dump($param->values);
+  //           $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".implode(" AND ", $param->values);
+  //           break;
+  //         case 'IN':
+  //         case 'NOT IN':
+  //           $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." (".implode(", ", $param->values).")";
+  //           break;
+  //         default:
+  //           // var_dump($param->values);
+  //           $this->_reportFilters .= $and.$table.".".$param->fieldName." ".$param->operator." ".$param->values[0];
+  //           break;
+  //       }
+  //     }
+  //   }
+  //   // var_dump($this->_reportFilters);
+  //
+  //   return $this->_reportFilters;
+  // }
 
-  public function METRICS($metrics) {
+  public function metrics($metrics) {
     // metriche non filtrate
     $metricsList = array();
     foreach ($metrics as $table => $metric) {
@@ -156,12 +196,26 @@ class Cube {
         // $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
       }
     }
-    return $this->_metrics = implode(", ", $metricsList);
+    $this->_metrics = implode(", ", $metricsList);
+    // var_dump($this->_metrics);
   }
+  // public function METRICS($metrics) {
+  //   // metriche non filtrate
+  //   $metricsList = array();
+  //   foreach ($metrics as $table => $metric) {
+  //     foreach ($metric as $param) {
+  //       $metricsList[] = $param->sqlFunction."(".$table.".".$param->fieldName.") AS '".$param->alias."'";
+  //       // CHANGED: imposto un FORMAT per i numeri (16.01.2020)
+  //       // 17.01.2020 Formattazione impostat in JS
+  //       // $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
+  //     }
+  //   }
+  //   return $this->_metrics = implode(", ", $metricsList);
+  // }
 
-  public function GROUPBY($groups) {
+  public function groupBy($groups) {
     $fieldList = array();
-    $this->_groupBy = "GROUP BY ";
+    $this->_groupBy = " GROUP BY ";
 
     foreach ($groups as $table => $col) {
       foreach ($col as $param) {
@@ -170,8 +224,20 @@ class Cube {
       }
     }
     $this->_groupBy .= implode(", ", $fieldList);
-    return $this->_groupBy;
   }
+  // public function GROUPBY($groups) {
+  //   $fieldList = array();
+  //   $this->_groupBy = "GROUP BY ";
+  //
+  //   foreach ($groups as $table => $col) {
+  //     foreach ($col as $param) {
+  //       // TODO: aggiungere il format della colonna (es.: GROUP BY DATE_FORMAT(curdate(), '%Y%m'))
+  //       $fieldList[] = $table.".".$param->fieldName;
+  //     }
+  //   }
+  //   $this->_groupBy .= implode(", ", $fieldList);
+  //   return $this->_groupBy;
+  // }
 
   public function baseTable() {
     // TODO: creo una VIEW/TABLE senza metriche su cui, dopo, andrò a fare una left join con le VIEW/TABLE che contengono le metriche
@@ -186,7 +252,7 @@ class Cube {
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    // return $sql;
+    // var_dump($sql);
     return $this->connect->multiInsert($sql);
   }
 
@@ -276,6 +342,7 @@ class Cube {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
     // return $sql;
+    // var_dump($sql);
     return $this->connect->multiInsert($sql);
   }
 
