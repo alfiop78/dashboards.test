@@ -755,8 +755,8 @@ class Options extends Report{
       this.table.querySelector('thead tr').appendChild(this.th);
 
       for (let [key, colName] of Object.entries(this._options.positioning[index])) {
-        console.log(key);
-        console.log(colName);
+        // console.log(key);
+        // console.log(colName);
         // imposto l'attributo columns/metrics sulle intestazioni di colonna
         this.th.setAttribute(key, true);
         // console.log(key);
@@ -883,7 +883,6 @@ class Options extends Report{
     */
     this.positioning = [];
     console.log('positioning');
-
     Array.from(Object.keys(cube)).forEach((element) => {
       if (element === 'associatedDimensions') {
         // recupero columns
@@ -892,14 +891,21 @@ class Options extends Report{
         // console.log(Object.keys(cube[element]));
         for (let [dimName] of Object.entries(cube[element])) {
           // console.log(dimName);
-          console.log(cube[element][dimName]['columns']);
+          // console.log(cube[element][dimName]['columns']);
           Array.from(Object.keys(cube[element][dimName]['columns'])).forEach((table) => {
             // recupero l'alias per questo object
-            let obj = {};
-            console.log(table);
-            obj['columns'] = cube[element][dimName]['columns'][table]['alias'];
-            // obj[element] = cube[element][table][value]['alias'];
-            this.positioning.push(obj);
+            // console.log(table);
+            // console.log(cube[element][dimName]['columns'][table]['Descrizione']['alias']);
+            for (let [field] of Object.entries(cube[element][dimName]['columns'][table])) {
+              // per ogni tabella trovata in 'columns'
+              // console.log(cube[element][dimName]['columns'][table][field]['alias']);
+              // debugger;
+              let obj = {};
+              obj['columns'] = cube[element][dimName]['columns'][table][field]['alias'];
+              // obj[element] = cube[element][table][value]['alias'];
+              this.positioning.push(obj);
+            }
+
           });
 
         }
