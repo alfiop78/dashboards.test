@@ -183,6 +183,8 @@ var App = new Application();
     app.report.reportName = document.getElementById('reportName').value;
     app.report.saveReport();
     app.dialogReportName.close();
+    // abilito il tasto 'crea layout'
+    app.btnDashboardLayout.removeAttribute('hidden');
   };
 
   app.propertyColHidden.onclick = function (e) {

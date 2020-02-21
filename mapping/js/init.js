@@ -1337,6 +1337,7 @@ var cube = new Cube();
 
     // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
     cube.cube.cubeId = cubeStorage.getIdAvailable();
+    // debugger;
     console.log(cube.cube.cubeId);
     console.log(cube.cube);
     // salvo il cubo in localStorage

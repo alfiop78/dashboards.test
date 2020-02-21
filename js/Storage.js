@@ -58,9 +58,9 @@ class CubeStorage extends Storages {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
 
-      if (jsonStorage.type === "CUBE") {
+      if (jsonStorage.type === 'CUBE') {
         // ottengo il numero di elementi PAGE nello storage
-        this.cubesElement.push(jsonStorage.id);
+        this.cubesElement.push(jsonStorage.cubeId);
       }
     });
 
@@ -149,7 +149,7 @@ class ReportStorage extends Storages {
     // ottengo il primo Id disponibile
     console.log(this.storageKeys);
     this.elements = [];
-    this.storageKeys.forEach((key, index) => {
+    this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(jsonStorage);
 

@@ -28,18 +28,20 @@ var App = new Application();
   app.getReports = function() {
     /*recupero lista reports creati dal localStorage*/
     let ul = document.getElementById('datamartList');
-    let storage = new ReportStorage();
+    let report = new ReportStorage();
     // console.log(storage.list());
-    storage.list().forEach((report) => {
-      // console.log(report);
+    let reports = report.list();
+    for (let i in reports) {
+      console.log(reports[i]);
       let li = document.createElement('li');
-      li.id = report.reportId;
-      li.setAttribute('datamart-id', report.datamartId);
-      li.setAttribute('label', report.name);
-      li.innerHTML = report.name;
+      li.id = reports[i].reportId;
+
+      li.setAttribute('label', reports[i].name);
+      li.setAttribute('datamart-id', reports[i].datamartId);
+      li.innerText = reports[i].name;
       ul.appendChild(li);
 
-      li.onclick = function(e) {
+      li.onclick = function() {
         /*
         1- Inserisco il nome del Report selezionato in lyt-report
         */
@@ -63,9 +65,7 @@ var App = new Application();
         let report_section_association = arrSections;
         app.pageParams.layoutParams = report_section_association;
       }
-
-    })
-
+    }
   };
 
   app.handlerAddObject = function(e) {
