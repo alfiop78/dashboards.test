@@ -10,6 +10,7 @@ class Cube {
     this.columns = new Object();
     this.cols = [];
     this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
+    this.objFilter = {};
     this.conditionsColName = [];
     this.metrics = new Object(); // metriche non filtrate
     this.filteredMetrics = new Object(); // metriche filtrate
@@ -92,18 +93,17 @@ class Cube {
         value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
         values.push(value);
     }
-    // console.log(values);
-    // debugger;
 
-    if (!this.filters.hasOwnProperty(tableName)) {this.conditionsColName = [];}
+    if (!this.filters.hasOwnProperty(tableName)) {this.objFilter = {};}
 
-    this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});
-    let objParam = {};
-    this.conditionsColName.forEach((filter) => {objParam[filter.fieldName] = filter;});
-
-    this.filters[tableName] = objParam;
     console.log(this.filters);
-    // this.currentFieldSetting.setAttribute('defined', true);
+
+    this.conditionsColName.push({'fieldName' : fieldName, 'operator' : operator, 'values' : values});
+    // this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});
+    this.conditionsColName.forEach((filter) => {this.objFilter[filterName] = filter;});
+
+    this.filters[tableName] = this.objFilter;
+    console.log(this.filters);
     this.dialogFilters.close();
   }
 

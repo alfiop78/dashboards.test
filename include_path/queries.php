@@ -34,7 +34,7 @@ class Queries {
   public function distinctValues($table, $field) {
     $l = new ConnectDB('automotive_bi_data');
     // $l = new ConnectDB('Sql1073234_1');
-    $query = "SELECT DISTINCT($field) FROM $table LIMIT 100;";
+    $query = "SELECT DISTINCT($field) FROM $table LIMIT 2000;";
     // return $query;
     $this->_result = $l->getResultAssoc($query);
     // $this->_result = $l->getResultAssoc("SHOW TABLES;");

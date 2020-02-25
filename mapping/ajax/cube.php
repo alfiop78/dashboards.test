@@ -19,25 +19,16 @@ $q->dimension($cube->{'associatedDimensions'}, $cube->{'FACT'});
 $q->factRelation($cube->{'hierarchies'});
 $q->metrics($cube->{'metrics'});
 
-// return;
-// $q->SELECT($cube->{'columns'});
-// $q->METRICS($cube->{'metrics'});
-// $q->FROM($cube->{'dimensions'});
-// $q->AND($cube->{'dimensions'}); // gerarchie associazione con la FACT table
-// $q->WHERE($cube->{'hierarchies'}); // gerarchie della dimensione (non contiene l'associazione con la FACT)
-// $q->FILTERS($cube->{'filters'});
-// return;
-// $q->GROUPBY($cube->{'groupby'});
-// return;
 // creo la tabella base, comprensivo di metriche che non hanno filtri
 $baseTable = $q->baseTable();
-// var_dump($baseTable);
-// return;
-// $baseTable = $q->baseTable();
+var_dump($baseTable);
+return;
+
 if ($baseTable > 0) {
 
   $metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
-  // var_dump($metricTable);
+  var_dump($metricTable);
+  return;
 
   $result = $q->createDatamart();
   var_dump($result);

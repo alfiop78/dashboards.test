@@ -6,11 +6,8 @@ var cube = new Cube();
 // TODO: dichiarare qui le altre Classi
 (() => {
   var app = {
-    // TimelineHier : new Timeline('layout-timeline-0'),
-    // TimelineFact : new Timeline('layout-timeline-1'),
-    // passo al Costruttore il contenitore di tutte le page
+
     tmplElementMenu : document.getElementById('elementMenu'),
-    // Page : new Page(document.getElementById('pages')),
     dialogCubeName : document.getElementById('cube-name'),
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
@@ -387,7 +384,6 @@ var cube = new Cube();
       case 'filters':
         console.log('filters');
         e.target.toggleAttribute('filters');
-        // e.target.parentElement.querySelector('#filters-icon').onclick = this.handlerFilterSetting.bind(this);
         if (!e.target.hasAttribute('filters')) {
           // elimino il filtro impostato
           delete cube.filters[tableName][fieldName];
@@ -497,18 +493,19 @@ var cube = new Cube();
         console.log(table);
         // console.log(this.filters[table]);
         // per ogni tabella recupero i propri filtri per inserirli in un elenco
-        Array.from(Object.keys(cube.filters[table])).forEach((filter) => {
-          console.log(filter);
+        Array.from(Object.keys(cube.filters[table])).forEach((filterName) => {
+          console.log(filterName);
+          // debugger;
           // verifico ogni filtro...
           // ...se questo filtro è già presente nell'elenco non lo inserisco
-          if (!arrMetricFilters.includes(cube.filters[table][filter].filterName) ) {
+          if (!arrMetricFilters.includes(filterName) ) {
             let li = document.createElement('li');
-            li.innerText = cube.filters[table][filter].filterName;
-            li.setAttribute('filter-name', cube.filters[table][filter].filterName);
+            li.innerText = filterName;
+            li.setAttribute('filter-name', filterName);
             li.setAttribute('table-name', table);
-            li.setAttribute('field-name', cube.filters[table][filter].fieldName);
-            li.setAttribute('operator', cube.filters[table][filter].operator);
-            li.setAttribute('values', cube.filters[table][filter].values);
+            li.setAttribute('field-name', cube.filters[table][filterName].fieldName);
+            li.setAttribute('operator', cube.filters[table][filterName].operator);
+            li.setAttribute('values', cube.filters[table][filterName].values);
             metricFiltersUl.appendChild(li);
             li.onclick = app.handlerFilterMetric;
           }
@@ -600,20 +597,20 @@ var cube = new Cube();
       // inserisco in filters l'object del filtro selezionato (e non solo il nome), successivamente elimino questo filtro dall'object filters di origine
       // quindi il filtro sarà applicato a livello metrica e non Report
       // recupero da this.filters il filtro selezionato
-      console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+      // console.log(li);
+      // debugger;
+      // console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
 
-      arrFilters.push(cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')]);
+      arrFilters.push(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
 
-      arrFilters.forEach((filter) => {
-        filters[li.getAttribute('table-name')] = filter;
-      });
+      arrFilters.forEach((filter) => {filters[li.getAttribute('table-name')] = filter;});
       console.log(filters);
 
       // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
       if (Object.keys(cube.filters[li.getAttribute('table-name')]).length === 0) {
         delete cube.filters[li.getAttribute('table-name')];
       } else {
-        delete cube.filters[li.getAttribute('table-name')][li.getAttribute('field-name')];
+        delete cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')];
       }
     });
 
@@ -621,6 +618,7 @@ var cube = new Cube();
     if (!cube.metrics.hasOwnProperty(tableName)) {cube.colsMetrics = [];}
     let objParam = {};
     if (Object.keys(filters).length > 0) {
+      // debugger;
       // questa è una metrica filtrata
       cube.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
       cube.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
@@ -952,34 +950,6 @@ var cube = new Cube();
     request.send();
   };
 
-  app.handlerFilterSetting = function(e) {
-    console.log('apro la dialog Filter');
-    // l'elemento nel DOM dove verrà inserito il nome del campo selezionato
-    const fieldName = app.dialogFilters.querySelector('#filter-fieldName');
-    // ... e il datatype del campo selezionato
-    const fieldType = app.dialogFilters.querySelector('#fieldType');
-    // nome del campo selezionato
-    const field = e.path[1].querySelector('li').getAttribute('label');
-    // ... e della tabella
-    let operator = app.dialogFilters.querySelector('#operator-list > li[selected]').getAttribute('label');
-    // imposto il nome del campo selezionato in currentFieldSetting (questo servirà per impostare l'icon colorata, tramite l'attr defined)
-    cube.currentFieldSetting = e.target;
-    // recupero il datatype della colonna selezionata, questo mi servirà per impostare i valori nella between oppure nella IN/NOT IN...
-    // ...Se il datatype è una stringa inserisco degli apici (nella IN ad esempio) oppure se il datatype = date nel between mostro le input type=date ...
-    // ... invece delle input type text, ecc..
-    // imposto l datatype sul fieldName
-    fieldType.innerHTML = e.path[1].querySelector('li').getAttribute('data-type');
-    // TODO: applicare dei controlli sul datatype che si sta inserendo, si potrebbe agire sull'evento oninput della input
-    fieldName.innerHTML = field;
-    // creo un'anteprima della formula
-    app.dialogFilters.querySelector('#formula > span.field').innerText = e.path[1].querySelector('li').getAttribute('label');
-    app.dialogFilters.querySelector('#formula > span.operator').innerText = operator;
-    app.dialogFilters.showModal();
-    // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-    app.dialogFilters.querySelector('#btnFilterDone').onclick = cube.handlerBtnFilterDone.bind(cube);
-
-  };
-
   app.handlerValueFilterSelected = function(e) {
     // selezione di un valore dall'elenco nella dialog filters
     // inserisco il valore nella textarea
@@ -1023,6 +993,7 @@ var cube = new Cube();
       span.innerText = valuesArr;
     }
     span.focus();
+    app.validityFilterDialog();
   };
 
   app.getDistinctValues = function(table, field) {
@@ -1038,10 +1009,7 @@ var cube = new Cube();
     console.log(params);
     const ul = document.getElementById('valuesList');
     // pulisco la ul
-    Array.from(ul.querySelectorAll('.element')).forEach((item) => {
-      // console.log(item);
-      item.remove();
-    });
+    Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -1057,6 +1025,7 @@ var cube = new Cube();
             ul.appendChild(element);
             let li = document.createElement('li');
             li.id = i;
+            li.className = 'elementSearch';
             li.setAttribute('label', response[i][field]);
             li.innerHTML = response[i][field];
             element.appendChild(li);
@@ -1110,25 +1079,42 @@ var cube = new Cube();
     span.innerText = e.target.getAttribute('label');
     textarea.appendChild(span);
     app.getDistinctValues(e.target.getAttribute('data-table'), e.target.getAttribute('label'));
+    app.validityFilterDialog();
   };
 
   app.handlerAddFilters = function(e) {
+    // apro la dialog filter
+    // pulisco la input filter-name
+    app.dialogFilters.querySelector('#filter-name').value = '';
+    // ripulisco valuesList
+    app.dialogFilters.querySelectorAll('#valuesList > .element').forEach((item) => {item.remove();});
+    // ripulisco la textarea
+    app.dialogFilters.querySelectorAll('#filterFormula span').forEach((item) => {item.remove();});
+    // reset della lista operatori, nessun elemento deve essere già selezionato
+    app.dialogFilters.querySelectorAll('#operator-list li').forEach((item) => {item.removeAttribute('selected');});
+    // tasto ok disabilitato
+    app.dialogFilters.querySelector('#btnFilterDone').disabled = true;
+
     cube.activeCard = e.path[3].querySelector('.cardTable');
     // console.log(cube.activeCard);
     // console.log(cube.activeCard.querySelectorAll('#columns > .element'));
     let ulFieldsList = document.getElementById('fieldsList');
     // pulisco la ul per non duplicare la lista delle colonne
-    Array.from(ulFieldsList.querySelectorAll('li')).forEach((item) => {item.remove();});
+    Array.from(ulFieldsList.querySelectorAll('.element')).forEach((item) => {item.remove();});
     // popolo la ul con la lista delle colonne
     Array.from(cube.activeCard.querySelectorAll('#columns > .element')).forEach((item) => {
       // console.log(item);
+      let element = document.createElement('div');
+      element.className = 'element';
       let liElement = item.querySelector('li');
       let li = liElement.cloneNode(true);
-      ulFieldsList.appendChild(li);
+      element.appendChild(li);
+      ulFieldsList.appendChild(element);
       li.onclick = app.handlerColumnFilterSelected;
     });
 
     app.dialogFilters.showModal();
+
     app.dialogFilters.querySelector('#btnFilterDone').onclick = cube.handlerBtnFilterDone.bind(cube);
   };
 
@@ -1350,60 +1336,6 @@ var cube = new Cube();
 
   };
 
-  /* tasto OK nella dialog per il salvataggio di un Report/Cubo */
-  // document.getElementById('btnCubeSaveName').onclick = function() {
-  //   cube.cubeTitle = document.getElementById('cubeName').value;
-  //   cube.cube.dimensions = cube.dimension;
-  //   cube.cube.type = 'CUBE';
-  //   cube.cube['columns'] = cube.columns;
-  //   cube.cube['filters'] = cube.filters;
-  //   cube.cube['metrics'] = cube.metrics;
-  //   cube.cube['filteredMetrics'] = cube.filteredMetrics;
-  //   cube.cube['groupby'] = cube.groupBy;
-  //   cube.cube['FACT'] = document.querySelector('#fact').getAttribute('name');
-  //   cube.cube.name = cube.cubeTitle;
-  //   let cubeStorage = new CubeStorage();
-  //
-  //   // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-  //   cube.cube.cubeId = cubeStorage.getIdAvailable();
-  //   console.log(cube.cube.cubeId);
-  //
-  //   // cube.cube.cube_id = oStorage.cubeId;
-  //   console.log(cube.cube);
-  //
-  //   // salvo il cubo in localStorage
-  //   cubeStorage.save = cube.cube;
-  //   cubeStorage.stringifyObject = cube.cube;
-  //
-  //   var url = 'ajax/cube.php';
-  //   let params = 'cube='+cubeStorage.stringifyObject;
-  //   console.log(params);
-  //
-  //   var request = new XMLHttpRequest();
-  //   request.onreadystatechange = function() {
-  //     if (request.readyState === XMLHttpRequest.DONE) {
-  //       if (request.status === 200) {
-  //         var response = JSON.parse(request.response);
-  //         console.table(response);
-  //         app.dialogCubeName.close();
-  //         // abilito il tasto REPORT PREVIEW
-  //         document.getElementById('mdc-preview-report').disabled = false;
-  //       } else {
-  //         // TODO:
-  //       }
-  //     } else {
-  //       // TODO:
-  //     }
-  //   };
-  //
-  //   request.open('POST', url);
-  //   // request.setRequestHeader('Content-Type','application/json');
-  //   request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-  //   request.send(params);
-  // };
-
-  // document.getElementById('saveReport').onclick = function() {app.dialogCubeName.showModal();};
-
   document.querySelectorAll('#operator-list li').forEach((li) => {
     li.onclick = app.handlerFunctionOperatorList;
   });
@@ -1427,27 +1359,23 @@ var cube = new Cube();
 
   app.inputValueSearch.oninput = App.searchInList;
 
-  app.inputFilterName.oninput = function(e) {
-    // console.log(e.target.value);
-    (e.target.value.length > 0) ? app.btnFilterDone.disabled = false : app.btnFilterDone.disabled = true;
+  app.inputFilterName.oninput = function() {
+    app.validityFilterDialog();
   };
 
-  // app.inputFilterValues.oninput = function(e) {
-  //   // console.log(e.target.value);
-  //   // copio il valore che sto inserendo nella input, in #formula > span.value
-  //   // TODO: verifico anche il datatype per poter impostare una stringa/ numero/ ecc...
-  //   // se datatype = varchar imposto gli apici
-  //   let datatype = document.getElementById('fieldType').innerHTML;
-  //   console.log(datatype);
-  //   switch (datatype) {
-  //     case 'varchar':
-  //       app.dialogFilters.querySelector('#formula > span.value').innerHTML = `'${e.target.value}'`;
-  //       break;
-  //     default:
-  //       app.dialogFilters.querySelector('#formula > span.value').innerHTML = e.target.value;
-  //
-  //   }
-  // };
+  app.validityFilterDialog = function() {
+    // TODO: verifico inserimento della formula per abilitare il tasto ok
+    // iil nome del filtro è stato inserito ?
+    let check = false;
+    if (app.inputFilterName.value.length > 0) {
+      // verifico se presente la formula
+      if (app.dialogFilters.querySelector('#filterFormula').childElementCount >= 3) {
+        check = true;
+      }
+    }
+    (check) ? app.dialogFilters.querySelector('#btnFilterDone').disabled = false : app.dialogFilters.querySelector('#btnFilterDone').disabled = true;
+
+  };
 
   document.getElementById('openTableList').onclick = function(e) {
     // visualizzo la lista delle tabelle
@@ -1525,6 +1453,26 @@ var cube = new Cube();
     app.getTable(lastTableInHierarchy);
 
   };
+
+  // input su fieldSearch in dialogFilter
+  app.dialogFilters.querySelector('#fieldSearch').oninput = App.searchInList;
+
+  app.handlerLogicalOperator = function(e) {
+    // selezione di un operatore logico da inserire nella formula
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaLogicalOperator';
+
+    span.innerText = e.target.getAttribute('label');
+    textarea.appendChild(span);
+  };
+
+  // operatori logici nella dialogFilters
+  app.dialogFilters.querySelectorAll('.logicalOperator > span').forEach((item) => {
+    item.onclick = app.handlerLogicalOperator;
+  });
+
+
 
   /*events */
 
