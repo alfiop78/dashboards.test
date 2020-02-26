@@ -167,7 +167,7 @@ var cube = new Cube();
   app.handlerDrop = function(e) {
     e.preventDefault();
     // console.log('drop');
-    console.log(e.target);
+    // console.log(e.target);
     let data = e.dataTransfer.getData('text/plain');
     let card = document.getElementById(data);
     // console.log(e.dataTransfer);
@@ -558,7 +558,7 @@ var cube = new Cube();
     cube.dialogColumns.close();
   };
 
-  app.handlerBtnGroupByDone = function(e) {
+  app.handlerBtnGroupByDone = function() {
     // TODO: salvo l'alias per il GroupBy
     let tableName = cube.activeCard.getAttribute('name');
     let fieldName = cube.dialogGroupBy.querySelector('#fieldName').innerText;
@@ -583,6 +583,7 @@ var cube = new Cube();
   };
 
   app.handlerBtnMetricDone = function(e) {
+
     let tableName = cube.activeCard.getAttribute('name');
     let metricName = app.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
     let fieldName = app.dialogMetrics.querySelector('#fieldName').innerText;
@@ -599,12 +600,18 @@ var cube = new Cube();
       // recupero da this.filters il filtro selezionato
       // console.log(li);
       // debugger;
-      // console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
+      console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
+      debugger;
 
       arrFilters.push(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
+      console.log(arrFilters);
 
-      arrFilters.forEach((filter) => {filters[li.getAttribute('table-name')] = filter;});
+      arrFilters.forEach((filter) => {
+        console.log(filter);
+        filters[li.getAttribute('table-name')] = filter;
+      });
       console.log(filters);
+      return;
 
       // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
       if (Object.keys(cube.filters[li.getAttribute('table-name')]).length === 0) {
@@ -613,6 +620,8 @@ var cube = new Cube();
         delete cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')];
       }
     });
+    console.log(cube.filters);
+    debugger;
 
     // aggiungo i filtri da associare a questa metrica
     if (!cube.metrics.hasOwnProperty(tableName)) {cube.colsMetrics = [];}
@@ -1006,7 +1015,7 @@ var cube = new Cube();
     // TODO: utilizzare le promise
     var url = 'ajax/columnInfo.php';
     let params = 'table='+table+'&field='+field;
-    console.log(params);
+    // console.log(params);
     const ul = document.getElementById('valuesList');
     // pulisco la ul
     Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
@@ -1066,7 +1075,7 @@ var cube = new Cube();
 
   app.handlerColumnFilterSelected = function(e) {
     // selezione della colonna nella dialogFilters
-    console.log(e.target);
+    // console.log(e.target);
     if (e.target.hasAttribute('selected')) {return;}
 
     // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
@@ -1150,7 +1159,7 @@ var cube = new Cube();
     // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
     document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
     this.toggleAttribute('selected');
-    console.log(e.target);
+    // console.log(e.target);
     const textarea = document.getElementById('filterFormula');
     let span = document.createElement('span');
     span.className = 'formulaOperator';
@@ -1290,9 +1299,9 @@ var cube = new Cube();
 
   app.btnSaveDimension.onclick = function() {app.dialogDimensionName.showModal();};
 
-  app.btnSaveCube.onclick = function() {app.dialogCubeName.showModal();}
+  app.btnSaveCube.onclick = function() {app.dialogCubeName.showModal();};
 
-  app.btnSaveCubeName.onclick = function(e) {
+  app.btnSaveCubeName.onclick = function() {
     console.log('cube save');
     cube.cubeTitle = document.getElementById('cubeName').value;
     // recupero le dimensioni che sono state associate a queto cubo

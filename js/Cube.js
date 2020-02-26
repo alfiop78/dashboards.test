@@ -70,7 +70,6 @@ class Cube {
   get sectionOption() {return this._sectionOption;}
 
   handlerBtnFilterDone() {
-    console.log(this);
     let filterName = document.getElementById('filter-name').value;
     let tableName = this.activeCardRef.getAttribute('name');
     let fieldName = this.dialogFilters.querySelector('#filterFormula .formulaField').innerText;
