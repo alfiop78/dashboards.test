@@ -601,34 +601,36 @@ var cube = new Cube();
       // console.log(li);
       // debugger;
       console.log(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
-      debugger;
 
       arrFilters.push(cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')]);
       console.log(arrFilters);
 
       arrFilters.forEach((filter) => {
-        console.log(filter);
-        filters[li.getAttribute('table-name')] = filter;
+        // console.log(filter);
+        let objFilter = {};
+        objFilter[li.getAttribute('filter-name')] = filter;
+        filters[li.getAttribute('table-name')] = objFilter;
+        // filters[li.getAttribute('table-name')][li.getAttribute('filter-name')] = filter;
       });
       console.log(filters);
-      return;
-
+      debugger;
+      
       // se l'object this.filters[nometabella] non ha più nessun filtro al suo interno elimino anche this.filters[nometabella]
       if (Object.keys(cube.filters[li.getAttribute('table-name')]).length === 0) {
         delete cube.filters[li.getAttribute('table-name')];
       } else {
+        // elimino, dai filtri del report, il filtro che verrà inserito nella metrica
+        // BUG: a questo punto dovrei eliminare il filtro impostato sulla metrica, anche nella dimensione salvata in precedenza
         delete cube.filters[li.getAttribute('table-name')][li.getAttribute('filter-name')];
       }
     });
     console.log(cube.filters);
-    debugger;
-
+    
     // aggiungo i filtri da associare a questa metrica
     if (!cube.metrics.hasOwnProperty(tableName)) {cube.colsMetrics = [];}
     let objParam = {};
     if (Object.keys(filters).length > 0) {
-      // debugger;
-      // questa è una metrica filtrata
+      // è stato selezionato un filtro che deve essere aggiunto alla metrica, questa è una metrica filtrata
       cube.colsFilteredMetrics.push({sqlFunction, fieldName, metricName, 'distinct' : distinctOption, 'alias' : alias, filters});
       cube.colsFilteredMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
       cube.filteredMetrics[tableName] = objParam;
@@ -638,9 +640,9 @@ var cube = new Cube();
       cube.metrics[tableName] = objParam;
     }
 
-
     console.log(cube.metrics);
     console.log(cube.filteredMetrics);
+
     cube.currentFieldSetting.setAttribute('defined', true);
     app.dialogMetrics.close();
   };
