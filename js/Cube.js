@@ -1,42 +1,68 @@
-class Cube {
-  #_cubeId = null;
 
+class Dimension {
   constructor() {
-    this.cube = new Object();
-    this.dimension = new Object();
-    this.hierarchyFact = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
-    this.hierarchyTable = new Object(); // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
-    this.hierarchyOrder = {}; // ordine gerarchico della struttura (con l'ultima tabella che rappresenta l'associazione con la FACT)
-    this.columns = new Object();
-    this.cols = [];
-    this.filters = new Object(); // contiene l'array di colonne che andranno nella WHERE come condizioni
-    this.objFilter = {};
-    this.conditionsColName = [];
-    this.metrics = new Object(); // metriche non filtrate
-    this.filteredMetrics = new Object(); // metriche filtrate
-    this.colsMetrics = [];
-    this.colsFilteredMetrics = [];
-    this.groupBy = new Object();
-    this.colsGroupBy = [];
+    this._dimension = {};
+    this._hierarchies = {};
     this.relationId = 0;
-    this.dialogFilters = document.getElementById('filter-setting');
-    // this.dialogMetrics = document.getElementById('metric-setting');
-    this.dialogColumns = document.getElementById('column-setting');
-    this.dialogGroupBy = document.getElementById('groupby-setting');
+  }
+
+  set id(value) {this._id = value;}
+
+  get id() {return this._id;}
+
+  set activeCard(cardRef) {
+    // la card su cui si sta operando
+    this.card = cardRef;
+  }
+
+  get activeCard() {return this.card;}
+
+  set title(value) {
+    this._dimension['title'] = value;
+    this._dimension['type'] = 'DIMENSION';
+  }
+
+  get title() {return this._dimension['title'];}
+
+  set from(value) {this._dimension['from'] = value;}
+
+  get from() {return this._dimension['from'];}
+
+  set hierarchies(value) {
+    this._hierarchies['hier_'+this.relationId];
+    this._dimension['hierarchies'] = this._hierarchies;
+  }
+
+  get hierarchies() {return this._hierarchies;}
+
+}
+
+class Cube {
+  
+  constructor() {
+    this._cubeId;
+    this.cube = {};
+    this.dimension = {};
+    this.hierarchyFact = {}; // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
+    this.hierarchyTable = {}; // Oggetto che contiene un'array di gerarchie (memorizzato in this.hierarchies)
+    this.hierarchyOrder = {}; // ordine gerarchico della struttura (con l'ultima tabella che rappresenta l'associazione con la FACT)
+    this.relationId = 0;
     this.currentFieldSetting = null;
     this.dimensions = [];
   }
 
   set cubeId(value) {
-    this.#_cubeId = value;
+    this._cubeId = value;
   }
 
-  get cubeId() {return this.#_cubeId;}
+  get cubeId() {return this._cubeId;}
 
   set cubeTitle(value) {this.cube_title = value;}
+
   get cubeTitle() {return this.cube_title;}
 
   set dimensionTitle(value) {this.dimension_title = value;}
+
   get dimensionTitle() {return this.dimension_title;}
 
   set dimensionsSelected(value) {this.dimensions.push(value);}
@@ -68,43 +94,6 @@ class Cube {
   }
 
   get sectionOption() {return this._sectionOption;}
-
-  handlerBtnFilterDone() {
-    let filterName = document.getElementById('filter-name').value;
-    let tableName = this.activeCardRef.getAttribute('name');
-    let fieldName = this.dialogFilters.querySelector('#filterFormula .formulaField').innerText;
-    let operator = this.dialogFilters.querySelector('#filterFormula .formulaOperator').innerText;
-    // array di valori, nel caso di operatori IN oppure between ci sono più valori, nel caso di operator = c'è un solo valore
-    let values = [];
-    let value;
-    // console.log(operator);
-
-    switch (operator) {
-      case 'IN':
-      case 'NOT IN':
-        value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
-        // console.log(value);
-        // console.log('IN / NOT IN');
-        values = value.split(',');
-
-        break;
-      default:
-        value = this.dialogFilters.querySelector('#filterFormula .formulaValues').innerHTML;
-        values.push(value);
-    }
-
-    if (!this.filters.hasOwnProperty(tableName)) {this.objFilter = {};}
-
-    console.log(this.filters);
-
-    this.conditionsColName.push({'fieldName' : fieldName, 'operator' : operator, 'values' : values});
-    // this.conditionsColName.push({'filterName' : filterName, 'fieldName' : fieldName, 'operator' : operator, 'values' : values});
-    this.conditionsColName.forEach((filter) => {this.objFilter[filterName] = filter;});
-
-    this.filters[tableName] = this.objFilter;
-    console.log(this.filters);
-    this.dialogFilters.close();
-  }
 
   changeMode(value, text) {
     // imposto la modalità della card (hierarchies, columns, filters, groupby,metrics)

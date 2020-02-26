@@ -103,7 +103,7 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 /* colonne all'interno della card/tabella*/
 .card.table ul{padding-inline-start: 0; font-size: .65rem; border-radius: 4px; min-height: auto; overflow: auto; max-height: 200px;}
 
-.card.table ul > .element li{width: 120px;max-width: 120px;list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
+.card.table ul > .element li{list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
   white-space: nowrap;}
 
 .card.table > .cardLayout > .cardTable[mode] ul > .element li:hover{cursor: pointer;}
