@@ -12,7 +12,7 @@ class Storages {
 
   set save(value) {
     // salvo nello storage
-    window.localStorage.setItem(value.name, JSON.stringify(value));
+    window.localStorage.setItem(value.title, JSON.stringify(value));
   }
 
   set reportConfig(value) {
@@ -59,15 +59,15 @@ class CubeStorage extends Storages {
       // console.log(jsonStorage);
 
       if (jsonStorage.type === 'CUBE') {
-        // ottengo il numero di elementi PAGE nello storage
-        this.cubesElement.push(jsonStorage.cubeId);
+        // ottengo il numero di elementi CUBE nello storage
+        this.cubesElement.push(jsonStorage.id);
       }
     });
 
     // ordino l'array
     this.cubesElement.sort(function (a, b) {
-      console.log(a);
-      console.log(b);
+      // console.log(a);
+      // console.log(b);
       // TODO: cosa sono a e b ?
       return a - b;
     })

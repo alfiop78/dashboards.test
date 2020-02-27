@@ -300,6 +300,8 @@ var dimension = new Dimension();
     // selezione della colonna nella card table
     // console.log(e.target);
     dimension.activeCard = e.path[3];
+    cube.fieldSelected = e.target.getAttribute('label');
+    
     // console.log(cube.activeCard);
 
     // se è presente un altro elemento con attributo hierarchy ma NON data-relation-id, "deseleziono" quello con hierarchy per mettere ...
@@ -350,10 +352,29 @@ var dimension = new Dimension();
         delete cube.metrics[tableName][fieldName];
         // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
       } else {
+        app.dialogMetrics.querySelector('#fieldName').innerText = dimension.fieldSelected;
         app.dialogMetrics.showModal();
+        // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+        app.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
       }
-      console.log(cube.metrics);
+      
     }
+  };
+
+  app.handlerBtnMetricDone = function(e) {    
+    const metricName = app.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
+    const sqlFunction = document.querySelector('#function-list > li[selected]').innerText; // TODO meglio utilizzare l'attributo label, da inserire se non presente
+    const distinctOption = document.getElementById('checkbox-distinct').checked;
+    const alias = document.getElementById('alias-metric').value;
+
+    console.log(cube.fieldSelected);
+
+    let objParam = {};
+    cube.arrMetrics.push({sqlFunction, 'fieldName': cube.fieldSelected, metricName, 'distinct' : distinctOption, 'alias' : alias});
+    cube.arrMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+    cube.metrics = objParam;
+    
+    app.dialogMetrics.close();
   };
 
   app.handlerAddMetric = function(e) {
@@ -375,32 +396,40 @@ var dimension = new Dimension();
         colSelected.push(liRef);
         hier.push(tableName+'.'+liRef.innerText);
       }
-      // console.log(hier);
+      console.log(hier);
       // per creare correttamente la relazione è necessario avere due elementi selezionati
       if (hier.length === 2) {
-        dimension.relationId++;
         // se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
         // e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
         if (card.hasAttribute('fact')) {
-          dimension.hierarchyFact['hier_'+dimension.relationId] = hier;
-          console.log(dimension.hierarchyFact);
+          console.log('FACT TABLE Relation');
+          cube.relationId++;
+          cube.relations['hier_'+cube.relationId] = hier;
+          console.log(cube.relations);
+          cube.saveRelation = colSelected;
+          // colSelected.forEach((el) => {
+          //   el.setAttribute('data-rel-'+cube.relationId, cube.relationId);
+          //   // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          //   el.setAttribute('data-relation-id', true);
+          //   // la relazione è stata creata, posso eliminare [selected]
+          //   el.removeAttribute('selected');
+          // });
         } else {
-          // dimension.dimension['hier_'+dimension.relationId] = hier;
+          dimension.relationId++;
           dimension.hierarchies = hier;
+          // visualizzo l'icona per capire che c'è una relazione tra le due colonne
+          dimension.saveRelation = colSelected;
+          // colSelected.forEach((el) => {
+          //   el.setAttribute('data-rel-'+dimension.relationId, dimension.relationId);
+          //   // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
+          //   el.setAttribute('data-relation-id', true);
+          //   // la relazione è stata creata, posso eliminare [selected]
+          //   el.removeAttribute('selected');
+          // });
+          console.log(dimension.hierarchies);
+          // esiste una relazione, visualizzo il div hierarchiesContainer
+          app.hierarchyContainer.removeAttribute('hidden');
         }
-        // (card.hasAttribute('fact-table')) ? this.hierarchyFact['fact_'+this.relationId] = hier : this.hierarchyTable['hier_'+this.relationId] = hier;
-
-        // visualizzo l'icona per capire che c'è una relazione tra le due colonne
-        colSelected.forEach((el) => {
-          el.setAttribute('data-rel-'+dimension.relationId, dimension.relationId);
-          // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
-          el.setAttribute('data-relation-id', true);
-          // la relazione è stata creata, posso eliminare [selected]
-          el.removeAttribute('selected');
-        });
-        console.log(dimension.hierarchies);
-        // esiste una relazione, visualizzo il div hierarchiesContainer
-        app.hierarchyContainer.removeAttribute('hidden');
       }
     });
   };
@@ -621,10 +650,9 @@ var dimension = new Dimension();
   };
 
   app.handlerAddHierarchy = function(e) {
-    let cardTable = e.path[3].querySelector('.cardTable');
-    cube.activeCard = cardTable;
-    console.log(cardTable);
-    cube.changeMode('hierarchies', 'Selezionare le colonne che saranno messe in relazione');
+    const cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
+    cube.mode('hierarchies', 'Selezionare le colonne che saranno messe in relazione');
   };
 
   app.getTable = function(table) {
@@ -743,45 +771,61 @@ var dimension = new Dimension();
 
   app.btnSaveCubeName.onclick = function() {
     console.log('cube save');
-    cube.cubeTitle = document.getElementById('cubeName').value;
-    // recupero le dimensioni che sono state associate a queto cubo
-    const storage = new DimensionStorage();
-    console.log(cube.dimensionsSelected);
+    let cubeStorage = new CubeStorage();
+    cube.title = document.getElementById('cubeName').value;
+
+    cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
+    // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
+    cube.id = cubeStorage.getIdAvailable();
+    console.log(cube.id);
+
+    const dimensionStorage = new DimensionStorage();
+
     let dimensionObject = {};
     cube.dimensionsSelected.forEach((dimensionName) => {
       console.log(dimensionName);
-      storage.selected = dimensionName;
-      console.log(storage.selected);
-      dimensionObject[dimensionName] = storage.selected;
+      dimensionStorage.selected = dimensionName;
+      console.log(dimensionStorage.selected);
+      dimensionObject[dimensionName] = dimensionStorage.selected;
       // salvo la/le dimenioni scelte nell'object cube
-      // REVIEW: da verificare
-      cube.cube.associatedDimensions = dimensionObject;
     });
-    console.log(cube.cube);
-    console.log(cube.cube.associatedDimensions);
-    cube.cube.type = 'CUBE';
-    console.log(cube.hierarchyFact);
-    cube.cube.hierarchies = cube.hierarchyFact;
 
+    
+    cube.save();
 
-    cube.cube.metrics = cube.metrics;
-    cube.cube.filteredMetrics = cube.filteredMetrics;
-    cube.cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
-    cube.cube.name = cube.cubeTitle;
-    let cubeStorage = new CubeStorage();
-
-    // Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-    cube.cube.cubeId = cubeStorage.getIdAvailable();
-    // debugger;
-    console.log(cube.cube.cubeId);
-    console.log(cube.cube);
     // salvo il cubo in localStorage
     cubeStorage.save = cube.cube;
-    cubeStorage.stringifyObject = cube.cube;
-    console.log('ajaxReq');
+
+    app.dialogCubeName.close();
+
+    return;
+    
+    // recupero le dimensioni che sono state associate a queto cubo
+    // const storage = new DimensionStorage();
+    // console.log(cube.dimensionsSelected);
+    // let dimensionObject = {};
+    // cube.dimensionsSelected.forEach((dimensionName) => {
+    //   console.log(dimensionName);
+    //   storage.selected = dimensionName;
+    //   console.log(storage.selected);
+    //   dimensionObject[dimensionName] = storage.selected;
+    //   // salvo la/le dimenioni scelte nell'object cube
+    //   // REVIEW: da verificare
+    //   cube.cube.associatedDimensions = dimensionObject;
+    // });
+    // console.log(cube.cube);
+    // console.log(cube.cube.associatedDimensions);
+    // console.log(cube.hierarchyFact);
+    // cube.cube.hierarchies = cube.hierarchyFact;
+
+    //let cubeStorage = new CubeStorage();
+
+    
+    // cubeStorage.stringifyObject = cube.cube;
+    
     app.dialogCubeName.close();
     // TODO: visualizzo il tasto crea report che rimanda alla pagina /reports
-    app.btnNewReport.removeAttribute('hidden');
+    // app.btnNewReport.removeAttribute('hidden');
 
   };
 
@@ -846,9 +890,10 @@ var dimension = new Dimension();
     card.onmouseup = app.dragEnd;
     card.onmousemove = app.drag;
     // prendo il template cardLayout e lo inserisco nella .card.table
-    let tmpl = document.getElementById('cardLayoutLastTable');
+    let tmpl = document.getElementById('cardLayout');
     let content = tmpl.content.cloneNode(true);
     let cardLayout = content.querySelector('.cardLayout');
+    
     cardLayout.querySelector('.cardTable').setAttribute('fact', true);
     // imposto il titolo in h6
 
@@ -861,11 +906,8 @@ var dimension = new Dimension();
     card.querySelector('i[data-id="closeTable"]').onclick = app.handlerCloseCard;
     // evento sulla input di ricerca nella card
     card.querySelector('input').oninput = App.searchInList;
-
-    cube.activeCard = card.querySelector('.cardTable');
-    // inserisco il nome della tabella selezionata nella card [active]
-    cube.table = card.getAttribute('label');
-
+    cube.activeCard = {'ref': card.querySelector('.cardTable'), 'tableName': card.getAttribute('label')};
+    
     // event sui tasti section[options]
     card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
 
