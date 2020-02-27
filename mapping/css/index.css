@@ -8,10 +8,6 @@ i[open]{color: red;}
 div[draggable]{cursor: grab;}
 
 .highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
-/*pages*/
-
-#operator{background-color: grey;border-radius: 4px;color: white;font-size: 1.10rem; font-weight: bold;margin: 16px;padding: 8px;}
-#operator:hover #operator-list{visibility: visible;}
 
 h5{font-size: .9rem;padding: 8px;margin: 0;}
 
@@ -83,10 +79,6 @@ dialog #between > span{padding: 16px;}
 #formula{background-color: #be7575;padding: 16px;border-radius: 4px;margin: 16px auto;color: white;font-weight: bold;font-size: 1rem;
   display: grid;grid-template-columns: auto auto auto;}
 #formula > span{justify-self: center;}
-
-.logicalOperator {display: flex;flex-flow: row;justify-content: space-evenly;padding: 16px;}
-.logicalOperator > span{padding: 4px 8px;}
-.logicalOperator > span:hover{background: var(--main-primary-color); color: white;border-radius: 4px;cursor: pointer;padding: 4px 8px;}
 
 .formulaContent {display: flex;}
 div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
