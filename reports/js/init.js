@@ -4,6 +4,10 @@ var Pages = new Page();
 (() => {
   var app = {
     report : null,
+    
+    btnPreviousStep : document.getElementById('stepPrevious'),
+    btnNextStep : document.getElementById('stepNext'),
+
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
     dialogTableList : document.getElementById('table-list'),
@@ -42,6 +46,10 @@ var Pages = new Page();
   };
 
   App.init();
+
+  // la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
+  var Step = new Steps('stepTranslate');
+  // TODO: penso si possano spostare anche le altre Classi qui
 
   app.getReports = function() {
     // recupero la lista dei report già presenti
@@ -110,7 +118,6 @@ var Pages = new Page();
     let element = document.createElement('div');
     element.classList.add('element');
 
-
     for (let i in obj) {
       // element.querySelector('span').innerHTML = obj[i]['key'];
       // element.id = 'cubeId_' + obj[i]['cubeId'];
@@ -163,14 +170,6 @@ var Pages = new Page();
   app.btnOpenReport.onclick = function(e) {
     // apro la dialog dialog-reportList
     app.dialogReportList.showModal();
-  };
-
-  app.openCubeList.onclick = function(e) {
-    console.log(e.target);
-    const list = document.getElementById('cubeList');
-    list.toggleAttribute('hidden');
-    e.target.toggleAttribute('open');
-    document.getElementById('cubeSearch').focus();
   };
 
   app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
@@ -262,6 +261,10 @@ var Pages = new Page();
   app.btnNextPage.onclick = function() {Pages.next();};
 
   app.btnBackPage.onclick = function() {Pages.previous();};
+
+  app.btnPreviousStep.onclick = function() {Step.previous();}
+
+  app.btnNextStep.onclick = function() {Step.next();};
 
 
 

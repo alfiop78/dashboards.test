@@ -13,6 +13,8 @@
     <link rel="stylesheet" type="text/css" href="/css/md-inputs.css" />
     <link rel="stylesheet" type="text/css" href="/css/report-layout.css" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="/css/steps.css" />
+    <script src="/js/Step.js"></script>
     <script src="/js/Application.js"></script>
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
@@ -185,12 +187,6 @@
 
         <nav>
           <a href="/mapping/" title="Mapping"><i class="material-icons md-18">settings</i><span>Mapping</span></a>
-          <!-- <a href="#" title="Il mio Profilo" onclick="App.menuOpen('profile/')"><i class="material-icons md-18">person</i><span>elem 1</span></a> -->
-
-          <!-- <a href="" title="Impostazioni"><i class="material-icons md-18">settings</i><span>elem 2</span></a> -->
-
-          <!-- <a href="" title="Logout"><i class="material-icons md-18">power_settings_new</i><span>Logout</span></a> -->
-
         </nav>
 
       </div>
@@ -217,12 +213,12 @@
                 <h5>descrizione</h5>
 
                 <div class="actions">
-                  <span class="popupContent"><i id="openCubeList" class="material-icons md-24">view_list</i><small class="popup">Lista cubi</small></span>
+                  
                   <span class="popupContent"><i id="openCube" class="material-icons md-24">add_circle</i><small class="popup">Nuovo</small></span>
                   <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
                   <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
                 </div>
-                <div class="lists">
+                <!-- <div class="lists">
                   <div class="absList" id="cubeList" hidden>
                     <div class="md-field">
                       <input type="search" id="cubeSearch" value=""/>
@@ -230,7 +226,53 @@
                     </div>
                     <ul id="cubes"></ul>
                   </div>
+                </div> -->
+
+
+                <div class="steps" data-step="1">
+
+                  <div class="overflow">
+
+                    <div id="stepTranslate">
+                      
+                      <section class="step" data-step="1" selected>
+                        <section class="pageContent">
+                          <h4>Step 1</h4><h6>Seleziona il cubo su cui creare il report</h6>
+                          <div id="layoutStep-1">
+
+                            <div class="lists">
+                              <div id="cubeList">
+                                <ul id="cubes"></ul>
+                              </div>
+                            </div>
+
+                            <div class="selectColumns">
+                              selezione delle colonne del report
+                            </div>
+                          </div>
+
+                        </section>
+                      </section>
+                      
+                      <section class="step" data-step="2">
+                        <section class="pageContent">
+                          <h4>Step 2</h4><h6>Seleziona</h6>
+
+                        </section>
+                      </section>
+
+                    </div>
+
+                    <div class="buttons">
+                      <button id="stepPrevious">previous</button>
+                      <button id="stepNext">next</button>
+                    </div>
+
+                  </div>
+                  
                 </div>
+
+
               </section>
 
               <section class="page" data-step="2">

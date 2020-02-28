@@ -1,4 +1,4 @@
-// TODO: definire dei metodi per spostare la pagina in base al viewport/device. Attualmente la translate è impostata a 1000px per ogni pagina
+// TODO: Impostare un controllo per il next/previous su pagine inesistenti
 class Page {
 
   constructor() {
@@ -10,18 +10,13 @@ class Page {
 
   set currentPage(page) {
     this._page = page;
-    console.log('pagina corrente', this._page);
     // ottengo la width della pagina
     this._width = this._page.offsetWidth;
-    console.log(this._width);
-
   }
 
   get currentPage() {return this._page;}
 
-  set currentStep(step) {
-    this.step = +step;
-  }
+  set currentStep(step) {this.step = +step;}
 
   get currentStep() {return this.step;}
 
