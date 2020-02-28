@@ -215,17 +215,17 @@ var dimension = new Dimension();
     const hierarchiesTables = document.getElementById('hierTables');
     let id = hierarchiesTables.childElementCount;
     // let dropzone = document.createElement('div');
-    let hierTables = document.getElementById('hierTables');
+    
     // dropzone.classList = 'dropzoneHier';
     // hierarchiesTables.appendChild(dropzone);
     let div = document.createElement('div');
     div.className = 'hier table dropzoneHier';
-    div.id = 'hier_' + id;
+    div.id = 'relation_' + id;
     div.setAttribute('draggable', true);
-    div.setAttribute('label', cube.table);
-    div.innerHTML = cube.table;
+    div.setAttribute('label', cube.card.tableName);
+    div.innerText = cube.card.tableName;
 
-    hierTables.appendChild(div);
+    hierarchiesTables.appendChild(div);
     // imposto sul div l'evento drag&drop
     div.ondragstart = app.hierDragStart;
     div.ondragover = app.hierDragOver;
@@ -417,6 +417,7 @@ var dimension = new Dimension();
         } else {
           dimension.relationId++;
           dimension.hierarchies = hier;
+          debugger;
           // visualizzo l'icona per capire che c'è una relazione tra le due colonne
           dimension.saveRelation = colSelected;
           // colSelected.forEach((el) => {
@@ -780,17 +781,17 @@ var dimension = new Dimension();
     console.log(cube.id);
 
     const dimensionStorage = new DimensionStorage();
-
+    
     let dimensionObject = {};
     cube.dimensionsSelected.forEach((dimensionName) => {
       console.log(dimensionName);
       dimensionStorage.selected = dimensionName;
-      console.log(dimensionStorage.selected);
+      console.log(dimensionStorage.selected);      
       dimensionObject[dimensionName] = dimensionStorage.selected;
       // salvo la/le dimenioni scelte nell'object cube
+      cube.associatedDimensions = dimensionObject;
     });
 
-    
     cube.save();
 
     // salvo il cubo in localStorage
@@ -798,29 +799,6 @@ var dimension = new Dimension();
 
     app.dialogCubeName.close();
 
-    return;
-    
-    // recupero le dimensioni che sono state associate a queto cubo
-    // const storage = new DimensionStorage();
-    // console.log(cube.dimensionsSelected);
-    // let dimensionObject = {};
-    // cube.dimensionsSelected.forEach((dimensionName) => {
-    //   console.log(dimensionName);
-    //   storage.selected = dimensionName;
-    //   console.log(storage.selected);
-    //   dimensionObject[dimensionName] = storage.selected;
-    //   // salvo la/le dimenioni scelte nell'object cube
-    //   // REVIEW: da verificare
-    //   cube.cube.associatedDimensions = dimensionObject;
-    // });
-    // console.log(cube.cube);
-    // console.log(cube.cube.associatedDimensions);
-    // console.log(cube.hierarchyFact);
-    // cube.cube.hierarchies = cube.hierarchyFact;
-
-    //let cubeStorage = new CubeStorage();
-
-    
     // cubeStorage.stringifyObject = cube.cube;
     
     app.dialogCubeName.close();

@@ -65,7 +65,7 @@ class Cube {
     this._cube.relations = this._relations;
     this._cube.FACT = this._fact;
     this._cube.id = this._id;
-    this._cube.associatedDimensions = this._dimensions;
+    this._cube.associatedDimensions = this._associatedDimension;
   }
 
   get cube() {return this._cube;}
@@ -83,6 +83,10 @@ class Cube {
   set dimensionsSelected(value) {this._dimensions.push(value);}
 
   get dimensionsSelected() {return this._dimensions;}
+
+  set associatedDimensions(obj) {this._associatedDimension = obj;}
+
+  get associatedDimensions() {return this._associatedDimension;}
 
 }
 
