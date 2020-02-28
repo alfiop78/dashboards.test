@@ -17,7 +17,6 @@
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
     <script src="/js/Report.js"></script>
-    <script src="/js/Page.js"></script>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <title>Creazione Report</title>
   </head>
@@ -202,49 +201,99 @@
 
         </div>
 
-        <h1 class="title">Creazione report</h1>
+        <h1 class="title"></h1>
       </header>
 
-      <div id="container" data-page="1">
+      <div id="container">
 
         <div id="content">
           <div id="body" hidden>
+            <h2>Creazione Report</h2>
+            <h5>descrizione</h5>
 
-            <div id="pages" data-step="1">
-              
-              <section class="page" selected data-step="1">
-                <h3>title</h3>
-                <h5>descrizione</h5>
-
-                <div class="actions">
-                  <span class="popupContent"><i id="openCubeList" class="material-icons md-24">view_list</i><small class="popup">Lista cubi</small></span>
-                  <span class="popupContent"><i id="openCube" class="material-icons md-24">add_circle</i><small class="popup">Nuovo</small></span>
-                  <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
-                  <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
+            <div class="actions">
+              <span class="popupContent"><i id="openCubeList" class="material-icons md-24">view_list</i><small class="popup">Lista cubi</small></span>
+              <span class="popupContent"><i id="openCube" class="material-icons md-24">add_circle</i><small class="popup">Nuovo</small></span>
+              <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
+              <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
+            </div>
+            <div class="lists">
+              <div class="absList" id="cubeList" hidden>
+                <div class="md-field">
+                  <input type="search" id="cubeSearch" value=""/>
+                  <label for="cubeSearch" class="">Ricerca</label>
                 </div>
-                <div class="lists">
-                  <div class="absList" id="cubeList" hidden>
-                    <div class="md-field">
-                      <input type="search" id="cubeSearch" value=""/>
-                      <label for="cubeSearch" class="">Ricerca</label>
-                    </div>
-                    <ul id="cubes"></ul>
-                  </div>
-                </div>
-              </section>
-
-              <section class="page" data-step="2">
-                <h3>Report</h3>
-                <h5>descrizione</h5>
-
-                
-                
-              </section>
-
-              
-
+                <ul id="cubes"></ul>
+              </div>
             </div>
 
+            <div class="layout-settings">
+
+              <section params>
+                <div class="params column">
+                  <template id="params">
+                    <div class="cell-full md-field" data-param-id="" options='filters'>
+                      <input type="search" id="" value="" onclick="this.select()"/>
+                      <label for=""></label>
+                      <div class="elements" options="filters" col="">
+                        <ul class="filters" id=""></ul>
+                        <section>
+                          <button class="button dense raised">ok</button>
+                        </section>
+                      </div>
+                    </div>
+                    <span class="popupContent"><i class="material-icons md-18">settings</i><small class="popup">Impostazioni</small></span>
+                  </template>
+
+                </div>
+
+                <section class="settings" paramSettings>
+                  <span class="popupContent"><i id="head-settings" class="material-icons md-18">settings</i><small class="popup">PageBy</small></span>
+                </section>
+
+              </section>
+
+              <section body>
+                <section table>
+                  <table id="table-01" header-fixed>
+                    <caption>caption table</caption>
+                    <thead>
+                      <tr head></tr>
+                    </thead>
+
+                    <tbody></tbody>
+
+                    <tfoot>
+                      <tr><td>Total</td></tr>
+                      <tr>
+                        <td inputSearch>
+                          <div class="cell-full md-field">
+                            <input id="search" type="search" autocomplete="off" onfocus="this.select()" />
+                            <label for="search">Ricerca</label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr class="tr-right">
+                        <td>
+                          <div info>
+                            <span>Elementi presenti</span>&nbsp;<span row-number></span>
+                          </div>
+                        </td>
+
+                      </tr>
+                    </tfoot>
+
+                  </table>
+
+                </section>
+
+                <section class="settings" tableSettings>
+                  <span class="popupContent"><i id="body-settings" class="material-icons md-18">settings</i><small class="popup">Body Report</small></span>
+                  <span class="popupContent"><i id="other-settings" class="material-icons md-18">line_style</i><small class="popup">Altre impostazioni</small></span>
+                </section>
+              </section>
+
+            </div>
 
           </div>
 
@@ -252,10 +301,9 @@
 
         <div id="controls">
           <div id="fabs">
-            <button id="mdcBack" class="button dense raised">back</button>
+            <button id="mdc-back" class="button dense raised">back</button>
             <div class="spacer"></div>
             <button id="mdc-dashboard-layout" class="button dense raised done" hidden>CREA LAYOUT</button>
-            <button id="mdcNextPage" class="button dense raised done">next</button>
 
           </div>
         </div>

@@ -1,5 +1,5 @@
+/* global Application, CubeStorage, ReportStorage, Options */
 var App = new Application();
-var Pages = new Page();
 
 (() => {
   var app = {
@@ -20,8 +20,6 @@ var Pages = new Page();
     btnNewReport: document.getElementById('mdc-new-report'),
     btnSaveReport : document.getElementById('saveReport'),
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
-    btnNextPage : document.getElementById('mdcNextPage'),
-    btnBackPage : document.getElementById('mdcBack'),
     btnSaveColOption: document.getElementById('btnSaveColOption'),
     table: document.getElementById('table-01'),
     // btn in actions
@@ -46,12 +44,12 @@ var Pages = new Page();
   app.getReports = function() {
     // recupero la lista dei report già presenti
     const reports = new ReportStorage();
-    // console.log(reports.list());
+    console.log(reports.list());
     let reportsObj = reports.list();
     const ul = document.getElementById('reports');
 
     for (let i in reportsObj) {
-      // console.log(reportsObj[i]);
+      console.log(reportsObj[i]);
       let element = document.createElement('div');
       element.className = 'element';
       element.setAttribute('label', reportsObj[i]['name']);
@@ -232,7 +230,7 @@ var Pages = new Page();
   app.formatBold.onclick = app.handlerOption;
   app.formatItalic.onclick = app.handlerOption;
 
-  // console.log(app.radioSingleSelection);
+  console.log(app.radioSingleSelection);
 
   app.handlerRadioSelectionType = function(e) {
     console.log('radio : ', e.target);
@@ -258,12 +256,6 @@ var Pages = new Page();
     // value dell'elemento selezionato nella select
     app.report.attribute = { [propName]: propValue};
   };
-
-  app.btnNextPage.onclick = function() {Pages.next();};
-
-  app.btnBackPage.onclick = function() {Pages.previous();};
-
-
 
   /* events */
 

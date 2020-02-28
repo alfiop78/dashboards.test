@@ -1,3 +1,13 @@
+/*pages*/
+#pages{display: flex;transition: all 250ms;}
+.page{align-items: center;display: flex;flex-direction: column;min-width: 100%;padding: 8px;}
+
+
+.highlight{padding: 4px;border-radius: 4px;background-color: #9a9b94;color: white;}
+/*pages*/
+
+
+
 th{position: relative;}
 th i.material-icons{position: absolute;right: 8px;display: inline-table;}
 
