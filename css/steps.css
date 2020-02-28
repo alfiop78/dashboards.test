@@ -1,0 +1,8 @@
+.steps {display: flex; width: 100%;background: lightgreen;justify-content: center;}
+
+.steps > .overflow{display: flex; width: 80%;background: lightgrey;overflow: hidden; flex-flow: column; align-items: center;}
+
+.steps > .overflow > #stepTranslate{display: flex;width: 100%;transition: transform 200ms;}
+
+.steps .step{align-items: center;display: flex;flex-direction: column;min-width: calc(100% - 32px);margin: 16px;}
+.steps .step > .pageContent{width: 90%; display: flex;justify-content: center;flex-flow: column;}
