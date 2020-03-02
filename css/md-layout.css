@@ -107,6 +107,11 @@ ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: ce
 /*ul > .element li:hover{background-color: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}*/
 /* lists */
 
+/* .sectionLists*/
+.sectionLists ul li:hover{background: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}
+.sectionLists ul li[selected]{background: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}
+/* .sectionLists*/
+
 /* dialog */
 dialog > section{padding: 16px;}
 dialog{border: none;box-shadow: 0 2px 5px 1px rgba(10,10,10,.35);border-radius: 4px;padding: 0;font-size: .8rem;}

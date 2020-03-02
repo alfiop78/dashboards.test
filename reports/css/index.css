@@ -23,3 +23,5 @@ i[open]{color: red;}
 
 #layoutStep-1{display: grid; grid-template-columns: 30% auto;}
 #layoutStep-2{display: grid; grid-template-columns: 30% auto;}
+
+#reportSection{display: flex;flex-flow: row;}

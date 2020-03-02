@@ -1,5 +1,6 @@
 var App = new Application();
 var Pages = new Page();
+var Query = new Queries();
 
 (() => {
   var app = {
@@ -41,7 +42,9 @@ var Pages = new Page();
     formatItalic: document.getElementById('format-italic'),
     radioSingleSelection: document.getElementsByName('selection-type'),
     numberFormat : document.getElementById('numberFormat'),
-    openCubeList : document.getElementById('openCubeList')
+    openCubeList : document.getElementById('openCubeList'),
+
+    reportSection : document.getElementById('reportSection')
 
   };
 
@@ -77,7 +80,7 @@ var Pages = new Page();
     const cubeId = e.target.getAttribute('data-cube-id');
     const cubeName = e.target.getAttribute('label');
     const storage = new CubeStorage();
-    // TODO: Recupero le dimensioni associate a questo cubo per mostrarle nella sezione corrispondente.
+    // Recupero le dimensioni associate a questo cubo per mostrarle nella sezione corrispondente.
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
     let ul = document.getElementById('dimensions');
@@ -85,17 +88,39 @@ var Pages = new Page();
     let element = document.createElement('div');
     element.classList.add('element');
     for (dimension in dimensions) {
-      console.log(dimension);
-      console.log(dimensions);
-      
+      // console.log(dimension);
+      // console.log(dimensions);
       let li = document.createElement('li');
       li.innerText = dimensions[dimension]['title'];
-      
       li.setAttribute('label', dimension);
       ul.appendChild(element);
       element.appendChild(li);
       li.onclick = app.handlerDimensionSelected;
     }
+
+  };
+
+  app.handlerDimensionSelected = function(e) {
+    // selezione della/e dimensione su cui lavorare per la creazione del report
+    // imposto attributo selected sulle dimensioni selezionate
+    e.target.toggleAttribute('selected');
+    
+  };
+
+  app.handlerTableSelected = function(e) {
+    // TODO: visualizzo la ul nascosta della tabella selezionata
+    let dataTableId = +e.target.getAttribute('data-table-id');
+    document.querySelector("#fieldList[data-table-id='"+dataTableId+"']").removeAttribute('hidden');
+  };
+
+  app.handlerFieldSelected = function(e) {
+    // seleziono la colonna da inserire nel report e la inserisco nel reportSection
+    let field = e.target.getAttribute('label');
+    let tmplColumn = document.getElementById('reportColumn');
+    let content = tmplColumn.content.cloneNode(true);
+    let div = content.querySelector('div');
+    div.innerText = field;
+    app.reportSection.appendChild(div);
 
   };
 
@@ -291,7 +316,64 @@ var Pages = new Page();
 
   app.btnPreviousStep.onclick = function() {Step.previous();}
 
-  app.btnNextStep.onclick = function() {Step.next();};
+  app.btnNextStep.onclick = function() {
+    // TODO: Aggiungo le tabelle e le colonne definite nel mapping per poterle selezionare ed inserirle nel report
+    const storage = new DimensionStorage();
+    // ciclo le dimensioni selezionate
+    let dims = Array.from(document.querySelectorAll('#dimensions li[selected]')).forEach((dimension) => {
+      console.log(dimension);
+      // recupero la dimension in JSON dallo storage
+      storage.selected = dimension.getAttribute('label');
+      console.log(storage.selected);
+      // popolo l'elenco tables che ha al proprio interno le colonne mappate
+      let ulTable = document.getElementById('tables');
+      let element = document.createElement('div');
+      element.className = 'element';
+      let i = 0;
+      for (let table in storage.selected.columns) {
+        console.log(table);
+        let li = document.createElement('li');
+        li.innerText = table;
+        li.setAttribute('label', table);
+        li.setAttribute('data-table-id', i);
+        ulTable.appendChild(element);
+        element.appendChild(li);
+        li.onclick = app.handlerTableSelected;
+        // popolo i campi di questa tabella
+        let tmplFields = document.getElementById('tmplFields');
+        let tmplContent = tmplFields.content.cloneNode(true);
+        let list = tmplContent.querySelector('div');
+        list.setAttribute('data-table-id', i);
+        let parent = document.getElementById('listFields');
+        console.log(storage.selected.columns);
+        console.log(storage.selected.columns[table]);
+        parent.appendChild(list);
+        let ulField = list.querySelector('#fields');
+        console.log(ulField);
+        i++;
+        
+        storage.selected.columns[table].forEach((field) => {
+
+          let li = document.createElement('li');
+          let elementField = document.createElement('div');
+          elementField.className = 'element';
+          li.innerText = field;
+          li.setAttribute('label', field);
+          ulField.appendChild(elementField);
+          elementField.appendChild(li);
+          li.onclick = app.handlerFieldSelected;
+
+
+        });
+
+
+      }
+    });
+    
+    
+    Step.next();
+  };
+
 
 
 

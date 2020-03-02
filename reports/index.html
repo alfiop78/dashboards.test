@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <link rel="stylesheet" type="text/css" href="/css/steps.css" />
     <script src="/js/Step.js"></script>
+    <script src="/js/Query.js"></script>
     <script src="/js/Application.js"></script>
     <script src="/js/lib.js"></script>
     <script src="/js/Storage.js"></script>
@@ -25,7 +26,7 @@
   </head>
   <body>
 
-    <dialog id="table-list">
+    <!-- <dialog id="table-list">
       <div class="lists">
         <div class="list">
           <div class="md-field">
@@ -40,7 +41,7 @@
       <div class="dialog-buttons">
         <button type="button" name="cancel" class="md-button">annulla</button>
       </div>
-    </dialog>
+    </dialog> -->
 
     <dialog id="dialog-reportList">
       <div class="lists">
@@ -249,7 +250,7 @@
 
                             <section class="sectionLists">
                               <h5>Lista delle dimensioni</h5>
-                              <div id="DimensionList">
+                              <div id="dimensionList">
                                 <ul id="dimensions"></ul>
                               </div>
                             </section>
@@ -265,12 +266,20 @@
                           <div id="layoutStep-2">
 
                             <section class="sectionLists">
-                              <h5>Dimensioni</h5>
+                              <h5>Tabelle</h5>
+                              <div id="tableList">
+                                <ul id="tables"></ul>
+                              </div>
                               
                             </section>
 
-                            <section class="sectionLists">
-                              <h5>Colonne</h5>
+                            <section class="sectionLists" id="listFields">
+                              <h5>Colonne disponibili</h5>
+                              <template id="tmplFields">
+                                <div id="fieldList" hidden="true">
+                                  <ul id="fields"></ul>
+                                </div>
+                              </template>
                               
                             </section>
 
@@ -290,6 +299,12 @@
                   </div>
                   
                 </div>
+
+                <section id="reportSection">
+                  <template id="reportColumn">
+                    <div></div>
+                  </template>
+                </section>
 
 
               </section>

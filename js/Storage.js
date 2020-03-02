@@ -326,6 +326,17 @@ class DimensionStorage extends Storages {
     }
     return this.id;
   }
+
+  getFields(table) {
+    // resituisco un array con il nome delle tabelle incluse in .columns
+    this.item = JSON.parse(this.storage.getItem(this._name));
+    this.tables = [];
+    for (let table in this.item.from) {
+      this.tables.push(table);
+    }
+    return this.tables;
+  }
+
 }
 
 class PageStorage extends Storages {
