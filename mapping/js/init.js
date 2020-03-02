@@ -237,6 +237,7 @@ var dimension = new Dimension();
     // event sui tasti section[options]
     card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
     card.querySelector('i[metrics]').onclick = app.handlerAddMetric;
+    card.querySelector('i[columns]').onclick = app.handlerAddColumns;
 
   };
 
@@ -310,55 +311,78 @@ var dimension = new Dimension();
     // ...entrambe le tabelle tramite un identificatifo di relazione
 
     let attrs = cube.card.ref.getAttribute('mode');
-    if (attrs === 'hierarchies') {
-      if (e.target.hasAttribute('data-relation-id')) {
-        // debugger;
-        /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
-        relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
-        Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
-        */
-        e.target.toggleAttribute('selected');
-        // recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
-        for (let name of e.target.getAttributeNames()) {
-          // console.log(name);
-          let relationId, value;
-          if (name.substring(0, 9) === 'data-rel-') {
-            relationId = name;
-            value = e.target.getAttribute(name);
-            app.removeHierarchy(relationId, value);
+
+    switch (attrs) {
+      case 'hierarchies':
+        if (e.target.hasAttribute('data-relation-id')) {
+          // debugger;
+          /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
+          relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
+          Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
+          */
+          e.target.toggleAttribute('selected');
+          // recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+          for (let name of e.target.getAttributeNames()) {
+            // console.log(name);
+            let relationId, value;
+            if (name.substring(0, 9) === 'data-rel-') {
+              relationId = name;
+              value = e.target.getAttribute(name);
+              app.removeHierarchy(relationId, value);
+            }
+          }
+        } else {
+          let liRelationSelected = dimension.card.querySelector('li[hierarchy]:not([data-relation-id])');
+          // console.log(liRelationSelected);
+          e.target.toggleAttribute('hierarchy');
+          e.target.toggleAttribute('selected');
+          // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
+          // se è stata selezionata una colonna già selezionata la deseleziono
+          if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+            liRelationSelected.toggleAttribute('hierarchy');
+            liRelationSelected.toggleAttribute('selected');
           }
         }
-      } else {
-        let liRelationSelected = dimension.card.querySelector('li[hierarchy]:not([data-relation-id])');
-        // console.log(liRelationSelected);
-        e.target.toggleAttribute('hierarchy');
-        e.target.toggleAttribute('selected');
-        // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
-        // se è stata selezionata una colonna già selezionata la deseleziono
-        if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
-          liRelationSelected.toggleAttribute('hierarchy');
-          liRelationSelected.toggleAttribute('selected');
+        app.createHierarchy();
+        break;
+      case 'metrics':
+        console.log('metrics');
+        e.target.toggleAttribute('metrics');
+        if (!e.target.hasAttribute('metrics')) {
+          // elimino l'attributo defined utile a colorare l'icona
+          e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
+          delete cube.metrics[tableName][fieldName];
+          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+        } else {
+          app.dialogMetrics.querySelector('#fieldName').innerText = dimension.fieldSelected;
+          app.dialogMetrics.showModal();
+          // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
+          app.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
         }
-      }
-      app.createHierarchy();
-    } else {
-      // metrics
-      console.log('metrics');
-      e.target.toggleAttribute('metrics');
-      // e.target.parentElement.querySelector('#metrics-icon').onclick = app.handlerMetricSetting;
-      if (!e.target.hasAttribute('metrics')) {
-        // elimino l'attributo defined utile a colorare l'icona
-        e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
-        delete cube.metrics[tableName][fieldName];
-        // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
-      } else {
-        app.dialogMetrics.querySelector('#fieldName').innerText = dimension.fieldSelected;
-        app.dialogMetrics.showModal();
-        // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-        app.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
-      }
-      
+        break;
+      default:
+        // se la card è stata imposta con l'attributo mode ...
+        if (cube.card.ref.hasAttribute('mode')) {
+          console.log('columns');
+          e.target.toggleAttribute('columns');
+          if (!e.target.hasAttribute('columns')) {
+            // TODO: elimino la selezione effettuata
+            console.log('TODO Da eliminare');
+          } else {
+            // aggiungo la selezione effettuata
+            dimension.columns = cube.fieldSelected;
+          }
+        }
+        
+        
+
+        // if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
+        //   delete dimension.columns[tableName][fieldName];
+        //   if (Object.keys(dimension.columns[tableName]).length === 0) {delete dimension.columns[tableName];}
+        // }
+        // console.log(dimension.columns);
     }
+   
   };
 
   app.handlerBtnMetricDone = function(e) {    
@@ -375,6 +399,16 @@ var dimension = new Dimension();
     cube.metrics = objParam;
     
     app.dialogMetrics.close();
+  };
+
+  app.handlerAddColumns = function(e) {
+    // console.log(e.target);
+    // console.log(e.path);
+    console.log('add columns');
+
+    const cardTable = e.path[3].querySelector('.cardTable');
+    cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
+    cube.mode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
   };
 
   app.handlerAddMetric = function(e) {
@@ -683,7 +717,7 @@ var dimension = new Dimension();
             let pos = response[i][1].indexOf('(');
             let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
             li.setAttribute('data-type', type);
-            li.setAttribute('data-table',cube.table);
+            //li.setAttribute('data-table',cube.table);
             li.id = i;
             ulContainer.appendChild(element);
             // li.onclick = cube.handlerColumns.bind(cube);

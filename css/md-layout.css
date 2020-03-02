@@ -104,7 +104,7 @@ ul:not(.filters) li{list-style: none;padding: 6px;margin: 2px 8px;}
 /* ul:not(.filters) li:hover, ul li[selected]{list-style: none;padding: 6px;background-color: var(--main-primary-color);border-radius: 4px;
   cursor: pointer;color: white;} */
 ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: center;padding: 6px;}
-ul > .element li:hover{background-color: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}
+/*ul > .element li:hover{background-color: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}*/
 /* lists */
 
 /* dialog */

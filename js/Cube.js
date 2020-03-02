@@ -36,7 +36,7 @@ class Cube {
 
   set activeCard(card) {
     // la card è un obj contenente il riferimento nel DOM e il nome della tabella
-    console.log(card);
+    // console.log(card);
     this.card = card; // contiene {'ref': riferimento della card nel DOM, tableName: 'nometabella'}
     this.card.ref.setAttribute('name', card.tableName);
   }
@@ -95,6 +95,8 @@ class Dimension {
     this._dimension = {};
     this._hierarchies = {};
     this._hierarchyOrder = {};
+    this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
+    this._arrColumns = []; // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
     this.relationId = 0;
   }
 
@@ -105,6 +107,8 @@ class Dimension {
   set activeCard(cardRef) {
     // la card su cui si sta operando
     this.card = cardRef;
+    console.log(this.card);
+    this._tableName = this.card.getAttribute('name');
   }
 
   get activeCard() {return this.card;}
@@ -136,15 +140,29 @@ class Dimension {
     });
   }
 
+  set columns(field) {
+    // se il nome della tabella è già presente, aggiungo l'array, altrimenti pulisco l'array per non duplicare gli elementi in entrambi gli object this._columns[nometabella]
+    if (!this._columns.hasOwnProperty(this._tableName)) {this._arrColumns = [];}
+
+    this._arrColumns.push(field);
+
+    this._columns[this._tableName] = this._arrColumns;
+    console.log(this._columns);
+    
+  }
+
+  get columns() {return this._columns;}
+
+
   save() {
     this._dimension.type = 'DIMENSION';
     // TODO Aggiungere dimensionId
+    this._dimension.columns = this._columns;
     this._dimension.title = this._title;
     this._dimension.from = this._from;
     this._dimension.hierarchies = this._hierarchies;
     this._dimension.hierarchyOrder = this._hierarchyOrder;
     console.log(this._dimension);
-    // TODO: aggiungere hierarchyOrder
   }
 
   get dimension() {return this._dimension;}

@@ -100,22 +100,15 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 
 .card.table > .cardLayout > .cardTable[mode] ul > .element li:hover{cursor: pointer;}
 
-.card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;}
-.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;}
-.card.table > .cardLayout > .cardTable[mode='hierarchies'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
 .card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
-.card.table > .cardLayout > .cardTable[mode='groupby'] ul > .element li:hover{background-color: #c7b198;border-radius: 4px;color: white;}
+.card.table > .cardLayout > .cardTable[mode='hierarchies'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
 .card.table > .cardLayout > .cardTable[mode='metrics'] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
 .card.table ul > .element li ~ i{color: grey;visibility: hidden;}
 .card.table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
-.card.table ul > .element li[columns] ~ #columns-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[columns] ~ #columns-icon[defined='true']{color: #9a6a6a;visibility: visible;}
-/* .card-table ul > .element li[filters] ~ #filters-icon:not([defined='true']){visibility: visible;}
-.card-table ul > .element li[filters] ~ #filters-icon[defined='true']{color: #3b7096;visibility: visible;} */
+.card.table ul > .element li[columns] ~ #columns-icon{color: #9a6a6a;visibility: visible;}
+
 .card.table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
 .card.table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
-.card.table ul > .element li[groupby] ~ #groupby-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[groupby] ~ #groupby-icon[defined='true']{color: #c7b198;visibility: visible;}
 
 .card.table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
 /* colonne all'interno della card/tabella*/
@@ -131,7 +124,6 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 .card.table > .cardLayout > .cardTable[mode='hierarchies'] > .info{background: #99b19c;color: white;}
 .card.table > .cardLayout > .cardTable[mode='columns'] > .info{background: #9a6a6a;color: white;}
 .card.table > .cardLayout > .cardTable[filters] > .info{background: #3b7096;color: white;}
-.card.table > .cardLayout > .cardTable[mode='groupby'] > .info{background: #c7b198;color: black;}
 .card.table > .cardLayout > .cardTable[mode='metrics'] > .info{background: #587850;color: white;}
 
 .card.table .cardTable > .title{grid-area: title;height: fit-content;background: tan;border-top-left-radius: 4px;

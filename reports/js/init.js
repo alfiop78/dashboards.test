@@ -73,10 +73,37 @@ var Pages = new Page();
     }
   };
 
-  app.handlerCubeSelected = function() {
+  app.handlerCubeSelected = function(e) {
+    const cubeId = e.target.getAttribute('data-cube-id');
+    const cubeName = e.target.getAttribute('label');
+    const storage = new CubeStorage();
+    // TODO: Recupero le dimensioni associate a questo cubo per mostrarle nella sezione corrispondente.
+    // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
+    // console.log(storage.associatedDimensions(cubeName));
+    let ul = document.getElementById('dimensions');
+    const dimensions = storage.associatedDimensions(cubeName);
+    let element = document.createElement('div');
+    element.classList.add('element');
+    for (dimension in dimensions) {
+      console.log(dimension);
+      console.log(dimensions);
+      
+      let li = document.createElement('li');
+      li.innerText = dimensions[dimension]['title'];
+      
+      li.setAttribute('label', dimension);
+      ul.appendChild(element);
+      element.appendChild(li);
+      li.onclick = app.handlerDimensionSelected;
+    }
+
+  };
+
+  /*app.handlerCubeSelected = function() {
     let reportName = this.getAttribute('label');
 
     // recupero un datamart FX... già creato e visualizzo l'anteprima
+    // TEMP: Codice per aprire il report, da utilizzare dopo nella creazione della preview del report
     var url = 'ajax/reports.php';
     let reportId = this.getAttribute('id');
     let params = 'reportId=' + reportId;
@@ -105,7 +132,7 @@ var Pages = new Page();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
-  };
+  };*/
 
   app.loadCubes = () => {
     // carico elenco Cubi su cui creare il report
@@ -117,14 +144,14 @@ var Pages = new Page();
     // console.log(obj);
     let element = document.createElement('div');
     element.classList.add('element');
-
     for (let i in obj) {
       // element.querySelector('span').innerHTML = obj[i]['key'];
       // element.id = 'cubeId_' + obj[i]['cubeId'];
       console.log(obj[i]['key']);
       let li = document.createElement('li');
       li.innerText = obj[i]['key'];
-      li.id = obj[i]['cubeId'];
+      li.id = 'cube-' + obj[i]['id'];
+      li.setAttribute('data-cube-id', obj[i]['id']);
       li.setAttribute('label', obj[i]['key']);
       ul.appendChild(element);
       element.appendChild(li);

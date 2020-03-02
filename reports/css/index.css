@@ -22,3 +22,4 @@ th i.material-icons{position: absolute;right: 8px;display: inline-table;}
 i[open]{color: red;}
 
 #layoutStep-1{display: grid; grid-template-columns: 30% auto;}
+#layoutStep-2{display: grid; grid-template-columns: 30% auto;}
