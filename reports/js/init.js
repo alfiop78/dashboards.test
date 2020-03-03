@@ -104,6 +104,9 @@ var Query = new Queries();
     // selezione della/e dimensione su cui lavorare per la creazione del report
     // imposto attributo selected sulle dimensioni selezionate
     e.target.toggleAttribute('selected');
+    // TODO: popolo la sezione step 2, colonne e field
+    // TODO: popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
+    // ... i cmapi per impostare i filtri.
     
   };
 
@@ -116,12 +119,13 @@ var Query = new Queries();
   app.handlerFieldSelected = function(e) {
     // seleziono la colonna da inserire nel report e la inserisco nel reportSection
     let field = e.target.getAttribute('label');
-    let tmplColumn = document.getElementById('reportColumn');
-    let content = tmplColumn.content.cloneNode(true);
-    let div = content.querySelector('div');
-    div.innerText = field;
-    app.reportSection.appendChild(div);
-
+    
+    let table = document.getElementById('table-0');
+    // console.log(table);
+    console.log(table.tHead);
+    const th = document.createElement('th');
+    th.innerText = field;
+    table.tHead.rows[0].appendChild(th);
   };
 
   /*app.handlerCubeSelected = function() {
@@ -316,7 +320,7 @@ var Query = new Queries();
 
   app.btnPreviousStep.onclick = function() {Step.previous();}
 
-  app.btnNextStep.onclick = function() {
+  /*app.btnNextStep.onclick = function() {
     // TODO: Aggiungo le tabelle e le colonne definite nel mapping per poterle selezionare ed inserirle nel report
     const storage = new DimensionStorage();
     // ciclo le dimensioni selezionate
@@ -372,7 +376,9 @@ var Query = new Queries();
     
     
     Step.next();
-  };
+  };*/
+
+  app.btnNextStep.onclick = function() {Step.next();};
 
 
 

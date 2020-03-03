@@ -24,4 +24,7 @@ i[open]{color: red;}
 #layoutStep-1{display: grid; grid-template-columns: 30% auto;}
 #layoutStep-2{display: grid; grid-template-columns: 30% auto;}
 
-#reportSection{display: flex;flex-flow: row;}
+#reportSection{display: flex;flex-flow: row;width: 100%;margin: 16px; padding: 16px;}
+
+table thead{background: indianred;color: white;}
+table thead tr > th{border: solid thin;}
