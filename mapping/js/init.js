@@ -695,7 +695,7 @@ var dimension = new Dimension();
     // elemento dove inserire le colonne della tabella
     let ulContainer = cube.card.ref.querySelector('#columns');
 
-    var url = 'ajax/tableInfo.php';
+    var url = '/ajax/tableInfo.php';
     let params = 'tableName='+table;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {

@@ -23,6 +23,9 @@ i[open]{color: red;}
 
 #layoutStep-1{display: grid; grid-template-columns: 30% auto;}
 #layoutStep-2{display: grid; grid-template-columns: 30% auto;}
+#layoutStep-3{display: grid; grid-template-columns: 30% auto;}
+
+.overflowList{max-height: 250px; overflow: auto;}
 
 #reportSection{display: flex;flex-flow: row;width: 100%;margin: 16px; padding: 16px;}
 

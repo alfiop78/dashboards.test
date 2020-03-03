@@ -229,6 +229,13 @@
                   </div>
                 </div> -->
 
+                <template id="templateListField">
+                  <div class="element" name="">
+                    <li></li>
+                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                  </div>
+                </template>
+
 
                 <div class="steps" data-step="1">
 
@@ -267,8 +274,8 @@
 
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
-                              <div id="tableList">
-                                <ul id="tables"></ul>
+                              <div id="tableList-column">
+                                <ul id="tables-columns"></ul>
                               </div>
                               
                             </section>
@@ -276,8 +283,8 @@
                             <section class="sectionLists" id="listFields">
                               <h5>Colonne disponibili</h5>
                               <template id="tmplFields">
-                                <div id="fieldList" hidden="true">
-                                  <ul id="fields"></ul>
+                                <div data-id="fieldList" hidden="true">
+                                  <ul data-id="fields"></ul>
                                 </div>
                               </template>
                               
@@ -297,18 +304,22 @@
 
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
-                              <div id="filterTableList">
-                                <ul id="filterTables"></ul>
+                              <div id="tableList-filter">
+                                <ul id="tables-filter"></ul>
                               </div>
+                            </section>
+
+                            <section class="sectionLists" id="listFields-filter">
+                              <h5>Colonne della tabella selezioanta</h5>
+                              <div data-id="fieldList-filter">
+                                <ul data-id="fields-filter" class="overflowList" hidden="true">
+                                  
+                                </ul>
+                              </div>
+
                               
                             </section>
 
-                            <section class="sectionLists" id="listFields">
-                              <h5>Colonne disponibili</h5>
-                              
-                            </section>
-
-                            
                           </div>
 
                         </section>

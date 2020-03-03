@@ -80,7 +80,6 @@ var Query = new Queries();
     const cubeId = e.target.getAttribute('data-cube-id');
     const cubeName = e.target.getAttribute('label');
     const storage = new CubeStorage();
-    // Recupero le dimensioni associate a questo cubo per mostrarle nella sezione corrispondente.
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
     let ul = document.getElementById('dimensions');
@@ -107,13 +106,122 @@ var Query = new Queries();
     // TODO: popolo la sezione step 2, colonne e field
     // TODO: popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
     // ... i cmapi per impostare i filtri.
-    
+    const dimName = e.target.getAttribute('label');
+    const Dim = new DimensionStorage();
+    Dim.selected = dimName;
+    console.log(Dim.selected);
+    console.log(Dim.selected.columns);
+    let columns = Dim.selected.columns;
+
+    app.createListTableFilters(Dim.selected.from);
+
+    let ul = document.getElementById('tables-columns');
+    let element = document.createElement('div');  
+    element.className = 'element';
+
+    Object.keys(columns).forEach((table, index) => {
+      console.log(table);
+      let li = document.createElement('li');
+      li.innerText = table;
+      li.setAttribute('data-table-id', index);
+      li.setAttribute('label', table);
+      element.appendChild(li);
+      ul.appendChild(element);
+      li.onclick = app.handlerTableSelected;
+      // tabella inserta in lista
+
+      let fieldParent =  document.getElementById('listFields');
+      let tmplFields = document.getElementById('tmplFields');
+      let content = tmplFields.content.cloneNode(true);
+      let fieldList = content.querySelector('div');
+
+      for (let i in columns[table]) {
+        let field = columns[table][i]; // nome del campo della tabella
+        // inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
+        
+        fieldParent.appendChild(fieldList);
+        let ulField = fieldList.querySelector("ul[data-id='fields']");
+        fieldList.setAttribute('data-table-id', index);
+        
+        let liField = document.createElement('li');
+        let elementField = document.createElement('div');
+        elementField.className = 'element';
+        liField.innerText = field; 
+        liField.setAttribute('label', field);
+        elementField.appendChild(liField);
+        ulField.appendChild(elementField);
+        liField.onclick = app.handlerFieldSelected;
+      }
+    });
+  };
+
+  app.createListTableFilters = function(from) {
+    console.log(from);
+    let ul = document.getElementById('tables-filter');
+    from.forEach((table) => {
+      let li = document.createElement('li');
+      let element = document.createElement('div');
+      element.className = 'element';
+      li.innerText = table;
+      li.setAttribute('label', table);
+      element.appendChild(li);
+      ul.appendChild(element);
+      li.onclick = app.handlerTableSelectedFilter;
+    });
   };
 
   app.handlerTableSelected = function(e) {
-    // TODO: visualizzo la ul nascosta della tabella selezionata
+    // visualizzo la ul nascosta della tabella selezionata
     let dataTableId = +e.target.getAttribute('data-table-id');
-    document.querySelector("#fieldList[data-table-id='"+dataTableId+"']").removeAttribute('hidden');
+    document.querySelector("div[data-id='fieldList'][data-table-id='"+dataTableId+"']").removeAttribute('hidden');
+    e.target.toggleAttribute('selected');
+  };
+
+  app.handlerTableSelectedFilter = function(e) {
+    // carico elenco field dal DB
+    let table = e.target.getAttribute('label');
+    console.log(table);
+    var url = '/ajax/tableInfo.php';
+    let params = 'tableName='+table;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          
+          let tmplFieldList = document.getElementById('templateListField');
+          let listField = document.getElementById('listFields-filter');
+          let fieldListFilter = listField.querySelector("div[data-id='fieldList-filter']");
+          let ul = listField.querySelector('ul');
+          for (let i in response) {
+            let content = tmplFieldList.content.cloneNode(true);
+            let element = content.querySelector('.element');
+            let li = element.querySelector('li');
+            li.className = 'elementSearch';
+            li.innerText = response[i][0];
+            // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
+            let pos = response[i][1].indexOf('(');
+            let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+            li.setAttribute('data-type', type);
+            li.id = i;
+            ul.appendChild(element);
+            
+            // li.onclick = app.handlerColumns;
+          }
+
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+
   };
 
   app.handlerFieldSelected = function(e) {
@@ -320,68 +428,7 @@ var Query = new Queries();
 
   app.btnPreviousStep.onclick = function() {Step.previous();}
 
-  /*app.btnNextStep.onclick = function() {
-    // TODO: Aggiungo le tabelle e le colonne definite nel mapping per poterle selezionare ed inserirle nel report
-    const storage = new DimensionStorage();
-    // ciclo le dimensioni selezionate
-    let dims = Array.from(document.querySelectorAll('#dimensions li[selected]')).forEach((dimension) => {
-      console.log(dimension);
-      // recupero la dimension in JSON dallo storage
-      storage.selected = dimension.getAttribute('label');
-      console.log(storage.selected);
-      // popolo l'elenco tables che ha al proprio interno le colonne mappate
-      let ulTable = document.getElementById('tables');
-      let element = document.createElement('div');
-      element.className = 'element';
-      let i = 0;
-      for (let table in storage.selected.columns) {
-        console.log(table);
-        let li = document.createElement('li');
-        li.innerText = table;
-        li.setAttribute('label', table);
-        li.setAttribute('data-table-id', i);
-        ulTable.appendChild(element);
-        element.appendChild(li);
-        li.onclick = app.handlerTableSelected;
-        // popolo i campi di questa tabella
-        let tmplFields = document.getElementById('tmplFields');
-        let tmplContent = tmplFields.content.cloneNode(true);
-        let list = tmplContent.querySelector('div');
-        list.setAttribute('data-table-id', i);
-        let parent = document.getElementById('listFields');
-        console.log(storage.selected.columns);
-        console.log(storage.selected.columns[table]);
-        parent.appendChild(list);
-        let ulField = list.querySelector('#fields');
-        console.log(ulField);
-        i++;
-        
-        storage.selected.columns[table].forEach((field) => {
-
-          let li = document.createElement('li');
-          let elementField = document.createElement('div');
-          elementField.className = 'element';
-          li.innerText = field;
-          li.setAttribute('label', field);
-          ulField.appendChild(elementField);
-          elementField.appendChild(li);
-          li.onclick = app.handlerFieldSelected;
-
-
-        });
-
-
-      }
-    });
-    
-    
-    Step.next();
-  };*/
-
   app.btnNextStep.onclick = function() {Step.next();};
-
-
-
 
   /* events */
 
