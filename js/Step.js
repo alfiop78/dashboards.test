@@ -6,14 +6,14 @@ class Steps {
 
   constructor(stepTranslate) {
     // definisco il div che deve effettuare la translate
-    console.log(stepTranslate);
+    // console.log(stepTranslate);
     this._translateRef = document.getElementById(stepTranslate);
     this._translateX = 0;
     this.page = document.querySelector('.step[selected]');
-    console.log(this._page);
-    console.log(this._page.offsetWidth);
+    // console.log(this._page);
+    // console.log(this._page.offsetWidth);
     this._pageWidth = this._page.offsetWidth + 32; // width della pagina da translare
-    console.log(this._pageWidth);
+    // console.log(this._pageWidth);
 
   }
 

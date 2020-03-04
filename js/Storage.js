@@ -125,7 +125,7 @@ class CubeStorage extends Storages {
 
   associatedDimensions(name) {
     let jsonStorage = JSON.parse(this.storage.getItem(name));
-    console.log(jsonStorage);
+    // console.log(jsonStorage);
     if (jsonStorage.type === 'CUBE') {
       return jsonStorage.associatedDimensions;
     }

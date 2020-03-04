@@ -60,6 +60,18 @@
       </div>
     </dialog>
 
+    <dialog id="dialogColumn">
+      <div class="md-field">
+        <input type="text" id="inputColumnName" name="columnName" value=""/>
+        <label for="inputColumnName" class="">Alias per la colonna</label>
+      </div>
+
+      <div class="dialog-buttons">
+        <button type="button" name="cancel" class="md-button">annulla</button>
+        <button id="dialogColumnDone" type="button" name="done" class="md-button">ok</button>
+      </div>
+    </dialog>
+
     <dialog id="report-name">
       <div class="dialog-save-name">
 
@@ -178,6 +190,102 @@
           <button id="btnSavePageByOption" type="button" name="done" class="md-button">OK</button>
         </div>
       </div>
+    </dialog>
+
+    <dialog id="dialogFilter" class="dialog-filters">
+      <section>
+        <h4>Inserisci qui la condizione di filtro
+        <div class="md-field">
+          <input type="text" id="filter-name" value=""/>
+          <label for="filter-name" class="">Nome</label>
+        </div>
+
+        <div class="formulaDefine">
+
+          <section class="formula">
+            <div class="title">
+              <h5>Colonne</h5><h6>Seleziona le colonne da filtrare</h6>
+            </div>
+
+            <div class="listContent">
+              <div class="md-field" value>
+                <input type="search" id="fieldSearch" value=""/>
+                <label for="fieldSearch" class="">Ricerca</label>
+              </div>
+              <ul id="fieldsList" class="middleList"></ul>
+            </div>
+          </section>
+
+          <section class="formula">
+            <div class="title">
+              <h5>SQL operatori</h5><h6>Scorri la lista degli operatori</h6>
+            </div>
+
+            <div class="listContent">
+              <ul id="operator-list" class="miniList">
+                <li label="=">&equals;</li>
+                <li label="<>">&lt;&gt;</li>
+                <li label="<">&lt;</li>
+                <li label=">">&gt;</li>
+                <li label="<=">&lt;&equals;</li>
+                <li label=">=">&gt;&equals;</li>
+                <li label="BETWEEN AND">BETWEEN&nbsp;AND&nbsp;</li>
+                <li label="IN">IN</li>
+                <li label="NOT IN">NOT IN</li>
+                <li label="IS NULL">IS NULL</li>
+                <li label="IS NOT NULL">IS NOT NULL</li>
+              </ul>
+            </div>
+          </section>
+          <!-- TODO: rinominare la .formula in section.... -->
+          <section class="formula">
+            <div class="title">
+              <h5>Lista valori</h5><h6>Seleziona i valori per creare il filtro</h6>
+            </div>
+
+            <div id="filterValuesList" class="valuesList" hidden>
+              <div class="listContent">
+                <div class="md-field" value>
+                  <input type="search" id="valuesSearch" value=""/>
+                  <label for="valuesSearch" class="">Ricerca</label>
+                </div>
+                <ul id="valuesList" class="middleList"></ul>
+              </div>
+            </div>
+
+          </section>
+
+        </div>
+
+        <div class="formulaDefined">
+          <div class="logicalOperator">
+            <span label='AND'>AND</span>
+            <span label='OR'>OR</span>
+            <span label='AND NOT'>AND NOT</span>
+            <span label='OR NOT'>OR NOT</span>
+            <span label='('>(</span>
+            <span label=')'>)</span>
+          </div>
+
+          <div class="formulaContent">
+            <div id="filterFormula" class="textarea">
+              <!-- <span class="formulaField">id</span>
+              <span class="formulaOperator"> =</span>
+              <span class="formulaValues">443</span> -->
+            </div>
+            <div class="formulaIcons">
+              <span class="popupContent"><i class="material-icons md-18">clear</i><small class="popup">Rimuovi</small></span>
+              <span class="popupContent"><i class="material-icons md-18">edit</i><small class="popup">Modifica</small></span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="dialog-buttons">
+          <button type="button" name="cancel" class="md-button">annulla</button>
+          <button id="btnFilterDone" type="button" name="done" class="md-button" disabled>ok</button>
+        </div>
+      </section>
     </dialog>
 
 

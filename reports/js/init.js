@@ -9,6 +9,10 @@ var Query = new Queries();
     btnPreviousStep : document.getElementById('stepPrevious'),
     btnNextStep : document.getElementById('stepNext'),
 
+    // dialog
+    dialogFilter : document.getElementById('dialogFilter'),
+    dialogColumn : document.getElementById('dialogColumn'),
+
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
     dialogTableList : document.getElementById('table-list'),
@@ -109,7 +113,8 @@ var Query = new Queries();
     const dimName = e.target.getAttribute('label');
     const Dim = new DimensionStorage();
     Dim.selected = dimName;
-    console.log(Dim.selected);/*
+    //console.log(Dim.selected);
+    /*
     console.log(Dim.selected.columns);
     console.log(Dim.selected.from);*/
     let columns = Dim.selected.columns;
@@ -152,15 +157,12 @@ var Query = new Queries();
       ulTable.appendChild(elementTable);
       li.onclick = app.handlerTableSelected;
       // tabella inserita in lista
-      debugger; // ok
-
-      // TODO: inserisco le ul come fatto con fieldList-filter
+     
+      // inserisco le ul come fatto con fieldList-filter
       let tmpl_ulList = document.getElementById('tmpl_ulList');
       let ulContent = tmpl_ulList.content.cloneNode(true);
       let ulField = ulContent.querySelector('ul[data-id="fields-column"]');
       const parentElement = document.getElementById('sectionFields-column'); // elemento a cui aggiungere la ul
-
-      console.log(parentElement);
 
       let tmplFieldList = document.getElementById('templateListField');
 
@@ -173,10 +175,10 @@ var Query = new Queries();
         let element = content.querySelector('.element');
         let li = element.querySelector('li');
         li.innerText = field;
+        li.setAttribute('label', field);
         element.appendChild(li);
         ulField.appendChild(element);
-        
-        // liField.onclick = app.handlerFieldSelected;
+        li.onclick = app.handlerFieldSelected;
       }
       parentElement.appendChild(ulField);
     });
@@ -185,14 +187,16 @@ var Query = new Queries();
   app.handlerTableSelected = function(e) {
     // visualizzo la ul nascosta della tabella selezionata, sezione columns
     let tableId = +e.target.getAttribute('data-table-id');
-    console.log(tableId);
-    
     document.querySelector("ul[data-id='fields-column'][data-table-id='"+tableId+"']").removeAttribute('hidden');
     e.target.toggleAttribute('selected');
+    Query.table = e.target.getAttribute('label');
   };
 
   app.handlerTableSelectedFilter = function(e) {
+    // tabella selezionata nella sezione filters
+    e.target.toggleAttribute('selected');
     // carico elenco field dal DB
+
     let table = e.target.getAttribute('label');
     let tableId = +e.target.getAttribute('data-table-id');
     let tmpl_ulList = document.getElementById('tmpl_ulList');
@@ -200,7 +204,7 @@ var Query = new Queries();
     let ul = ulContent.querySelector('ul[data-id="fields-filter"]');
     const parentElement = document.getElementById('sectionFields-filter'); // elemento a cui aggiungere la ul
 
-    console.log(table);
+    // console.log(table);
     var url = '/ajax/tableInfo.php';
     let params = 'tableName='+table;
     var request = new XMLHttpRequest();
@@ -210,9 +214,6 @@ var Query = new Queries();
           var response = JSON.parse(request.response);
           
           let tmplFieldList = document.getElementById('templateListField');
-          // let listField = document.getElementById('sectionFields-filter');
-          // let fieldListFilter = listField.querySelector("div[data-id='fieldList-filter']");
-          //let ul = listField.querySelector('ul');
           ul.setAttribute('data-table-id', tableId);
           for (let i in response) {
             let content = tmplFieldList.content.cloneNode(true);
@@ -227,11 +228,11 @@ var Query = new Queries();
             li.id = i;
             ul.appendChild(element);
             
-            // li.onclick = app.handlerColumns;
+            li.onclick = function(e) {app.dialogFilter.showModal();}; // apro la dialog filter
           }
           parentElement.appendChild(ul);
           
-          console.log(document.querySelector("ul[data-id='fields-filter']:not([hidden])"));
+          // console.log(document.querySelector("ul[data-id='fields-filter']:not([hidden])"));
           // nascondo la ul 'attiva' in questo momento e visualizzo quella su cui si è cliccato adesso
           if (document.querySelector("ul[data-id='fields-filter']:not([hidden])")) {document.querySelector("ul[data-id='fields-filter']:not([hidden])").setAttribute('hidden', true);}
           ul.removeAttribute('hidden');
@@ -251,17 +252,40 @@ var Query = new Queries();
 
   };
 
-  app.handlerFieldSelected = function(e) {
+  app.handlerFieldSelected = function() {
     // seleziono la colonna da inserire nel report e la inserisco nel reportSection
-    let field = e.target.getAttribute('label');
-    
+    Query.field = e.target.getAttribute('label');
+    app.dialogColumn.showModal();
+    // console.log(Query.table);
+    // event sul tasto ok della dialog
+    const btnDone = document.getElementById('dialogColumnDone');
+    btnDone.onclick = app.handlerBtnColumnDone;
+  };
+
+  app.handlerBtnColumnDone = function() {
+    // Confermo il nome dell'alias per la colonna
+    // TODO: da inserire anche SQL formula (es.: date_format()) in un textarea oppure un contenteditable
+    const alias = document.getElementById('inputColumnName').value;
+    //console.log(alias);
+    //let obj = {'SQLFormat': null, alias};
+    let obj = {};
+    obj = {'SQLFormat': null, alias};
+    //obj[Query.field] = {'SQLFormat': null, alias};
+    Query.select = obj;
+    // Query.addColumn(Query.field, null, alias);
+    app.dialogColumn.close();
+
     let table = document.getElementById('table-0');
     // console.log(table);
-    console.log(table.tHead);
+    // console.log(table.tHead);
     const th = document.createElement('th');
-    th.innerText = field;
+    
+    th.innerText = Query.getAliasColumn();
     table.tHead.rows[0].appendChild(th);
+
   };
+
+
 
   /*app.handlerCubeSelected = function() {
     let reportName = this.getAttribute('label');
