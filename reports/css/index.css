@@ -26,6 +26,7 @@ i[open]{color: red;}
 #layoutStep-3{display: grid; grid-template-columns: 30% auto;}
 
 .overflowList{max-height: 250px; overflow: auto;}
+#fieldList-filter{padding: 0 16px;}
 
 #reportSection{display: flex;flex-flow: row;width: 100%;margin: 16px; padding: 16px;}
 

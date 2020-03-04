@@ -103,66 +103,32 @@ var Query = new Queries();
     // selezione della/e dimensione su cui lavorare per la creazione del report
     // imposto attributo selected sulle dimensioni selezionate
     e.target.toggleAttribute('selected');
-    // TODO: popolo la sezione step 2, colonne e field
-    // TODO: popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
+    //  popolo la sezione step 2, colonne e field
+    // popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
     // ... i cmapi per impostare i filtri.
     const dimName = e.target.getAttribute('label');
     const Dim = new DimensionStorage();
     Dim.selected = dimName;
-    console.log(Dim.selected);
+    console.log(Dim.selected);/*
     console.log(Dim.selected.columns);
+    console.log(Dim.selected.from);*/
     let columns = Dim.selected.columns;
 
+    app.createListTableColumns(Dim.selected.columns);
+
     app.createListTableFilters(Dim.selected.from);
-
-    let ul = document.getElementById('tables-columns');
-    let element = document.createElement('div');  
-    element.className = 'element';
-
-    Object.keys(columns).forEach((table, index) => {
-      console.log(table);
-      let li = document.createElement('li');
-      li.innerText = table;
-      li.setAttribute('data-table-id', index);
-      li.setAttribute('label', table);
-      element.appendChild(li);
-      ul.appendChild(element);
-      li.onclick = app.handlerTableSelected;
-      // tabella inserta in lista
-
-      let fieldParent =  document.getElementById('listFields');
-      let tmplFields = document.getElementById('tmplFields');
-      let content = tmplFields.content.cloneNode(true);
-      let fieldList = content.querySelector('div');
-
-      for (let i in columns[table]) {
-        let field = columns[table][i]; // nome del campo della tabella
-        // inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
-        
-        fieldParent.appendChild(fieldList);
-        let ulField = fieldList.querySelector("ul[data-id='fields']");
-        fieldList.setAttribute('data-table-id', index);
-        
-        let liField = document.createElement('li');
-        let elementField = document.createElement('div');
-        elementField.className = 'element';
-        liField.innerText = field; 
-        liField.setAttribute('label', field);
-        elementField.appendChild(liField);
-        ulField.appendChild(elementField);
-        liField.onclick = app.handlerFieldSelected;
-      }
-    });
   };
 
   app.createListTableFilters = function(from) {
-    console.log(from);
+    // console.log(from); // array
     let ul = document.getElementById('tables-filter');
-    from.forEach((table) => {
+    from.forEach((table, index) => {
       let li = document.createElement('li');
       let element = document.createElement('div');
       element.className = 'element';
       li.innerText = table;
+      //li.id = 'table-filter-' + index;
+      li.setAttribute('data-table-id', index);
       li.setAttribute('label', table);
       element.appendChild(li);
       ul.appendChild(element);
@@ -170,16 +136,70 @@ var Query = new Queries();
     });
   };
 
+  app.createListTableColumns = function(columns) {
+    // console.log(columns); // object
+    let ulTable = document.getElementById('tables-column');
+    let elementTable = document.createElement('div');  
+    elementTable.className = 'element';
+
+    Object.keys(columns).forEach((table, index) => {
+      // console.log(table);
+      let li = document.createElement('li');
+      li.innerText = table;
+      li.setAttribute('data-table-id', index);
+      li.setAttribute('label', table);
+      elementTable.appendChild(li);
+      ulTable.appendChild(elementTable);
+      li.onclick = app.handlerTableSelected;
+      // tabella inserita in lista
+      debugger; // ok
+
+      // TODO: inserisco le ul come fatto con fieldList-filter
+      let tmpl_ulList = document.getElementById('tmpl_ulList');
+      let ulContent = tmpl_ulList.content.cloneNode(true);
+      let ulField = ulContent.querySelector('ul[data-id="fields-column"]');
+      const parentElement = document.getElementById('sectionFields-column'); // elemento a cui aggiungere la ul
+
+      console.log(parentElement);
+
+      let tmplFieldList = document.getElementById('templateListField');
+
+      ulField.setAttribute('data-table-id', index);
+      
+      for (let i in columns[table]) {
+        let field = columns[table][i]; // nome del campo della tabella
+        // inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
+        let content = tmplFieldList.content.cloneNode(true);
+        let element = content.querySelector('.element');
+        let li = element.querySelector('li');
+        li.innerText = field;
+        element.appendChild(li);
+        ulField.appendChild(element);
+        
+        // liField.onclick = app.handlerFieldSelected;
+      }
+      parentElement.appendChild(ulField);
+    });
+  };
+
   app.handlerTableSelected = function(e) {
-    // visualizzo la ul nascosta della tabella selezionata
-    let dataTableId = +e.target.getAttribute('data-table-id');
-    document.querySelector("div[data-id='fieldList'][data-table-id='"+dataTableId+"']").removeAttribute('hidden');
+    // visualizzo la ul nascosta della tabella selezionata, sezione columns
+    let tableId = +e.target.getAttribute('data-table-id');
+    console.log(tableId);
+    
+    document.querySelector("ul[data-id='fields-column'][data-table-id='"+tableId+"']").removeAttribute('hidden');
     e.target.toggleAttribute('selected');
   };
 
   app.handlerTableSelectedFilter = function(e) {
     // carico elenco field dal DB
     let table = e.target.getAttribute('label');
+    let tableId = +e.target.getAttribute('data-table-id');
+    let tmpl_ulList = document.getElementById('tmpl_ulList');
+    let ulContent = tmpl_ulList.content.cloneNode(true);
+    let ul = ulContent.querySelector('ul[data-id="fields-filter"]');
+    const parentElement = document.getElementById('sectionFields-filter'); // elemento a cui aggiungere la ul
+
     console.log(table);
     var url = '/ajax/tableInfo.php';
     let params = 'tableName='+table;
@@ -190,14 +210,15 @@ var Query = new Queries();
           var response = JSON.parse(request.response);
           
           let tmplFieldList = document.getElementById('templateListField');
-          let listField = document.getElementById('listFields-filter');
-          let fieldListFilter = listField.querySelector("div[data-id='fieldList-filter']");
-          let ul = listField.querySelector('ul');
+          // let listField = document.getElementById('sectionFields-filter');
+          // let fieldListFilter = listField.querySelector("div[data-id='fieldList-filter']");
+          //let ul = listField.querySelector('ul');
+          ul.setAttribute('data-table-id', tableId);
           for (let i in response) {
             let content = tmplFieldList.content.cloneNode(true);
             let element = content.querySelector('.element');
             let li = element.querySelector('li');
-            li.className = 'elementSearch';
+            // li.className = 'elementSearch';
             li.innerText = response[i][0];
             // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
             let pos = response[i][1].indexOf('(');
@@ -208,6 +229,12 @@ var Query = new Queries();
             
             // li.onclick = app.handlerColumns;
           }
+          parentElement.appendChild(ul);
+          
+          console.log(document.querySelector("ul[data-id='fields-filter']:not([hidden])"));
+          // nascondo la ul 'attiva' in questo momento e visualizzo quella su cui si è cliccato adesso
+          if (document.querySelector("ul[data-id='fields-filter']:not([hidden])")) {document.querySelector("ul[data-id='fields-filter']:not([hidden])").setAttribute('hidden', true);}
+          ul.removeAttribute('hidden');
 
         } else {
           // TODO:

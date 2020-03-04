@@ -219,21 +219,16 @@
                   <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
                   <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
                 </div>
-                <!-- <div class="lists">
-                  <div class="absList" id="cubeList" hidden>
-                    <div class="md-field">
-                      <input type="search" id="cubeSearch" value=""/>
-                      <label for="cubeSearch" class="">Ricerca</label>
-                    </div>
-                    <ul id="cubes"></ul>
-                  </div>
-                </div> -->
-
+              
                 <template id="templateListField">
                   <div class="element" name="">
-                    <li></li>
-                    <i id="filters-icon" class="material-icons md-18">filter_list</i>
+                    <li class="elementSearch"></li>
                   </div>
+                </template>
+
+                <template id="tmpl_ulList">
+                  <ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
+                  <ul data-id="fields-column" class="overflowList" hidden="true"></ul>
                 </template>
 
 
@@ -275,21 +270,15 @@
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
                               <div id="tableList-column">
-                                <ul id="tables-columns"></ul>
+                                <ul id="tables-column"></ul>
                               </div>
                               
                             </section>
 
-                            <section class="sectionLists" id="listFields">
+                            <section class="sectionLists" id="sectionFields-column">
                               <h5>Colonne disponibili</h5>
-                              <template id="tmplFields">
-                                <div data-id="fieldList" hidden="true">
-                                  <ul data-id="fields"></ul>
-                                </div>
-                              </template>
-                              
+                              <div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
                             </section>
-
                             
                           </div>
 
@@ -309,15 +298,9 @@
                               </div>
                             </section>
 
-                            <section class="sectionLists" id="listFields-filter">
+                            <section class="sectionLists" id="sectionFields-filter">
                               <h5>Colonne della tabella selezioanta</h5>
-                              <div data-id="fieldList-filter">
-                                <ul data-id="fields-filter" class="overflowList" hidden="true">
-                                  
-                                </ul>
-                              </div>
-
-                              
+                              <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList--></div>
                             </section>
 
                           </div>
