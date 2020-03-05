@@ -12,7 +12,8 @@ var Query = new Queries();
     // dialog
     dialogFilter : document.getElementById('dialogFilter'),
     dialogColumn : document.getElementById('dialogColumn'),
-    btnFilterDone : document.getElementById('btnFilterDone'), //tasto ok nella dialog filter
+    btnFilterSave : document.getElementById('btnFilterSave'), //tasto salva nella dialog filter
+    btnFilterDone : document.getElementById('btnFilterDone'), //tasto fatto nella dialog filter
 
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
@@ -193,7 +194,7 @@ var Query = new Queries();
     // apro la dialog filter
     app.dialogFilter.showModal();
     // event su <li> degli operatori
-    document.querySelectorAll('operatorList').forEach((li) => {
+    document.querySelectorAll('#operatorList').forEach((li) => {
       li.onclick = app.handlerFilterOperatorSelected;
     });
   };
@@ -341,15 +342,38 @@ var Query = new Queries();
   };
 
   // salvataggio del filtro impostato nella dialog
-  app.btnFilterDone.onclick = function(e) {
+  app.btnFilterSave.onclick = function(e) {
     // Filter save
+    const textarea = document.getElementById('filterFormula');
     const filterName = document.getElementById('filter-name').value;
-    let operator = this.dialogFilters.querySelector('#filterFormula .formulaOperator').innerText;
+    let operator = app.dialogFilter.querySelector('#filterFormula .formulaOperator').innerText;
+    let values = [], value;
+
+    switch (operator) {
+      case 'IN':
+      case 'NOT IN':
+        value = app.dialogFilter.querySelector('#filterFormula .formulaValues').innerHTML;
+        // console.log(value);
+        // console.log('IN / NOT IN');
+        values = value.split(',');
+
+        break;
+      default:
+        value = app.dialogFilter.querySelector('#filterFormula .formulaValues').innerHTML;
+        values.push(value);
+    }
 
     let obj = {};
-    obj = {operator, values};
-    console.log(obj);
+    obj = {filterName, operator, values};
+    Query.filters = obj;
+    // pulisco la textarea
+    textarea.querySelectorAll('span').forEach((span) => {span.remove();});
+    document.getElementById('filter-name').focus();
+
+
   };
+
+  app.btnFilterDone.onclick = function(e) {app.dialogFilter.close();};
 
   // recupero valori distinti per inserimento nella dialogFilter
   app.getDistinctValues = function() {
@@ -402,6 +426,47 @@ var Query = new Queries();
     request.send(params);
   };
 
+  // selezione di uno o più valori dalla lista dei valori della colonna in dialogFilter
+  app.handlerValueFilterSelected = function(e) {
+    const textarea = document.getElementById('filterFormula');
+    const ul = app.dialogFilter.querySelector('#filter-valueList');
+    let span;
+    let values = [];
+
+    if (!ul.hasAttribute('multi')) {
+      // selezione singola
+      // se l'elemento target è già selezionato faccio il return
+      if (e.target.hasAttribute('selected')) return;
+      // ...altrimenti elimino tutte le selezioni fatte (single) e imposto il target selezionato
+      document.querySelectorAll('#valuesList li').forEach((li) => {li.removeAttribute('selected');});
+      e.target.toggleAttribute('selected');
+
+      // se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
+      if (textarea.querySelector('.formulaValues')) {
+        // console.log('esiste');
+        span = textarea.querySelector('.formulaValues');
+        span.innerText = e.target.getAttribute('label');
+      } else {
+        // console.log('non eiste');
+        span = document.createElement('span');
+        span.className = 'formulaValues';
+        span.setAttribute('contenteditable', true);
+        span.innerText = e.target.getAttribute('label');
+        textarea.appendChild(span);
+      }
+
+    } else {
+      // selezione multipla, quindi seleziono tutti gli elementi su cui si attiva il click
+      e.target.toggleAttribute('selected');
+      span = textarea.querySelector('.formulaValues');
+      // TODO: recupero l'elenco dei valori selezionati nella multi
+      let liSelected = app.dialogFilters.querySelectorAll('#valuesList li[selected]');
+      // console.log(liSelected);
+      liSelected.forEach((item) => {valuesArr.push(item.getAttribute('label'));});
+      span.innerText = valuesArr;
+    }
+    span.focus();
+  };
 
 
   /*app.handlerCubeSelected = function() {

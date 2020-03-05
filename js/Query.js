@@ -39,8 +39,16 @@ class Queries {
 
 	set filters(object) {
 		this._obj = {};
-		this._obj[this._field] = object;
-		this._filter[this._table] = this._obj;
+		if (this._filter.hasOwnProperty(this._table)) {
+			// tabella già presente nell'object _select
+			if (!this._filter[this._table].hasOwnProperty(this._field)) {
+				// field NON presente in _select[_table], lo aggiungo
+				this._filter[this._table][this._field] = object;
+			}
+		} else {
+			this._obj[this._field] = object;
+			this._filter[this._table] = this._obj;
+		}
 		console.log(this._filter);
 	}
 

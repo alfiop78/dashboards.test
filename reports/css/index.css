@@ -33,7 +33,9 @@ i[open]{color: red;}
 table thead{background: indianred;color: white;}
 table thead tr > th{border: solid thin;}
 
-.formulaDefine{display: grid;grid-template-columns: auto auto auto;}
+.formula{margin: 16px;}
+
+.formulaDefine{display: grid;grid-template-columns: auto auto auto; grid-gap: 16px;}
 .listContent{align-items: left;display: flex;min-height: 200px;flex-flow: column;}
 dialog .miniList{max-height: 150px;overflow-y: auto;}
 dialog .middleList{height: 220px;overflow-y: auto;width: 250px;}

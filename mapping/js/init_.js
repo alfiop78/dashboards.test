@@ -961,102 +961,6 @@ var cube = new Cube();
     request.send();
   };
 
-  app.handlerValueFilterSelected = function(e) {
-    // selezione di un valore dall'elenco nella dialog filters
-    // inserisco il valore nella textarea
-    // console.log(e.target);
-    // inserisco la colonna selezionata nella textarea
-    const ul = app.dialogFilters.querySelector('ul#valuesList');
-    const textarea = document.getElementById('filterFormula');
-    let span;
-    let valuesArr = [];
-
-    if (!ul.hasAttribute('multi')) {
-      // selezione singola
-      // se l'elemento target è già selezionato faccio il return
-      if (e.target.hasAttribute('selected')) return;
-      // ...altrimenti elimino tutte le selezioni fatte (single) e imposto il target selezionato
-      document.querySelectorAll('#valuesList li').forEach((li) => {li.removeAttribute('selected');});
-      e.target.toggleAttribute('selected');
-
-      // se il formulaValues già esiste (perchè inserito con IN/NOT IN non ricreo qui lo span)
-      if (textarea.querySelector('.formulaValues')) {
-        // console.log('esiste');
-        span = textarea.querySelector('.formulaValues');
-        span.innerText = e.target.getAttribute('label');
-      } else {
-        // console.log('non eiste');
-        span = document.createElement('span');
-        span.className = 'formulaValues';
-        span.setAttribute('contenteditable', true);
-        span.innerText = e.target.getAttribute('label');
-        textarea.appendChild(span);
-      }
-
-    } else {
-      // selezione multipla, quindi seleziono tutti gli elementi su cui si attiva il click
-      e.target.toggleAttribute('selected');
-      span = textarea.querySelector('.formulaValues');
-      // TODO: recupero l'elenco dei valori selezionati nella multi
-      let liSelected = app.dialogFilters.querySelectorAll('#valuesList li[selected]');
-      // console.log(liSelected);
-      liSelected.forEach((item) => {valuesArr.push(item.getAttribute('label'));});
-      span.innerText = valuesArr;
-    }
-    span.focus();
-    app.validityFilterDialog();
-  };
-
-  app.getDistinctValues = function(table, field) {
-
-    // let tableName = e.target.getAttribute('data-tableName');
-    // let fieldName = document.getElementById('filter-fieldName').innerText;
-    // return;
-    // TODO: getDistinctValues
-    // ottengo i valori distinti per la colonna selezionata
-    // TODO: utilizzare le promise
-    var url = 'ajax/columnInfo.php';
-    let params = 'table='+table+'&field='+field;
-    // console.log(params);
-    const ul = document.getElementById('valuesList');
-    // pulisco la ul
-    Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
-
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          // console.table(response);
-          for (let i in response) {
-            // console.log(i);
-            // console.log(response[i][fieldName]);
-            let element = document.createElement('div');
-            element.className = 'element';
-            ul.appendChild(element);
-            let li = document.createElement('li');
-            li.id = i;
-            li.className = 'elementSearch';
-            li.setAttribute('label', response[i][field]);
-            li.innerHTML = response[i][field];
-            element.appendChild(li);
-            li.onclick = app.handlerValueFilterSelected;
-          }
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  };
-
   app.handlerAddHierarchy = function(e) {
     let cardTable = e.path[3].querySelector('.cardTable');
     cube.activeCard = cardTable;
@@ -1073,24 +977,6 @@ var cube = new Cube();
     cube.activeCard = cardTable;
     // console.log(cardTable);
     cube.changeMode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
-  };
-
-  app.handlerColumnFilterSelected = function(e) {
-    // selezione della colonna nella dialogFilters
-    // console.log(e.target);
-    if (e.target.hasAttribute('selected')) {return;}
-
-    // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
-    document.querySelectorAll('#fieldsList li').forEach((li) => {li.removeAttribute('selected');});
-    e.target.toggleAttribute('selected');
-    // inserisco la colonna selezionata nella textarea, la colonna non è editabile
-    const textarea = document.getElementById('filterFormula');
-    let span = document.createElement('span');
-    span.className = 'formulaField';
-    span.innerText = e.target.getAttribute('label');
-    textarea.appendChild(span);
-    app.getDistinctValues(e.target.getAttribute('data-table'), e.target.getAttribute('label'));
-    app.validityFilterDialog();
   };
 
   app.handlerAddFilters = function(e) {

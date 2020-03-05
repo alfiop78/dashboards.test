@@ -194,3 +194,5 @@ small.popup{background: #494949;border-radius: 4px;color: white;font-size: .7rem
   75% {transform: scale(1.10);}
   100% {transition: scale(1);}
 }
+
+.dialog-buttons{display: flex;flex-flow: row;justify-content: space-between;}
