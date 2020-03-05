@@ -1153,48 +1153,6 @@ var cube = new Cube();
 
   document.querySelectorAll('#function-list li').forEach((li) => {li.onclick = app.handlerFunctionMetricList;});
 
-  app.handlerFunctionOperatorList = function(e) {
-    // console.log(this);
-    // questo elenco deve avere sempre almeno un elemento selezionato
-    if (e.target.hasAttribute('selected')) {return;}
-
-    // TODO: Nelle input che verranno mostrate dovrò andare a verificare il type del campo, se date mostro input type="date", se number <input type=number, ecc...
-    document.querySelectorAll('#operator-list li').forEach((li) => {li.removeAttribute('selected');});
-    this.toggleAttribute('selected');
-    // console.log(e.target);
-    const textarea = document.getElementById('filterFormula');
-    let span = document.createElement('span');
-    span.className = 'formulaOperator';
-    span.innerText = e.target.getAttribute('label');
-    textarea.appendChild(span);
-    // debugger;
-    let openPar, closePar, formulaValues;
-    switch (e.target.getAttribute('label')) {
-      case 'IN':
-      case 'NOT IN':
-        openPar = document.createElement('span');
-        closePar = document.createElement('span');
-        formulaValues = document.createElement('span');
-        // inserisco anche formulaValues tra le parentesi della IN/NOT IN
-        openPar.className = 'openPar';
-        formulaValues.className = 'formulaValues';
-        formulaValues.setAttribute('contenteditable', true);
-        closePar.className = 'closePar';
-        openPar.innerText = '( ';
-        closePar.innerText = ' )';
-
-        textarea.appendChild(openPar);
-        textarea.appendChild(formulaValues);
-        textarea.appendChild(closePar);
-        formulaValues.focus();
-        //  imposto la lista dei valori in multiselezione (una IN può avere un elenco di valori separati da virgola)
-        app.dialogFilters.querySelector('#valuesList').setAttribute('multi', true);
-        break;
-      default:
-        // TODO: valutare le operazioni da svolgere per questo blocco
-    }
-  };
-
   app.openReportList = function() {app.dialogReportList.showModal();};
 
   app.getTable = function(table) {

@@ -61,13 +61,13 @@ dialog h4{font-size: .9rem;}
 .formulaDefine > .alias, .formulaDefine > .alias{display: flex; flex-direction: column;justify-content: center;}
 .formulaDefine .metric-filters{max-height: 450px;overflow-y: auto;width: 100%;}
 .formulaDefine > .filtersList{padding: 16px;}
-.listContent{align-items: left;display: flex;min-height: 200px;flex-flow: column;}
+
+
 .valueContent{align-items: center;display: flex;flex-flow: row;}
 dialog .values{display: flex;flex-direction: column;padding: 8px;}
 dialog .valuesList{display: flex;flex-direction: column;padding: 8px;max-width: 300px;}
 dialog .filtersList{display: flex;flex-direction: column;}
-dialog .miniList{max-height: 150px;overflow-y: auto;}
-dialog .middleList{height: 220px;overflow-y: auto;width: 250px;}
+
 dialog .formula, dialog .field, dialog .values{padding: 8px;}
 
 .name-alias{display: grid;grid-template-columns: auto auto;}
@@ -88,12 +88,6 @@ dialog #between > span{padding: 16px;}
 .logicalOperator > span{padding: 4px 8px;}
 .logicalOperator > span:hover{background: var(--main-primary-color); color: white;border-radius: 4px;cursor: pointer;padding: 4px 8px;}
 
-.formulaContent {display: flex;}
-div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
-div.textarea > span{padding: 4px;color: #494949;}
-div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
-div.textarea > span.formulaValues{border-bottom: solid thin gray;padding: 4px 16px;}
-div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 
 #content.dragging{opacity: .6;box-shadow: inset 0px 0px 10px 2px grey;}
 
