@@ -86,6 +86,10 @@ var Query = new Queries();
     const cubeId = e.target.getAttribute('data-cube-id');
     const cubeName = e.target.getAttribute('label');
     const storage = new CubeStorage();
+    let cube = storage.json(cubeName);
+    
+    Query.from = cube.FACT;
+    
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
     let ul = document.getElementById('dimensions');
@@ -121,14 +125,17 @@ var Query = new Queries();
     let columns = Dim.selected.columns;
 
     app.createListTableColumns(Dim.selected.columns);
-
+    
     app.createListTableFilters(Dim.selected.from);
   };
 
   app.createListTableFilters = function(from) {
     // console.log(from); // array
     let ul = document.getElementById('tables-filter');
+
     from.forEach((table, index) => {
+      Query.from = table;
+      // console.log(Query.from);
       let li = document.createElement('li');
       let element = document.createElement('div');
       element.className = 'element';
@@ -346,6 +353,8 @@ var Query = new Queries();
     // Filter save
     const textarea = document.getElementById('filterFormula');
     const filterName = document.getElementById('filter-name').value;
+    let logicalOperator = null; // TODO: qui andrò a memorizzare l'operatore che verrà inserito nella textare, appunti nel Metodo filters della class Query
+    Query.filterName = filterName;
     let operator = app.dialogFilter.querySelector('#filterFormula .formulaOperator').innerText;
     let values = [], value;
 
@@ -364,11 +373,20 @@ var Query = new Queries();
     }
 
     let obj = {};
-    obj = {filterName, operator, values};
+    obj = {operator, values};
     Query.filters = obj;
     // pulisco la textarea
     textarea.querySelectorAll('span').forEach((span) => {span.remove();});
     document.getElementById('filter-name').focus();
+    document.getElementById('filter-name').value = '';
+    // TODO: visualizzo il filtro appena creato nella section #sectionFields-filter
+    let ul = document.getElementById('createdFilters');
+    let li = document.createElement('li');
+    let element = document.createElement('div');
+    li.innerText = filterName;
+    li.setAttribute('label', filterName);
+    element.appendChild(li)
+    ul.appendChild(element);
 
 
   };

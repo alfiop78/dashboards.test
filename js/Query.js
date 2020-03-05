@@ -2,6 +2,7 @@ class Queries {
 	constructor() {
 		this._select = {};
 		this._from = {};
+		this._fromArray = [];
 		this._where = {};
 		this._filter = {}
 		this._groupBy = {};
@@ -14,6 +15,18 @@ class Queries {
 	set field(value) {this._field = value;}
 
 	get field() {return this._field;}
+
+	set from(value) {
+		this._fromArray.push(value);
+		// console.log(this._fromArray);
+		this._from = this._fromArray;
+	}
+
+	get from() {return this._from;}
+
+	set filterName(value) {this._filterName = value};
+
+	get filterName() {return this._filterName;}
 
 	set select(object) {
 		// es.: this._select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
@@ -39,15 +52,50 @@ class Queries {
 
 	set filters(object) {
 		this._obj = {};
-		if (this._filter.hasOwnProperty(this._table)) {
+		// TODO: vedere, tramite questi appunti (sotto) come gestire i filtri con più condizioni
+		// es.: id_azienda = 43 AND sede = 444909
+
+		//this._logicalOperator = {};
+		// console.log(this._logicalOperator);
+		/*
+		nomefiltro:
+			'logicalOperator-1' : 'AND' - oppure null, OR, OR NOT, ecc...
+			id: {operator: "=", values: Array(1)}
+			colonna id_Azienda: {operator: "<>", values: Array(1)}
+			 RESULT : id = xx AND id_Azienda <> xxx
+
+		nomeFiltro:
+			'logicalOperator-2' : 'OR' - oppure null, AND, AND NOT, ecc...
+			nomeColonna-1: {operator: "=", values: Array(1)}
+			nomeColonna-2: {operator: "<>", values: Array(1)}
+			RESULT : nomeColonna-1 = values OR nomeColonna-2 <> values
+
+		nomeFiltro:
+			'logicalOperator-3' : null -  oppure AND, OR, ecc...
+			nomeColonna-1: {operator: "=", values: Array(1)}
+			nomeColonna-2: {operator: "<>", values: Array(1)}
+			RESULT : AND nomeColonna-1 = values 
+			RESULT : AND nomeColonna-2 <> values
+
+		nomeFiltro:
+			'logicalOperator-3' : null -  oppure AND, OR, ecc...
+			nomeColonna-1: {operator: ">", values: Array(1)}
+			RESULT : AND nomeColonna-1 > values 
+			
+			*/
+
+		if (this._filter.hasOwnProperty(this._filterName)) {
 			// tabella già presente nell'object _select
-			if (!this._filter[this._table].hasOwnProperty(this._field)) {
+			if (!this._filter[this._filterName].hasOwnProperty(this._field)) {
 				// field NON presente in _select[_table], lo aggiungo
-				this._filter[this._table][this._field] = object;
+				this._filter[this._filterName][this._field] = object;
 			}
 		} else {
+
 			this._obj[this._field] = object;
-			this._filter[this._table] = this._obj;
+			//this._obj.logicalOperator = object.logicalOperator;
+			this._filter[this._filterName] = this._obj;
+			
 		}
 		console.log(this._filter);
 	}

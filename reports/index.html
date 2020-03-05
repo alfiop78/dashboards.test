@@ -351,7 +351,7 @@
                       <section class="step" data-step="1" selected>
                         <section class="pageContent">
                           <h4>Step 1</h4><h6>Seleziona il cubo su cui creare il report</h6>
-                          <div id="layoutStep-1">
+                          <div id="layoutStep-1" class="stepLayout">
 
                             <section class="sectionLists">
                               <h5>Lista dei Cubi</h5>
@@ -375,7 +375,7 @@
                         <section class="pageContent">
                           <h4>Step 2</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
-                          <div id="layoutStep-2">
+                          <div id="layoutStep-2" class="stepLayout">
 
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
@@ -399,7 +399,7 @@
                         <section class="pageContent">
                           <h4>Step 3</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
-                          <div id="layoutStep-3">
+                          <div id="layoutStep-3" class="stepLayout"> 
 
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
@@ -411,7 +411,34 @@
                             <section class="sectionLists" id="sectionFields-filter">
                               <h5>Filtri impostati</h5>
                               <!-- <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList </div>-->
-                              <div id="filters"></div>
+                              <div id="filters">
+                                <ul id="createdFilters"></ul>
+                              </div>
+                            </section>
+
+                          </div>
+
+                        </section>
+                      </section>
+
+                      <section class="step" data-step="4">
+                        <section class="pageContent">
+                          <h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
+
+                          <div id="layoutStep-4" class="stepLayout">
+
+                            <section class="sectionLists">
+                              <h5>Tabelle</h5>
+                              <div id="tableList-metric">
+                                <ul id="tables-metric"></ul>
+                              </div>
+                            </section>
+
+                            <section class="sectionLists" id="sectionFields-metric">
+                              <h5>Metriche impostate</h5>
+                              <div id="metrics">
+                                <ul id="createdMetrics"></ul>
+                              </div>
                             </section>
 
                           </div>
