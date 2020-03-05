@@ -212,7 +212,7 @@
                 <input type="search" id="fieldSearch" value=""/>
                 <label for="fieldSearch" class="">Ricerca</label>
               </div>
-              <ul id="fieldsList" class="middleList"></ul>
+              <ul id="filter-fieldList" class="list middleList"></ul>
             </div>
           </section>
 
@@ -222,8 +222,8 @@
             </div>
 
             <div class="listContent">
-              <ul id="operator-list" class="miniList">
-                <li label="=">&equals;</li>
+              <ul id="operatorList" class="list miniList">
+                <li label="=" selected>&equals;</li>
                 <li label="<>">&lt;&gt;</li>
                 <li label="<">&lt;</li>
                 <li label=">">&gt;</li>
@@ -237,19 +237,20 @@
               </ul>
             </div>
           </section>
+
           <!-- TODO: rinominare la .formula in section.... -->
           <section class="formula">
             <div class="title">
               <h5>Lista valori</h5><h6>Seleziona i valori per creare il filtro</h6>
             </div>
 
-            <div id="filterValuesList" class="valuesList" hidden>
+            <div id="filterValuesList" class="valuesList">
               <div class="listContent">
                 <div class="md-field" value>
                   <input type="search" id="valuesSearch" value=""/>
                   <label for="valuesSearch" class="">Ricerca</label>
                 </div>
-                <ul id="valuesList" class="middleList"></ul>
+                <ul id="filter-valueList" class="list middleList"></ul>
               </div>
             </div>
 
@@ -330,7 +331,7 @@
               
                 <template id="templateListField">
                   <div class="element" name="">
-                    <li class="elementSearch"></li>
+                    <li class="elementSearch" label=""></li>
                   </div>
                 </template>
 
@@ -407,8 +408,9 @@
                             </section>
 
                             <section class="sectionLists" id="sectionFields-filter">
-                              <h5>Colonne della tabella selezioanta</h5>
-                              <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList--></div>
+                              <h5>Filtri impostati</h5>
+                              <!-- <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList </div>-->
+                              <div id="filters"></div>
                             </section>
 
                           </div>

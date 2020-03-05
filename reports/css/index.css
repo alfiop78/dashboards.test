@@ -35,3 +35,13 @@ table thead tr > th{border: solid thin;}
 
 .formulaDefine{display: grid;grid-template-columns: auto auto auto;}
 .listContent{align-items: left;display: flex;min-height: 200px;flex-flow: column;}
+dialog .miniList{max-height: 150px;overflow-y: auto;}
+dialog .middleList{height: 220px;overflow-y: auto;width: 250px;}
+.formulaContent {display: flex;}
+div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
+div.textarea > span{padding: 4px;color: #494949;}
+div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
+div.textarea > span.formulaValues{border-bottom: solid thin gray;padding: 4px 16px;}
+div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
+
+.list li:hover{background: var(--main-primary-color); border-radius: 4px; color: white;cursor: pointer;}
