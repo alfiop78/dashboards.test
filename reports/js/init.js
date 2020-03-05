@@ -12,6 +12,7 @@ var Query = new Queries();
     // dialog
     dialogFilter : document.getElementById('dialogFilter'),
     dialogColumn : document.getElementById('dialogColumn'),
+    btnFilterDone : document.getElementById('btnFilterDone'), //tasto ok nella dialog filter
 
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
@@ -100,7 +101,6 @@ var Query = new Queries();
       element.appendChild(li);
       li.onclick = app.handlerDimensionSelected;
     }
-
   };
 
   app.handlerDimensionSelected = function(e) {
@@ -184,6 +184,21 @@ var Query = new Queries();
     });
   };
 
+  // selezione della tabella nella sezione Filtri (step 3)
+  app.handlerTableSelectedFilter = function(e) {
+    // TODO: carico elenco field per la tabella selezionata
+    Query.table = e.target.getAttribute('label');
+    app.getFields();
+
+    // apro la dialog filter
+    app.dialogFilter.showModal();
+    // event su <li> degli operatori
+    document.querySelectorAll('operatorList').forEach((li) => {
+      li.onclick = app.handlerFilterOperatorSelected;
+    });
+  };
+
+  // selezione della tabella nella sezione Column
   app.handlerTableSelected = function(e) {
     // visualizzo la ul nascosta della tabella selezionata, sezione columns
     let tableId = +e.target.getAttribute('data-table-id');
@@ -192,21 +207,65 @@ var Query = new Queries();
     Query.table = e.target.getAttribute('label');
   };
 
-  app.handlerTableSelectedFilter = function(e) {
-    // tabella selezionata nella sezione filters
+  // selezione della colonna nella dialogFilter
+  app.handlerFilterFieldSelected = function(e) {
     e.target.toggleAttribute('selected');
-    // carico elenco field dal DB
+    Query.field = e.target.getAttribute('label');
+    // inserisco il field selezionato nella textarea, la colonna non è editabile
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaField';
+    span.innerText = Query.field;
+    textarea.appendChild(span);
+    // TODO: recupero la lista dei valori distinct dalla tabella
+    app.getDistinctValues();
 
-    let table = e.target.getAttribute('label');
-    let tableId = +e.target.getAttribute('data-table-id');
-    let tmpl_ulList = document.getElementById('tmpl_ulList');
-    let ulContent = tmpl_ulList.content.cloneNode(true);
-    let ul = ulContent.querySelector('ul[data-id="fields-filter"]');
-    const parentElement = document.getElementById('sectionFields-filter'); // elemento a cui aggiungere la ul
+  };
 
-    // console.log(table);
-    var url = '/ajax/tableInfo.php';
-    let params = 'tableName='+table;
+  // selezione dell'operatore nella dialogFilter
+  app.handlerFilterOperatorSelected = function(e) {
+    if (e.target.hasAttribute('selected')) return;
+
+    document.querySelectorAll('#operatorList li').forEach((li) => {li.removeAttribute('selected');});
+    e.target.toggleAttribute('selected');
+    const textarea = document.getElementById('filterFormula');
+    let span = document.createElement('span');
+    span.className = 'formulaOperator';
+    span.innerText = e.target.getAttribute('label');
+    textarea.appendChild(span);
+    let openPar, closePar, formulaValues;
+    // OPTIMIZE: da ottimizzare
+    switch (e.target.getAttribute('label')) {
+      case 'IN':
+      case 'NOT IN':
+        openPar = document.createElement('span');
+        closePar = document.createElement('span');
+        formulaValues = document.createElement('span');
+        // inserisco anche formulaValues tra le parentesi della IN/NOT IN
+        openPar.className = 'openPar';
+        formulaValues.className = 'formulaValues';
+        formulaValues.setAttribute('contenteditable', true);
+        closePar.className = 'closePar';
+        openPar.innerText = '( ';
+        closePar.innerText = ' )';
+
+        textarea.appendChild(openPar);
+        textarea.appendChild(formulaValues);
+        textarea.appendChild(closePar);
+        formulaValues.focus();
+        //  imposto la lista dei valori in multiselezione (una IN può avere un elenco di valori separati da virgola)
+        app.dialogFilter.querySelector('#valuesList').setAttribute('multi', true);
+        break;
+      default:
+        // TODO: valutare le operazioni da svolgere per questo blocco
+    }
+  };
+
+  // carico elenco colonne dal DB per visualizzare nella dialogFilter
+  app.getFields = function() {
+    console.log(Query.table);
+    const url = '/ajax/tableInfo.php';
+    let params = 'tableName='+Query.table;
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -214,12 +273,13 @@ var Query = new Queries();
           var response = JSON.parse(request.response);
           
           let tmplFieldList = document.getElementById('templateListField');
-          ul.setAttribute('data-table-id', tableId);
+          let ul = document.getElementById('filter-fieldList');
+
           for (let i in response) {
             let content = tmplFieldList.content.cloneNode(true);
             let element = content.querySelector('.element');
             let li = element.querySelector('li');
-            // li.className = 'elementSearch';
+            li.setAttribute('label', response[i][0]);
             li.innerText = response[i][0];
             // scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
             let pos = response[i][1].indexOf('(');
@@ -227,15 +287,8 @@ var Query = new Queries();
             li.setAttribute('data-type', type);
             li.id = i;
             ul.appendChild(element);
-            
-            li.onclick = function(e) {app.dialogFilter.showModal();}; // apro la dialog filter
-          }
-          parentElement.appendChild(ul);
-          
-          // console.log(document.querySelector("ul[data-id='fields-filter']:not([hidden])"));
-          // nascondo la ul 'attiva' in questo momento e visualizzo quella su cui si è cliccato adesso
-          if (document.querySelector("ul[data-id='fields-filter']:not([hidden])")) {document.querySelector("ul[data-id='fields-filter']:not([hidden])").setAttribute('hidden', true);}
-          ul.removeAttribute('hidden');
+            li.onclick = app.handlerFilterFieldSelected;
+          }          
 
         } else {
           // TODO:
@@ -249,10 +302,10 @@ var Query = new Queries();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
-
   };
 
-  app.handlerFieldSelected = function() {
+  // selezione della colonna da inserire nel report
+  app.handlerFieldSelected = function(e) {
     // seleziono la colonna da inserire nel report e la inserisco nel reportSection
     Query.field = e.target.getAttribute('label');
     app.dialogColumn.showModal();
@@ -262,6 +315,7 @@ var Query = new Queries();
     btnDone.onclick = app.handlerBtnColumnDone;
   };
 
+  // Salvataggio dell'alias di colonna
   app.handlerBtnColumnDone = function() {
     // Confermo il nome dell'alias per la colonna
     // TODO: da inserire anche SQL formula (es.: date_format()) in un textarea oppure un contenteditable
@@ -274,15 +328,78 @@ var Query = new Queries();
     Query.select = obj;
     // Query.addColumn(Query.field, null, alias);
     app.dialogColumn.close();
+    // aggiungo la colonna selezionata a Query.groupBy
+    obj = {};
+    obj = {'SQLFormat': null};
+    Query.groupBy = obj;
 
     let table = document.getElementById('table-0');
-    // console.log(table);
-    // console.log(table.tHead);
+    // aggiungo la colonna alla tabella
     const th = document.createElement('th');
-    
     th.innerText = Query.getAliasColumn();
     table.tHead.rows[0].appendChild(th);
+  };
 
+  // salvataggio del filtro impostato nella dialog
+  app.btnFilterDone.onclick = function(e) {
+    // Filter save
+    const filterName = document.getElementById('filter-name').value;
+    let operator = this.dialogFilters.querySelector('#filterFormula .formulaOperator').innerText;
+
+    let obj = {};
+    obj = {operator, values};
+    console.log(obj);
+  };
+
+  // recupero valori distinti per inserimento nella dialogFilter
+  app.getDistinctValues = function() {
+
+    // let tableName = e.target.getAttribute('data-tableName');
+    // let fieldName = document.getElementById('filter-fieldName').innerText;
+    // return;
+    // TODO: getDistinctValues
+    // ottengo i valori distinti per la colonna selezionata
+    // TODO: utilizzare le promise
+    var url = 'ajax/columnInfo.php';
+    let params = 'table='+Query.table+'&field='+Query.field;
+    console.log(params);
+    const ul = document.getElementById('filter-valueList');
+    // pulisco la ul
+    Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          // console.table(response);
+          for (let i in response) {
+            // console.log(i);
+            // console.log(response[i][fieldName]);
+            let element = document.createElement('div');
+            element.className = 'element';
+            ul.appendChild(element);
+            let li = document.createElement('li');
+            li.id = i;
+            li.className = 'elementSearch';
+            li.setAttribute('label', response[i][Query.field]);
+            li.innerHTML = response[i][Query.field];
+            element.appendChild(li);
+            li.onclick = app.handlerValueFilterSelected;
+          }
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
   };
 
 
