@@ -10,6 +10,8 @@ class Steps {
     this._translateRef = document.getElementById(stepTranslate);
     this._translateX = 0;
     this.page = document.querySelector('.step[selected]');
+    this._step = document.getElementById('step'); // elemento con [data-step]
+    this._stepActive = 1;
     // console.log(this._page);
     // console.log(this._page.offsetWidth);
     this._pageWidth = this._page.offsetWidth + 32; // width della pagina da translare
@@ -40,6 +42,7 @@ class Steps {
     //this._translateRef.style.transform = "translateX(-"+this._pageWidth+"px)";
     this._translateRef.style.transform = "translateX("+this._move+"px)";
     this.translate = this._move;
+    this._step.setAttribute('data-step', --this._stepActive);
     // rimuovo [selected] dalla pagina corrente
     this._page.removeAttribute('selected');
     // imposto [selected] sul nuovo step
@@ -54,6 +57,7 @@ class Steps {
     //this._translateRef.style.transform = "translateX(-"+this._pageWidth+"px)";
     this._translateRef.style.transform = "translateX(-"+this._move+"px)";
     this.translate = -this._move;
+    this._step.setAttribute('data-step', ++this._stepActive);
     // rimuovo [selected] dalla pagina corrente
     this._page.removeAttribute('selected');
     // imposto [selected] sul nuovo step

@@ -8,6 +8,7 @@ var Query = new Queries();
     
     btnPreviousStep : document.getElementById('stepPrevious'),
     btnNextStep : document.getElementById('stepNext'),
+    btnStepDone : document.getElementById('stepDone'),
 
     // dialog
     dialogFilter : document.getElementById('dialogFilter'),
@@ -22,7 +23,7 @@ var Query = new Queries();
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogCubeList: document.getElementById('dialog-cube-list'),
-    dialogReportName: document.getElementById('report-name'),
+    dialogSaveReport: document.getElementById('dialogSaveReport'),
     dialogColOption : document.getElementById('columnsOption'),
     dialogPagebyOption : document.getElementById('pagebyOptions'),
     btnBack : document.getElementById('mdc-back'),
@@ -90,6 +91,7 @@ var Query = new Queries();
     let cube = storage.json(cubeName);
     
     Query.from = cube.FACT;
+    Query.factRelation = cube.relations;
     
     app.createListTableMetrics(cube.FACT, cube.metrics, cubeName);
     // aggiungo la tabella fact selezionata alla lista dello step 3 - filters
@@ -142,6 +144,9 @@ var Query = new Queries();
     app.createListTableColumns(Dim.selected.columns);
     
     app.createListTableFilters(Dim.selected.from);
+
+    // TODO: salvo l'object _where. Recupero, dalla dimensione, la key hierarchies (da rinominare in relations)
+    Query.where = Dim.selected.hierarchies
   };
 
   // creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -269,8 +274,10 @@ var Query = new Queries();
     const metrics = storage.getMetrics(cubeName);
     
     for (metric in metrics) {
-      // console.log(metric);
-      // console.log(metrics[metric]);
+      console.log(metric);
+      console.log(metrics[metric]);
+      // set metric name
+      Query.metricName = metric;
       Query.metric = metrics[metric];
     }
     // aggiungo la metrica al report
@@ -761,6 +768,15 @@ var Query = new Queries();
   app.btnPreviousStep.onclick = function() {Step.previous();}
 
   app.btnNextStep.onclick = function() {Step.next();};
+
+  // tasto completato nello step 4
+  app.btnStepDone.onclick = function(e) {
+    
+    console.log(Query);
+    // TODO: processa query
+    
+
+  };
 
   /* events */
 
