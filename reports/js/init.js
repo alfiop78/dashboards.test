@@ -89,6 +89,8 @@ var Query = new Queries();
     let cube = storage.json(cubeName);
     
     Query.from = cube.FACT;
+
+    app.createListTableMetrics(cube.FACT, cube.metrics);
     
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
@@ -118,24 +120,22 @@ var Query = new Queries();
     const dimName = e.target.getAttribute('label');
     const Dim = new DimensionStorage();
     Dim.selected = dimName;
-    //console.log(Dim.selected);
-    /*
-    console.log(Dim.selected.columns);
-    console.log(Dim.selected.from);*/
+
     let columns = Dim.selected.columns;
 
     app.createListTableColumns(Dim.selected.columns);
+    // aggiungo le tabelle appartenenti alla dimensione a Query.from
+    Dim.selected.from.forEach((table) => {Query.from = table;});
     
-    app.createListTableFilters(Dim.selected.from);
+    app.createListTableFilters(Query.from);
   };
 
+  // creo la lista delle tabelle nella sezione dello step 3 - Filtri
   app.createListTableFilters = function(from) {
     // console.log(from); // array
     let ul = document.getElementById('tables-filter');
 
     from.forEach((table, index) => {
-      Query.from = table;
-      // console.log(Query.from);
       let li = document.createElement('li');
       let element = document.createElement('div');
       element.className = 'element';
@@ -149,6 +149,43 @@ var Query = new Queries();
     });
   };
 
+  app.createListTableMetrics = function(fact, metrics) {
+
+    let ul = document.getElementById('tables-metric');
+    let li = document.createElement('li');
+    let element = document.createElement('div');
+    element.className = 'element';
+    li.innerText = fact;
+    li.setAttribute('label', fact);
+    element.appendChild(li);
+    ul.appendChild(element);
+    li.onclick = app.handlerTableSelectedMetric;
+
+    // popolo elenco delle metriche impostate su questo cube
+    console.log(metrics);
+    Object.keys(metrics).forEach((table) => {
+      console.log(table);
+      console.log(metrics[table]);
+      let ulMetrics = document.getElementById('createdMetrics');
+      Object.keys(metrics[table]).forEach((field) => {
+        console.log(field);
+        console.log(metrics[table][field].metricName);
+
+        let li = document.createElement('li');
+        let element = document.createElement('div');
+        element.className = 'element';
+        li.innerText = metrics[table][field].metricName;
+        li.setAttribute('label', metrics[table][field].metricName);
+        li.setAttribute('data-field', field);
+        element.appendChild(li);
+        ulMetrics.appendChild(element);
+        // li.onclick = app.handlerMetricSelected;
+
+      });
+    });
+  };
+
+  // creo la lista delle tabelle nella sezione dello step 2 - Colonne
   app.createListTableColumns = function(columns) {
     // console.log(columns); // object
     let ulTable = document.getElementById('tables-column');
@@ -204,6 +241,11 @@ var Query = new Queries();
     document.querySelectorAll('#operatorList').forEach((li) => {
       li.onclick = app.handlerFilterOperatorSelected;
     });
+  };
+
+  // selezione della/e tabella/e fact per impostare le metriche
+  app.handlerTableSelectedMetric = function(e) {
+
   };
 
   // selezione della tabella nella sezione Column
