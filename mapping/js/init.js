@@ -395,7 +395,8 @@ var dimension = new Dimension();
 
     let objParam = {};
     cube.arrMetrics.push({sqlFunction, 'fieldName': cube.fieldSelected, metricName, 'distinct' : distinctOption, 'alias' : alias});
-    cube.arrMetrics.forEach((metric) => {objParam[metric.fieldName] = metric;});
+    // cube.arrMetrics.forEach((metric) => {objParam[metric.metricName] = metric;});
+    cube.arrMetrics.forEach((metric) => {objParam = metric;});
     cube.metrics = objParam;
     
     app.dialogMetrics.close();

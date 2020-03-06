@@ -48,7 +48,11 @@ class Cube {
   get fieldSelected() {return this._field;}
 
   set metrics(value) {
-    this._metrics[this.card.tableName] = value;
+    // this._metrics[this.card.tableName] = value;
+    /*console.log(value);
+    console.log(this._field);*/
+    this._metrics[value.metricName] = value;
+    
     console.log(this._metrics);
   }
 
