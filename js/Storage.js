@@ -123,6 +123,11 @@ class CubeStorage extends Storages {
     return JSON.parse(window.localStorage.getItem(cubeName));
   }
 
+  getMetrics(cubeName) {
+    this._cube = JSON.parse(window.localStorage.getItem(cubeName));
+    return this._cube.metrics;
+  }
+
   associatedDimensions(name) {
     let jsonStorage = JSON.parse(this.storage.getItem(name));
     // console.log(jsonStorage);

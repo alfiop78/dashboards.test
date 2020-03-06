@@ -82,6 +82,7 @@ var Query = new Queries();
     }
   };
 
+  // selezione del cubo
   app.handlerCubeSelected = function(e) {
     const cubeId = e.target.getAttribute('data-cube-id');
     const cubeName = e.target.getAttribute('label');
@@ -89,8 +90,22 @@ var Query = new Queries();
     let cube = storage.json(cubeName);
     
     Query.from = cube.FACT;
-
-    app.createListTableMetrics(cube.FACT, cube.metrics);
+    
+    app.createListTableMetrics(cube.FACT, cube.metrics, cubeName);
+    // aggiungo la tabella fact selezionata alla lista dello step 3 - filters
+    // OPTIMIZE: Ottimizzare quando verranno aggiunti più cubi, inserendo un data-table-id, index e altre cose che mancano
+    let ulTable = document.getElementById('tables-filter');
+    let liTable = document.createElement('li');
+    let elementTable = document.createElement('div');
+    elementTable.className = 'element';
+    liTable.innerText = cube.FACT;
+    //li.id = 'table-filter-' + index;
+    //li.setAttribute('data-table-id', index);
+    liTable.setAttribute('label', cube.FACT);
+    elementTable.appendChild(liTable);
+    ulTable.appendChild(elementTable);
+    liTable.onclick = app.handlerTableSelectedFilter;
+    
     
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
@@ -110,6 +125,7 @@ var Query = new Queries();
     }
   };
 
+  // selezione delle dimensioni da utilizzare per la creazione del report
   app.handlerDimensionSelected = function(e) {
     // selezione della/e dimensione su cui lavorare per la creazione del report
     // imposto attributo selected sulle dimensioni selezionate
@@ -124,10 +140,8 @@ var Query = new Queries();
     let columns = Dim.selected.columns;
 
     app.createListTableColumns(Dim.selected.columns);
-    // aggiungo le tabelle appartenenti alla dimensione a Query.from
-    Dim.selected.from.forEach((table) => {Query.from = table;});
     
-    app.createListTableFilters(Query.from);
+    app.createListTableFilters(Dim.selected.from);
   };
 
   // creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -136,6 +150,7 @@ var Query = new Queries();
     let ul = document.getElementById('tables-filter');
 
     from.forEach((table, index) => {
+      Query.from = table;
       let li = document.createElement('li');
       let element = document.createElement('div');
       element.className = 'element';
@@ -149,7 +164,7 @@ var Query = new Queries();
     });
   };
 
-  app.createListTableMetrics = function(fact, metrics) {
+  app.createListTableMetrics = function(fact, metrics, cubeName) {
 
     let ul = document.getElementById('tables-metric');
     let li = document.createElement('li');
@@ -162,26 +177,23 @@ var Query = new Queries();
     li.onclick = app.handlerTableSelectedMetric;
 
     // popolo elenco delle metriche impostate su questo cube
-    console.log(metrics);
-    Object.keys(metrics).forEach((table) => {
-      console.log(table);
-      console.log(metrics[table]);
+    // console.log(metrics);
+    Object.keys(metrics).forEach((name) => {
+      // console.log(name);
+      // console.log(metrics[name]);
       let ulMetrics = document.getElementById('createdMetrics');
-      Object.keys(metrics[table]).forEach((field) => {
-        console.log(field);
-        console.log(metrics[table][field].metricName);
+      // console.log(metrics[name].alias);
 
-        let li = document.createElement('li');
-        let element = document.createElement('div');
-        element.className = 'element';
-        li.innerText = metrics[table][field].metricName;
-        li.setAttribute('label', metrics[table][field].metricName);
-        li.setAttribute('data-field', field);
-        element.appendChild(li);
-        ulMetrics.appendChild(element);
-        // li.onclick = app.handlerMetricSelected;
-
-      });
+      let li = document.createElement('li');
+      let element = document.createElement('div');
+      element.className = 'element';
+      li.innerText = metrics[name].alias;
+      li.setAttribute('label', metrics[name].alias);
+      li.setAttribute('data-field', metrics[name].fieldName);
+      li.setAttribute('data-cube-name', cubeName);
+      element.appendChild(li);
+      ulMetrics.appendChild(element);
+      li.onclick = app.handlerFieldSelectedMetric;
     });
   };
 
@@ -223,7 +235,7 @@ var Query = new Queries();
         li.setAttribute('label', field);
         element.appendChild(li);
         ulField.appendChild(element);
-        li.onclick = app.handlerFieldSelected;
+        li.onclick = app.handlerFieldSelectedColumn;
       }
       parentElement.appendChild(ulField);
     });
@@ -246,6 +258,33 @@ var Query = new Queries();
   // selezione della/e tabella/e fact per impostare le metriche
   app.handlerTableSelectedMetric = function(e) {
 
+  };
+
+  // selezione della metrica, da aggiungere al report
+  app.handlerFieldSelectedMetric = function(e) {
+    // recupero la metrica dallo storage, invece di andare a ricrearla qui
+    const cubeName = e.target.getAttribute('data-cube-name');
+    const storage = new CubeStorage();
+    console.log(storage.getMetrics(cubeName));
+    const metrics = storage.getMetrics(cubeName);
+    
+    for (metric in metrics) {
+      // console.log(metric);
+      // console.log(metrics[metric]);
+      Query.metric = metrics[metric];
+    }
+    // aggiungo la metrica al report
+    let table = document.getElementById('table-0');
+    const th = document.createElement('th');
+    th.innerText = e.target.getAttribute('label');
+    table.tHead.rows[0].appendChild(th);
+    
+
+    // for (let [table, metric] of Object.entries(metrics)) {
+    //   console.log(table);
+    //   console.log(metric);
+    // }
+    
   };
 
   // selezione della tabella nella sezione Column
@@ -355,7 +394,7 @@ var Query = new Queries();
   };
 
   // selezione della colonna da inserire nel report
-  app.handlerFieldSelected = function(e) {
+  app.handlerFieldSelectedColumn = function(e) {
     // seleziono la colonna da inserire nel report e la inserisco nel reportSection
     Query.field = e.target.getAttribute('label');
     app.dialogColumn.showModal();

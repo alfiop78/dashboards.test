@@ -6,6 +6,7 @@ class Queries {
 		this._where = {};
 		this._filter = {}
 		this._groupBy = {};
+		this._metrics = {};
 	}
 
 	set table(value) {this._table = value;}
@@ -121,6 +122,15 @@ class Queries {
 	}
 
 	get groupBy() {return this._groupBy;}
+
+	set metric(object) {
+		// console.log(object);
+		// console.log(Object.keys(object));
+		this._metrics = object;
+		console.log(this._metrics);
+	}
+
+	get metric() {return this._metrics;}
 
 
 
