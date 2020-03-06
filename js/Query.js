@@ -4,6 +4,7 @@ class Queries {
 		this._from = {};
 		this._fromArray = [];
 		this._where = {};
+		this._factRelation = {};
 		this._filter = {}
 		this._groupBy = {};
 		this._metrics = {};
@@ -50,6 +51,21 @@ class Queries {
 	getAliasColumn() {
 		return this._select[this._table][this._field]['alias'];
 	}
+
+	set where(object) {
+		this._where = object;
+		console.log(this._where);
+		console.log(this);
+	}
+
+	get where() {return this._where;}
+
+	set factRelation(object) {
+		this._factRelation = object;
+		console.log(this._factRelation);
+	}
+
+	get factRelation() {this._factRelation;}
 
 	set filters(object) {
 		this._obj = {};
@@ -123,11 +139,17 @@ class Queries {
 
 	get groupBy() {return this._groupBy;}
 
+	set metricName(value) {this._metricName = value;}
+
+	get metricName() {return this._metricName;}
+
 	set metric(object) {
+		// object = {sqlFunction: "SUM", fieldName: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
 		// console.log(object);
 		// console.log(Object.keys(object));
-		this._metrics = object;
+		this._metrics[this._metricName] = object;
 		console.log(this._metrics);
+		delete this._metricName;
 	}
 
 	get metric() {return this._metrics;}

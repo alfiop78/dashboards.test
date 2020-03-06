@@ -45,3 +45,8 @@ div.textarea > span.formulaValues{border-bottom: solid thin gray;padding: 4px 16
 div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 
 .list li:hover{background: var(--main-primary-color); border-radius: 4px; color: white;cursor: pointer;}
+
+/* steps */
+.steps:not([data-step="4"]) > .overflow > .buttons #stepDone{visibility: hidden;}
+.steps[data-step="4"] > .overflow > .buttons #stepDone{visibility: visible;}
+/* steps */
