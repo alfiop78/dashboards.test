@@ -120,7 +120,7 @@
 
       <div class="dialog-buttons">
         <button type="button" name="cancel" class="md-button">annulla</button>
-        <button id="dialogColumnDone" type="button" name="done" class="md-button">ok</button>
+        <button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
       </div>
     </dialog>
 
@@ -391,6 +391,7 @@
                 <template id="tmpl_ulList">
                   <ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
                   <ul data-id="fields-column" class="overflowList" hidden="true"></ul>
+                  <ul data-id="fields-metric" class="overflowList" hidden="true"></ul>
                 </template>
 
 
@@ -489,7 +490,7 @@
                             <section class="sectionLists" id="sectionFields-metric">
                               <h5>Metriche impostate</h5>
                               <div id="metrics">
-                                <ul id="createdMetrics"></ul>
+                                <!-- <ul id="createdMetrics"></ul> -->
                               </div>
                             </section>
 

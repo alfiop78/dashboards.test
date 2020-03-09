@@ -380,9 +380,9 @@ var dimension = new Dimension();
   };
 
   app.handlerBtnMetricDone = function(e) {    
-    // TODO: eliminare
-    const metricName = app.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
-    const sqlFunction = document.querySelector('#function-list > li[selected]').innerText; // TODO meglio utilizzare l'attributo label, da inserire se non presente
+    // TODO: eliminare dopo averla spostata in /reports
+    const metricName = app.dialogMetrics.querySelector('#metric-name').value;
+    const sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
     const distinctOption = document.getElementById('checkbox-distinct').checked;
     const alias = document.getElementById('alias-metric').value;
 

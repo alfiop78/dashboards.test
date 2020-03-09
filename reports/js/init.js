@@ -13,8 +13,11 @@ var Query = new Queries();
     // dialog
     dialogFilter : document.getElementById('dialogFilter'),
     dialogColumn : document.getElementById('dialogColumn'),
+    dialogMetric : document.getElementById('dialogMetric'),
     btnFilterSave : document.getElementById('btnFilterSave'), //tasto salva nella dialog filter
     btnFilterDone : document.getElementById('btnFilterDone'), //tasto fatto nella dialog filter
+    btnColumnDone : document.getElementById('btnColumnDone'), // tasto ok nella dialogColumn
+    btnMetricDone : document.getElementById('btnMetricDone'), // tasto Salva nella dialogMetric
 
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
@@ -93,7 +96,7 @@ var Query = new Queries();
     Query.from = cube.FACT;
     Query.factRelation = cube.relations;
     
-    app.createListTableMetrics(cube.FACT, cube.metrics, cubeName);
+    app.createListTableMetrics(cube.metrics, cubeName);
     // aggiungo la tabella fact selezionata alla lista dello step 3 - filters
     // OPTIMIZE: Ottimizzare quando verranno aggiunti più cubi, inserendo un data-table-id, index e altre cose che mancano
     let ulTable = document.getElementById('tables-filter');
@@ -129,7 +132,6 @@ var Query = new Queries();
 
   // selezione delle dimensioni da utilizzare per la creazione del report
   app.handlerDimensionSelected = function(e) {
-    // selezione della/e dimensione su cui lavorare per la creazione del report
     // imposto attributo selected sulle dimensioni selezionate
     e.target.toggleAttribute('selected');
     //  popolo la sezione step 2, colonne e field
@@ -146,7 +148,7 @@ var Query = new Queries();
     app.createListTableFilters(Dim.selected.from);
 
     // TODO: salvo l'object _where. Recupero, dalla dimensione, la key hierarchies (da rinominare in relations)
-    Query.where = Dim.selected.hierarchies
+    Query.where = Dim.selected.join
   };
 
   // creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -169,36 +171,50 @@ var Query = new Queries();
     });
   };
 
-  app.createListTableMetrics = function(fact, metrics, cubeName) {
+  app.createListTableMetrics = function(metrics, cubeName) {
 
-    let ul = document.getElementById('tables-metric');
-    let li = document.createElement('li');
-    let element = document.createElement('div');
-    element.className = 'element';
-    li.innerText = fact;
-    li.setAttribute('label', fact);
-    element.appendChild(li);
-    ul.appendChild(element);
-    li.onclick = app.handlerTableSelectedMetric;
+    let ulTable = document.getElementById('tables-metric');
 
-    // popolo elenco delle metriche impostate su questo cube
-    // console.log(metrics);
-    Object.keys(metrics).forEach((name) => {
-      // console.log(name);
-      // console.log(metrics[name]);
-      let ulMetrics = document.getElementById('createdMetrics');
-      // console.log(metrics[name].alias);
+    Object.keys(metrics).forEach((table, index) => {
+      console.log(table);
+      console.log(metrics[table]);
 
-      let li = document.createElement('li');
-      let element = document.createElement('div');
-      element.className = 'element';
-      li.innerText = metrics[name].alias;
-      li.setAttribute('label', metrics[name].alias);
-      li.setAttribute('data-field', metrics[name].fieldName);
-      li.setAttribute('data-cube-name', cubeName);
-      element.appendChild(li);
-      ulMetrics.appendChild(element);
-      li.onclick = app.handlerFieldSelectedMetric;
+      let liTable = document.createElement('li');
+      let elementTable = document.createElement('div');
+      elementTable.className = 'element';
+      liTable.innerText = table;
+      liTable.setAttribute('data-table-id', index);
+      liTable.setAttribute('data-list-type', 'metric');
+      liTable.setAttribute('label', table);
+      elementTable.appendChild(liTable);
+      ulTable.appendChild(elementTable);
+      liTable.onclick = app.handlerTableSelected;
+
+      let tmpl_ulList = document.getElementById('tmpl_ulList');
+      let ulContent = tmpl_ulList.content.cloneNode(true);
+      let ulField = ulContent.querySelector('ul[data-id="fields-metric"]');
+      const parentElement = document.getElementById('sectionFields-metric'); // elemento a cui aggiungere la ul
+
+      let tmplFieldList = document.getElementById('templateListField');
+
+      ulField.setAttribute('data-table-id', index);
+      metrics[table].forEach((metric) => {
+        // console.log(metric);
+        let content = tmplFieldList.content.cloneNode(true);
+        let element = content.querySelector('.element');
+        let li = element.querySelector('li');
+      
+        li.innerText = metric;
+        // li.innerText = metrics[name].alias;
+        li.setAttribute('label', metric);
+        li.setAttribute('data-field', metric);
+        li.setAttribute('data-cube-name', cubeName);
+        element.appendChild(li);
+        ulField.appendChild(element);
+        li.onclick = app.handlerFieldSelectedMetric;
+      });
+
+      parentElement.appendChild(ulField);
     });
   };
 
@@ -214,6 +230,7 @@ var Query = new Queries();
       let li = document.createElement('li');
       li.innerText = table;
       li.setAttribute('data-table-id', index);
+      li.setAttribute('data-list-type', 'column');
       li.setAttribute('label', table);
       elementTable.appendChild(li);
       ulTable.appendChild(elementTable);
@@ -260,45 +277,15 @@ var Query = new Queries();
     });
   };
 
-  // selezione della/e tabella/e fact per impostare le metriche
-  app.handlerTableSelectedMetric = function(e) {
-
-  };
-
-  // selezione della metrica, da aggiungere al report
-  app.handlerFieldSelectedMetric = function(e) {
-    // recupero la metrica dallo storage, invece di andare a ricrearla qui
-    const cubeName = e.target.getAttribute('data-cube-name');
-    const storage = new CubeStorage();
-    console.log(storage.getMetrics(cubeName));
-    const metrics = storage.getMetrics(cubeName);
-    
-    for (metric in metrics) {
-      console.log(metric);
-      console.log(metrics[metric]);
-      // set metric name
-      Query.metricName = metric;
-      Query.metric = metrics[metric];
-    }
-    // aggiungo la metrica al report
-    let table = document.getElementById('table-0');
-    const th = document.createElement('th');
-    th.innerText = e.target.getAttribute('label');
-    table.tHead.rows[0].appendChild(th);
-    
-
-    // for (let [table, metric] of Object.entries(metrics)) {
-    //   console.log(table);
-    //   console.log(metric);
-    // }
-    
-  };
+  // selezione della metrica, apro la dialog per impostare la metrica
+  app.handlerFieldSelectedMetric = function(e) {app.dialogMetric.showModal();};
 
   // selezione della tabella nella sezione Column
   app.handlerTableSelected = function(e) {
     // visualizzo la ul nascosta della tabella selezionata, sezione columns
+    let fieldType = e.target.getAttribute('data-list-type')
     let tableId = +e.target.getAttribute('data-table-id');
-    document.querySelector("ul[data-id='fields-column'][data-table-id='"+tableId+"']").removeAttribute('hidden');
+    document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
     e.target.toggleAttribute('selected');
     Query.table = e.target.getAttribute('label');
   };
@@ -407,8 +394,8 @@ var Query = new Queries();
     app.dialogColumn.showModal();
     // console.log(Query.table);
     // event sul tasto ok della dialog
-    const btnDone = document.getElementById('dialogColumnDone');
-    btnDone.onclick = app.handlerBtnColumnDone;
+    
+    app.btnColumnDone.onclick = app.handlerBtnColumnDone;
   };
 
   // Salvataggio dell'alias di colonna
@@ -434,6 +421,24 @@ var Query = new Queries();
     const th = document.createElement('th');
     th.innerText = Query.getAliasColumn();
     table.tHead.rows[0].appendChild(th);
+  };
+
+  // salvo la metrica impostata
+  app.btnMetricDone.onclick = function(e) {
+    console.log('save metric');
+    Query.field = e.target.getAttribute('label');
+    // TODO: il nome non può contenere spazi ed altri caratteri da definire
+    const name = app.dialogMetric.querySelector('#metric-name').value;
+    // TODO meglio utilizzare l'attributo label, da inserire se non presente
+    const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
+    const distinctOption = document.getElementById('checkbox-distinct').checked;
+    const alias = document.getElementById('alias-metric').value;
+
+    let obj = {};
+    obj = {SQLFunction, 'field': Query.field, name, 'distinct' : distinctOption, alias}
+    Query.metrics = obj;
+
+    app.dialogMetric.close();
   };
 
   // salvataggio del filtro impostato nella dialog

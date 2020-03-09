@@ -143,16 +143,23 @@ class Queries {
 
 	get metricName() {return this._metricName;}
 
-	set metric(object) {
-		// object = {sqlFunction: "SUM", fieldName: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
-		// console.log(object);
-		// console.log(Object.keys(object));
-		this._metrics[this._metricName] = object;
+	set metrics(object) {
+		// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
+		this._obj = {};
+		if (this._metrics.hasOwnProperty(this._table)) {
+			// tabella già presente nell'object _select
+			if (!this._metrics[this._table].hasOwnProperty(this._field)) {
+				// field NON presente in _select[_table], lo aggiungo
+				this._metrics[this._table][this._field] = object;
+			}
+		} else {
+			this._obj[this._field] = object;
+			this._metrics[this._table] = this._obj;
+		}
 		console.log(this._metrics);
-		delete this._metricName;
 	}
 
-	get metric() {return this._metrics;}
+	get metrics() {return this._metrics;}
 
 
 
