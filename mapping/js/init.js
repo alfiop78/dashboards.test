@@ -8,7 +8,6 @@ var dimension = new Dimension();
     dialogDimensionName : document.getElementById('dimension-name'),
     dialogHierarchyName : document.getElementById('hierarchy-name'),
     dialogReportList : document.getElementById('dialog-report-list'),
-    dialogMetrics : document.getElementById('dialog-metric'),
 
     hierarchyContainer : document.getElementById('hierarchiesContainer'),
 
@@ -235,7 +234,7 @@ var dimension = new Dimension();
     div.ondrop = app.hierDrop;
 
     // event sui tasti section[options]
-    card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
+    card.querySelector('i[join]').onclick = app.handlerAddJoin;
     card.querySelector('i[metrics]').onclick = app.handlerAddMetric;
     card.querySelector('i[columns]').onclick = app.handlerAddColumns;
 
@@ -313,7 +312,7 @@ var dimension = new Dimension();
     let attrs = cube.card.ref.getAttribute('mode');
 
     switch (attrs) {
-      case 'hierarchies':
+      case 'relations':
         if (e.target.hasAttribute('data-relation-id')) {
           // debugger;
           /* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
@@ -332,14 +331,14 @@ var dimension = new Dimension();
             }
           }
         } else {
-          let liRelationSelected = dimension.card.querySelector('li[hierarchy]:not([data-relation-id])');
+          let liRelationSelected = dimension.card.querySelector('li[relations]:not([data-relation-id])');
           // console.log(liRelationSelected);
-          e.target.toggleAttribute('hierarchy');
+          e.target.toggleAttribute('relations');
           e.target.toggleAttribute('selected');
           // se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
           // se è stata selezionata una colonna già selezionata la deseleziono
           if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
-            liRelationSelected.toggleAttribute('hierarchy');
+            liRelationSelected.toggleAttribute('relations');
             liRelationSelected.toggleAttribute('selected');
           }
         }
@@ -348,16 +347,14 @@ var dimension = new Dimension();
       case 'metrics':
         console.log('metrics');
         e.target.toggleAttribute('metrics');
+
         if (!e.target.hasAttribute('metrics')) {
-          // elimino l'attributo defined utile a colorare l'icona
-          e.target.parentElement.querySelector('#metrics-icon').removeAttribute('defined');
-          delete cube.metrics[tableName][fieldName];
-          // TODO: aggiungere il controllo per eliminare l'object se non contiene nulla
+          console.log('da eliminare');
+          //delete cube.metrics[tableName][fieldName];
+          
         } else {
-          app.dialogMetrics.querySelector('#fieldName').innerText = dimension.fieldSelected;
-          app.dialogMetrics.showModal();
-          // aggiungo evento al tasto ok per memorizzare il filtro e chiudere la dialog
-          app.dialogMetrics.querySelector('#btnMetricDone').onclick = app.handlerBtnMetricDone;
+
+          cube.metrics = cube.fieldSelected;
         }
         break;
       default:
@@ -373,9 +370,6 @@ var dimension = new Dimension();
             dimension.columns = cube.fieldSelected;
           }
         }
-        
-        
-
         // if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
         //   delete dimension.columns[tableName][fieldName];
         //   if (Object.keys(dimension.columns[tableName]).length === 0) {delete dimension.columns[tableName];}
@@ -386,6 +380,7 @@ var dimension = new Dimension();
   };
 
   app.handlerBtnMetricDone = function(e) {    
+    // TODO: eliminare
     const metricName = app.dialogMetrics.querySelector('#metric-name').value; // TODO: il nome non può contenere spazi ed altri caratteri da definire
     const sqlFunction = document.querySelector('#function-list > li[selected]').innerText; // TODO meglio utilizzare l'attributo label, da inserire se non presente
     const distinctOption = document.getElementById('checkbox-distinct').checked;
@@ -398,8 +393,6 @@ var dimension = new Dimension();
     // cube.arrMetrics.forEach((metric) => {objParam[metric.metricName] = metric;});
     cube.arrMetrics.forEach((metric) => {objParam = metric;});
     cube.metrics = objParam;
-    
-    app.dialogMetrics.close();
   };
 
   app.handlerAddColumns = function(e) {
@@ -420,12 +413,12 @@ var dimension = new Dimension();
   };
 
   app.createHierarchy = function(e) {
-    console.log('createHierarchy');
+    console.log('create Relations');
     let hier = [];
     let colSelected = [];
-    document.querySelectorAll('.cardTable[mode="hierarchies"]').forEach((card) => {
+    document.querySelectorAll('.cardTable[mode="relations"]').forEach((card) => {
       let tableName = card.getAttribute('name');
-      let liRef = card.querySelector('li[hierarchy][selected]');
+      let liRef = card.querySelector('li[relations][selected]');
       if (liRef) {
         // metto in un array gli elementi selezionati per la creazione della gerarchia
         colSelected.push(liRef);
@@ -439,7 +432,7 @@ var dimension = new Dimension();
         if (card.hasAttribute('fact')) {
           console.log('FACT TABLE Relation');
           cube.relationId++;
-          cube.relations['hier_'+cube.relationId] = hier;
+          cube.relations['cubeJoin_'+cube.relationId] = hier;
           console.log(cube.relations);
           cube.saveRelation = colSelected;
           // colSelected.forEach((el) => {
@@ -452,7 +445,7 @@ var dimension = new Dimension();
         } else {
           dimension.relationId++;
           dimension.hierarchies = hier;
-          debugger;
+          //debugger;
           // visualizzo l'icona per capire che c'è una relazione tra le due colonne
           dimension.saveRelation = colSelected;
           // colSelected.forEach((el) => {
@@ -509,8 +502,8 @@ var dimension = new Dimension();
           li.removeAttribute('hierarchy');
         }
       });
-      delete cube.hierarchyFact['hier_'+value];
-      delete cube.hierarchyTable['hier_'+value];
+      delete cube.hierarchyFact['dimensionJoin_'+value];
+      delete cube.hierarchyTable['dimensionJoin_'+value];
       console.log(cube.hierarchyTable);
     }
   };
@@ -685,10 +678,10 @@ var dimension = new Dimension();
     request.send();
   };
 
-  app.handlerAddHierarchy = function(e) {
+  app.handlerAddJoin = function(e) {
     const cardTable = e.path[3].querySelector('.cardTable');
     cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
-    cube.mode('hierarchies', 'Selezionare le colonne che saranno messe in relazione');
+    cube.mode('relations', 'Selezionare le colonne che saranno messe in relazione');
   };
 
   app.getTable = function(table) {
@@ -879,7 +872,7 @@ var dimension = new Dimension();
   app.handlerDimensionSelected = function(e) {
     // selezione di una dimensione da inserire nel body
     console.log(e.target);
-
+    debugger;
     const storage = new DimensionStorage();
     let lastTableInHierarchy;
     storage.selected = e.target.getAttribute('label');
@@ -888,9 +881,9 @@ var dimension = new Dimension();
     // recupero tutta la dimensione selezionata, dallo storage
     console.log(storage.selected);
     // TODO: tramite questa dimensione vado a ricreare l'ultima tabella della relazione, reimpostando le colonne/filtri/groupBy impostati su questa tabella
-    if (storage.selected.hasOwnProperty('hierarchyOrder')) {
+    if (storage.selected.hasOwnProperty('hierarchies')) {
       // recupero l'ultima tabella da hierarchyOrder
-      lastTableInHierarchy = storage.selected.hierarchyOrder[Object.keys(storage.selected.hierarchyOrder).length-1];
+      lastTableInHierarchy = storage.selected.hierarchies[Object.keys(storage.selected.hierarchies).length-1];
     } else {
       // recupero l'ultima tabella dalla unica presente, quindi nella from dell'oggetto
       lastTableInHierarchy = storage.selected.from;
@@ -922,7 +915,7 @@ var dimension = new Dimension();
     cube.activeCard = {'ref': card.querySelector('.cardTable'), 'tableName': card.getAttribute('label')};
     
     // event sui tasti section[options]
-    card.querySelector('i[hierarchies]').onclick = app.handlerAddHierarchy;
+    card.querySelector('i[join]').onclick = app.handlerAddJoin;
 
     app.getTable(lastTableInHierarchy);
 

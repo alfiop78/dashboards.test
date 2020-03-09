@@ -1,4 +1,3 @@
-
 .lists{position: relative;}
 .absList{width: 250px;background: white;position: absolute;border-radius: 4px;z-index: 6;box-shadow: 0 4px 8px 0px #b5b5b5;
 /*box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);*/}
@@ -14,10 +13,10 @@ h5{font-size: .9rem;padding: 8px;margin: 0;}
 div[tables-columns]{display: grid;grid-template-columns: max-content max-content; grid-column-gap: 16px;}
 
 /*relations*/
-section[options] i[hierarchies]{color: #99b19c;}
-section[options] i[hierarchies-left]{color: #99b19c;}
-section[options] i[hierarchies-right]{color: #99b19c;}
-section[options] i[hierarchies-remove]{color: #3b7096;}
+section[options] i[join]{color: #99b19c;}
+section[options] i[join-left]{color: #99b19c;}
+section[options] i[join-right]{color: #99b19c;}
+section[options] i[join-remove]{color: #3b7096;}
 /*relations*/
 
 @keyframes popup {
@@ -101,14 +100,12 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 .card.table > .cardLayout > .cardTable[mode] ul > .element li:hover{cursor: pointer;}
 
 .card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}
-.card.table > .cardLayout > .cardTable[mode='hierarchies'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
+.card.table > .cardLayout > .cardTable[mode='relations'] ul > .element li:hover{background-color: #99b19c;border-radius: 4px;color: white;}
 .card.table > .cardLayout > .cardTable[mode='metrics'] ul > .element li:hover{background-color: #587850;border-radius: 4px;color: white;}
 .card.table ul > .element li ~ i{color: grey;visibility: hidden;}
-.card.table ul > .element li[hierarchy] ~ #hierarchy-icon{visibility: visible;}
+.card.table ul > .element li[relations] ~ #hierarchy-icon{visibility: visible;}
 .card.table ul > .element li[columns] ~ #columns-icon{color: #9a6a6a;visibility: visible;}
-
-.card.table ul > .element li[metrics] ~ #metrics-icon:not([defined='true']){visibility: visible;}
-.card.table ul > .element li[metrics] ~ #metrics-icon[defined='true']{color: #587850;visibility: visible;}
+.card.table ul > .element li[metrics] ~ #metrics-icon{color: #587850;visibility: visible;}
 
 .card.table ul > .element li[data-relation-id='true'] ~ #hierarchy-icon{color: #99b19c;}
 /* colonne all'interno della card/tabella*/
@@ -121,7 +118,7 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 .card.table > .cardLayout > .cardTable{position: relative;height: fit-content;display: grid;grid-template-areas: "title" "input" "body" "footer";
   z-index: 1;}
 .card.table > .cardLayout > .cardTable > .info{font-size: .65rem;padding: 8px;background: lemonchiffon;border-bottom-left-radius: 4px;border-bottom-right-radius: 4px;}
-.card.table > .cardLayout > .cardTable[mode='hierarchies'] > .info{background: #99b19c;color: white;}
+.card.table > .cardLayout > .cardTable[mode='relations'] > .info{background: #99b19c;color: white;}
 .card.table > .cardLayout > .cardTable[mode='columns'] > .info{background: #9a6a6a;color: white;}
 .card.table > .cardLayout > .cardTable[filters] > .info{background: #3b7096;color: white;}
 .card.table > .cardLayout > .cardTable[mode='metrics'] > .info{background: #587850;color: white;}

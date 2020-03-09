@@ -5,7 +5,7 @@ class Cube {
     this._metrics = {}; // contiene gli oggetti metriche
     this.arrMetrics = []; // accessibile dall'esterno
     this.relationId = 0;
-    this._relations = {};
+    this._join = {};
     this._dimensions = []; // dimensioni selezionate da associare al cube
   }
 
@@ -18,10 +18,10 @@ class Cube {
   get title() {return this._title;}
 
   set relations(value) {
-    this._relations['hier_'+this.relationId] = value;
+    this._join['hier_'+this.relationId] = value;
   }
 
-  get relations() {return this._relations;}
+  get relations() {return this._join;}
 
   set saveRelation(value) {
     // value : colSelected
@@ -39,6 +39,7 @@ class Cube {
     // console.log(card);
     this.card = card; // contiene {'ref': riferimento della card nel DOM, tableName: 'nometabella'}
     this.card.ref.setAttribute('name', card.tableName);
+    this._tableName = card.tableName;
   }
 
   get activeCard() {return this.card;}
@@ -47,12 +48,12 @@ class Cube {
 
   get fieldSelected() {return this._field;}
 
-  set metrics(value) {
-    // this._metrics[this.card.tableName] = value;
-    /*console.log(value);
-    console.log(this._field);*/
-    this._metrics[value.metricName] = value;
-    
+  set metrics(field) {
+    if (!this._metrics.hasOwnProperty(this._tableName)) {this._arrMetrics = [];}
+
+    this._arrMetrics.push(field);
+
+    this._metrics[this._tableName] = this._arrMetrics;
     console.log(this._metrics);
   }
 
@@ -66,7 +67,7 @@ class Cube {
     this._cube.type = 'CUBE';
     this._cube.title = this._title;
     this._cube.metrics = this._metrics;
-    this._cube.relations = this._relations;
+    this._cube.relations = this._join;
     this._cube.FACT = this._fact;
     this._cube.id = this._id;
     this._cube.associatedDimensions = this._associatedDimension;
@@ -75,7 +76,7 @@ class Cube {
   get cube() {return this._cube;}
 
   mode(value, text) {
-    // imposto la modalità della card (hierarchies, columns, filters, groupby,metrics)
+    // imposto la modalità della card (relations, columns, filters, groupby,metrics)
     // console.log(this.activeCardRef);
 
     this.card.ref.setAttribute('mode', value);
@@ -97,8 +98,8 @@ class Cube {
 class Dimension {
   constructor() {
     this._dimension = {};
-    this._hierarchies = {};
-    this._hierarchyOrder = {};
+    this._join = {}; // relazioni tra le tabelle
+    this._hierarchies = {}; // ordine gerarchico
     this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
     this._arrColumns = []; // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
     this.relationId = 0;
@@ -125,13 +126,13 @@ class Dimension {
 
   get from() {return this._from;}
 
-  set hierarchies(value) {this._hierarchies['hier_'+this.relationId] = value;}
+  set hierarchies(value) {this._join['dimensionJoin_'+this.relationId] = value;}
 
-  get hierarchies() {return this._hierarchies;}
+  get hierarchies() {return this._join;}
 
-  set hierarchyOrder(values) {this._hierarchyOrder = values;}
+  set hierarchyOrder(values) {this._hierarchies = values;}
 
-  get hierarchyOrder() {return this._hierarchyOrder;}
+  get hierarchyOrder() {return this._hierarchies;}
 
   set saveRelation(value) {
     // value : colSelected
@@ -164,8 +165,8 @@ class Dimension {
     this._dimension.columns = this._columns;
     this._dimension.title = this._title;
     this._dimension.from = this._from;
+    this._dimension.join = this._join;
     this._dimension.hierarchies = this._hierarchies;
-    this._dimension.hierarchyOrder = this._hierarchyOrder;
     console.log(this._dimension);
   }
 
