@@ -376,10 +376,10 @@
                 <h5>descrizione</h5>
 
                 <div class="actions">
-                  
                   <span class="popupContent"><i id="openCube" class="material-icons md-24">add_circle</i><small class="popup">Nuovo</small></span>
                   <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
                   <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
+                  <span class="popupContent"><i id="processReport" class="material-icons md-24">folder_open</i><small class="popup">Process Report</small></span>
                 </div>
               
                 <template id="templateListField">
@@ -396,6 +396,16 @@
 
 
                 <div id="step" class="steps" data-step="1">
+
+                  <div class="lists">
+                    <div class="absList" id="reportsProcessList" hidden>
+                      <div class="md-field">
+                        <input type="search" id="searchReportProcess" value=""/>
+                        <label for="searchReportProcess" class="">Ricerca</label>
+                      </div>
+                      <ul id="reportsProcess"></ul>
+                    </div>
+                  </div>
 
                   <div class="overflow">
 

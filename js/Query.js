@@ -8,6 +8,7 @@ class Queries {
 		this._filter = {}
 		this._groupBy = {};
 		this._metrics = {};
+		this._filteredMetrics = {};
 	}
 
 	set table(value) {this._table = value;}
@@ -55,7 +56,7 @@ class Queries {
 	set where(object) {
 		this._where = object;
 		console.log(this._where);
-		console.log(this);
+		
 	}
 
 	get where() {return this._where;}
@@ -160,6 +161,21 @@ class Queries {
 	}
 
 	get metrics() {return this._metrics;}
+
+	save() {
+		this._reportProcess = {};
+		this._reportProcess['select'] = this._select;
+		this._reportProcess['from'] = this._from;
+		this._reportProcess['where'] = this._where;
+		this._reportProcess['factJoin'] = this._factRelation;
+		this._reportProcess['filters'] = this._filter;
+		this._reportProcess['groupBy'] = this._groupBy;
+		this._reportProcess['metrics'] = this._metrics;
+		this._reportProcess['filteredMetrics'] = this._filteredMetrics;
+
+		window.localStorage.setItem('process_1', JSON.stringify(this._reportProcess));
+
+	}
 
 
 

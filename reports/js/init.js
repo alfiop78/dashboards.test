@@ -86,6 +86,35 @@ var Query = new Queries();
     }
   };
 
+  app.getReportsProcess = function(e) {
+    // let data = JSON.parse(window.localStorage.getItem('process_1'));
+    let data = window.localStorage.getItem('process_1');
+    var url = 'ajax/cube.php';
+    let params = 'cube='+data;
+    console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+
+  };
+
   // selezione del cubo
   app.handlerCubeSelected = function(e) {
     const cubeId = e.target.getAttribute('data-cube-id');
@@ -148,7 +177,7 @@ var Query = new Queries();
     app.createListTableFilters(Dim.selected.from);
 
     // TODO: salvo l'object _where. Recupero, dalla dimensione, la key hierarchies (da rinominare in relations)
-    Query.where = Dim.selected.join
+    Query.where = Dim.selected.join;
   };
 
   // creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -278,7 +307,10 @@ var Query = new Queries();
   };
 
   // selezione della metrica, apro la dialog per impostare la metrica
-  app.handlerFieldSelectedMetric = function(e) {app.dialogMetric.showModal();};
+  app.handlerFieldSelectedMetric = function(e) {
+    Query.field = e.target.getAttribute('label');
+    app.dialogMetric.showModal();
+  };
 
   // selezione della tabella nella sezione Column
   app.handlerTableSelected = function(e) {
@@ -392,8 +424,6 @@ var Query = new Queries();
     // seleziono la colonna da inserire nel report e la inserisco nel reportSection
     Query.field = e.target.getAttribute('label');
     app.dialogColumn.showModal();
-    // console.log(Query.table);
-    // event sul tasto ok della dialog
     
     app.btnColumnDone.onclick = app.handlerBtnColumnDone;
   };
@@ -407,10 +437,9 @@ var Query = new Queries();
     //let obj = {'SQLFormat': null, alias};
     let obj = {};
     obj = {'SQLFormat': null, alias};
-    //obj[Query.field] = {'SQLFormat': null, alias};
+    
     Query.select = obj;
-    // Query.addColumn(Query.field, null, alias);
-    app.dialogColumn.close();
+    
     // aggiungo la colonna selezionata a Query.groupBy
     obj = {};
     obj = {'SQLFormat': null};
@@ -421,22 +450,25 @@ var Query = new Queries();
     const th = document.createElement('th');
     th.innerText = Query.getAliasColumn();
     table.tHead.rows[0].appendChild(th);
+
+    app.dialogColumn.close();
   };
 
   // salvo la metrica impostata
   app.btnMetricDone.onclick = function(e) {
-    console.log('save metric');
-    Query.field = e.target.getAttribute('label');
     // TODO: il nome non può contenere spazi ed altri caratteri da definire
     const name = app.dialogMetric.querySelector('#metric-name').value;
-    // TODO meglio utilizzare l'attributo label, da inserire se non presente
     const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
     const distinctOption = document.getElementById('checkbox-distinct').checked;
     const alias = document.getElementById('alias-metric').value;
+    
+    Query.metrics = {SQLFunction, 'field': Query.field, name, 'distinct' : distinctOption, alias};
 
-    let obj = {};
-    obj = {SQLFunction, 'field': Query.field, name, 'distinct' : distinctOption, alias}
-    Query.metrics = obj;
+    let table = document.getElementById('table-0');
+    // aggiungo la colonna alla tabella
+    const th = document.createElement('th');
+    th.innerText = alias;
+    table.tHead.rows[0].appendChild(th);
 
     app.dialogMetric.close();
   };
@@ -465,8 +497,10 @@ var Query = new Queries();
         values.push(value);
     }
 
+    
+    
     let obj = {};
-    obj = {operator, values};
+    obj = {'table': Query.table, operator, values};
     Query.filters = obj;
     // pulisco la textarea
     textarea.querySelectorAll('span').forEach((span) => {span.remove();});
@@ -670,6 +704,8 @@ var Query = new Queries();
 
   app.getReports();
 
+  app.getReportsProcess();
+
 
 
 
@@ -778,6 +814,8 @@ var Query = new Queries();
   app.btnStepDone.onclick = function(e) {
     
     console.log(Query);
+    // TODO: salvo temporaneamente la query da processare nello storage
+    Query.save();
     // TODO: processa query
     
 
