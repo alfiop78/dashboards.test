@@ -18,8 +18,6 @@ class Cube {
 
   function getReportId() {return $this->_reportId;}
 
-
-
   public function dimension($dimension, $fact) {
     foreach ($dimension as $key => $value) {
       echo "{$key}\n"; // dimension name
@@ -339,6 +337,8 @@ class Cube {
     /* creo i datamart necessari per le metriche filtrate */
     $i = 1;
     foreach ($filteredMetrics as $table => $metrics) {
+      echo $table;
+      return;
       foreach ($metrics as $param) {
         unset($this->_sql);
 

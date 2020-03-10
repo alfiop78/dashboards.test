@@ -162,7 +162,7 @@ class Queries {
 
 	get metrics() {return this._metrics;}
 
-	save() {
+	save(reportId, name) {
 		this._reportProcess = {};
 		this._reportProcess['select'] = this._select;
 		this._reportProcess['from'] = this._from;
@@ -172,8 +172,11 @@ class Queries {
 		this._reportProcess['groupBy'] = this._groupBy;
 		this._reportProcess['metrics'] = this._metrics;
 		this._reportProcess['filteredMetrics'] = this._filteredMetrics;
+		this._reportProcess['processId'] = reportId; // questo creerà il datamart FX[reportId]
+		this._reportProcess['name'] = name;
+		this._reportProcess['type'] = 'PROCESS';
 
-		window.localStorage.setItem('process_1', JSON.stringify(this._reportProcess));
+		window.localStorage.setItem('process_' + name, JSON.stringify(this._reportProcess));
 
 	}
 
