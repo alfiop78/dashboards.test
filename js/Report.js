@@ -183,7 +183,7 @@ class Report {
 
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // se questa è una columns (quindi non è una metrica) aggiungo gli elementi in pageby
-      if (this.tbody.rows[0].cells[c].hasAttribute('columns')) {
+      if (this.tbody.rows[0].cells[c].hasAttribute('select')) {
 
         // per ogni colonna con attributo columns (quindi escludo le metriche) ciclo tutte le righe ed aggiungo gli elementi della colonna in un array
         this.arrCols = [];
@@ -742,6 +742,7 @@ class Options extends Report{
   }
 
   addColumns() {
+    console.log('AddColumns');
     Object.keys(this._data[0]).forEach((col, index) => {
       console.log(col, index);
       this.th = document.createElement('th');
@@ -761,7 +762,7 @@ class Options extends Report{
         this.th.setAttribute(key, true);
         // console.log(key);
         // console.log(value);
-        if (key === 'columns') {
+        if (key === 'select') {
           //TODO: aggiungo il pageBy
           this.addPageBy(colName, index);
         }
@@ -853,22 +854,6 @@ class Options extends Report{
     // evento click su icona setting per il pageBy
     this.icon.onclick = this.handlerPageByOption.bind(this);
   }
-
-  // setColsAttribute() {
-  //   // applico gli attributi columns e metrics sulle rispettive colonne
-  //   console.log('cols attribute');
-  //   // console.log(this._options.positioning);
-  //   // console.log(Array.isArray(this.positioning));
-
-  //   this.positioning.forEach((col, index) => {
-  //     // console.log(col, index);
-  //     this.thead.rows[0].cells[index].setAttribute(Object.keys(col), true); // head
-  //     for (let i = 0; i < this.tbody.rows.length; i++) {
-  //       // console.log(this.tbody.rows[i].cells[index]);
-  //       this.tbody.rows[i].cells[index].setAttribute(Object.keys(col), true); // body
-  //     }
-  //   });
-  // }
 
   set defaultPositioning(cube) {
     /*Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
