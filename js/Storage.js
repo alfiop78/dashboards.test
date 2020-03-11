@@ -256,6 +256,21 @@ class ReportStorage extends Storages {
     });
     return reports;
   }
+
+  listToBeProcessed() {
+    let reports = {};
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === 'PROCESS') {
+        // console.log("cubo : "+key);
+        let reportProperties = {'name' : key, 'processId' : jsonStorage.processId};
+        // reports.push(reportProperties);
+        reports[key] = reportProperties;
+      }
+    });
+    return reports;
+  }
 }
 
 class DimensionStorage extends Storages {

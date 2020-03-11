@@ -5,6 +5,8 @@ var Query = new Queries();
 (() => {
   var app = {
     report : null,
+    // templates
+    tmplListField : document.getElementById('templateListField'),
     
     btnPreviousStep : document.getElementById('stepPrevious'),
     btnNextStep : document.getElementById('stepNext'),
@@ -90,9 +92,9 @@ var Query = new Queries();
     }
   };
 
-  app.getReportsProcess = function(e) {
-    // let data = JSON.parse(window.localStorage.getItem('process_1'));
-    let data = window.localStorage.getItem('process_1');
+  app.handlerReportToBeProcessed = function(e) {
+    const label = e.target.getAttribute('label');
+    let data = window.localStorage.getItem(label);
     var url = 'ajax/cube.php';
     let params = 'cube='+data;
     console.log(params);
@@ -102,7 +104,7 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          
+          // TODO: lo salvo in dialog-reportList
         } else {
           // TODO:
         }
@@ -115,6 +117,31 @@ var Query = new Queries();
     // request.setRequestHeader('Content-Type','application/json');
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
+
+  };
+
+  // report da processare
+  app.datamartToBeProcessed = function(e) {
+    const storage = new ReportStorage();
+    // console.log(storage.listToBeProcessed());
+
+    const toBeProcessed = storage.listToBeProcessed();
+
+    const ul = document.getElementById('reportsProcess');
+    let content = app.tmplListField.content.cloneNode(true);
+    let element = content.querySelector('.element');
+  
+    for (let proc in toBeProcessed) {
+      console.log(proc);
+      console.log(toBeProcessed[proc]);
+      let li = element.querySelector('li');
+      li.innerText = proc;
+      li.setAttribute('label', proc);
+      li.setAttribute('data-id', toBeProcessed[proc]['processId']);
+      ul.appendChild(element);
+      li.onclick = app.handlerReportToBeProcessed;
+    }
+    
 
   };
 
@@ -721,6 +748,8 @@ var Query = new Queries();
 
   app.getReports();
 
+  app.datamartToBeProcessed();
+
   // app.getReportsProcess();
 
   //app.datamartProcessed();
@@ -859,3 +888,53 @@ var Query = new Queries();
 
 
 })();
+
+/* oggetto report in localStoraga*//*
+{id: 2, type: "REPORT", datamartId: 2, name: "report_KPI", options: {inputSearch: true,…}}
+id: 2
+type: "REPORT"
+datamartId: 2
+name: "report_KPI"
+options: {inputSearch: true,…}
+inputSearch: true
+positioning: [{columns: "zona"}, {columns: "area"}, {columns: "dealer"}, {columns: "cod.ford"},…]
+0: {columns: "zona"}
+columns: "zona"
+1: {columns: "area"}
+columns: "area"
+2: {columns: "dealer"}
+columns: "dealer"
+3: {columns: "cod.ford"}
+columns: "cod.ford"
+4: {metrics: "venduto"}
+metrics: "venduto"
+cols: {0: {columnId: 0, styles: {backgroundColor: "#8db6a5"}, attributes: {}},…}
+0: {columnId: 0, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
+columnId: 0
+styles: {backgroundColor: "#8db6a5"}
+backgroundColor: "#8db6a5"
+attributes: {}
+1: {columnId: 1, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
+columnId: 1
+styles: {backgroundColor: "#8db6a5"}
+backgroundColor: "#8db6a5"
+attributes: {}
+2: {columnId: 2, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
+columnId: 2
+styles: {backgroundColor: "#8db6a5"}
+backgroundColor: "#8db6a5"
+attributes: {}
+3: {columnId: 3, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
+columnId: 3
+styles: {backgroundColor: "#8db6a5"}
+backgroundColor: "#8db6a5"
+attributes: {}
+4: {columnId: 4, styles: {backgroundColor: "#285c47", color: "#ffffff"}, attributes: {}}
+columnId: 4
+styles: {backgroundColor: "#285c47", color: "#ffffff"}
+backgroundColor: "#285c47"
+color: "#ffffff"
+attributes: {}
+
+
+*/
