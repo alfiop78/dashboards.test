@@ -94,7 +94,10 @@ var Query = new Queries();
 
   app.handlerReportToBeProcessed = function(e) {
     const label = e.target.getAttribute('label');
+    const reportId = +e.target.getAttribute('data-id');
+    console.log('reportId : ',reportId);
     let data = window.localStorage.getItem(label);
+    let dataJSON = JSON.parse(window.localStorage.getItem(label));
     var url = 'ajax/cube.php';
     let params = 'cube='+data;
     console.log(params);
@@ -105,6 +108,7 @@ var Query = new Queries();
           var response = JSON.parse(request.response);
           console.table(response);
           // TODO: lo salvo in dialog-reportList
+          app.getDatamart(label, reportId, dataJSON);
         } else {
           // TODO:
         }
@@ -118,6 +122,35 @@ var Query = new Queries();
     request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     request.send(params);
 
+  };
+
+  app.getDatamart = function(reportName, reportId, dataJSON) {
+    // recupero un datamart FX... già creato e visualizzo l'anteprima
+    var url = 'ajax/reports.php';
+    
+    let params = 'reportId=' + reportId;
+
+    // console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          app.createReport_NEW(response, reportName, dataJSON);
+
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
   };
 
   // report da processare
@@ -722,15 +755,17 @@ var Query = new Queries();
 
   };
 
-  app.createReport_NEW = function(response) {
+  app.createReport_NEW = function(response, reportName, dataJSON) {
     console.log('create report');
     
     // ottengo un reportId per passarlo a costruttore
-    const reportStorage = new ReportStorage();
-
-    app.report = new Options(app.table, reportStorage.getIdAvailable());
-
-    app.report.cube = cube;
+    //const reportStorage = new ReportStorage();
+    console.log(dataJSON);
+    
+    app.report = new Options(app.table, dataJSON.processId);
+    console.log(app.report);
+    
+    app.report.cube = dataJSON;
     // dati estratti dalla query
     app.report.data = response;
     // aggiungo le colonne
@@ -880,8 +915,6 @@ var Query = new Queries();
   app.btnProcessReport.onclick = function(e) {
     const listReportProcess = document.getElementById('reportProcessList');
     listReportProcess.removeAttribute('hidden');
-    // recupero la lista dei report da processare 
-    
   };
 
   /* events */

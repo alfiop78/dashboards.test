@@ -883,6 +883,7 @@ class Options extends Report{
     */
     this.positioning = [];
     console.log('positioning');
+    debugger;
     Array.from(Object.keys(cube)).forEach((element) => {
       if (element === 'associatedDimensions') {
         // recupero columns
