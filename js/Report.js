@@ -870,8 +870,43 @@ class Options extends Report{
   //   });
   // }
 
-
   set defaultPositioning(cube) {
+    /*Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
+    positioning = [
+      0=> {'col': 'Cod.Sede'},
+      1=> {'col': 'Sede'},
+      2=> {'metric': 'venduto'},
+      3=> {'metric': 'quantita'}
+    ]*/
+
+    this.positioning = [];
+    for (let element in cube) {
+      // console.log(element);
+      // console.log(cube[element]);
+      if (element === 'select' || element === 'metrics' || element === 'filteredMetrics') {
+        // console.log(element); // select
+        console.log(cube[element]);
+        // per ogni tabella presente...
+        for (let [table] of Object.entries(cube[element])) {
+          console.log(table);
+          for (let [field] of Object.entries(cube[element][table])) {
+            console.log(field);
+            console.log(cube[element][table][field]['alias']);
+            let obj = {};
+            //obj['columns'] = cube[element][table][field]['alias'];
+            obj[element] = cube[element][table][field]['alias'];
+            this.positioning.push(obj);
+          }
+        }
+      }
+    }
+    console.log(this.positioning);
+    this._options.positioning = this.positioning;
+    // console.log(this.reportOptions);
+  }
+
+
+  /*set defaultPositioning(cube) {
     /*
     Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
     positioning = [
@@ -880,7 +915,7 @@ class Options extends Report{
       2=> {'metric': 'venduto'},
       3=> {'metric': 'quantita'}
     ]
-    */
+    *//*
     this.positioning = [];
     console.log('positioning');
     debugger;
@@ -930,7 +965,7 @@ class Options extends Report{
     console.log(this.positioning);
     this._options.positioning = this.positioning;
     // console.log(this.reportOptions);
-  }
+  }*/
 
   get defaultPositioning() { return this._options.positioning; }
 
