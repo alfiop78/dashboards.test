@@ -180,6 +180,10 @@ class Queries {
 
 	}
 
+	getJSONProcess(value) {
+		return JSON.parse(window.localStorage.getItem('process_' + value));
+	}
+
 
 
 	
