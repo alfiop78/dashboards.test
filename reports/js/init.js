@@ -78,6 +78,7 @@ var Query = new Queries();
     // console.log(reports.list());
     let reportsObj = reports.list();
     const ul = document.getElementById('reports');
+    // TODO: recuperare element dal template che già contiene la class li.elementSearch
 
     for (let i in reportsObj) {
       // console.log(reportsObj[i]);
@@ -87,13 +88,51 @@ var Query = new Queries();
 
       let li = document.createElement('li');
       li.innerText = reportsObj[i]['name'];
-      li.setAttribute('report-id', reportsObj[i]['reportId']);
+      li.setAttribute('data-report-id', reportsObj[i]['reportId']);
       li.setAttribute('label', reportsObj[i]['name']);
       element.appendChild(li);
       ul.appendChild(element);
+      li.onclick = app.handlerReportSelected;
     }
   };
 
+  // selezione del report con datamart già presente
+  // recupero un datamart FX... già creato e visualizzo l'anteprima
+  app.handlerReportSelected = function(e) {
+    const datamartId = e.target.getAttribute('data-report-id');
+    // recupero il process di questo report
+    const storage = new ReportProcessStorage();
+    const dataJSON = storage.getJSONProcess(e.target.getAttribute('label'));
+    console.log(dataJSON);
+    var url = 'ajax/reports.php';
+    
+    let params = 'datamartId=' + datamartId;
+
+    // console.log(params);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE) {
+        if (request.status === 200) {
+          var response = JSON.parse(request.response);
+          console.table(response);
+          app.createReport(response, dataJSON);
+          // TODO: va impostato l'attribute mode='report' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
+          app.btnSaveReport.setAttribute('mode', 'report');
+        } else {
+          // TODO:
+        }
+      } else {
+        // TODO:
+      }
+    };
+
+    request.open('POST', url);
+    // request.setRequestHeader('Content-Type','application/json');
+    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    request.send(params);
+  };
+
+  // click sul report da processare/elaborare
   app.handlerReportToBeProcessed = function(e) {
     const label = e.target.getAttribute('label');
     console.log(label);
@@ -101,6 +140,7 @@ var Query = new Queries();
     console.log('reportId : ',reportId);
     let data = window.localStorage.getItem(label);
     let dataJSON = JSON.parse(window.localStorage.getItem(label));
+    console.log(dataJSON);
     var url = 'ajax/cube.php';
     let params = 'cube='+data;
     console.log(params);
@@ -110,8 +150,10 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // TODO: lo salvo in dialog-reportList
-          app.getDatamart(label, reportId, dataJSON);
+          // lo salvo in dialog-reportList
+          app.getDatamart(reportId, dataJSON);
+          // TODO: va impostato l'attribute mode='process' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
+          app.btnSaveReport.setAttribute('mode', 'process');
         } else {
           // TODO:
         }
@@ -127,11 +169,9 @@ var Query = new Queries();
 
   };
 
-  app.getDatamart = function(reportName, reportId, dataJSON) {
-    // recupero un datamart FX... già creato e visualizzo l'anteprima
+  app.getDatamart = function(datamartId, dataJSON) {
     var url = 'ajax/reports.php';
-    
-    let params = 'reportId=' + reportId;
+    let params = 'datamartId=' + datamartId;
 
     // console.log(params);
     var request = new XMLHttpRequest();
@@ -140,8 +180,7 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport_NEW(response, dataJSON);
-
+          app.createReport(response, dataJSON);
         } else {
           // TODO:
         }
@@ -675,40 +714,6 @@ var Query = new Queries();
     span.focus();
   };
 
-  app.datamartProcessed = function(e) {
-    debugger;
-    // recupero un datamart FX... già creato e visualizzo l'anteprima
-    // TEMP: Codice per aprire il report, da utilizzare dopo nella creazione della preview del report
-    var url = 'ajax/reports.php';
-    //let reportId = this.getAttribute('id');
-    let params = 'reportId=5';
-
-
-    // console.log(params);
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        if (request.status === 200) {
-          var response = JSON.parse(request.response);
-          console.table(response);
-
-          app.createReport_NEW(response);
-          //document.getElementById('cubeList').toggleAttribute('hidden');
-
-        } else {
-          // TODO:
-        }
-      } else {
-        // TODO:
-      }
-    };
-
-    request.open('POST', url);
-    // request.setRequestHeader('Content-Type','application/json');
-    request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    request.send(params);
-  };
-
   app.loadCubes = () => {
     // carico elenco Cubi su cui creare il report
     console.log('loadCubes');
@@ -734,7 +739,7 @@ var Query = new Queries();
     }
   };
 
-  app.createReport_NEW = function(response, dataJSON) {
+  app.createReport = function(response, dataJSON) {
     console.log('create report');
     
     // ottengo un reportId per passarlo a costruttore
@@ -769,12 +774,6 @@ var Query = new Queries();
   app.getReports();
 
   app.datamartToBeProcessed();
-
-  // app.getReportsProcess();
-
-  //app.datamartProcessed();
-
-
 
 
   /* events */
@@ -869,9 +868,22 @@ var Query = new Queries();
                   name: "ass"
                   type: "PROCESS"
     */
-    app.report.saveReport(Query.getJSONProcess(app.report.reportName));
-    // abilito il tasto 'crea layout'
-    app.btnDashboardLayout.removeAttribute('hidden');
+    /* attribute : mode = 'process'/'report'
+    * con l'attribute 'process' il report viene elaborato e creato il datamart, quindi dispongo, nella Classe Query, dell'obj process
+    * con l'attribute 'report' devo recuperare da Storage, il process per questo report in modo da salvarlo in app.report.saveReport e sovrascrivere quindi, l'elemento già presente in localStorage
+    */
+    if (e.target.getAttribute('mode') === 'process') {
+      app.report.saveReport(Query.getJSONProcess(app.report.reportName));
+      // abilito il tasto 'crea layout'
+      app.btnDashboardLayout.removeAttribute('hidden');
+    } else {
+      const storage = new ReportProcessStorage();
+      console.log(storage.getJSONProcess(app.report.reportName));
+      return;
+      app.report.saveReport();
+    }
+
+    
     // TODO: disabilito il tasto salvaReport, lo riattivo non appena si modifica di nuovo il report
 
   };

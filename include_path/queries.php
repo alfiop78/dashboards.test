@@ -50,9 +50,9 @@ class Queries {
   //     AND COLUMN_NAME = 'id_Azienda'*/
   // }
 
-  public function getDatamartDefault($reportId) {
+  public function getDatamartDefault($datamartId) {
     $l = new ConnectDB("decisyon_cache");
-    $datamartName = "FX".$reportId;
+    $datamartName = "FX".$datamartId;
     var_dump($datamartName);
     return $l->getResultAssoc("SELECT * FROM $datamartName;");
   }

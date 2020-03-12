@@ -276,6 +276,12 @@ class ReportProcessStorage extends Storages {
     });
     return processReports;
   }
+
+  getJSONProcess(value) {
+    let processReports = {};
+    let report = JSON.parse(this.storage.getItem(value));
+    return report.process;
+  }
 }
 
 class DimensionStorage extends Storages {
