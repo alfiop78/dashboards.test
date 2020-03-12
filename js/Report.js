@@ -636,7 +636,8 @@ class Options extends Report{
     // quando imposto il cubo imposto anche il posizionamaneto di default
     this.defaultPositioning = this._cube;
     // imposto anche il datamartId
-    this.datamart = this._cube.cubeId;
+    this.datamart = this._cube.processId; 
+    // FIXME: non esiste più il cubeId
   }
 
   get cube() { return this._cube; }
@@ -729,16 +730,21 @@ class Options extends Report{
 
   get style() { return this.styles; }
 
-  saveReport() {
+  saveReport(process) {
+
     this.reportOptions.id = this.report;
     this.reportOptions.type = 'REPORT';
     this.reportOptions.datamartId = this.datamart;
     this.reportOptions.name = this.reportName;
     this.reportOptions.options = this._options;
+    this.reportOptions.process = process;
 
     this.storage = new ReportStorage();
     console.log(this.reportOptions);
     this.storage.save = this.reportOptions;
+    // dopo aver salvato il report elimino dallo storage il process che elabora questo report
+    // se è necessario rielaborare il report, il process lo prendo all'interno del object report.process (in storage)
+    window.localStorage.removeItem('process_' + this.reportName);
   }
 
   addColumns() {
