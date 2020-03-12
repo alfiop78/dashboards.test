@@ -12,7 +12,7 @@ class Storages {
 
   set save(value) {
     // salvo nello storage
-    window.localStorage.setItem(value.title, JSON.stringify(value));
+    window.localStorage.setItem(value.name, JSON.stringify(value));
   }
 
   set reportConfig(value) {
@@ -209,15 +209,11 @@ class ReportStorage extends Storages {
     });
   }
 
-  set reportName(value) {
-    this.name = value;
-  }
+  set reportName(value) {this.name = value;}
 
   get reportName() { return this.name;}
 
-  get settings() {
-    return JSON.stringify(this.reportParams);
-  }
+  get settings() {return JSON.stringify(this.reportParams);}
 
   set options(report_id) {
     // TODO: da rivedere e ottimizzare
@@ -237,9 +233,7 @@ class ReportStorage extends Storages {
     });
   }
 
-  get options() {
-    return JSON.stringify(this._options);
-  }
+  get options() {return JSON.stringify(this._options);}
 
   list() {
     // let reports = [];
@@ -256,9 +250,20 @@ class ReportStorage extends Storages {
     });
     return reports;
   }
+}
 
-  listToBeProcessed() {
-    let reports = {};
+class ReportProcessStorage extends Storages {
+  constructor() {
+    super();
+    this.id = 0; // default
+  }
+
+  set processId(value) {this.id = value;}
+
+  get processId() {return this.id;}
+
+  list() {
+    let processReports = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
@@ -266,10 +271,10 @@ class ReportStorage extends Storages {
         // console.log("cubo : "+key);
         let reportProperties = {'name' : key, 'processId' : jsonStorage.processId};
         // reports.push(reportProperties);
-        reports[key] = reportProperties;
+        processReports[key] = reportProperties;
       }
     });
-    return reports;
+    return processReports;
   }
 }
 
