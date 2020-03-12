@@ -378,7 +378,6 @@
                 <div class="actions">
                   <span class="popupContent"><i id="openCube" class="material-icons md-24">add_circle</i><small class="popup">Nuovo</small></span>
                   <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span>
-                  <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
                   <span class="popupContent"><i id="btnProcessReport" class="material-icons md-24">folder_open</i><small class="popup">Process Report</small></span>
                 </div>
               
@@ -443,7 +442,7 @@
                             <section class="sectionLists">
                               <h5>Tabelle</h5>
                               <div id="tableList-column">
-                                <ul id="tables-column"></ul>
+                                <ul id="tables-column" class="stdList"></ul>
                               </div>
                               
                             </section>
@@ -514,7 +513,8 @@
                     <div class="buttons">
                       <button id="stepPrevious">previous</button>
                       <button id="stepNext">next</button>
-                      <button id="stepDone">completato</button>
+                      <button id="stepDone">Salva</button>
+                      <button id="saveAndProcess">Salva ed elabora il report</button>
                     </div>
 
                   </div>
@@ -537,6 +537,10 @@
               <section class="page" data-step="2">
                 <h3>Report</h3>
                 <h5>descrizione</h5>
+
+                <div class="actions">
+                  <span class="popupContent"><i id="saveReport" class="material-icons md-24">save</i><small class="popup">Salva Report</small></span>
+                </div>
 
                 <div class="layout-settings">
 
@@ -623,6 +627,7 @@
           <div id="fabs">
             <button id="mdcBack" class="button dense raised">back</button>
             <div class="spacer"></div>
+            <button id="mdcReportSave" class="button dense raised done" hidden>salva report</button>
             <button id="mdc-dashboard-layout" class="button dense raised done" hidden>CREA LAYOUT</button>
             <button id="mdcNextPage" class="button dense raised done">next</button>
 

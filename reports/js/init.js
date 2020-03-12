@@ -11,6 +11,7 @@ var Query = new Queries();
     btnPreviousStep : document.getElementById('stepPrevious'),
     btnNextStep : document.getElementById('stepNext'),
     btnStepDone : document.getElementById('stepDone'),
+    btnSaveAndProcess : document.getElementById('saveAndProcess'),
 
     btnProcessReport : document.getElementById('btnProcessReport'),
 
@@ -23,6 +24,7 @@ var Query = new Queries();
     btnFilterDone : document.getElementById('btnFilterDone'), //tasto fatto nella dialog filter
     btnColumnDone : document.getElementById('btnColumnDone'), // tasto ok nella dialogColumn
     btnMetricDone : document.getElementById('btnMetricDone'), // tasto Salva nella dialogMetric
+    btnSaveReport : document.getElementById('saveReport'),
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
 
     btnOpenCubes: document.getElementById('openCube'),
@@ -39,7 +41,7 @@ var Query = new Queries();
     btnPreviewReport : document.getElementById('mdc-preview-report'),
     btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
     btnNewReport: document.getElementById('mdc-new-report'),
-    btnSaveReport : document.getElementById('saveReport'),
+    btnReportSave : document.getElementById('mdcReportSave'),
     
     btnNextPage : document.getElementById('mdcNextPage'),
     btnBackPage : document.getElementById('mdcBack'),
@@ -94,6 +96,7 @@ var Query = new Queries();
 
   app.handlerReportToBeProcessed = function(e) {
     const label = e.target.getAttribute('label');
+    console.log(label);
     const reportId = +e.target.getAttribute('data-id');
     console.log('reportId : ',reportId);
     let data = window.localStorage.getItem(label);
@@ -137,7 +140,7 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport_NEW(response, reportName, dataJSON);
+          app.createReport_NEW(response, dataJSON);
 
         } else {
           // TODO:
@@ -155,10 +158,9 @@ var Query = new Queries();
 
   // report da processare
   app.datamartToBeProcessed = function(e) {
-    const storage = new ReportStorage();
-    // console.log(storage.listToBeProcessed());
+    const storage = new ReportProcessStorage();
 
-    const toBeProcessed = storage.listToBeProcessed();
+    const toBeProcessed = storage.list();
 
     const ul = document.getElementById('reportsProcess');
     let content = app.tmplListField.content.cloneNode(true);
@@ -174,8 +176,6 @@ var Query = new Queries();
       ul.appendChild(element);
       li.onclick = app.handlerReportToBeProcessed;
     }
-    
-
   };
 
   // selezione del cubo
@@ -287,7 +287,7 @@ var Query = new Queries();
       let ulField = ulContent.querySelector('ul[data-id="fields-metric"]');
       const parentElement = document.getElementById('sectionFields-metric'); // elemento a cui aggiungere la ul
 
-      let tmplFieldList = document.getElementById('templateListField');
+      let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
 
       ulField.setAttribute('data-table-id', index);
       metrics[table].forEach((metric) => {
@@ -314,11 +314,11 @@ var Query = new Queries();
   app.createListTableColumns = function(columns) {
     // console.log(columns); // object
     let ulTable = document.getElementById('tables-column');
-    let elementTable = document.createElement('div');  
-    elementTable.className = 'element';
-
+    
     Object.keys(columns).forEach((table, index) => {
       // console.log(table);
+      let elementTable = document.createElement('div');  
+      elementTable.className = 'element';
       let li = document.createElement('li');
       li.innerText = table;
       li.setAttribute('data-table-id', index);
@@ -335,7 +335,7 @@ var Query = new Queries();
       let ulField = ulContent.querySelector('ul[data-id="fields-column"]');
       const parentElement = document.getElementById('sectionFields-column'); // elemento a cui aggiungere la ul
 
-      let tmplFieldList = document.getElementById('templateListField');
+      let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
 
       ulField.setAttribute('data-table-id', index);
       
@@ -381,6 +381,9 @@ var Query = new Queries();
     let fieldType = e.target.getAttribute('data-list-type')
     let tableId = +e.target.getAttribute('data-table-id');
     document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
+    // rimuovo eventuali altri ul aperti in precedenza
+    Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
+    
     e.target.toggleAttribute('selected');
     Query.table = e.target.getAttribute('label');
   };
@@ -450,7 +453,7 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           
-          let tmplFieldList = document.getElementById('templateListField');
+          let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
           let ul = document.getElementById('filter-fieldList');
 
           for (let i in response) {
@@ -673,11 +676,13 @@ var Query = new Queries();
   };
 
   app.datamartProcessed = function(e) {
+    debugger;
     // recupero un datamart FX... già creato e visualizzo l'anteprima
     // TEMP: Codice per aprire il report, da utilizzare dopo nella creazione della preview del report
     var url = 'ajax/reports.php';
     //let reportId = this.getAttribute('id');
     let params = 'reportId=5';
+
 
     // console.log(params);
     var request = new XMLHttpRequest();
@@ -712,57 +717,34 @@ var Query = new Queries();
     let ul = document.getElementById('cubes');
     let obj = cubes.list();
     // console.log(obj);
-    let element = document.createElement('div');
-    element.classList.add('element');
+    
     for (let i in obj) {
-      // element.querySelector('span').innerHTML = obj[i]['key'];
-      // element.id = 'cubeId_' + obj[i]['cubeId'];
       console.log(obj[i]['key']);
+      let element = document.createElement('div');
+      element.classList.add('element');
       let li = document.createElement('li');
       li.innerText = obj[i]['key'];
       li.id = 'cube-' + obj[i]['id'];
       li.setAttribute('data-cube-id', obj[i]['id']);
       li.setAttribute('label', obj[i]['key']);
-      ul.appendChild(element);
       element.appendChild(li);
+      ul.appendChild(element);
+      
       li.onclick = app.handlerCubeSelected;
     }
   };
 
-  app.createReport = function(response, cubeName) {
-    console.log('create report');
-    // converto il cube in JSON
-    const cubeStorage = new CubeStorage();
-    let cube = cubeStorage.JSONFormat(cubeName);
-    console.log(cube.name);
-
-    // ottengo un reportId per passarlo a costruttore
-    const reportStorage = new ReportStorage();
-
-    app.report = new Options(app.table, reportStorage.getIdAvailable());
-
-    app.report.cube = cube;
-    // dati estratti dalla query
-    app.report.data = response;
-    // aggiungo le colonne
-    app.report.addColumns();
-    // aggiungo le righe del report
-    app.report.addRows();
-    // aggiungo elementi nelle datalist (page-by)
-    app.report.createDatalist();
-
-    app.report.draw();
-
-  };
-
-  app.createReport_NEW = function(response, reportName, dataJSON) {
+  app.createReport_NEW = function(response, dataJSON) {
     console.log('create report');
     
     // ottengo un reportId per passarlo a costruttore
-    //const reportStorage = new ReportStorage();
+    const storage = new ReportStorage();
+    const reportId = storage.getIdAvailable();
+    console.log(reportId);
+
     console.log(dataJSON);
     
-    app.report = new Options(app.table, dataJSON.processId);
+    app.report = new Options(app.table, reportId);
     console.log(app.report);
     
     app.report.cube = dataJSON;
@@ -776,7 +758,10 @@ var Query = new Queries();
     app.report.createDatalist();
 
     app.report.draw();
+    // salvo nella Classe Reports il nome in modo da ritrovarmelo anche dopo quando, dopo le modifiche al layout del report andrò a salvare il report
 
+    app.report.reportName = dataJSON.name;
+    
   };
 
   app.loadCubes();
@@ -802,17 +787,93 @@ var Query = new Queries();
   app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
 
   app.btnSaveReport.onclick = function (e) {
-    // apro dialog report-name
-    app.dialogReportName.showModal();
-  };
-
-  app.btnSaveReportDone.onclick = function (e) {
-    // TODO: salvo il report e l'oggetto Report, contenente tutte le options, in Storage
-    app.report.reportName = document.getElementById('reportName').value;
-    app.report.saveReport();
-    app.dialogReportName.close();
+    // salvo il report e l'oggetto Report, contenente tutte le options, in Storage
+    // salvo in Report queste informazioni riguardanti il report
+    /*
+    id: 3
+        type: "REPORT"
+        datamartId: 3
+        name: "ass"
+        options: {inputSearch: true, positioning: [{select: "area"}, {select: "deal"}, {metrics: "aas"}],…}
+          inputSearch: true
+          positioning: [{select: "area"}, {select: "deal"}, {metrics: "aas"}]
+          0: {select: "area"}
+          select: "area"
+          1: {select: "deal"}
+          select: "deal"
+          2: {metrics: "aas"}
+          metrics: "aas"
+          cols: {0: {columnId: 0, styles: {backgroundColor: "#3e3838"}, attributes: {}}}
+          0: {columnId: 0, styles: {backgroundColor: "#3e3838"}, attributes: {}}
+          columnId: 0
+          styles: {backgroundColor: "#3e3838"}
+          backgroundColor: "#3e3838"
+          attributes: {}
+        process: {select: {ZonaVenditaCM: {Codice: {SQLFormat: null, alias: "area"}},…},…}
+                  select: {ZonaVenditaCM: {Codice: {SQLFormat: null, alias: "area"}},…}
+                  ZonaVenditaCM: {Codice: {SQLFormat: null, alias: "area"}}
+                  Codice: {SQLFormat: null, alias: "area"}
+                  SQLFormat: null
+                  alias: "area"
+                  Azienda: {descrizione: {SQLFormat: null, alias: "deal"}}
+                  descrizione: {SQLFormat: null, alias: "deal"}
+                  SQLFormat: null
+                  alias: "deal"
+                  from: ["DocVenditaDettaglio", "ZonaVenditaCM", "Azienda", "CodSedeDealer", "DocVenditaIntestazione"]
+                  0: "DocVenditaDettaglio"
+                  1: "ZonaVenditaCM"
+                  2: "Azienda"
+                  3: "CodSedeDealer"
+                  4: "DocVenditaIntestazione"
+                  where: {dimensionJoin_1: ["ZonaVenditaCM.id", "Azienda.id_ZonaVenditaCM"],…}
+                  dimensionJoin_1: ["ZonaVenditaCM.id", "Azienda.id_ZonaVenditaCM"]
+                  0: "ZonaVenditaCM.id"
+                  1: "Azienda.id_ZonaVenditaCM"
+                  dimensionJoin_2: ["Azienda.id", "CodSedeDealer.id_Azienda"]
+                  0: "Azienda.id"
+                  1: "CodSedeDealer.id_Azienda"
+                  dimensionJoin_3: ["CodSedeDealer.id", "DocVenditaIntestazione.id_CodSedeDealer"]
+                  0: "CodSedeDealer.id"
+                  1: "DocVenditaIntestazione.id_CodSedeDealer"
+                  factJoin: {cubeJoin_1: ["DocVenditaDettaglio.NumRifInt", "DocVenditaIntestazione.NumRifInt"],…}
+                  cubeJoin_1: ["DocVenditaDettaglio.NumRifInt", "DocVenditaIntestazione.NumRifInt"]
+                  0: "DocVenditaDettaglio.NumRifInt"
+                  1: "DocVenditaIntestazione.NumRifInt"
+                  cubeJoin_2: ["DocVenditaDettaglio.id_Azienda", "DocVenditaIntestazione.id_Azienda"]
+                  0: "DocVenditaDettaglio.id_Azienda"
+                  1: "DocVenditaIntestazione.id_Azienda"
+                  filters: {dref: {id: {table: "Azienda", operator: "=", values: ["443"]}}}
+                  dref: {id: {table: "Azienda", operator: "=", values: ["443"]}}
+                  id: {table: "Azienda", operator: "=", values: ["443"]}
+                  table: "Azienda"
+                  operator: "="
+                  values: ["443"]
+                  0: "443"
+                  groupBy: {ZonaVenditaCM: {Codice: {SQLFormat: null}}, Azienda: {descrizione: {SQLFormat: null}}}
+                  ZonaVenditaCM: {Codice: {SQLFormat: null}}
+                  Codice: {SQLFormat: null}
+                  SQLFormat: null
+                  Azienda: {descrizione: {SQLFormat: null}}
+                  descrizione: {SQLFormat: null}
+                  SQLFormat: null
+                  metrics: {,…}
+                  DocVenditaDettaglio: {NettoRiga: {SQLFunction: "SUM", field: "NettoRiga", name: "aas", distinct: false, alias: "aas"}}
+                  NettoRiga: {SQLFunction: "SUM", field: "NettoRiga", name: "aas", distinct: false, alias: "aas"}
+                  SQLFunction: "SUM"
+                  field: "NettoRiga"
+                  name: "aas"
+                  distinct: false
+                  alias: "aas"
+                  filteredMetrics: {}
+                  processId: 3
+                  name: "ass"
+                  type: "PROCESS"
+    */
+    app.report.saveReport(Query.getJSONProcess(app.report.reportName));
     // abilito il tasto 'crea layout'
     app.btnDashboardLayout.removeAttribute('hidden');
+    // TODO: disabilito il tasto salvaReport, lo riattivo non appena si modifica di nuovo il report
+
   };
 
   app.propertyColHidden.onclick = function (e) {
@@ -894,28 +955,43 @@ var Query = new Queries();
   app.btnNextStep.onclick = function() {Step.next();};
 
   // tasto completato nello step 4, // dialog per il salvataggio del nome del report
-  app.btnStepDone.onclick = function(e) {app.dialogSaveReport.showModal();};
+  app.btnStepDone.onclick = function(e) {
+    app.dialogSaveReport.showModal();
+    // sulla dialog imposto la modalità di salvataggio tra process/report, se impostato su process salvo, dal tasto OK, il process del report, altrimenti salvo il report con tutte le sue opzioni
+    app.dialogSaveReport.setAttribute('mode', 'process');
+  };
 
+  // salvo il report da processare
   app.btnSaveReportDone.onclick = function(e) {
     console.log(Query);
-    // TODO: salvo temporaneamente la query da processare nello storage
+    // salvo temporaneamente la query da processare nello storage
 
     // ottengo un reportId per passarlo a costruttore
-    const reportStorage = new ReportStorage();
-    const reportId = reportStorage.getIdAvailable();
+    const storage = new ReportStorage();
+    const reportId = storage.getIdAvailable();
     const name = document.getElementById('reportName').value;
 
     // il datamart sarà creato come FXreportId
-    
     Query.save(reportId, name);
-    // TODO: processa query
-
+    // TODO: aggiungo il report da processare nella list 'reportProcessList'
+    const ulReportsProcess = document.getElementById('reportsProcess');
+    let tmplContent = app.tmplListField.content.cloneNode(true);
+    let element = tmplContent.querySelector('.element');
+    let li = element.querySelector('li');
+    li.innerText = name;
+    li.setAttribute('label', 'process_' + name);
+    li.setAttribute('data-id', reportId);
+    ulReportsProcess.appendChild(element);
+    li.onclick = app.handlerReportToBeProcessed;
+    app.dialogSaveReport.close();
   };
 
+  // visualizzo la lista dei report da processare
   app.btnProcessReport.onclick = function(e) {
     const listReportProcess = document.getElementById('reportProcessList');
-    listReportProcess.removeAttribute('hidden');
+    listReportProcess.toggleAttribute('hidden');
   };
+
 
   /* events */
 

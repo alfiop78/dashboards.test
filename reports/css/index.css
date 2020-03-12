@@ -52,6 +52,12 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 .list li:hover{background: var(--main-primary-color); border-radius: 4px; color: white;cursor: pointer;}
 
 /* steps */
-.steps:not([data-step="4"]) > .overflow > .buttons #stepDone{visibility: hidden;}
-.steps[data-step="4"] > .overflow > .buttons #stepDone{visibility: visible;}
+.steps:not([data-step="4"]) > .overflow > .buttons #stepDone{display: none;}
+.steps[data-step="4"] > .overflow > .buttons #stepDone{display: initial;}
+.steps:not([data-step="4"]) > .overflow > .buttons #saveAndProcess{display: none;}
+.steps[data-step="4"] > .overflow > .buttons #saveAndProcess{display: initial;}
 /* steps */
+
+/* list */
+.stdList{}
+/* list */
