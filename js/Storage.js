@@ -19,16 +19,16 @@ class Storages {
     window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));
   }
 
-  set dimension(value) {
-    // console.log(Object.keys(value));
-    // console.log(value.title);
-    //
-    window.localStorage.setItem(value.title, JSON.stringify(value));
-    this.dimensionName = value.title;
-  }
+  // set dimension(value) {
+  //   // console.log(Object.keys(value));
+  //   // console.log(value.title);
+  //   //
+  //   window.localStorage.setItem(value.title, JSON.stringify(value));
+  //   this.dimensionName = value.title;
+  // }
 
-  // restituisco il nome della dimensione
-  get dimension() {return this.dimensionName;}
+  // // restituisco il nome della dimensione
+  // get dimension() {return this.dimensionName;}
 
   JSONFormat(name) {
     // restituisco un object convertito in json, questo mi servirà per ricostruire la struttura

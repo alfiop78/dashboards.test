@@ -742,7 +742,6 @@ var dimension = new Dimension();
       // Visualizzo nell'elenco di sinistra la dimensione appena creata
       // creo un contenitorre per le dimensioni salvate, con dentro le tabelle che ne fanno parte.
     */
-
     dimension.title = document.getElementById('dimensionName').value;
     // cube.dimension
     const storage = new DimensionStorage();
@@ -760,7 +759,8 @@ var dimension = new Dimension();
     dimension.hierarchyOrder = hierarchyOrder;
     
     dimension.save();
-    storage.dimension = dimension.dimension;
+    storage.save = dimension.dimension;
+    //storage.dimension = dimension.dimension;
 
     app.dialogDimensionName.close();
     
@@ -827,9 +827,6 @@ var dimension = new Dimension();
 
     app.dialogCubeName.close();
 
-    // cubeStorage.stringifyObject = cube.cube;
-    
-    app.dialogCubeName.close();
     // TODO: visualizzo il tasto crea report che rimanda alla pagina /reports
     // app.btnNewReport.removeAttribute('hidden');
 

@@ -65,7 +65,7 @@ class Cube {
 
   save() {
     this._cube.type = 'CUBE';
-    this._cube.title = this._title;
+    this._cube.name = this._title;
     this._cube.metrics = this._metrics;
     this._cube.relations = this._join;
     this._cube.FACT = this._fact;
@@ -163,7 +163,7 @@ class Dimension {
     this._dimension.type = 'DIMENSION';
     // TODO Aggiungere dimensionId
     this._dimension.columns = this._columns;
-    this._dimension.title = this._title;
+    this._dimension.name = this._title;
     this._dimension.from = this._from;
     this._dimension.join = this._join;
     this._dimension.hierarchies = this._hierarchies;
