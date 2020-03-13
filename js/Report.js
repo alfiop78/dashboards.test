@@ -54,7 +54,8 @@ class Report {
 
   addColumns() {
     // aggiungo le intestazioni di colonna
-    //TODO: qui posso vedere quali sono le opzioni della colonna, se ad esempio la colonna 2 è hidden qui non la creo
+    // TODO: qui posso vedere quali sono le opzioni della colonna, se ad esempio la colonna 2 è hidden qui non la creo
+    // TODO: provare ad utilizzare il for in oppure for of con Object.entries
     Object.keys(this._data[0]).forEach((col, index) => {
       this.th = document.createElement('th');
       this.th.setAttribute('col', index);
@@ -175,6 +176,7 @@ class Report {
   }
 
   createDatalist() {
+    console.log('create datalist in pageby');
     // console.log(this.table.cols.length);
     // creo le option nella datalist in base a quello che 'vedo' nella table
     // console.log(this.table.rows.length);
@@ -195,7 +197,7 @@ class Report {
         // console.log(this.arrCols);
 
         this.arrColumns.push(this.arrCols);
-        console.log(this.arrColumns);
+        // console.log(this.arrColumns);
 
         // NOTE:  rimuovo elementi duplicati nell'array con l'utilizzo di array.filter
           /*
@@ -253,24 +255,8 @@ class Report {
     });
   }
 
-  // addRow(rowValues) {
-  //   // console.log(rowValues);
-  //   this.tr = document.createElement('tr');
-  //   this.tr.setAttribute('row', 'body');
-  //   this.tbody.appendChild(this.tr);
-
-  //   // NOTE: Utilizzando le arrowFunction posso referenziare, con this, l'oggetto esterno alla function
-  //   rowValues.forEach((el, i) => {
-  //     // el contiene il valore della cella
-  //     this.td = document.createElement('td');
-  //     this.td.setAttribute('col', i);
-  //     this.td.setAttribute('options', 'cols');
-  //     (!el) ? console.log('NULL'): this.td.innerHTML = el.toUpperCase().trim();
-  //     this.tr.appendChild(this.td);
-  //   });
-  // }
-
   addRows() {
+    console.log('addRows (Report)');
     // TODO: provare questi metodi: https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/insertRow
     // console.log(rowValues);
     for (let i in this._data) {
@@ -278,6 +264,7 @@ class Report {
       this.tr.setAttribute('row', 'body');
       this.tbody.appendChild(this.tr);
       // console.log(this._data[i]);
+      // TODO: provare ad utilizzare for...in oppure for...of con object.entries
       Array.from(Object.values(this._data[i])).forEach((data, index) => {
         this.td = document.createElement('td');
         this.td.setAttribute('col', index);
@@ -425,7 +412,7 @@ class Report {
   info() {
     console.log('info');
     // TODO: da rivedere
-    console.log(this.table.tFoot); // utlizzare questo nel costruttore (se ritorna il footer)
+    // console.log(this.table.tFoot); // utlizzare questo nel costruttore (se ritorna il footer)
 
     this.infoRef = this.table.querySelector('tfoot div[info]');
     this.rowCounter = this.infoRef.querySelector('span[row-number]');
@@ -545,6 +532,7 @@ class Report {
 
   applyPageBy() {
     // applico le opzioni inserite sul pageBy
+    console.log('apply PageBy');
 
     for (let columnId in this._options.cols) {
       console.log(columnId);
@@ -583,6 +571,7 @@ class Report {
 }
 
 class Options extends Report{
+  // apro il report per la prima volta, per crearlo e creo anche le opzioni
   constructor(table, reportId) {
     super(table, reportId);
     this._options = {};
@@ -637,7 +626,6 @@ class Options extends Report{
     this.defaultPositioning = this._cube;
     // imposto anche il datamartId
     this.datamart = this._cube.processId; 
-    // FIXME: non esiste più il cubeId
   }
 
   get cube() { return this._cube; }
@@ -648,7 +636,7 @@ class Options extends Report{
     // se la inputSearch è abilitata (true) la visualizzo ed associo l'evento input al metodo searchInput()
     if (this._inputSearch) {
       // la visualizzo e gli associo l'evento oninput
-      console.log(this.tfoot);
+      // console.log(this.tfoot);
       this.td.hidden = false;
       this.tfoot.querySelector('#search').oninput = this.searchInput.bind(this);
     } else {
@@ -748,9 +736,9 @@ class Options extends Report{
   }
 
   addColumns() {
-    console.log('AddColumns');
+    console.log('AddColumns della subClass Options');
     Object.keys(this._data[0]).forEach((col, index) => {
-      console.log(col, index);
+      // console.log(col, index);
       this.th = document.createElement('th');
       this.th.setAttribute('col', index);
       this.th.classList.add('dropzone');
@@ -876,13 +864,13 @@ class Options extends Report{
       // console.log(cube[element]);
       if (element === 'select' || element === 'metrics' || element === 'filteredMetrics') {
         // console.log(element); // select
-        console.log(cube[element]);
+        // console.log(cube[element]);
         // per ogni tabella presente...
         for (let [table] of Object.entries(cube[element])) {
-          console.log(table);
+          // console.log(table);
           for (let [field] of Object.entries(cube[element][table])) {
-            console.log(field);
-            console.log(cube[element][table][field]['alias']);
+            // console.log(field);
+            // console.log(cube[element][table][field]['alias']);
             let obj = {};
             //obj['columns'] = cube[element][table][field]['alias'];
             obj[element] = cube[element][table][field]['alias'];
@@ -893,70 +881,7 @@ class Options extends Report{
     }
     console.log(this.positioning);
     this._options.positioning = this.positioning;
-    // console.log(this.reportOptions);
   }
-
-
-  /*set defaultPositioning(cube) {
-    /*
-    Definisco un array di oggetti contenenti la disposizione delle colonne, nello stato iniziale del datamart
-    positioning = [
-      0=> {'col': 'Cod.Sede'},
-      1=> {'col': 'Sede'},
-      2=> {'metric': 'venduto'},
-      3=> {'metric': 'quantita'}
-    ]
-    *//*
-    this.positioning = [];
-    console.log('positioning');
-    debugger;
-    Array.from(Object.keys(cube)).forEach((element) => {
-      if (element === 'associatedDimensions') {
-        // recupero columns
-        // console.log(element);
-        // console.log(cube[element]);
-        // console.log(Object.keys(cube[element]));
-        for (let [dimName] of Object.entries(cube[element])) {
-          // console.log(dimName);
-          // console.log(cube[element][dimName]['columns']);
-          Array.from(Object.keys(cube[element][dimName]['columns'])).forEach((table) => {
-            // recupero l'alias per questo object
-            // console.log(table);
-            // console.log(cube[element][dimName]['columns'][table]['Descrizione']['alias']);
-            for (let [field] of Object.entries(cube[element][dimName]['columns'][table])) {
-              // per ogni tabella trovata in 'columns'
-              // console.log(cube[element][dimName]['columns'][table][field]['alias']);
-              // debugger;
-              let obj = {};
-              obj['columns'] = cube[element][dimName]['columns'][table][field]['alias'];
-              // obj[element] = cube[element][table][value]['alias'];
-              this.positioning.push(obj);
-            }
-
-          });
-
-        }
-      } else {
-        if (element === 'metrics' || element === 'filteredMetrics') {
-          // console.log(element);
-          Array.from(Object.keys(cube[element])).forEach((table) => {
-            // console.log(table);
-            // console.log(cube.columns[table]);
-            Array.from(Object.keys(cube[element][table])).forEach((value) => {
-              // recupero l'alias per questo object
-              let obj = {};
-              obj[element] = cube[element][table][value]['alias'];
-              this.positioning.push(obj);
-            });
-          });
-        }
-      }
-
-    });
-    console.log(this.positioning);
-    this._options.positioning = this.positioning;
-    // console.log(this.reportOptions);
-  }*/
 
   get defaultPositioning() { return this._options.positioning; }
 
@@ -968,10 +893,34 @@ class Options extends Report{
     // l'associazione degli eventi va messa dopo l'applicazione delle option, solo nelle option vengono definiti i filtri multi e non
     this.eventParams();
     this.info();
+  }
+}
 
-    // visualizzo il page-by
-    // document.querySelector('section[params]').hidden = false;
-    // visualizzo la table
-    // this.table.hidden = false;
+class OpenReport extends Options {
+  // apro il report che ha già delle opzioni (riapertura per edit)
+  constructor(table, reportId, options) {
+    super(table, reportId);
+    this._options = options;
+    // console.log(this.table, this.reportId, this._options);
+    
+  }
+
+  set data(value) {
+    this._data = value;
+    super.addColumns();
+    super.addRows(); // class Report
+    super.createDatalist(); // class Report
+    this.draw();
+  }
+
+  draw() {
+    console.log('draw (OpenReport');
+    // TODO: disegno la tabella applicandogli le options già definite
+    console.log();
+    super.eventParams();
+    super.info();
+    super.applyStyles();return;
+    super.applyAttributes();
+    super.applyPageBy();
   }
 }

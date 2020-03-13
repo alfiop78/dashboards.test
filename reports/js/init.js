@@ -100,12 +100,11 @@ var Query = new Queries();
   // recupero un datamart FX... già creato e visualizzo l'anteprima
   app.handlerReportSelected = function(e) {
     const datamartId = e.target.getAttribute('data-report-id');
-    // recupero il process di questo report
-    const storage = new ReportProcessStorage();
-    const dataJSON = storage.getJSONProcess(e.target.getAttribute('label'));
-    console.log(dataJSON);
+    const report = new ReportStorage();
+    const JSONReportData = report.getJSON(e.target.getAttribute('label'));
+    console.log(JSONReportData);
+
     var url = 'ajax/reports.php';
-    
     let params = 'datamartId=' + datamartId;
 
     // console.log(params);
@@ -115,7 +114,8 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          app.createReport(response, dataJSON);
+          app.openReport(response, JSONReportData);
+          // app.createReport(response, dataJSON);
           // TODO: va impostato l'attribute mode='report' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
           app.btnSaveReport.setAttribute('mode', 'report');
         } else {
@@ -716,7 +716,7 @@ var Query = new Queries();
 
   app.loadCubes = () => {
     // carico elenco Cubi su cui creare il report
-    console.log('loadCubes');
+    // console.log('loadCubes');
     const cubes = new CubeStorage();
     // console.log(storage.list);
     let ul = document.getElementById('cubes');
@@ -724,7 +724,7 @@ var Query = new Queries();
     // console.log(obj);
     
     for (let i in obj) {
-      console.log(obj[i]['key']);
+      // console.log(obj[i]['key']);
       let element = document.createElement('div');
       element.classList.add('element');
       let li = document.createElement('li');
@@ -767,6 +767,15 @@ var Query = new Queries();
 
     app.report.reportName = dataJSON.name;
     
+  };
+
+  app.openReport = function(response, JSONReportData) {
+    console.log(JSONReportData);
+    
+    const report = new OpenReport(app.table, JSONReportData.id, JSONReportData.options);
+
+    report.data = response;
+
   };
 
   app.loadCubes();

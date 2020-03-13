@@ -153,7 +153,7 @@ class ReportStorage extends Storages {
 
   getIdAvailable() {
     // ottengo il primo Id disponibile
-    console.log(this.storageKeys);
+    // console.log(this.storageKeys);
     this.elements = [];
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
@@ -249,6 +249,12 @@ class ReportStorage extends Storages {
       }
     });
     return reports;
+  }
+
+  getJSON(value) {
+    let reports = {};
+    let report = JSON.parse(this.storage.getItem(value));
+    return report;
   }
 }
 
