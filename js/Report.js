@@ -176,7 +176,7 @@ class Report {
   }
 
   createDatalist() {
-    console.log('create datalist in pageby');
+    console.log('create datalist');
     // console.log(this.table.cols.length);
     // creo le option nella datalist in base a quello che 'vedo' nella table
     // console.log(this.table.rows.length);
@@ -256,7 +256,7 @@ class Report {
   }
 
   addRows() {
-    console.log('addRows (Report)');
+    console.log('addRows');
     // TODO: provare questi metodi: https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/insertRow
     // console.log(rowValues);
     for (let i in this._data) {
@@ -467,8 +467,8 @@ class Report {
     console.log('applyStyles');
 
     // applico le opzioni impostate al report
-    console.log(this._options);
-    console.log(this.styles);
+    // console.log(this._options);
+    // console.log(this.styles);
 
     for (let columnId in this._options.cols) {
       // console.log(columnId);
@@ -489,8 +489,6 @@ class Report {
   applyAttributes() {
     // applico le opzioni impostate al report
     console.log('applyAttributes');
-    // console.log(this._options);
-    console.log(this.attributes);
     /*
     // TODO: dopo aver impostato l'attributo lo devo impostare a tutta la colonna. Alcuni attributi, come hidden sono
       automaticamente impostati qui e quindi ho l'effetto immediato, altri attributi devo andarli a leggerli (switch)
@@ -535,21 +533,17 @@ class Report {
     console.log('apply PageBy');
 
     for (let columnId in this._options.cols) {
-      console.log(columnId);
       // leggo le proprietà impostate per questo filtro in pageBy
-      console.log(this._options.cols[columnId].pageBy);
       if (this._options.cols[columnId].pageBy) {
         for (let [property, value] of Object.entries(this._options.cols[columnId].pageBy)) {
-          console.info('CONTROLLO PAGEBY TRUE');
-          console.log(property);
-          console.log(value);
+          console.info('PageBy impostato sulla colonna: ', columnId);
+          console.log(property, value);
           // i parametri e/o le opzioni dei filtri le imposto sull'elemento div.elements[options]
           this.paramsRef.querySelector('.elements[col="'+columnId+'"]').setAttribute(property, value);
         }
       } else {
-        console.log('CONTROLLO PAGEBY FALSE');
+        console.log('PageBy non impostato sulla colonna: ',columnId);
       }
-
     }
   }
 
@@ -734,7 +728,7 @@ class Options extends Report{
   }
 
   addColumns() {
-    console.log('AddColumns (Options)');
+    console.log('AddColumns');
     Object.keys(this._data[0]).forEach((col, index) => {
       // console.log(col, index);
       this.th = document.createElement('th');
@@ -795,7 +789,6 @@ class Options extends Report{
     // btn OK nella dialog pageByOption
     this.dialogPageByOption.close();
     console.log(this.columnId);
-    debugger;
     // TODO: se già esiste il columnId selezionato in this.cols non lo riassegno (altrimenti viene resettato styles e attributes)
     if (!this.cols[this.columnId].hasOwnProperty('columnId')) {
       console.log('colonna non impostata azzero');
@@ -932,12 +925,12 @@ class OpenReport extends Options {
   }
 
   draw() {
-    console.log('draw (OpenReport');
+    console.log('draw');
     // TODO: disegno la tabella applicandogli le options già definite
     console.log();
     super.eventParams();
     super.info();
-    super.applyStyles();return;
+    super.applyStyles();
     super.applyAttributes();
     super.applyPageBy();
   }
