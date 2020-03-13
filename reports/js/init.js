@@ -99,13 +99,12 @@ var Query = new Queries();
   // selezione del report con datamart già presente
   // recupero un datamart FX... già creato e visualizzo l'anteprima
   app.handlerReportSelected = function(e) {
-    const datamartId = e.target.getAttribute('data-report-id');
     const report = new ReportStorage();
     const JSONReportData = report.getJSON(e.target.getAttribute('label'));
     // console.log(JSONReportData);
 
     var url = 'ajax/reports.php';
-    let params = 'datamartId=' + datamartId;
+    let params = 'datamartId=' + JSONReportData.id;
 
     // console.log(params);
     var request = new XMLHttpRequest();
@@ -883,19 +882,11 @@ var Query = new Queries();
     */
     if (e.target.getAttribute('mode') === 'process') {
       app.report.saveReport(Query.getJSONProcess(app.report.reportName));
-      // abilito il tasto 'crea layout'
-      app.btnDashboardLayout.removeAttribute('hidden');
     } else {
-      debugger;
-      app.report.saveReport();
-
-      const storage = new ReportProcessStorage();
-      console.log(storage.getJSONProcess(app.report.reportName));
-      return;
       app.report.saveReport();
     }
-
-    
+    // abilito il tasto 'crea layout'
+    app.btnDashboardLayout.removeAttribute('hidden');
     // TODO: disabilito il tasto salvaReport, lo riattivo non appena si modifica di nuovo il report
 
   };
@@ -1023,7 +1014,7 @@ var Query = new Queries();
 })();
 
 /* oggetto report in localStoraga*//*
-{id: 2, type: "REPORT", datamartId: 2, name: "report_KPI", options: {inputSearch: true,…}}
+{id: 2, type: "REPORT", name: "report_KPI", options: {inputSearch: true,…}}
 id: 2
 type: "REPORT"
 datamartId: 2

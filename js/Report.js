@@ -35,9 +35,7 @@ class Report {
 
   get caption() { return this.name;}
 
-  set data(value) {
-    this._data = value;
-  }
+  set data(value) {this._data = value;}
 
   get data() { return this._data;}
 
@@ -616,8 +614,6 @@ class Options extends Report{
     this._cube = value;
     // quando imposto il cubo imposto anche il posizionamaneto di default
     this.defaultPositioning = this._cube;
-    // imposto anche il datamartId
-    this.datamart = this._cube.processId; 
   }
 
   get cube() { return this._cube; }
@@ -640,10 +636,6 @@ class Options extends Report{
   }
 
   get inputSearch() { return this._inputSearch;}
-
-  set datamart(id) { this.datamartId = id; }
-
-  get datamart() { return this.datamartId;}
 
   set report(value) {this.reportId = value;}
 
@@ -714,7 +706,6 @@ class Options extends Report{
 
     this.reportOptions.id = this.report;
     this.reportOptions.type = 'REPORT';
-    this.reportOptions.datamartId = this.datamart;
     this.reportOptions.name = this.reportName;
     this.reportOptions.options = this._options;
     this.reportOptions.process = process;
@@ -894,10 +885,12 @@ class OpenReport extends Options {
   constructor(table, reportId, JSONReportData) {
     super(table, reportId);
     this.JSONReportData = JSONReportData;
-    console.log(JSONReportData);
+    // console.log(JSONReportData);
     this._options = JSONReportData.options;
-    console.log(this._options);
-    // TODO: reimposto questi object allo stato in cui erano stati salvati nello storage
+    // console.log(this._options);
+    // reimposto questi object allo stato in cui erano stati salvati nello storage
+    // in questo modo, quando si modifica di nuovo il report, non vengono perse le precedenti modifiche già salvate nello storage
+    // TODO: poi, posso aggiungere un 'salva con nome' per creare un nuovo report
     this.inputSearch = this._options.inputSearch;
     this.cols = this._options.cols;
   }
@@ -927,7 +920,6 @@ class OpenReport extends Options {
   draw() {
     console.log('draw');
     // TODO: disegno la tabella applicandogli le options già definite
-    console.log();
     super.eventParams();
     super.info();
     super.applyStyles();
