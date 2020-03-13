@@ -614,9 +614,7 @@ class Options extends Report{
     this.inputSearch = true;
   }
 
-  set reportName(value) {
-    this.name = value;
-  }
+  set reportName(value) {this.name = value;}
 
   get reportName() { return this.name;}
 
@@ -736,7 +734,7 @@ class Options extends Report{
   }
 
   addColumns() {
-    console.log('AddColumns della subClass Options');
+    console.log('AddColumns (Options)');
     Object.keys(this._data[0]).forEach((col, index) => {
       // console.log(col, index);
       this.th = document.createElement('th');
@@ -783,7 +781,7 @@ class Options extends Report{
     // Salvo le impostazioni per questa colonna
     console.log('btnDoneDialogOption');
     this.dialogOption.close();
-    this.cols[this.columnId] = { 'columnId': this.columnId };
+    this.cols[this.columnId] = {'columnId': this.columnId};
     this.cols[this.columnId].styles = this.styles;
     this.cols[this.columnId].attributes = this.attributes;
     // imposto this._options
@@ -797,11 +795,13 @@ class Options extends Report{
     // btn OK nella dialog pageByOption
     this.dialogPageByOption.close();
     console.log(this.columnId);
+    debugger;
     // TODO: se già esiste il columnId selezionato in this.cols non lo riassegno (altrimenti viene resettato styles e attributes)
     if (!this.cols[this.columnId].hasOwnProperty('columnId')) {
       console.log('colonna non impostata azzero');
-      this.cols[this.columnId] = { 'columnId': this.columnId };
+      this.cols[this.columnId] = {'columnId': this.columnId};
     }
+
     this.cols[this.columnId].pageBy = this.pageBy;
     // imposto this._options
     this.colOption = this.cols;
@@ -898,11 +898,15 @@ class Options extends Report{
 
 class OpenReport extends Options {
   // apro il report che ha già delle opzioni (riapertura per edit)
-  constructor(table, reportId, options) {
+  constructor(table, reportId, JSONReportData) {
     super(table, reportId);
-    this._options = options;
-    // console.log(this.table, this.reportId, this._options);
-    
+    this.JSONReportData = JSONReportData;
+    console.log(JSONReportData);
+    this._options = JSONReportData.options;
+    console.log(this._options);
+    // TODO: reimposto questi object allo stato in cui erano stati salvati nello storage
+    this.inputSearch = this._options.inputSearch;
+    this.cols = this._options.cols;
   }
 
   set data(value) {
@@ -911,6 +915,20 @@ class OpenReport extends Options {
     super.addRows(); // class Report
     super.createDatalist(); // class Report
     this.draw();
+  }
+
+  saveReport() {
+    // sovrascrivo il report in storage con le ultime modifiche effettuate
+    this.reportOptions.id = this.report;
+    this.reportOptions.type = 'REPORT';
+    this.reportOptions.datamartId = this.datamart; // FIXME: Da settare
+    this.reportOptions.name = this.reportName;
+    this.reportOptions.options = this._options;
+    this.reportOptions.process = this.JSONReportData.process;
+
+    this.storage = new ReportStorage();
+    console.log(this.reportOptions);
+    this.storage.save = this.reportOptions;
   }
 
   draw() {

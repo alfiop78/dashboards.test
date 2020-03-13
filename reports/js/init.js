@@ -102,7 +102,7 @@ var Query = new Queries();
     const datamartId = e.target.getAttribute('data-report-id');
     const report = new ReportStorage();
     const JSONReportData = report.getJSON(e.target.getAttribute('label'));
-    console.log(JSONReportData);
+    // console.log(JSONReportData);
 
     var url = 'ajax/reports.php';
     let params = 'datamartId=' + datamartId;
@@ -770,11 +770,11 @@ var Query = new Queries();
   };
 
   app.openReport = function(response, JSONReportData) {
-    console.log(JSONReportData);
     
-    const report = new OpenReport(app.table, JSONReportData.id, JSONReportData.options);
+    app.report = new OpenReport(app.table, JSONReportData.id, JSONReportData);
 
-    report.data = response;
+    app.report.data = response;
+    app.report.reportName = JSONReportData.name;
 
   };
 
@@ -886,6 +886,9 @@ var Query = new Queries();
       // abilito il tasto 'crea layout'
       app.btnDashboardLayout.removeAttribute('hidden');
     } else {
+      debugger;
+      app.report.saveReport();
+
       const storage = new ReportProcessStorage();
       console.log(storage.getJSONProcess(app.report.reportName));
       return;
