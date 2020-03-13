@@ -48,6 +48,9 @@ div.textarea > span{padding: 4px;color: #494949;}
 div.textarea > span.formulaOperator{background: #f9c4aa;border-radius: 4px;margin: 0 8px;}
 div.textarea > span.formulaValues{border-bottom: solid thin gray;padding: 4px 16px;}
 div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
+.logicalOperator{display: flex;justify-content: space-evenly;padding: 16px;}
+.logicalOperator > span{padding: 4px 16px;}
+.logicalOperator > span:hover{background: var(--main-secondary-color); border-radius: 4px;cursor: pointer;}
 
 .list li:hover{background: var(--main-primary-color); border-radius: 4px; color: white;cursor: pointer;}
 

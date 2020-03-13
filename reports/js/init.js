@@ -27,6 +27,8 @@ var Query = new Queries();
     btnSaveReport : document.getElementById('saveReport'),
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
 
+    // end dialog
+
     btnOpenCubes: document.getElementById('openCube'),
     dialogReportList : document.getElementById('dialog-reportList'),
     dialogTableList : document.getElementById('table-list'),
@@ -438,6 +440,7 @@ var Query = new Queries();
     textarea.appendChild(span);
     // TODO: recupero la lista dei valori distinct dalla tabella
     app.getDistinctValues();
+    app.checkFilterForm();
 
   };
 
@@ -478,6 +481,7 @@ var Query = new Queries();
       default:
         // TODO: valutare le operazioni da svolgere per questo blocco
     }
+    app.checkFilterForm();
   };
 
   // carico elenco colonne dal DB per visualizzare nella dialogFilter
@@ -581,9 +585,10 @@ var Query = new Queries();
   app.btnFilterSave.onclick = function(e) {
     // Filter save
     const textarea = document.getElementById('filterFormula');
-    const filterName = document.getElementById('filter-name').value;
+    let filterName = document.getElementById('filter-name');
     let logicalOperator = null; // TODO: qui andrò a memorizzare l'operatore che verrà inserito nella textare, appunti nel Metodo filters della class Query
-    Query.filterName = filterName;
+    console.log(filterName.value);
+    Query.filterName = filterName.value;
     let operator = app.dialogFilter.querySelector('#filterFormula .formulaOperator').innerText;
     let values = [], value;
 
@@ -604,18 +609,20 @@ var Query = new Queries();
     let obj = {};
     obj = {'table': Query.table, operator, values};
     Query.filters = obj;
-    // pulisco la textarea
-    textarea.querySelectorAll('span').forEach((span) => {span.remove();});
-    document.getElementById('filter-name').focus();
-    document.getElementById('filter-name').value = '';
+    
     // TODO: visualizzo il filtro appena creato nella section #sectionFields-filter
     let ul = document.getElementById('createdFilters');
     let li = document.createElement('li');
     let element = document.createElement('div');
-    li.innerText = filterName;
-    li.setAttribute('label', filterName);
+    li.innerText = filterName.value;
+    li.setAttribute('label', filterName.value);
     element.appendChild(li)
     ul.appendChild(element);
+    // reset del form
+    filterName.value = '';
+    filterName.focus();
+    // pulisco la textarea
+    textarea.querySelectorAll('span').forEach((span) => {span.remove();});
   };
 
   app.btnFilterDone.onclick = function(e) {app.dialogFilter.close();};
@@ -711,6 +718,7 @@ var Query = new Queries();
       span.innerText = valuesArr;
     }
     span.focus();
+    app.checkFilterForm();
   };
 
   app.loadCubes = () => {
@@ -782,6 +790,18 @@ var Query = new Queries();
   app.getReports();
 
   app.datamartToBeProcessed();
+
+  // abilito il tasto btnFilterSave se il form per la creazione del filtro è corretto
+  app.checkFilterForm = function() {
+    const filterName = document.getElementById('filter-name');
+    // textarea della formula, devo verifica se ci sono almento i 3 elementi della formula
+    const filterFormula = document.getElementById('filterFormula');
+    //console.log(filterFormula.childElementCount);
+    // TODO: verifica se il nome del filtro è stato inserito
+    // TODO: verifica se la formula è stata inserita
+    let flag = ( (filterName.value.length !== 0) && (filterFormula.childElementCount >= 3) ) ? true : false;
+    (flag) ? app.btnFilterSave.disabled = false: app.btnFilterSave.disabled = true;
+  }
 
 
   /* events */
@@ -1006,6 +1026,19 @@ var Query = new Queries();
     const listReportProcess = document.getElementById('reportProcessList');
     listReportProcess.toggleAttribute('hidden');
   };
+
+  // input di ricerca nella dialogFilter, ricerca nell'elenco dei fields
+  document.getElementById('fieldSearch').oninput = App.searchInList;
+
+  // input di ricerca nella dialogFilter, ricerca nell'elenco dei valori
+  document.getElementById('valuesSearch').oninput = App.searchInList;
+
+  // input per filter-name, controllo se il form per la creazione del filtro è convalidato
+  document.getElementById('filter-name').oninput = function(e) {
+    // TODO: controllo se il form è completato
+    app.checkFilterForm();
+  };
+
 
 
   /* events */
