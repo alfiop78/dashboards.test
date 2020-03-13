@@ -71,7 +71,7 @@ class Report {
         this.th.setAttribute(key, true);
         // console.log(key);
         // console.log(value);
-        if (key === 'columns') {
+        if (key === 'select') {
           //TODO: aggiungo il pageBy
           this.addPageBy(colName, index);
         }
@@ -180,7 +180,6 @@ class Report {
     // console.log(this.table.rows.length);
 
     this.arrColumns = [];
-
     for (let c = 0; c < this.tbody.rows[0].cells.length; c++) {
       // se questa è una columns (quindi non è una metrica) aggiungo gli elementi in pageby
       if (this.tbody.rows[0].cells[c].hasAttribute('select')) {

@@ -1,10 +1,3 @@
-/* global Application, PageStorage, ReportStorage, Report */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/* funzione immediata */
 var App = new Application();
 (() => {
   var app = {
@@ -26,6 +19,7 @@ var App = new Application();
       let nav = document.getElementsByTagName('nav')[0];
       let span = element.querySelector('span');
       span.innerHTML = page.name;
+      element.setAttribute('label', page.name);
       element.setAttribute('data-layout-id', page.layoutId);
       element.setAttribute('data-id', page.id);
       console.log(page.layoutParams);
@@ -44,11 +38,13 @@ var App = new Application();
   app.handlerPageSelect = function(e) {
     e.preventDefault(); // è un elemento <a> quindi impedisco il comportamento di default
     // recupero il layout con id dell'elemento selezionato
+    console.log(this); // elemento <a>
+    console.log(e.target); // elemento <span>
     let layout = app.loadLayoutTemplate(this.getAttribute('data-layout-id'));
-    layout.querySelector('h3').innerText = this.querySelector('span').innerText;
-    app.pageSelectedTitle = this.querySelector('span').innerText;
+    layout.querySelector('h3').innerText = this.getAttribute('label');
+    app.pageSelectedTitle = this.getAttribute('label');
 
-    var url = "ajax/reports.php";
+    
     let reportId = +this.getAttribute('data-report-id');
     let storage = new ReportStorage();
     console.log(reportId);
@@ -56,13 +52,8 @@ var App = new Application();
     storage.settings = reportId;
 
     console.log(storage.settings);
-    // return;
+    var url = "ajax/reports.php";
     let params = "datamart="+storage.settings;
-    console.log(params);
-    // visualizzo il template relativo al layout selezionato
-    console.log(this);
-
-    // console.log(params);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState === XMLHttpRequest.DONE) {
@@ -89,6 +80,7 @@ var App = new Application();
   app.loadLayoutTemplate = function(layoutId) {
     console.log('load Template');
     // visualizzo il template con layout-id = layoutId
+    console.log(layoutId);
     let tmplLayout = document.getElementById('layout-'+layoutId);
     let layoutContent = tmplLayout.content.cloneNode(true);
     let layout = layoutContent.querySelector("div.layout[data-layout-id='"+layoutId+"']");
@@ -105,6 +97,7 @@ var App = new Application();
 
     report.data = response;
     // imposto le options recuperate dallo storage tramite il reportId
+     // TODO: da rivedere, utilizzare lo stesso procedimento di OpenReport, le options posso prenderle anche dallo storage di questo report
     report.settings = reportId;
 
     report.addColumns();

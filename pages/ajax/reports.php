@@ -9,8 +9,10 @@ setlocale (LC_TIME, "it_IT");
 $q = new Queries();
 
 $datamart = json_decode($_POST['datamart']); // object
-// var_dump($datamart);
-// var_dump($datamart->{'id'});
+
+//var_dump($datamart);
+var_dump($datamart->{'id'});
+
 $result = $q->getDatamartData($datamart);
 // var_dump($result);
 // return;

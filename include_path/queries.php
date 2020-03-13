@@ -60,8 +60,9 @@ class Queries {
   public function getDatamartData($datamart) {
     $l = new ConnectDB("decisyon_cache");
 
-    $datamartName = "FX".$datamart->{'datamartId'};
+    $datamartName = "FX".$datamart->{'id'};
     $options = $datamart->{'options'};
+    var_dump($options);
 
     // return $options->{'positioning'};
     foreach ($options->{'positioning'} as $key => $value) {
