@@ -9,6 +9,7 @@ class Queries {
 		this._groupBy = {};
 		this._metrics = {};
 		this._filteredMetrics = {};
+		this.filterFormulaId = 0;
 	}
 
 	set table(value) {this._table = value;}
@@ -18,6 +19,10 @@ class Queries {
 	set field(value) {this._field = value;}
 
 	get field() {return this._field;}
+
+	set fieldType(value) {this._fieldType = value;}
+
+	get fieldType() {return this._fieldType;}
 
 	set from(value) {
 		this._fromArray.push(value);
@@ -69,40 +74,75 @@ class Queries {
 	get factRelation() {this._factRelation;}
 
 	set filters(object) {
-		this._obj = {};
+		//this.obj = {};
+		this._filter[this._filterName] = object;
+		console.log(this._filter);;
+	}
+
+	// set filters(object) {
+		// this._obj = {};
 		// TODO: vedere, tramite questi appunti (sotto) come gestire i filtri con più condizioni
 		// es.: id_azienda = 43 AND sede = 444909
 
-		//this._logicalOperator = {};
-		// console.log(this._logicalOperator);
 		/*
-		nomefiltro:
-			'logicalOperator-1' : 'AND' - oppure null, OR, OR NOT, ecc...
-			id: {operator: "=", values: Array(1)}
-			colonna id_Azienda: {operator: "<>", values: Array(1)}
-			 RESULT : id = xx AND id_Azienda <> xxx
+		soluzione 1 (attuale)
+		nomefiltro: {
+			nomecolonna : {
+				table : nometabella
+				operator: '='
+				values = [array]
+			}
+		}
 
-		nomeFiltro:
-			'logicalOperator-2' : 'OR' - oppure null, AND, AND NOT, ecc...
-			nomeColonna-1: {operator: "=", values: Array(1)}
-			nomeColonna-2: {operator: "<>", values: Array(1)}
-			RESULT : nomeColonna-1 = values OR nomeColonna-2 <> values
+		soluzione 2:
+		nomeFilter : {
+			'AND' : [
+				{
+					nomecolonna : {
+						table : nometabella,
+						operator: '=',
+						values = [array]
+					}
+				},
+				{
+					nomecolonna2 : {
+						table : nometabella,
+						operator: '=',
+						values = [array]
+					}
+				},
+			]	
+		}
 
-		nomeFiltro:
-			'logicalOperator-3' : null -  oppure AND, OR, ecc...
-			nomeColonna-1: {operator: "=", values: Array(1)}
-			nomeColonna-2: {operator: "<>", values: Array(1)}
-			RESULT : AND nomeColonna-1 = values 
-			RESULT : AND nomeColonna-2 <> values
+		
 
-		nomeFiltro:
-			'logicalOperator-3' : null -  oppure AND, OR, ecc...
-			nomeColonna-1: {operator: ">", values: Array(1)}
-			RESULT : AND nomeColonna-1 > values 
+		soluzione 3: 
+		nomeFilter: {
+			id (colName) : {
+				tableName : 'Azienda',
+				operator: '=',
+				values : [array]
+				parenthesis : "("
+			}
+			logicalOperator-1 : 'AND'
+			id (colName) : {
+				tableName : 'CodSedeDealer',
+				operator: '=',
+				values : [array],
+				parenthesis: ")"
+			}
+			logicalOperator-3 : 'OR'
+			id (colName) : {
+				tableName : 'Azienda',
+				operator: '=',
+				values : [array],
+				parenthesis: null
+			}
+		}	
 			
-			*/
+		*/
 
-		if (this._filter.hasOwnProperty(this._filterName)) {
+		/*if (this._filter.hasOwnProperty(this._filterName)) {
 			// tabella già presente nell'object _select
 			if (!this._filter[this._filterName].hasOwnProperty(this._field)) {
 				// field NON presente in _select[_table], lo aggiungo
@@ -116,7 +156,9 @@ class Queries {
 			
 		}
 		console.log(this._filter);
-	}
+	}*/
+
+
 
 	get filters() {return this._filters};
 

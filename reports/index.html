@@ -296,22 +296,22 @@
               <h5>Lista valori</h5><h6>Seleziona i valori per creare il filtro</h6>
             </div>
 
-            <div id="filterValuesList" class="valuesList">
-              <div class="listContent">
-                <div class="md-field" value>
-                  <input type="search" id="valuesSearch" value=""/>
-                  <label for="valuesSearch" class="">Ricerca</label>
-                </div>
-                <ul id="filter-valueList" class="list middleList"></ul>
+            
+            <div class="listContent">
+              <div class="md-field" value>
+                <input type="search" id="valuesSearch" value=""/>
+                <label for="valuesSearch" class="">Ricerca</label>
               </div>
+              <ul id="filter-valueList" class="list middleList"></ul>
             </div>
+            
 
           </section>
 
         </div>
 
         <div class="formulaDefined">
-          <div class="logicalOperator">
+          <div class="logicalOperator" id="logicalOperator">
             <span label='AND'>AND</span>
             <span label='OR'>OR</span>
             <span label='AND NOT'>AND NOT</span>
@@ -322,6 +322,7 @@
 
           <div class="formulaContent">
             <div id="filterFormula" class="textarea">
+              
               <!-- <span class="formulaField">id</span>
               <span class="formulaOperator"> =</span>
               <span class="formulaValues">443</span> -->
