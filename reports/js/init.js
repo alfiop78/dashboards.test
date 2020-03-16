@@ -437,7 +437,6 @@ var Query = new Queries();
     const textarea = document.getElementById('filterFormula');
     let span = document.createElement('span');
     span.className = 'formulaField';
-    span.setAttribute('data-id', Query.filterFormulaId);
     span.innerText = Query.field;
     textarea.appendChild(span);
     // TODO: recupero la lista dei valori distinct dalla tabella
@@ -448,15 +447,14 @@ var Query = new Queries();
 
   // selezione dell'operatore nella dialogFilter
   app.handlerFilterOperatorSelected = function(e) {
-    if (e.target.hasAttribute('selected')) return; // FIXME: ottimizzare
-
+    
     document.querySelectorAll('#operatorList li').forEach((li) => {li.removeAttribute('selected');});
     e.target.toggleAttribute('selected');
     const textarea = document.getElementById('filterFormula');
     let span = document.createElement('span');
     span.className = 'formulaOperator';
-    span.setAttribute('data-id', Query.filterFormulaId);
     span.innerText = e.target.getAttribute('label');
+    span.setAttribute('label', e.target.getAttribute('label'));
     textarea.appendChild(span);
     let openPar, closePar, formulaValues;
     // OPTIMIZE: da ottimizzare
@@ -481,6 +479,7 @@ var Query = new Queries();
         //  imposto la lista dei valori in multiselezione (una IN può avere un elenco di valori separati da virgola)
         app.dialogFilter.querySelector('#filterValueList').setAttribute('multi', true);
         break;
+
       default:
         // TODO: valutare le operazioni da svolgere per questo blocco
     }
@@ -611,13 +610,16 @@ var Query = new Queries();
         values.push(value);
     }
 
-    let formula = `${Query.table}.`;
+    let formula = '';
     // ciclo gli elementi nella formula per creare il filtro
     Array.from(document.querySelectorAll('#filterFormula > span')).forEach((span) => {
       //console.log(span);
-      formula += (span.classList.contains('formulaField')) ? `${span.innerText} `: `${span.innerText} `;
+      formula += (span.classList.contains('formulaField')) ? `${Query.table}.${span.innerText} `: `${span.innerText} `;
+
     });
+    
     console.log(formula);
+    Query.filters = formula.trimEnd();
     
     // visualizzo il filtro appena creato nella section #sectionFields-filter
     let ul = document.getElementById('createdFilters');
@@ -704,7 +706,6 @@ var Query = new Queries();
 
       span = document.createElement('span');
       span.className = 'formulaValues';
-      span.setAttribute('data-id', Query.filterFormulaId);
       
       switch (Query.fieldType) {
         case 'varchar':
@@ -716,6 +717,14 @@ var Query = new Queries();
           span.innerText = `${e.target.getAttribute("label")}`;
       }
       textarea.appendChild(span);
+      // TODO: verifico, dopo aver inserito il valore selezionato, se l'elemento precedente è un BETWEEN
+      const operator = span.previousElementSibling.getAttribute('label');
+      if (operator === 'BETWEEN') {
+        let and = document.createElement('span');
+        and.className = 'formulaOperator';
+        and.innerText = 'AND';
+        textarea.appendChild(and);
+      }
 
     } else {
       // selezione multipla, quindi seleziono tutti gli elementi su cui si attiva il click
@@ -822,7 +831,6 @@ var Query = new Queries();
     span.className = 'formulaLogicalOperator';
     span.innerText = e.target.getAttribute('label');
     textarea.appendChild(span);
-    Query.filterFormulaId++;
   };
 
 

@@ -9,7 +9,6 @@ class Queries {
 		this._groupBy = {};
 		this._metrics = {};
 		this._filteredMetrics = {};
-		this.filterFormulaId = 0;
 	}
 
 	set table(value) {this._table = value;}
