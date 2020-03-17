@@ -31,7 +31,7 @@ i[open]{color: red;}
 .overflowList{max-height: 250px; overflow: auto;}
 #fieldList-filter{padding: 0 16px;}
 
-#reportSection{display: flex;flex-flow: row;width: 100%;margin: 16px; padding: 16px;}
+#reportSection{display: flex;flex-flow: row;width: 100%; padding: 16px;}
 
 table thead{background: indianred;color: white;}
 table thead tr > th{border: solid thin;}
