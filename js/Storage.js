@@ -463,20 +463,22 @@ class FilterStorage extends Storages {
 
   get filterId() { return this.id; }
 
-  list() {
+  set filter(value) {
+    this._filter = value;
+  }
+
+  get filter() {
+    return JSON.parse(this.storage.getItem(this._filter));
+  }
+
+  list(table) {
     // ottengo la lista delle pagine create
-    this.filters = [];
+    this.filters = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "FILTERS") {
-        // console.log("cubo : "+key);
-        // console.log(jsonStorage.layoutParams);
-
-        let pageProperties = {
-          'name': key,
-          'id': jsonStorage.id};
-        this.filters.push(filterProperties);
+      if (jsonStorage.type === "FILTER" && jsonStorage.table === table) {
+        this.filters[key] = jsonStorage.formula;
       }
     });
     return this.filters;

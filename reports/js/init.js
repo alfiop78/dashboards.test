@@ -151,10 +151,15 @@ var Query = new Queries();
         if (request.status === 200) {
           var response = JSON.parse(request.response);
           console.table(response);
-          // lo salvo in dialog-reportList
-          app.getDatamart(reportId, dataJSON);
-          // TODO: va impostato l'attribute mode='process' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
-          app.btnSaveReport.setAttribute('mode', 'process');
+          if (response === 0) {
+            console.log('NON CI SONO DATI');
+          } else {
+            // lo salvo in dialog-reportList
+            app.getDatamart(reportId, dataJSON);
+            // TODO: va impostato l'attribute mode='process' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
+            app.btnSaveReport.setAttribute('mode', 'process');
+          }
+          
         } else {
           // TODO:
         }
@@ -292,14 +297,19 @@ var Query = new Queries();
       Query.from = table;
       let li = document.createElement('li');
       let element = document.createElement('div');
+      let i = document.createElement('i');
       element.className = 'element';
       li.innerText = table;
-      //li.id = 'table-filter-' + index;
+      i.className = 'material-icons md-18';
+      i.innerText = 'add';
+      i.setAttribute('label', table);
       li.setAttribute('data-table-id', index);
       li.setAttribute('label', table);
       element.appendChild(li);
+      element.appendChild(i);
       ul.appendChild(element);
       li.onclick = app.handlerTableSelectedFilter;
+      i.onclick = app.handlerAddFilter; // apro la dialog
     });
   };
 
@@ -396,8 +406,8 @@ var Query = new Queries();
   };
 
   // selezione della tabella nella sezione Filtri (step 3)
-  app.handlerTableSelectedFilter = function(e) {
-    // TODO: carico elenco field per la tabella selezionata
+  app.handlerAddFilter = function(e) {
+    // carico elenco field per la tabella selezionata
     Query.table = e.target.getAttribute('label');
     app.getFields();
 
@@ -407,6 +417,39 @@ var Query = new Queries();
     document.querySelectorAll('#operatorList').forEach((li) => {
       li.onclick = app.handlerFilterOperatorSelected;
     });
+  };
+
+  // selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
+  app.handlerTableSelectedFilter = function(e) {
+    const table = e.target.getAttribute('label');
+    const storage = new FilterStorage();
+    const filters = storage.list(table);
+    const ul = document.getElementById('exists-filter');
+    // pulisco la ul prima di visualizzare i filtri relativi alla tabella selezionata
+    ul.querySelectorAll('.element').forEach((el) => {el.remove();});
+    
+    for (let filter in filters) {
+      console.log(filter); // nome del filtro
+      console.log(filters[filter]); // formula
+      let content = app.tmplListField.content.cloneNode(true);
+      let element = content.querySelector('.element');
+      let li = element.querySelector('li');
+      li.innerText = filter;
+      li.setAttribute('label', filter);
+      ul.appendChild(element);
+      li.onclick = app.handlerFilterSelected;
+    }
+  };
+
+  // selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
+  app.handlerFilterSelected = function(e) {
+    const storage = new FilterStorage();
+    storage.filter = e.target.getAttribute('label');
+    // TODO: recupero dallo storage il filtro selezionato
+    // console.log(storage.filter);
+    // console.log(storage.filter.formula);
+    Query.filterName = storage.filter.name;
+    Query.filters = storage.filter.formula;
   };
 
   // selezione della metrica, apro la dialog per impostare la metrica
@@ -625,11 +668,17 @@ var Query = new Queries();
     // TODO: Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
     // ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli riscrivere
     const storage = new FilterStorage();
-    let = filterObj = {'name': filterName.value, 'table': Query.table, 'filter': formula.trimEnd()};
-    console.log(filterObj);
-    return;
-    //storage.save =
-
+    let = filterObj = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, 'formula': formula.trimEnd()};
+    storage.save = filterObj;
+    // NOTE: object filter salvato in storage
+    /* filter_name: {
+        'formula' : "id_Azienda = 43",
+        'table' : 'Azienda',
+        'TYPE' : 'FILTER'
+        'name' : nome del filtro
+    }
+    */
+    
     // visualizzo il filtro appena creato nella section #sectionFields-filter
     let ul = document.getElementById('createdFilters');
     let li = document.createElement('li');

@@ -61,6 +61,7 @@ div.textarea > span.formulaLogicalOperator{background: brown; border-radius: 4px
 .steps[data-step="4"] > .overflow > .buttons #saveAndProcess{display: initial;}
 /* steps */
 
-/* list */
-.stdList{}
-/* list */
+/* element */
+.element > li + i{visibility: hidden;}
+.element:hover > li + i{visibility: visible;}
+/* element */
