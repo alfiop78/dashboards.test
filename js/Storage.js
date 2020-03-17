@@ -450,3 +450,74 @@ class PageStorage extends Storages {
     return this.id;
   }
 }
+
+class FilterStorage extends Storages {
+  constructor() {
+    super();
+    this.id = 0; // default
+  }
+
+  set filterId(value) {
+    this.id = value;
+  }
+
+  get filterId() { return this.id; }
+
+  list() {
+    // ottengo la lista delle pagine create
+    this.filters = [];
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "FILTERS") {
+        // console.log("cubo : "+key);
+        // console.log(jsonStorage.layoutParams);
+
+        let pageProperties = {
+          'name': key,
+          'id': jsonStorage.id};
+        this.filters.push(filterProperties);
+      }
+    });
+    return this.filters;
+  }
+
+  getIdAvailable() {
+    // ottengo il primo Id disponibile
+    console.log(this.storageKeys);
+    this.filtersElement = [];
+    this.storageKeys.forEach((key, index) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+
+      if (jsonStorage.type === "FILTERS") {
+        // ottengo il numero di elementi PAGE nello storage
+        this.filtersElement.push(jsonStorage.id);
+      }
+
+    });
+
+    // ordino l'array
+    this.filtersElement.sort(function (a, b) {
+      console.log(a);
+      console.log(b);
+      // TODO: cosa sono a e b ?
+      return a - b;
+    })
+
+    // this.pagesElement.sort((a, b) => a - b);
+    for (let i = 0; i < this.filtersElement.length; i++) {
+      // indice 0
+      // se 0 è presente in pagesElement aggiungo una unità
+      // console.log(this.pagesElement.includes(i));
+
+      if (this.filtersElement.includes(i)) {
+        this.id++;
+        // console.log(this.id);
+      } else {
+        this.id = i;
+      }
+    }
+    return this.id;
+  }
+}

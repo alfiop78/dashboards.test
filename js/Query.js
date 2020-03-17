@@ -9,6 +9,7 @@ class Queries {
 		this._groupBy = {};
 		this._metrics = {};
 		this._filteredMetrics = {};
+
 	}
 
 	set table(value) {this._table = value;}
@@ -77,87 +78,6 @@ class Queries {
 		this._filter[this._filterName] = object;
 		console.log(this._filter);;
 	}
-
-	// set filters(object) {
-		// this._obj = {};
-		// TODO: vedere, tramite questi appunti (sotto) come gestire i filtri con più condizioni
-		// es.: id_azienda = 43 AND sede = 444909
-
-		/*
-		soluzione 1 (attuale)
-		nomefiltro: {
-			nomecolonna : {
-				table : nometabella
-				operator: '='
-				values = [array]
-			}
-		}
-
-		soluzione 2:
-		nomeFilter : {
-			'AND' : [
-				{
-					nomecolonna : {
-						table : nometabella,
-						operator: '=',
-						values = [array]
-					}
-				},
-				{
-					nomecolonna2 : {
-						table : nometabella,
-						operator: '=',
-						values = [array]
-					}
-				},
-			]	
-		}
-
-		
-
-		soluzione 3: 
-		nomeFilter: {
-			id (colName) : {
-				tableName : 'Azienda',
-				operator: '=',
-				values : [array]
-				parenthesis : "("
-			}
-			logicalOperator-1 : 'AND'
-			id (colName) : {
-				tableName : 'CodSedeDealer',
-				operator: '=',
-				values : [array],
-				parenthesis: ")"
-			}
-			logicalOperator-3 : 'OR'
-			id (colName) : {
-				tableName : 'Azienda',
-				operator: '=',
-				values : [array],
-				parenthesis: null
-			}
-		}	
-			
-		*/
-
-		/*if (this._filter.hasOwnProperty(this._filterName)) {
-			// tabella già presente nell'object _select
-			if (!this._filter[this._filterName].hasOwnProperty(this._field)) {
-				// field NON presente in _select[_table], lo aggiungo
-				this._filter[this._filterName][this._field] = object;
-			}
-		} else {
-
-			this._obj[this._field] = object;
-			//this._obj.logicalOperator = object.logicalOperator;
-			this._filter[this._filterName] = this._obj;
-			
-		}
-		console.log(this._filter);
-	}*/
-
-
 
 	get filters() {return this._filters};
 

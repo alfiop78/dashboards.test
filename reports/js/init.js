@@ -496,9 +496,11 @@ var Query = new Queries();
       if (request.readyState === XMLHttpRequest.DONE) {
         if (request.status === 200) {
           var response = JSON.parse(request.response);
-          
-          let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
+          // TODO: pulisco l'elenco dei campi
           let ul = document.getElementById('filter-fieldList');
+          ul.querySelectorAll('div.element').forEach((el) => {el.remove();});
+          let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
+          
 
           for (let i in response) {
             let content = tmplFieldList.content.cloneNode(true);
@@ -510,7 +512,7 @@ var Query = new Queries();
             let pos = response[i][1].indexOf('(');
             let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
             li.setAttribute('data-type', type);
-            li.id = i;
+            // li.id = i; al momento non mi serve
             ul.appendChild(element);
             li.onclick = app.handlerFilterFieldSelected;
           }          
@@ -620,7 +622,14 @@ var Query = new Queries();
     
     console.log(formula);
     Query.filters = formula.trimEnd();
-    
+    // TODO: Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
+    // ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli riscrivere
+    const storage = new FilterStorage();
+    let = filterObj = {'name': filterName.value, 'table': Query.table, 'filter': formula.trimEnd()};
+    console.log(filterObj);
+    return;
+    //storage.save =
+
     // visualizzo il filtro appena creato nella section #sectionFields-filter
     let ul = document.getElementById('createdFilters');
     let li = document.createElement('li');

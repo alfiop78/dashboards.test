@@ -26,7 +26,7 @@ th i.material-icons{position: absolute;right: 8px;display: inline-table;}
 .absList > ul{height: 500px;overflow-y: auto;}
 i[open]{color: red;}
 
-.stepLayout{display: grid; grid-template-columns: 30% auto;}
+.stepLayout{display: grid; grid-template-columns: 30% auto auto;}
 
 .overflowList{max-height: 250px; overflow: auto;}
 #fieldList-filter{padding: 0 16px;}

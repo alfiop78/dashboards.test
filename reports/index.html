@@ -78,23 +78,6 @@
       </div> -->
     </dialog>
 
-    <!-- <dialog id="table-list">
-      <div class="lists">
-        <div class="list">
-          <div class="md-field">
-            <input type="search" id="tableSearch" name="tableSearch" value=""/>
-            <label for="tableSearch" class="">Ricerca</label>
-          </div>
-
-          <ul id="tables"></ul>
-        </div>
-      </div>
-
-      <div class="dialog-buttons">
-        <button type="button" name="cancel" class="md-button">annulla</button>
-      </div>
-    </dialog> -->
-
     <dialog id="dialog-reportList">
       <div class="lists">
         <div class="list">
@@ -413,18 +396,18 @@
                       
                       <section class="step" data-step="1" selected>
                         <section class="pageContent">
-                          <h4>Step 1</h4><h6>Seleziona il cubo su cui creare il report</h6>
+                          <h4>Cubo e Dimensioni</h4><h6>Seleziona il cubo e le dimensioni su cui creare il report</h6>
                           <div id="layoutStep-1" class="stepLayout">
 
                             <section class="sectionLists">
-                              <h5>Lista dei Cubi</h5>
+                              <h5>Cubi</h5>
                               <div id="cubeList">
                                 <ul id="cubes"></ul>
                               </div>
                             </section>
 
                             <section class="sectionLists">
-                              <h5>Lista delle dimensioni</h5>
+                              <h5>Dimensioni</h5>
                               <div id="dimensionList">
                                 <ul id="dimensions"></ul>
                               </div>
@@ -436,7 +419,7 @@
                       
                       <section class="step" data-step="2">
                         <section class="pageContent">
-                          <h4>Step 2</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
+                          <h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
                           <div id="layoutStep-2" class="stepLayout">
 
@@ -445,7 +428,6 @@
                               <div id="tableList-column">
                                 <ul id="tables-column" class="stdList"></ul>
                               </div>
-                              
                             </section>
 
                             <section class="sectionLists" id="sectionFields-column">
@@ -460,7 +442,7 @@
 
                       <section class="step" data-step="3">
                         <section class="pageContent">
-                          <h4>Step 3</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
+                          <h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
                           <div id="layoutStep-3" class="stepLayout"> 
 
@@ -472,10 +454,17 @@
                             </section>
 
                             <section class="sectionLists" id="sectionFields-filter">
-                              <h5>Filtri impostati</h5>
+                              <h5>Filtri del Report</h5>
                               <!-- <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList </div>-->
                               <div id="filters">
                                 <ul id="createdFilters"></ul>
+                              </div>
+                            </section>
+
+                            <section class="sectionLists" id="sectionFields-existsfilter">
+                              <h5>Filtri esistenti</h5>
+                              <div id="existsfilter">
+                                <ul id="exists-filter"></ul>
                               </div>
                             </section>
 
