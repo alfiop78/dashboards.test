@@ -15,15 +15,15 @@ $cube = json_decode($_POST['cube']); // object
 $q = new Cube();
 $q->setReportId($cube->{'processId'});
 $q->n_select($cube->{'select'});
-$q->n_metrics($cube->{'metrics'});
+$q->metrics($cube->{'metrics'});
 $q->n_from($cube->{'from'});
 $q->n_where($cube->{'where'});
 $q->joinFact($cube->{'factJoin'});
 $q->filters($cube->{'filters'});
 $q->n_groupBy($cube->{'groupBy'});
-
 $baseTable = $q->baseTable();
 var_dump($baseTable);
+
 
 if ($baseTable > 0) {
 

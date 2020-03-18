@@ -229,6 +229,7 @@ var Query = new Queries();
     const cubeName = e.target.getAttribute('label');
     const storage = new CubeStorage();
     let cube = storage.json(cubeName);
+    e.target.toggleAttribute('selected');
     
     Query.from = cube.FACT;
     Query.factRelation = cube.relations;
@@ -239,15 +240,22 @@ var Query = new Queries();
     let ulTable = document.getElementById('tables-filter');
     let liTable = document.createElement('li');
     let elementTable = document.createElement('div');
+    let i = document.createElement('i');
+    i.className = 'material-icons md-18';
+    i.innerText = 'add';
+    i.setAttribute('label', cube.FACT);
     elementTable.className = 'element';
+
     liTable.innerText = cube.FACT;
     //li.id = 'table-filter-' + index;
     //li.setAttribute('data-table-id', index);
     liTable.setAttribute('label', cube.FACT);
     elementTable.appendChild(liTable);
+    elementTable.appendChild(i);
     ulTable.appendChild(elementTable);
+
     liTable.onclick = app.handlerTableSelectedFilter;
-    
+    i.onclick = app.handlerAddFilter; // apro la dialog
     
     // recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
     // console.log(storage.associatedDimensions(cubeName));
@@ -383,16 +391,16 @@ var Query = new Queries();
       let tmpl_ulList = document.getElementById('tmpl_ulList');
       let ulContent = tmpl_ulList.content.cloneNode(true);
       let ulField = ulContent.querySelector('ul[data-id="fields-column"]');
-      const parentElement = document.getElementById('sectionFields-column'); // elemento a cui aggiungere la ul
+      const parentElement = document.getElementById('fieldList-column'); // elemento a cui aggiungere la ul
 
-      let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
+      //let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
 
       ulField.setAttribute('data-table-id', index);
       
       for (let i in columns[table]) {
         let field = columns[table][i]; // nome del campo della tabella
         // inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
-        let content = tmplFieldList.content.cloneNode(true);
+        let content = app.tmplListField.content.cloneNode(true);
         let element = content.querySelector('.element');
         let li = element.querySelector('li');
         li.innerText = field;
@@ -452,6 +460,16 @@ var Query = new Queries();
     Query.filters = storage.filter.formula;
   };
 
+  // selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
+  app.handlerMetricSelected = function(e) {
+    const storage = new MetricStorage();
+    storage.metric = e.target.getAttribute('label');
+    // TODO: recupero dallo storage la metrica selezionata
+    console.log(storage.metric);
+    Query.metricName = storage.metric.name;
+    Query.metrics = storage.metric.formula;
+  };
+
   // selezione della metrica, apro la dialog per impostare la metrica
   app.handlerFieldSelectedMetric = function(e) {
     Query.field = e.target.getAttribute('label');
@@ -461,7 +479,7 @@ var Query = new Queries();
   // selezione della tabella nella sezione Column
   app.handlerTableSelected = function(e) {
     // visualizzo la ul nascosta della tabella selezionata, sezione columns
-    let fieldType = e.target.getAttribute('data-list-type')
+    let fieldType = e.target.getAttribute('data-list-type');
     let tableId = +e.target.getAttribute('data-table-id');
     document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
     // rimuovo eventuali altri ul aperti in precedenza
@@ -469,6 +487,19 @@ var Query = new Queries();
     
     e.target.toggleAttribute('selected');
     Query.table = e.target.getAttribute('label');
+    // in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
+    const storage = new MetricStorage()
+    const metrics = storage.list(Query.table);
+    const ul = document.getElementById('exists-metric');
+    for (let metric in metrics) {
+      let content = app.tmplListField.content.cloneNode(true);
+      let element = content.querySelector('.element');
+      let li = element.querySelector('li');
+      li.innerText = metric;
+      li.setAttribute('label', metric);
+      ul.appendChild(element);
+      li.onclick = app.handlerMetricSelected;
+    }
   };
 
   // selezione della colonna nella dialogFilter
@@ -616,8 +647,23 @@ var Query = new Queries();
     const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
     const distinctOption = document.getElementById('checkbox-distinct').checked;
     const alias = document.getElementById('alias-metric').value;
-    
-    Query.metrics = {SQLFunction, 'field': Query.field, name, 'distinct' : distinctOption, alias};
+    Query.metricName = name;
+    //console.log(Query.metricName);
+    //console.log(Query.table);
+
+    Query.metrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias};
+    // NOTE: object metric da salvare in storage
+    /* metric_name: {
+        'formula' : "id_Azienda = 43",
+        'table' : 'Azienda',
+        'TYPE' : 'FILTER'
+        'name' : nome del filtro
+    }
+    */
+    let metricObj = {'type': 'METRIC', name, 'formula' : {SQLFunction, 'table': Query.table, 'field': Query.field, 'distinct': distinctOption, alias}};
+    //console.log(metricObj);
+    const storage = new MetricStorage();
+    storage.save = metricObj;
 
     let table = document.getElementById('tablePreview');
     // aggiungo la colonna alla tabella
@@ -665,7 +711,7 @@ var Query = new Queries();
     
     console.log(formula);
     Query.filters = formula.trimEnd();
-    // TODO: Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
+    // Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
     // ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli riscrivere
     const storage = new FilterStorage();
     let = filterObj = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, 'formula': formula.trimEnd()};
@@ -685,6 +731,7 @@ var Query = new Queries();
     let element = document.createElement('div');
     li.innerText = filterName.value;
     li.setAttribute('label', filterName.value);
+    element.className = 'element';
     element.appendChild(li)
     ul.appendChild(element);
     // reset del form
@@ -1106,6 +1153,8 @@ var Query = new Queries();
     li.setAttribute('data-id', reportId);
     ulReportsProcess.appendChild(element);
     li.onclick = app.handlerReportToBeProcessed;
+    // abilito il tasto NEXT della pagina
+    app.btnNextPage.removeAttribute('disabled');
     app.dialogSaveReport.close();
   };
 

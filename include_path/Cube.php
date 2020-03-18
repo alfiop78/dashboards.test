@@ -74,19 +74,17 @@ class Cube {
     //var_dump($this->_reportFilters);
   }
 
-  public function n_metrics($metrics) {
+  public function metrics($metrics) {
     // metriche non filtrate
     $metricsList = array();
-    foreach ($metrics as $table => $metric) {
-      foreach ($metric as $param) {
-        $metricsList[] = $param->SQLFunction."(".$table.".".$param->field.") AS '".$param->alias."'";
-        // CHANGED: imposto un FORMAT per i numeri (16.01.2020)
-        // 17.01.2020 Formattazione impostat in JS
-        // $metricsList[] = "FORMAT({$param->sqlFunction}(`$table`.`$param->fieldName`), 2, 'de_DE') AS `$param->alias`";
-      }
+    //var_dump($metrics);
+    foreach ($metrics as $metric) {
+      // var_dump($metric);
+      //$metricsList[] = $metric->SQLFunction."(".$metric->table.".".$metric->field.") AS '".$metric->alias."'";
+      $metricsList[] = "{$metric->SQLFunction}({$metric->table}.{$metric->field}) AS `{$metric->alias}`";
     }
     $this->_metrics = implode(", ", $metricsList);
-    // var_dump($this->_metrics);
+    var_dump($this->_metrics);
   }
 
   public function n_groupBy($groups) {

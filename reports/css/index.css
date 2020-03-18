@@ -26,15 +26,21 @@ th i.material-icons{position: absolute;right: 8px;display: inline-table;}
 .absList > ul{height: 500px;overflow-y: auto;}
 i[open]{color: red;}
 
-.stepLayout{display: grid; grid-template-columns: 30% auto auto;}
+.stepLayout{display: grid;}
+.step:first-child .stepLayout{grid-template-columns: 30% 70%;}
+.step:nth-child(2) .stepLayout{grid-template-columns: 30% 70%;}
+.step:nth-child(3) .stepLayout{grid-template-columns: 30% 40% 30%;}
+.step:last-child .stepLayout{grid-template-columns: 30% 40% 30%;}
 
 .overflowList{max-height: 250px; overflow: auto;}
 #fieldList-filter{padding: 0 16px;}
-
+/* reportSection anteprima */
 #reportSection{display: flex;flex-flow: row;width: 100%; padding: 16px;}
-
-table thead{background: indianred;color: white;}
-table thead tr > th{border: solid thin;}
+#reportSection section[table] {margin: 8px auto;width: 100%;}
+#reportSection section[table] tr > th{border: solid thin lightgray;}
+#reportSection table caption{border-top-left-radius: 4px;border-top-right-radius: 4px;}
+#reportSection table thead{color: dimgrey;}
+/* reportSection anteprima */
 
 .formula{margin: 16px;}
 

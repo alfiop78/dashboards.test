@@ -523,3 +523,38 @@ class FilterStorage extends Storages {
     return this.id;
   }
 }
+
+class MetricStorage extends Storages {
+  constructor() {
+    super();
+    this.id = 0; // default
+  }
+
+  set metricId(value) {
+    this.id = value;
+  }
+
+  get metricId() { return this.id; }
+
+  set metric(value) {
+    this._metric = value;
+  }
+
+  get metric() {
+    return JSON.parse(this.storage.getItem(this._metric));
+  }
+
+  list(table) {
+    // ottengo la lista delle pagine create
+    this.metrics = {};
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(key);
+      if (jsonStorage.type === "METRIC" && jsonStorage.formula.table === table) {
+        this.metrics[key] = jsonStorage.formula;
+      }
+    });
+    return this.metrics;
+  }
+
+}
