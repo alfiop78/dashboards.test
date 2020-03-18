@@ -54,12 +54,13 @@ div.textarea > span.formulaLogicalOperator{background: brown; border-radius: 4px
 
 .list li:hover{background: var(--main-primary-color); border-radius: 4px; color: white;cursor: pointer;}
 
-/* steps */
-.steps:not([data-step="4"]) > .overflow > .buttons #stepDone{display: none;}
-.steps[data-step="4"] > .overflow > .buttons #stepDone{display: initial;}
-.steps:not([data-step="4"]) > .overflow > .buttons #saveAndProcess{display: none;}
-.steps[data-step="4"] > .overflow > .buttons #saveAndProcess{display: initial;}
-/* steps */
+/* btn */
+.steps .btn{display: flex; flex-direction: column;align-items: center;justify-content: center;}
+.steps:not([data-step="4"]) > .hr > .btn #stepDone{display: none;}
+.steps[data-step="4"] > .hr > .btn #stepDone{display: initial;}
+.steps:not([data-step="4"]) > .hr > .btn #saveAndProcess{display: none;}
+.steps[data-step="4"] > .hr > .btn #saveAndProcess{display: initial;}
+/* btn */
 
 /* element */
 .element > li + i{visibility: hidden;}

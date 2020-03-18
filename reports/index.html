@@ -390,124 +390,129 @@
                     </div>
                   </div>
 
-                  <div class="overflow">
+                  <div class="hr">
+                    <div class="btn"><button id="stepPrevious" class="md-button">previous</button></div>
 
-                    <div id="stepTranslate">
+                    <div class="overflow">
                       
-                      <section class="step" data-step="1" selected>
-                        <section class="pageContent">
-                          <h4>Cubo e Dimensioni</h4><h6>Seleziona il cubo e le dimensioni su cui creare il report</h6>
-                          <div id="layoutStep-1" class="stepLayout">
+                      <div id="stepTranslate">
+                        
+                        <section class="step" data-step="1" selected>
+                          <section class="pageContent">
+                            <h4>Cubo e Dimensioni</h4><h6>Seleziona il cubo e le dimensioni su cui creare il report</h6>
+                            <div id="layoutStep-1" class="stepLayout">
 
-                            <section class="sectionLists">
-                              <h5>Cubi</h5>
-                              <div id="cubeList">
-                                <ul id="cubes"></ul>
-                              </div>
-                            </section>
+                              <section class="sectionLists">
+                                <h5>Cubi</h5>
+                                <div id="cubeList">
+                                  <ul id="cubes"></ul>
+                                </div>
+                              </section>
 
-                            <section class="sectionLists">
-                              <h5>Dimensioni</h5>
-                              <div id="dimensionList">
-                                <ul id="dimensions"></ul>
-                              </div>
-                            </section>
-                          </div>
+                              <section class="sectionLists">
+                                <h5>Dimensioni</h5>
+                                <div id="dimensionList">
+                                  <ul id="dimensions"></ul>
+                                </div>
+                              </section>
+                            </div>
 
+                          </section>
                         </section>
-                      </section>
-                      
-                      <section class="step" data-step="2">
-                        <section class="pageContent">
-                          <h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
-                          <div id="layoutStep-2" class="stepLayout">
+                        
+                        <section class="step" data-step="2">
+                          <section class="pageContent">
+                            <h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
-                            <section class="sectionLists">
-                              <h5>Tabelle</h5>
-                              <div id="tableList-column">
-                                <ul id="tables-column" class="stdList"></ul>
-                              </div>
-                            </section>
+                            <div id="layoutStep-2" class="stepLayout">
 
-                            <section class="sectionLists" id="sectionFields-column">
-                              <h5>Colonne disponibili</h5>
-                              <div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
-                            </section>
-                            
-                          </div>
+                              <section class="sectionLists">
+                                <h5>Tabelle</h5>
+                                <div id="tableList-column">
+                                  <ul id="tables-column" class="stdList"></ul>
+                                </div>
+                              </section>
 
+                              <section class="sectionLists" id="sectionFields-column">
+                                <h5>Colonne disponibili</h5>
+                                <div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
+                              </section>
+                              
+                            </div>
+
+                          </section>
                         </section>
-                      </section>
 
-                      <section class="step" data-step="3">
-                        <section class="pageContent">
-                          <h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
+                        <section class="step" data-step="3">
+                          <section class="pageContent">
+                            <h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
-                          <div id="layoutStep-3" class="stepLayout"> 
+                            <div id="layoutStep-3" class="stepLayout"> 
 
-                            <section class="sectionLists">
-                              <h5>Tabelle</h5>
-                              <div id="tableList-filter">
-                                <ul id="tables-filter"></ul>
-                              </div>
-                            </section>
+                              <section class="sectionLists">
+                                <h5>Tabelle</h5>
+                                <div id="tableList-filter">
+                                  <ul id="tables-filter"></ul>
+                                </div>
+                              </section>
 
-                            <section class="sectionLists" id="sectionFields-filter">
-                              <h5>Filtri del Report</h5>
-                              <!-- <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList </div>-->
-                              <div id="filters">
-                                <ul id="createdFilters"></ul>
-                              </div>
-                            </section>
+                              <section class="sectionLists" id="sectionFields-filter">
+                                <h5>Filtri del Report</h5>
+                                <!-- <div id="fieldList-filter"><!-- qui viene inserito il template tmpl_ulList </div>-->
+                                <div id="filters">
+                                  <ul id="createdFilters"></ul>
+                                </div>
+                              </section>
 
-                            <section class="sectionLists" id="sectionFields-existsfilter">
-                              <h5>Filtri esistenti</h5>
-                              <div id="existsfilter">
-                                <ul id="exists-filter"></ul>
-                              </div>
-                            </section>
+                              <section class="sectionLists" id="sectionFields-existsfilter">
+                                <h5>Filtri esistenti</h5>
+                                <div id="existsfilter">
+                                  <ul id="exists-filter"></ul>
+                                </div>
+                              </section>
 
-                          </div>
+                            </div>
 
+                          </section>
                         </section>
-                      </section>
 
-                      <section class="step" data-step="4">
-                        <section class="pageContent">
-                          <h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
+                        <section class="step" data-step="4">
+                          <section class="pageContent">
+                            <h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
 
-                          <div id="layoutStep-4" class="stepLayout">
+                            <div id="layoutStep-4" class="stepLayout">
 
-                            <section class="sectionLists">
-                              <h5>Tabelle</h5>
-                              <div id="tableList-metric">
-                                <ul id="tables-metric"></ul>
-                              </div>
-                            </section>
+                              <section class="sectionLists">
+                                <h5>Tabelle</h5>
+                                <div id="tableList-metric">
+                                  <ul id="tables-metric"></ul>
+                                </div>
+                              </section>
 
-                            <section class="sectionLists" id="sectionFields-metric">
-                              <h5>Metriche impostate</h5>
-                              <div id="metrics">
-                                <!-- <ul id="createdMetrics"></ul> -->
-                              </div>
-                            </section>
+                              <section class="sectionLists" id="sectionFields-metric">
+                                <h5>Metriche impostate</h5>
+                                <div id="metrics">
+                                  <!-- <ul id="createdMetrics"></ul> -->
+                                </div>
+                              </section>
 
-                          </div>
+                            </div>
 
+                          </section>
                         </section>
-                      </section>
+
+                      </div>
 
                     </div>
 
-                    <div class="buttons">
-                      <button id="stepPrevious">previous</button>
-                      <button id="stepNext">next</button>
-                      <button id="stepDone">Salva</button>
-                      <button id="saveAndProcess">Salva ed elabora il report</button>
+                    <div class="btn">
+                      <button id="stepNext" class="md-button">Next</button>
+                      <button id="stepDone" class="md-button">Salva</button>
+                      <button id="saveAndProcess" class="md-button">Salva ed elabora il report</button>
                     </div>
-
                   </div>
+
 
                   <section id="reportSection">
                   

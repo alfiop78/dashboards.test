@@ -14,8 +14,9 @@ class Steps {
     this._stepActive = 1;
     // console.log(this._page);
     // console.log(this._page.offsetWidth);
-    this._pageWidth = this._page.offsetWidth + 32; // width della pagina da translare
-    // console.log(this._pageWidth);
+    this._pageWidth = this._page.offsetWidth; // width della pagina da translare
+    //this._pageWidth = this._page.offsetWidth + 32; // width della pagina da translare
+    console.log(this._pageWidth);
 
   }
 
