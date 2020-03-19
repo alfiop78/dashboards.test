@@ -26,62 +26,6 @@
   </head>
   <body>
 
-    <dialog id="dialogMetric" class="dialog-metrics">
-      <section>
-        <h4>Inserisci qui la funzione per la metrica <span id="fieldName" class="highlight"></span></h4>
-
-        <div class="name-alias">
-          <div class="md-field">
-            <input type="text" id="metric-name" value=""/>
-            <label for="metric-name" class="">Nome</label>
-          </div>
-
-          <div class="md-field">
-            <input type="text" id="alias-metric" value=""/>
-            <label for="alias-metrics" class="">Alias</label>
-          </div>
-        </div>
-
-        <div class="formulaDefine">
-
-          <section class="formula">
-            <h6>SQL Function</h6><small>Scorri la lista delle SQL function</small>
-            <div class="listContent">
-              <ul id="function-list" class="miniList">
-                <li id="0" selected>SUM</li>
-                <li id="1">COUNT</li>
-                <li id="2">AVG</li>
-                <li id="3">MAX</li>
-                <li id="4">MIN</li>
-              </ul>
-            </div>
-            <label class="mdc-checkbox">
-              <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
-              <span>DISTINCT</span>
-            </label>
-
-          </section>
-
-          <section class="filters">
-            <h6>Metrica filtrata</h6><small>Aggiungi filtro per questa metrica</small>
-          </section>
-
-        </div>
-
-        <div class="dialog-buttons">
-          <button type="button" name="cancel" class="md-button">annulla</button>
-          <button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>
-        </div>
-
-      </section>
-
-
-      <!-- <div> -->
-      <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
-        <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
-      </div> -->
-    </dialog>
-
     <dialog id="dialog-reportList">
       <div class="lists">
         <div class="list">
@@ -328,6 +272,80 @@
           <button id="btnFilterDone" type="button" name="done" class="md-button">fine</button>
         </div>
       </section>
+    </dialog>
+
+    <dialog id="dialogMetric" class="dialog-metrics">
+      <section>
+        <h4>Inserisci qui la funzione per la metrica <span id="fieldName" class="highlight"></span></h4>
+
+        <div class="name-alias">
+          <div class="md-field">
+            <input type="text" id="metric-name" value=""/>
+            <label for="metric-name" class="">Nome</label>
+          </div>
+
+          <div class="md-field">
+            <input type="text" id="alias-metric" value=""/>
+            <label for="alias-metrics" class="">Alias</label>
+          </div>
+        </div>
+
+        <div class="formulaDefine">
+
+          <section class="formula">
+            <h6>SQL Function</h6><small>Scorri la lista delle SQL function</small>
+            <div class="listContent">
+              <ul id="function-list" class="miniList">
+                <li id="0" selected>SUM</li>
+                <li id="1">COUNT</li>
+                <li id="2">AVG</li>
+                <li id="3">MAX</li>
+                <li id="4">MIN</li>
+              </ul>
+            </div>
+            <label class="mdc-checkbox">
+              <input id="checkbox-distinct" type="checkbox" name="distinct-checkbox"/>
+              <span>DISTINCT</span>
+            </label>
+
+          </section>
+
+          <section class="filters">
+            <h6>Filtri</h6><small>Filtri associati alla metrica</small>
+            <div class="md-field">
+              <input type="search" id="searchFilter-metric" value=""/>
+              <label for="searchFilter-metric" class="">Ricerca</label>
+            </div>
+            <div id="filter-metric">
+              <ul id="ul-filter-metric" class="overflowList"></ul>
+            </div>
+          </section>
+
+          <section class="filters">
+            <h6>Filtri disponibili</h6><small>Filtri disponibili da associare alla metrica</small>
+            <div class="md-field">
+              <input type="search" id="searchExistsFilter_Metric" value=""/>
+              <label for="searchExistsFilter_Metric" class="">Ricerca</label>
+            </div>
+            <div id="existsFilter_Metric">
+              <ul id="ul-existsFilter_Metric" class="overflowList"></ul>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="dialog-buttons">
+          <button type="button" name="cancel" class="md-button">annulla</button>
+          <button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>
+        </div>
+
+      </section>
+
+
+      <!-- <div> -->
+      <!-- TODO: si può aggiungere in futuro per filtri più complessi -->
+        <!-- <textarea id="sql-filter" name="sql" rows="5" cols="33" placeholder="Inserisci qui la condizione di filtro"></textarea>
+      </div> -->
     </dialog>
 
 

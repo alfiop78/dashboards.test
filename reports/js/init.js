@@ -26,7 +26,6 @@ var Query = new Queries();
     btnMetricDone : document.getElementById('btnMetricDone'), // tasto Salva nella dialogMetric
     btnSaveReport : document.getElementById('saveReport'),
     btnSaveReportDone: document.getElementById('btnReportSaveName'),
-
     // end dialog
 
     btnOpenCubes: document.getElementById('openCube'),
@@ -267,7 +266,7 @@ var Query = new Queries();
       // console.log(dimension);
       // console.log(dimensions);
       let li = document.createElement('li');
-      li.innerText = dimensions[dimension]['title'];
+      li.innerText = dimension;
       li.setAttribute('label', dimension);
       ul.appendChild(element);
       element.appendChild(li);
@@ -418,7 +417,6 @@ var Query = new Queries();
     // carico elenco field per la tabella selezionata
     Query.table = e.target.getAttribute('label');
     app.getFields();
-
     // apro la dialog filter
     app.dialogFilter.showModal();
     // event su <li> degli operatori
@@ -437,8 +435,8 @@ var Query = new Queries();
     ul.querySelectorAll('.element').forEach((el) => {el.remove();});
     
     for (let filter in filters) {
-      console.log(filter); // nome del filtro
-      console.log(filters[filter]); // formula
+      // console.log(filter); // nome del filtro
+      // console.log(filters[filter]); // formula
       let content = app.tmplListField.content.cloneNode(true);
       let element = content.querySelector('.element');
       let li = element.querySelector('li');
@@ -473,6 +471,38 @@ var Query = new Queries();
   // selezione della metrica, apro la dialog per impostare la metrica
   app.handlerFieldSelectedMetric = function(e) {
     Query.field = e.target.getAttribute('label');
+    // carico elenco filtri presenti su tutte le tabelle che fanno parte di tutte le dimensioni selezionate
+    // 1 - recupero le tabelle presenti nel terzo step ul #tables-filter
+    const storage = new FilterStorage();
+    let filters = [];
+    document.querySelectorAll('#tables-filter > .element >li').forEach((table) => {filters.push(storage.list(table.getAttribute('label')));});
+    // TODO: 2 - per ogni tabella recupero i filtri impostati dallo storage e li visualizzo in ul-existsFilter_Metric
+    const ul = document.getElementById('ul-existsFilter_Metric');
+    
+    //console.log(ulContent);
+    //let element = ulContent.querySelector('.element');
+    filters.forEach((object) => {
+      //console.log(object);
+      if (Object.keys(object).length > 0) {
+        let ulContent = app.tmplListField.content.cloneNode(true);
+        let element = ulContent.querySelector('.element');
+        console.log(element);
+        for (let filter in object) {
+          
+          
+          let li = element.querySelector('li');
+
+          console.log(filter); // il nome del filtro
+          li.innerText = filter;
+          li.setAttribute('label', filter);
+          //console.log(object[filter]); // la formula
+          ul.appendChild(element);
+        }
+      }
+      
+
+    });
+
     app.dialogMetric.showModal();
   };
 
@@ -649,7 +679,8 @@ var Query = new Queries();
     const alias = document.getElementById('alias-metric').value;
     Query.metricName = name;
     //console.log(Query.metricName);
-    //console.log(Query.table);
+    console.log(Query.table);
+    debugger;
 
     Query.metrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias};
     // NOTE: object metric da salvare in storage
@@ -710,22 +741,27 @@ var Query = new Queries();
     });
     
     console.log(formula);
+    console.log(Query.table);
+
     Query.filters = formula.trimEnd();
     // Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
-    // ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli riscrivere
+    // ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli ricreare
     const storage = new FilterStorage();
     let = filterObj = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, 'formula': formula.trimEnd()};
     storage.save = filterObj;
-    // NOTE: object filter salvato in storage
-    /* filter_name: {
-        'formula' : "id_Azienda = 43",
-        'table' : 'Azienda',
-        'TYPE' : 'FILTER'
-        'name' : nome del filtro
-    }
-    */
     
     // visualizzo il filtro appena creato nella section #sectionFields-filter
+    // TODO: e anche nella lista dei filtri esistenti all'interno della metrica, se si vuole utilizzarlo nella metrica 
+    const ulFilterMetric = document.getElementById('ul-existsFilter_Metric');
+    let ulContent = app.tmplListField.content.cloneNode(true);
+    let elementFilterMetric = ulContent.querySelector('.element');
+    let liFilterMetric = elementFilterMetric.querySelector('li');
+    liFilterMetric.setAttribute('label', filterName.value);
+    liFilterMetric.innerText = filterName.value;
+    elementFilterMetric.appendChild(liFilterMetric);
+    ulFilterMetric.appendChild(elementFilterMetric);
+
+
     let ul = document.getElementById('createdFilters');
     let li = document.createElement('li');
     let element = document.createElement('div');

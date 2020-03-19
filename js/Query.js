@@ -74,9 +74,16 @@ class Queries {
 	get factRelation() {this._factRelation;}
 
 	set filters(object) {
-		//this.obj = {};
 		this._filter[this._filterName] = object;
 		console.log(this._filter);
+		// NOTE: object filter salvato in storage
+		    /* filter_name: {
+		        'formula' : "id_Azienda = 43",
+		        'table' : 'Azienda',
+		        'TYPE' : 'FILTER'
+		        'name' : nome del filtro
+		    }
+		    */
 	}
 
 	get filters() {return this._filters};
@@ -105,22 +112,6 @@ class Queries {
 
 	get metricName() {return this._metricName;}
 
-	// set metrics(object) {
-	// 	// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
-	// 	this._obj = {};
-	// 	if (this._metrics.hasOwnProperty(this._table)) {
-	// 		// tabella già presente nell'object _select
-	// 		if (!this._metrics[this._table].hasOwnProperty(this._field)) {
-	// 			// field NON presente in _select[_table], lo aggiungo
-	// 			this._metrics[this._table][this._field] = object;
-	// 		}
-	// 	} else {
-	// 		this._obj[this._field] = object;
-	// 		this._metrics[this._table] = this._obj;
-	// 	}
-	// 	console.log(this._metrics);
-	// }
-
 	set metrics(object) {
 		console.log(object);
 		// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
@@ -129,6 +120,12 @@ class Queries {
 	}
 
 	get metrics() {return this._metrics;}
+
+	set filteredMetric(object) {
+		console.log(object);
+		this._filteredMetrics[this._metricName] = object;
+		console.log(this._filteredMetrics);
+	}
 
 	save(reportId, name) {
 		this._reportProcess = {};
