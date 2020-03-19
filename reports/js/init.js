@@ -476,8 +476,10 @@ var Query = new Queries();
     const storage = new FilterStorage();
     let filters = [];
     document.querySelectorAll('#tables-filter > .element >li').forEach((table) => {filters.push(storage.list(table.getAttribute('label')));});
-    // TODO: 2 - per ogni tabella recupero i filtri impostati dallo storage e li visualizzo in ul-existsFilter_Metric
+    // 2 - per ogni tabella recupero i filtri impostati dallo storage e li visualizzo in ul-existsFilter_Metric
     const ul = document.getElementById('ul-existsFilter_Metric');
+    // pulisco la lista dei filtri
+    ul.querySelectorAll('.element').forEach((el) => {el.remove();});
     
     //console.log(ulContent);
     //let element = ulContent.querySelector('.element');
@@ -488,15 +490,13 @@ var Query = new Queries();
         let element = ulContent.querySelector('.element');
         console.log(element);
         for (let filter in object) {
-          
-          
           let li = element.querySelector('li');
-
           console.log(filter); // il nome del filtro
           li.innerText = filter;
           li.setAttribute('label', filter);
           //console.log(object[filter]); // la formula
           ul.appendChild(element);
+          li.onclick = function(e) {e.target.toggleAttribute('selected');};
         }
       }
       
@@ -672,7 +672,6 @@ var Query = new Queries();
 
   // salvo la metrica impostata
   app.btnMetricDone.onclick = function(e) {
-    // TODO: il nome non può contenere spazi ed altri caratteri da definire
     const name = app.dialogMetric.querySelector('#metric-name').value;
     const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
     const distinctOption = document.getElementById('checkbox-distinct').checked;
@@ -680,24 +679,38 @@ var Query = new Queries();
     Query.metricName = name;
     //console.log(Query.metricName);
     console.log(Query.table);
-    debugger;
+    // verifico se ci sono filtri da associare a questa metrica
+    const ul = document.getElementById('ul-existsFilter_Metric');
+    let filtersAssociated = {};
+    const filterStorage = new FilterStorage()
+    ul.querySelectorAll('.element > li[selected]').forEach((filter) => {
+      // filtersAssociated.push(filter.getAttribute('label'));
+      // set il nome del filtro
+      filterStorage.filter = filter.getAttribute('label');
+      // recupero dallo storage il contenuto del filtro per inserirlo in un object (quest'ultimo verrà inserito nella metrica)
+      filtersAssociated[filter.getAttribute('label')] = filterStorage.filter;
+    });
 
-    Query.metrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias};
-    // NOTE: object metric da salvare in storage
-    /* metric_name: {
-        'formula' : "id_Azienda = 43",
-        'table' : 'Azienda',
-        'TYPE' : 'FILTER'
-        'name' : nome del filtro
+    let metricObj = {};
+    // se filtersAssociated > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
+    if (Object.keys(filtersAssociated).length > 0) {
+      // metrica filtrata
+      Query.filteredMetrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias, 'filters': filtersAssociated};
+      metricObj = {'type': 'METRIC', name, 'formula' : Query.filteredMetrics};
+    } else {
+      // metrica
+      Query.metrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias};
+      // all'interno di 'formula' devo vedere se ci posso mettere l'object appena salvato in Query.metrics
+      metricObj = {'type': 'METRIC', name, 'formula' : Query.metrics};
+      //console.log(metricObj);
     }
-    */
-    let metricObj = {'type': 'METRIC', name, 'formula' : {SQLFunction, 'table': Query.table, 'field': Query.field, 'distinct': distinctOption, alias}};
-    //console.log(metricObj);
+
     const storage = new MetricStorage();
+    // salvo la nuova metrica nello storage
     storage.save = metricObj;
 
+    // aggiungo la metrica appena creata nella preview della tabella
     let table = document.getElementById('tablePreview');
-    // aggiungo la colonna alla tabella
     const th = document.createElement('th');
     th.innerText = alias;
     table.tHead.rows[0].appendChild(th);

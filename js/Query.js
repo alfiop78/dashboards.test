@@ -117,14 +117,35 @@ class Queries {
 		// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
 		this._metrics[this._metricName] = object;
 		console.log(this._metrics);
+		// NOTE: object metric da salvare in storage
+		    /*matricName: 
+				type: "METRIC"
+				name: "n"
+				formula: {
+					SQLFunction: "SUM", table: "DocVenditaDettaglio", field: "NettoRiga", distinct: false, alias: "netto"
+					}
+		    */
 	}
 
 	get metrics() {return this._metrics;}
 
-	set filteredMetric(object) {
+	set filteredMetrics(object) {
 		console.log(object);
 		this._filteredMetrics[this._metricName] = object;
 		console.log(this._filteredMetrics);
+		/*matricName: 
+				type: "METRIC"
+				name: "n"
+				formula: {
+					SQLFunction: "SUM", table: "DocVenditaDettaglio", field: "NettoRiga", distinct: false, alias: "netto", 
+					filters: {
+						glm:
+							type: "FILTER"
+							name: "glm"
+							table: "Azienda"
+							formula: "Azienda.id = 43"}
+					}
+		    */
 	}
 
 	save(reportId, name) {

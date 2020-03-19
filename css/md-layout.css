@@ -108,8 +108,8 @@ ul > .element li{width: 100%;list-style-type: none;display: flex;align-items: ce
 /* lists */
 
 /* .sectionLists*/
-.sectionLists ul li:hover{background: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}
-.sectionLists ul li[selected]{background: var(--main-primary-color);color: white;border-radius: 4px;cursor: pointer;}
+ul li:hover{background: var(--main-secondary-color); border-radius: 4px;cursor: pointer;}
+ul li[selected]{background: var(--main-secondary-color); border-radius: 4px;cursor: pointer;}
 /* .sectionLists*/
 
 /* dialog */

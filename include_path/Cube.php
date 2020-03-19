@@ -84,7 +84,7 @@ class Cube {
       $metricsList[] = "{$metric->SQLFunction}({$metric->table}.{$metric->field}) AS `{$metric->alias}`";
     }
     $this->_metrics = implode(", ", $metricsList);
-    var_dump($this->_metrics);
+    //var_dump($this->_metrics);
   }
 
   public function n_groupBy($groups) {
@@ -117,25 +117,34 @@ class Cube {
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-    var_dump($sql);
+    //var_dump($sql);
     return $this->connect->multiInsert($sql);
   }
 
   public function createMetricDatamarts($filteredMetrics) {
     /* creo i datamart necessari per le metriche filtrate */
     $i = 1;
-    foreach ($filteredMetrics as $table => $metrics) {
-      echo $table;
-      return;
-      foreach ($metrics as $param) {
-        unset($this->_sql);
+    // var_dump($filteredMetrics);
+    foreach ($filteredMetrics as $metrics) {
+      //echo $metrics;
 
-        $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->alias`";
-        echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
-        // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-        $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
-        $i++;
-      }
+      unset($this->_sql);
+      $metric = "{$metrics->SQLFunction}({$metrics->table}.{$metrics->field}) AS `{$metrics->alias}`";
+      echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $metrics->filters);
+      // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
+      $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
+      $i++;
+
+      //return;
+      // foreach ($metrics as $param) {
+      //   unset($this->_sql);
+
+      //   $metric = "$param->sqlFunction(`$table`.`$param->fieldName`) AS `$param->alias`";
+      //   echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $param->filters);
+      //   // a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
+      //   $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $param->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
+      //   $i++;
+      // }
     }
   }
 
@@ -148,19 +157,16 @@ class Cube {
     $this->_sql .= $this->_and."\n";
     $this->_sql .= $this->_reportFilters."\n";
 
-    $and = " AND ";
-    $or = " OR ";
-
-    foreach ($filters as $table => $filter) {
-      $this->_metricFilters .= $and.$table.".".$filter->fieldName." ".$filter->operator." ".$filter->values;
+    foreach ($filters as $filter) {
+      $this->_metricFilters .= " AND {$filter->formula}";
     }
 
     $this->_sql .= $this->_metricFilters."\n";
     if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
     $sql = "CREATE TEMPORARY TABLE decisyon_cache.".$tableName." AS ".$this->_sql.";";
-    return $sql;
-    // return $this->connect->multiInsert($sql);
+    //return $sql;
+    return $this->connect->multiInsert($sql);
   }
 
   public function createDatamart() {
@@ -209,7 +215,7 @@ class Cube {
       $sql = "CREATE TABLE $datamartName AS (SELECT * FROM `decisyon_cache`.`$baseTableName`);";
     }
     // return $sql;
-    // var_dump($sql);
+    var_dump($sql);
     return $this->connect->multiInsert($sql);
   }
 

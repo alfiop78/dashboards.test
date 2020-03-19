@@ -24,7 +24,6 @@ $q->n_groupBy($cube->{'groupBy'});
 $baseTable = $q->baseTable();
 var_dump($baseTable);
 
-
 if ($baseTable > 0) {
 
   $metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
