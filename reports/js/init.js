@@ -677,8 +677,8 @@ var Query = new Queries();
     const distinctOption = document.getElementById('checkbox-distinct').checked;
     const alias = document.getElementById('alias-metric').value;
     Query.metricName = name;
-    //console.log(Query.metricName);
-    console.log(Query.table);
+    console.log(Query.metricName);
+    //console.log(Query.table);
     // verifico se ci sono filtri da associare a questa metrica
     const ul = document.getElementById('ul-existsFilter_Metric');
     let filtersAssociated = {};
@@ -695,7 +695,10 @@ var Query = new Queries();
     // se filtersAssociated > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
     if (Object.keys(filtersAssociated).length > 0) {
       // metrica filtrata
+      console.log('metrica filtrata');
       Query.filteredMetrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias, 'filters': filtersAssociated};
+      debugger;
+      console.log(Query.filteredMetrics);
       metricObj = {'type': 'METRIC', name, 'formula' : Query.filteredMetrics};
     } else {
       // metrica
@@ -707,6 +710,8 @@ var Query = new Queries();
 
     const storage = new MetricStorage();
     // salvo la nuova metrica nello storage
+    console.log(metricObj)
+    debugger;
     storage.save = metricObj;
 
     // aggiungo la metrica appena creata nella preview della tabella

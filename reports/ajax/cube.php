@@ -22,7 +22,6 @@ $q->joinFact($cube->{'factJoin'});
 $q->filters($cube->{'filters'});
 $q->n_groupBy($cube->{'groupBy'});
 $baseTable = $q->baseTable();
-var_dump($baseTable);
 
 if ($baseTable > 0) {
 

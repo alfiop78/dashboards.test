@@ -148,6 +148,8 @@ class Queries {
 		    */
 	}
 
+	get filteredMetrics() {return this._filteredMetrics;}
+
 	save(reportId, name) {
 		this._reportProcess = {};
 		this._reportProcess['select'] = this._select;
