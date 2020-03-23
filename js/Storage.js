@@ -472,7 +472,7 @@ class FilterStorage extends Storages {
   }
 
   list(table) {
-    // ottengo la lista delle pagine create
+    // ottengo la lista dei filtri create
     this.filters = {};
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));

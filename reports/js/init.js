@@ -476,6 +476,7 @@ var Query = new Queries();
     const storage = new FilterStorage();
     let filters = [];
     document.querySelectorAll('#tables-filter > .element >li').forEach((table) => {filters.push(storage.list(table.getAttribute('label')));});
+    console.log(filters);
     // 2 - per ogni tabella recupero i filtri impostati dallo storage e li visualizzo in ul-existsFilter_Metric
     const ul = document.getElementById('ul-existsFilter_Metric');
     // pulisco la lista dei filtri
@@ -486,10 +487,10 @@ var Query = new Queries();
     filters.forEach((object) => {
       //console.log(object);
       if (Object.keys(object).length > 0) {
-        let ulContent = app.tmplListField.content.cloneNode(true);
-        let element = ulContent.querySelector('.element');
-        console.log(element);
+        
         for (let filter in object) {
+          let ulContent = app.tmplListField.content.cloneNode(true);
+          let element = ulContent.querySelector('.element');
           let li = element.querySelector('li');
           console.log(filter); // il nome del filtro
           li.innerText = filter;
@@ -697,7 +698,7 @@ var Query = new Queries();
       // metrica filtrata
       console.log('metrica filtrata');
       Query.filteredMetrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias, 'filters': filtersAssociated};
-      debugger;
+      
       console.log(Query.filteredMetrics);
       metricObj = {'type': 'METRIC', name, 'formula' : Query.filteredMetrics};
     } else {
@@ -711,7 +712,7 @@ var Query = new Queries();
     const storage = new MetricStorage();
     // salvo la nuova metrica nello storage
     console.log(metricObj)
-    debugger;
+    
     storage.save = metricObj;
 
     // aggiungo la metrica appena creata nella preview della tabella
