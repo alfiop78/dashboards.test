@@ -412,7 +412,7 @@ var Query = new Queries();
     });
   };
 
-  // selezione della tabella nella sezione Filtri (step 3)
+  // tasto add nella sezione Filtri (step 3)
   app.handlerAddFilter = function(e) {
     // carico elenco field per la tabella selezionata
     Query.table = e.target.getAttribute('label');
@@ -458,14 +458,21 @@ var Query = new Queries();
     Query.filters = storage.filter.formula;
   };
 
-  // selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
+  // selezione di una metrica già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
   app.handlerMetricSelected = function(e) {
     const storage = new MetricStorage();
     storage.metric = e.target.getAttribute('label');
     // TODO: recupero dallo storage la metrica selezionata
     console.log(storage.metric);
+    console.log(storage.metric.name);
+    console.log(storage.metric.formula);
     Query.metricName = storage.metric.name;
-    Query.metrics = storage.metric.formula;
+    // TODO: se la metrica contiene un filtro bisogna aggiungerla a Query.filteredMetrics e non a Query.metrics
+    if (storage.metric.formula[storage.metric.name].hasOwnProperty('filters')) {
+      Query.filteredMetrics = storage.metric.formula[storage.metric.name];
+    } else {
+      Query.metrics = storage.metric.formula[storage.metric.name];
+    }
   };
 
   // selezione della metrica, apro la dialog per impostare la metrica
@@ -507,7 +514,7 @@ var Query = new Queries();
     app.dialogMetric.showModal();
   };
 
-  // selezione della tabella nella sezione Column
+  // selezione della tabella nella sezione Column o metric
   app.handlerTableSelected = function(e) {
     // visualizzo la ul nascosta della tabella selezionata, sezione columns
     let fieldType = e.target.getAttribute('data-list-type');
@@ -521,6 +528,8 @@ var Query = new Queries();
     // in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
     const storage = new MetricStorage()
     const metrics = storage.list(Query.table);
+    console.log(metrics);
+   
     const ul = document.getElementById('exists-metric');
     for (let metric in metrics) {
       let content = app.tmplListField.content.cloneNode(true);

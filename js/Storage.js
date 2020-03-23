@@ -550,10 +550,20 @@ class MetricStorage extends Storages {
     this.storageKeys.forEach((key) => {
       let jsonStorage = JSON.parse(this.storage.getItem(key));
       // console.log(key);
-      if (jsonStorage.type === "METRIC" && jsonStorage.formula.table === table) {
-        this.metrics[key] = jsonStorage.formula;
+      
+      // if (jsonStorage.type === "METRIC" && jsonStorage.formula.table === table) {
+        
+      //   this.metrics[key] = jsonStorage.formula;
+      // }
+
+      if (jsonStorage.type === "METRIC") {
+        console.log(jsonStorage.formula[key].table);
+        if (jsonStorage.formula[key].table === table) {
+          this.metrics[key] = jsonStorage.formula[key];
+        }
       }
     });
+    debugger;
     return this.metrics;
   }
 

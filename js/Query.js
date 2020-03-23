@@ -113,7 +113,7 @@ class Queries {
 	get metricName() {return this._metricName;}
 
 	set metrics(object) {
-		console.log(object);
+		debugger;
 		// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
 		this._metrics[this._metricName] = object;
 		console.log(this._metrics);
