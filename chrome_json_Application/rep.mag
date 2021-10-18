@@ -1,0 +1,1 @@
+{"type":"FILTER","name":"rep.mag","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"MAG\""}

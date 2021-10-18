@@ -1,0 +1,1 @@
+{"type":"METRIC","name":"q","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"},"q":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"q","distinct":false,"alias":"q"}}}

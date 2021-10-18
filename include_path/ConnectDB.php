@@ -14,9 +14,13 @@ class ConnectDB {
       // $this->_document_root = $_SERVER['DOCUMENT_ROOT'];
       $this->_schema = $schema;
 
-			$this->_u='apietrantuono';
-			$this->_host="192.168.2.3";
-			$this->_p="4lfi0";
+			// $this->_u='apietrantuono';
+			// $this->_host="192.168.2.3";
+			// $this->_p="4lfi0";
+
+      $this->_u='decisyon_v6';
+      $this->_host="192.168.2.7";
+      $this->_p="decisyon_v6";
 
 	}
 

@@ -1,0 +1,1 @@
+{"type":"METRIC","name":"qtaOff","formula":{"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}}}
