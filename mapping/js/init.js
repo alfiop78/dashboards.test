@@ -83,11 +83,11 @@ var dimension = new Dimension();
 		// console.log(e.target);
 		// console.log(e);
 		if (app.active) {
-	  		e.preventDefault();
+			e.preventDefault();
 
-		  	if (e.type === 'touchmove') {
-		  		app.currentX = e.touches[0].clientX - app.initialX;
-		  		app.currentY = e.touches[0].clientY - app.initialY;
+			if (e.type === 'touchmove') {
+				app.currentX = e.touches[0].clientX - app.initialX;
+				app.currentY = e.touches[0].clientY - app.initialY;
 			} else {
 				app.currentX = e.clientX - app.initialX;
 				app.currentY = e.clientY - app.initialY;
@@ -108,7 +108,7 @@ var dimension = new Dimension();
 	app.body.onmouseup = app.dragEnd;
 	app.body.onmousemove = app.drag;
 
-  	// TODO: aggiungere anhce eventi touch...
+	// TODO: aggiungere anhce eventi touch...
 
 	app.handlerDragStart = function(e) {
 		// console.log('start');
@@ -136,7 +136,7 @@ var dimension = new Dimension();
 		  console.info('DROPZONE');
 		  // TODO: css effect
 		}
-  	};
+	};
 
 	app.handlerDragLeave = function(e) {
 		e.preventDefault();
@@ -310,7 +310,7 @@ var dimension = new Dimension();
 		switch (attrs) {
 			case 'relations':
 				if (e.target.hasAttribute('data-relation-id')) {
-				  	// debugger;
+					// debugger;
 					/* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
 					relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
 					Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
@@ -354,6 +354,7 @@ var dimension = new Dimension();
 				}
 				break;
 			default:
+				debugger;
 				// se la card è stata imposta con l'attributo mode ...
 				if (cube.card.ref.hasAttribute('mode')) {
 					console.log('columns');
@@ -412,8 +413,8 @@ var dimension = new Dimension();
 		let hier = [];
 		let colSelected = [];
 		document.querySelectorAll('.cardTable[mode="relations"]').forEach((card) => {
-	  		let tableName = card.getAttribute('name');
-	  		let liRef = card.querySelector('li[relations][selected]');
+			let tableName = card.getAttribute('name');
+			let liRef = card.querySelector('li[relations][selected]');
 			if (liRef) {
 				// metto in un array gli elementi selezionati per la creazione della gerarchia
 				colSelected.push(liRef);
@@ -421,15 +422,15 @@ var dimension = new Dimension();
 			}
 			console.log(hier);
 			// per creare correttamente la relazione è necessario avere due elementi selezionati
-	  		if (hier.length === 2) {
+			if (hier.length === 2) {
 				// se, in questa relazione è presente anche la tabella FACT rinomino hier_n in fact_n in modo da poter separare le gerarchie
 				// e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
 				if (card.hasAttribute('fact')) {
-		  			console.log('FACT TABLE Relation');
-		  			cube.relationId++;
-		  			cube.relations['cubeJoin_'+cube.relationId] = hier;
-		  			console.log(cube.relations);
-		  			cube.saveRelation = colSelected;
+					console.log('FACT TABLE Relation');
+					cube.relationId++;
+					cube.relations['cubeJoin_'+cube.relationId] = hier;
+					console.log(cube.relations);
+					cube.saveRelation = colSelected;
 					// colSelected.forEach((el) => {
 					//   el.setAttribute('data-rel-'+cube.relationId, cube.relationId);
 					//   // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
@@ -579,9 +580,9 @@ var dimension = new Dimension();
 					var response = JSON.parse(request.response);
 					console.table(response);
 				} else {
-			  		// TODO:
+					// TODO:
 				}
-		  	} else {
+			} else {
 				// TODO:
 			}
 		};
@@ -636,10 +637,10 @@ var dimension = new Dimension();
 		request.onreadystatechange = function() {
 			if (request.readyState === XMLHttpRequest.DONE) {
 				if (request.status === 200) {
-			  		var response = JSON.parse(request.response);
-			  		// console.table(response);
-			  		let ul = document.getElementById('tables');
-			  		for (let i in response) {
+					var response = JSON.parse(request.response);
+					// console.table(response);
+					let ul = document.getElementById('tables');
+					for (let i in response) {
 						let tmpl = document.getElementById('el');
 						let tmplContent = tmpl.content.cloneNode(true);
 						let element = tmplContent.querySelector('.element.card');
@@ -735,14 +736,14 @@ var dimension = new Dimension();
 		const storage = new DimensionStorage();
 		let from = [];
 		document.querySelectorAll('.cardTable').forEach((card) => {
-		  	if (card.getAttribute('name')) {from.push(card.getAttribute('name'));}
+			if (card.getAttribute('name')) {from.push(card.getAttribute('name'));}
 		});
 		dimension.from = from;
 
 		// ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
 		let hierarchyOrder = {};
 		Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
-		  	hierarchyOrder[i] = table.getAttribute('label');
+			hierarchyOrder[i] = table.getAttribute('label');
 		});
 		dimension.hierarchyOrder = hierarchyOrder;
 	
@@ -909,5 +910,34 @@ var dimension = new Dimension();
 	app.getDimensions();
 
 	app.getCubes();
+
+	// inserisco lo storage che era presente sul pc desktop
+	let storage = new CubeStorage();
+	/*storage.save = {
+		"type":"DIMENSION",
+		"columns":{
+			"ZonaVenditaCM":["Codice","Descrizione"],
+			"Azienda":["descrizione"],
+			"CodSedeDealer":["Descrizione"]
+		},
+		"name":"dim-kpi dealers",
+		"from":["ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],
+		"join":{
+			"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],
+			"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],
+			"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]
+		},
+		"hierarchies":{"0":"ZonaVenditaCM","1":"Azienda","2":"CodSedeDealer","3":"DocVenditaIntestazione"}
+	};*/
+
+	// storage.save = {"type":"FILTER","name":"glm","table":"Azienda","formula":"Azienda.id = 43"};
+	// storage.save = {"type":"METRIC","name":"q","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"},"q":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"q","distinct":false,"alias":"q"}}};
+	// storage.save = {"type":"METRIC","name":"qtaOff","formula":{"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}}};
+
+	// storage.save = {"id":0,"type":"REPORT","name":"rep-0","options":{"inputSearch":true,"positioning":[{"select":"DEALER"},{"select":"SEDE"},{},{},{},{},{},{},{},{},{},{},{},{},{}]},"process":{"select":{"Azienda":{"descrizione":{"SQLFormat":null,"alias":"DEALER"}},"CodSedeDealer":{"Descrizione":{"SQLFormat":null,"alias":"SEDE"}}},"from":["DocVenditaDettaglio","ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],"where":{"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]},"factJoin":{"cubeJoin_1":["DocVenditaDettaglio.NumRifInt","DocVenditaIntestazione.NumRifInt"],"cubeJoin_2":["DocVenditaDettaglio.id_Azienda","DocVenditaIntestazione.id_Azienda"]},"filters":{"glm":"Azienda.id = 43"},"groupBy":{"Azienda":{"descrizione":{"SQLFormat":null}},"CodSedeDealer":{"Descrizione":{"SQLFormat":null}}},"metrics":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"}},"filteredMetrics":{"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}},"processId":0,"name":"rep-0","type":"PROCESS"}};
+	// storage.save = {"type":"FILTER","name":"rep.mag","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"MAG\""};
+	// storage.save = {"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""};
+	// storage.save = {"type":"METRIC","name":"venduto","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"}}};
+	// storage.save = {"select":{"Azienda":{"descrizione":{"SQLFormat":null,"alias":"a"}}},"from":["DocVenditaDettaglio","ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],"where":{"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]},"factJoin":{"cubeJoin_1":["DocVenditaDettaglio.NumRifInt","DocVenditaIntestazione.NumRifInt"],"cubeJoin_2":["DocVenditaDettaglio.id_Azienda","DocVenditaIntestazione.id_Azienda"]},"filters":{"glm":"Azienda.id = 43"},"groupBy":{"Azienda":{"descrizione":{"SQLFormat":null}}},"metrics":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"},"q":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"q","distinct":false,"alias":"q"},"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}},"filteredMetrics":{},"processId":1,"name":"x","type":"PROCESS"};
 
 })();

@@ -1,0 +1,7 @@
+1 - aggiungere le tabelle su cui creare i livelli dimensionali
+2 - salva gerarchia
+3 - salva dimensione
+4 - Nell'elenco "Lista Dimensioni" selezionare la dimensione da legare al cubo, verrà mostrata solo l'ultima tabella della gerarchia
+5 - "Imposta cubo", selezionare la tabella FACT
+6 - Legare l'ultima tabella della gerarchia, aperta precedentemente, al cubo
+7 - Impostare le metriche

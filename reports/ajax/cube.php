@@ -25,13 +25,13 @@ $baseTable = $q->baseTable();
 
 if ($baseTable > 0) {
 
-  $metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
-  var_dump($metricTable);
+	$metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
+	var_dump($metricTable);
 
-  echo 'elaborazione createDatamart';
+	echo 'elaborazione createDatamart';
 
-  $result = $q->createDatamart();
-  var_dump($result);
+	$result = $q->createDatamart();
+	var_dump($result);
 }
 // return;
 ob_clean();
