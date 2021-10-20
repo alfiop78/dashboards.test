@@ -411,6 +411,7 @@ var dimension = new Dimension();
 	app.createHierarchy = function(e) {
 		console.log('create Relations');
 		let hier = [];
+		// let hierObj = {};
 		let colSelected = [];
 		document.querySelectorAll('.cardTable[mode="relations"]').forEach((card) => {
 			let tableName = card.getAttribute('name');
@@ -418,7 +419,7 @@ var dimension = new Dimension();
 			if (liRef) {
 				// metto in un array gli elementi selezionati per la creazione della gerarchia
 				colSelected.push(liRef);
-				hier.push(tableName+'.'+liRef.innerText);
+				hier.push(tableName+'.'+liRef.innerText); // questa istruzione crea "Azienda.id"
 			}
 			console.log(hier);
 			// per creare correttamente la relazione è necessario avere due elementi selezionati
@@ -427,30 +428,17 @@ var dimension = new Dimension();
 				// e capire quali sono quelle con la fact (quindi legate al Cubo) e quali no (posso salvare la Dimensione, senza il legame con il Cubo)
 				if (card.hasAttribute('fact')) {
 					console.log('FACT TABLE Relation');
-					cube.relationId++;
 					cube.relations['cubeJoin_'+cube.relationId] = hier;
+					cube.relationId++;
 					console.log(cube.relations);
 					cube.saveRelation = colSelected;
-					// colSelected.forEach((el) => {
-					//   el.setAttribute('data-rel-'+cube.relationId, cube.relationId);
-					//   // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
-					//   el.setAttribute('data-relation-id', true);
-					//   // la relazione è stata creata, posso eliminare [selected]
-					//   el.removeAttribute('selected');
-					// });
 				} else {
-					dimension.relationId++;
 					dimension.hierarchies = hier;
+					dimension.relationId++;
 					//debugger;
 					// visualizzo l'icona per capire che c'è una relazione tra le due colonne
+					debugger;
 					dimension.saveRelation = colSelected;
-					// colSelected.forEach((el) => {
-					//   el.setAttribute('data-rel-'+dimension.relationId, dimension.relationId);
-					//   // el.setAttribute('data-relation-id', 'rel_'+this.relationId);
-					//   el.setAttribute('data-relation-id', true);
-					//   // la relazione è stata creata, posso eliminare [selected]
-					//   el.removeAttribute('selected');
-					// });
 					console.log(dimension.hierarchies);
 					// esiste una relazione, visualizzo il div hierarchiesContainer
 					app.hierarchyContainer.removeAttribute('hidden');
