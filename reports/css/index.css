@@ -36,9 +36,9 @@ i[open]{color: red;}
 .step:nth-child(3) .stepLayout{grid-template-columns: 30% 40% 30%;}
 .step:last-child .stepLayout{grid-template-columns: 30% 40% 30%;}
 
-.stepLayout .sectionLists{background: gainsboro;}
+.stepLayout .sectionLists{margin: .5em;}
 
-.overflowList{max-height: 250px; overflow: auto;}
+.overflowList{max-height: 150px; min-height: 150px; overflow-y: auto; background: gainsboro;}
 #fieldList-filter{padding: 0 16px;}
 /* reportSection anteprima */
 #reportSection{display: flex;flex-flow: row;width: 100%; padding: 16px;}

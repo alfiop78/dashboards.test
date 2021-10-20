@@ -70,65 +70,6 @@ var Query = new Queries();
 	var Step = new Steps('stepTranslate');
 	// TODO: penso si possano spostare anche le altre Classi qui
 
-	app.getReports = function() {
-		// recupero la lista dei report già presenti
-		const reports = new ReportStorage();
-		// console.log(reports.list());
-		let reportsObj = reports.list();
-		console.log('Lista reports : ', reportsObj);
-		const ul = document.getElementById('reports');
-		// TODO: recuperare element dal template che già contiene la class li.elementSearch
-		for (let i in reportsObj) {
-			// console.log(reportsObj[i]);
-			let element = document.createElement('div');
-			element.className = 'element';
-			element.setAttribute('label', reportsObj[i]['name']);
-
-			let li = document.createElement('li');
-			li.innerText = reportsObj[i]['name'];
-			li.setAttribute('data-report-id', reportsObj[i]['reportId']);
-			li.setAttribute('label', reportsObj[i]['name']);
-			element.appendChild(li);
-			ul.appendChild(element);
-			li.onclick = app.handlerReportSelected;
-		}
-	};
-
-	// selezione del report con datamart già presente
-	// recupero un datamart FX... già creato e visualizzo l'anteprima
-  	app.handlerReportSelected = function(e) {
-		const report = new ReportStorage();
-		const JSONReportData = report.getJSON(e.target.getAttribute('label'));
-		// console.log(JSONReportData);
-
-		var url = 'ajax/reports.php';
-		let params = 'datamartId=' + JSONReportData.id;
-
-		// console.log(params);
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-				  var response = JSON.parse(request.response);
-				  console.table(response);
-				  app.openReport(response, JSONReportData);
-				  // app.createReport(response, dataJSON);
-				  // TODO: va impostato l'attribute mode='report' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
-				  app.btnSaveReport.setAttribute('mode', 'report');
-				} else {
-				  // TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
-	};
-
 	// 2021-10-19 click sul report da processare/elaborare. tasto "Process Report"
 	app.handlerReportToBeProcessed = async (e) => {
 	    const label = e.target.getAttribute('label');
@@ -153,11 +94,10 @@ var Query = new Queries();
 		.then( (data) => {
 	        // console.log(data);
 	        if (data) {
+	        	console.info('FX creata con successo !');
 	        	// NOTE: qui ho creato la FX, a questo punto potrei scegliere di visualizzare il report, per il momento mi serve solo la FX.
 	        	// per come ho gestito la creazione del report è troppo complesso, qui potrei, una volta ottenuto il risultato dalla FX, popolarla con GoogleChart DataTable, da valutare in futuro se serve.
-				// app.getDatamart(reportId, jsonDataParsed);
-				// TODO: va impostato l'attribute mode='process' sul tasto saveReport, questo tasto avrà un comportamento condizionato dall'attribute mode
-				app.btnSaveReport.setAttribute('mode', 'process');
+				// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
 	        } else {
 	          // TODO: no data
 	        }
@@ -656,12 +596,6 @@ var Query = new Queries();
 		obj = {'SQLFormat': null};
 		Query.groupBy = obj;
 
-		let table = document.getElementById('tablePreview');
-		// aggiungo la colonna alla tabella
-		const th = document.createElement('th');
-		th.innerText = Query.getAliasColumn();
-		table.tHead.rows[0].appendChild(th);
-
 		app.dialogColumn.close();
 	};
 
@@ -1070,7 +1004,7 @@ var Query = new Queries();
 	};
 
 	// salvo il report da processare
-	/*app.btnSaveReportDone.onclick = function(e) {
+	app.btnSaveReportDone.onclick = function(e) {
 		console.log(Query);
 		// salvo temporaneamente la query da processare nello storage
 
@@ -1091,10 +1025,8 @@ var Query = new Queries();
 		li.setAttribute('data-id', reportId);
 		ulReportsProcess.appendChild(element);
 		li.onclick = app.handlerReportToBeProcessed;
-		// abilito il tasto NEXT della pagina
-		app.btnNextPage.removeAttribute('disabled');
 		app.dialogSaveReport.close();
-	};*/
+	};
 
 	// visualizzo la lista dei report da processare
 	app.btnProcessReport.onclick = function(e) {

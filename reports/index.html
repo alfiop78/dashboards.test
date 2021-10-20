@@ -37,7 +37,22 @@
 				<button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
 			</div>
 		</dialog>
-	
+
+		<dialog id="dialogSaveReport">
+			<div class="dialog-save-name">
+
+				<div class="md-field">
+					<input type="text" id="reportName" value=""/>
+					<label for="reportName" class="">Titolo Report</label>
+				</div>
+			</div>
+
+			<div class="dialog-buttons">
+				<button type="button" name="cancel" class="md-button">annulla</button>
+				<button id="btnReportSaveName" type="button" name="done" class="md-button">Salva</button>
+			</div>
+
+		</dialog>
 
 		<dialog id="dialogFilter" class="dialog-filters">
 			<section>
@@ -406,8 +421,7 @@
 
 										<div class="btn">
 											<button id="stepNext" class="md-button">Next</button>
-											<button id="stepDone" class="md-button">Salva</button>
-											<button id="saveAndProcess" class="md-button">Salva ed elabora il report</button>
+											<button id="stepDone" class="md-button">Salva/Crea FX</button>
 										</div>
 									</div>
 								</div>
