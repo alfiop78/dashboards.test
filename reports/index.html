@@ -238,194 +238,199 @@
 			<div id="container" data-page="1">
 				<div id="content">
 					<div id="body" hidden>
-						<div id="pages" data-step="1">
-							<section class="page" selected data-step="1">
-								<h3>title</h3>
-								<h5>descrizione</h5>
+						<h3>title</h3>
+						<h5>descrizione</h5>
 
-								<div class="actions">
-									<!-- <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span> -->
-									<span class="popupContent"><i id="btnProcessReport" class="material-icons md-24">folder_open</i><small class="popup">Process Report</small></span>
+						<div class="actions">
+							<!-- <span class="popupContent"><i id="openReport" class="material-icons md-24">folder_open</i><small class="popup">Apri</small></span> -->
+							<span class="popupContent"><i id="btnProcessReport" class="material-icons md-24">folder_open</i><small class="popup">Crea FX</small></span>
+						</div>
+						<div class="lists">
+							<div class="absList" id="reportProcessList" hidden>
+								<div class="md-field">
+									<input type="search" id="searchReportProcess" value=""/>
+									<label for="searchReportProcess" class="">Ricerca</label>
 								</div>
-			  
-								<template id="templateListField">
-									<div class="element" name="">
-										<li class="elementSearch" label=""></li>
+								<ul id="reportsProcess"></ul>
+							</div>
+						</div>
+	  
+						<template id="templateListField">
+							<div class="element" name="">
+								<li class="elementSearch" label=""></li>
+							</div>
+						</template>
+
+						<template id="tmpl_ulList">
+							<ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
+							<ul data-id="fields-column" class="overflowList" hidden="true"></ul>
+							<ul data-id="fields-metric" class="overflowList" hidden="true"></ul>
+						</template>
+
+						<div id="step" class="steps" data-step="1">
+
+							<!-- <div class="lists">
+								<div class="absList" id="reportProcessList" hidden>
+									<div class="md-field">
+										<input type="search" id="searchReportProcess" value=""/>
+										<label for="searchReportProcess" class="">Ricerca</label>
 									</div>
-								</template>
+									<ul id="reportsProcess"></ul>
+								</div>
+							</div> -->
 
-								<template id="tmpl_ulList">
-									<ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
-									<ul data-id="fields-column" class="overflowList" hidden="true"></ul>
-									<ul data-id="fields-metric" class="overflowList" hidden="true"></ul>
-								</template>
+							<div class="hr">
+								<div class="btn"><button id="stepPrevious" class="md-button">previous</button></div>
 
-								<div id="step" class="steps" data-step="1">
+								<div class="overflow">
+									<div id="stepTranslate">
+										<section class="step" data-step="1" selected>
+											<section class="pageContent">
+												<h4>Cubo e Dimensioni</h4><h6>Seleziona il cubo e le dimensioni su cui creare il report</h6>
+												<div class="stepLayout">
 
-									<div class="lists">
-										<div class="absList" id="reportProcessList" hidden>
-											<div class="md-field">
-												<input type="search" id="searchReportProcess" value=""/>
-												<label for="searchReportProcess" class="">Ricerca</label>
-											</div>
-											<ul id="reportsProcess"></ul>
-										</div>
-									</div>
-
-									<div class="hr">
-										<div class="btn"><button id="stepPrevious" class="md-button">previous</button></div>
-
-										<div class="overflow">
-											<div id="stepTranslate">
-												<section class="step" data-step="1" selected>
-													<section class="pageContent">
-														<h4>Cubo e Dimensioni</h4><h6>Seleziona il cubo e le dimensioni su cui creare il report</h6>
-														<div class="stepLayout">
-
-															<section class="sectionLists">
-																<h5>Cubi</h5>
-																<div class="md-field">
-																	<input type="search" id="searchCube" value=""/>
-																	<label for="searchCube" class="">Ricerca</label>
-																</div>
-																<div id="cubeList">
-																	<ul id="cubes" class="overflowList"></ul>
-																</div>
-															</section>
-
-															<section class="sectionLists">
-																<h5>Dimensioni</h5>
-																<div class="md-field">
-																	<input type="search" id="searchDimension" value=""/>
-																	<label for="searchDimension" class="">Ricerca</label>
-																</div>
-																<div id="dimensionList">
-																	<ul id="dimensions" class="overflowList"></ul>
-																</div>
-															</section>
+													<section class="sectionLists">
+														<h5>Cubi</h5>
+														<div class="md-field">
+															<input type="search" id="searchCube" value=""/>
+															<label for="searchCube" class="">Ricerca</label>
+														</div>
+														<div id="cubeList">
+															<ul id="cubes" class="overflowList"></ul>
 														</div>
 													</section>
-												</section>
-											
-												<section class="step" data-step="2">
-													<section class="pageContent">
-														<h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
-														<div class="stepLayout">
-
-															<section class="sectionLists">
-																<h5>Tabelle</h5>
-																<div class="md-field">
-																	<input type="search" id="searchTables-column" value=""/>
-																	<label for="searchTables-column" class="">Ricerca</label>
-																</div>
-																<div id="tableList-column">
-																	<ul id="tables-column" class="overflowList"></ul>
-																</div>
-															</section>
-
-															<section class="sectionLists" id="sectionFields-column">
-																<h5>Colonne disponibili</h5>
-																<div class="md-field">
-																	<input type="search" id="searchColumns" value=""/>
-																	<label for="searchColumns" class="">Ricerca</label>
-																</div>
-																<div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
-															</section>
+													<section class="sectionLists">
+														<h5>Dimensioni</h5>
+														<div class="md-field">
+															<input type="search" id="searchDimension" value=""/>
+															<label for="searchDimension" class="">Ricerca</label>
+														</div>
+														<div id="dimensionList">
+															<ul id="dimensions" class="overflowList"></ul>
 														</div>
 													</section>
-												</section>
+												</div>
+											</section>
+										</section>
+									
+										<section class="step" data-step="2">
+											<section class="pageContent">
+												<h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
-												<section class="step" data-step="3">
-													<section class="pageContent">
-														<h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
+												<div class="stepLayout">
 
-														<div class="stepLayout"> 
-
-															<section class="sectionLists">
-																<h5>Tabelle</h5>
-																<div class="md-field">
-																	<input type="search" id="searchTables-filter" value=""/>
-																	<label for="searchTables-filter" class="">Ricerca</label>
-																</div>
-																<div id="tableList-filter">
-																	<ul id="tables-filter" class="overflowList"></ul>
-																</div>
-															</section>
-
-															<section class="sectionLists" id="sectionFields-filter">
-																<h5>Filtri del Report</h5>
-																<div class="md-field">
-																	<input type="search" id="searchFilters" value=""/>
-																	<label for="searchFilters" class="">Ricerca</label>
-																</div>
-																<div id="filters">
-																	<ul id="createdFilters" class="overflowList"></ul>
-																</div>
-															</section>
-
-															<section class="sectionLists" id="sectionFields-existsfilter">
-																<h5>Filtri esistenti</h5>
-																<div class="md-field">
-																	<input type="search" id="searchExistsFilter" value=""/>
-																	<label for="searchExistsFilter" class="">Ricerca</label>
-																</div>
-																<div id="existsfilter">
-																	<ul id="exists-filter" class="overflowList"></ul>
-																</div>
-															</section>
+													<section class="sectionLists">
+														<h5>Tabelle</h5>
+														<div class="md-field">
+															<input type="search" id="searchTables-column" value=""/>
+															<label for="searchTables-column" class="">Ricerca</label>
+														</div>
+														<div id="tableList-column">
+															<ul id="tables-column" class="overflowList"></ul>
 														</div>
 													</section>
-												</section>
 
-												<section class="step" data-step="4">
-													<section class="pageContent">
-														<h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
-														<div class="stepLayout">
+													<section class="sectionLists" id="sectionFields-column">
+														<h5>Colonne disponibili</h5>
+														<div class="md-field">
+															<input type="search" id="searchColumns" value=""/>
+															<label for="searchColumns" class="">Ricerca</label>
+														</div>
+														<div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
+													</section>
+												</div>
+											</section>
+										</section>
 
-															<section class="sectionLists">
-																<h5>Tabelle</h5>
-																<div class="md-field">
-																	<input type="search" id="searchTables-metric" value=""/>
-																	<label for="searchTables-metric" class="">Ricerca</label>
-																</div>
-																<div id="tableList-metric">
-																	<ul id="tables-metric" class="overflowList"></ul>
-																</div>
-															</section>
+										<section class="step" data-step="3">
+											<section class="pageContent">
+												<h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
-															<section class="sectionLists" id="sectionFields-metric">
-																<h5>Metriche impostate</h5>
-																<div class="md-field">
-																	<input type="search" id="searchMetrics" value=""/>
-																	<label for="searchMetrics" class="">Ricerca</label>
-																</div>
-																<div id="metrics"></div>
-															</section>
+												<div class="stepLayout"> 
 
-															<section class="sectionLists" id="sectionFields-existsMetric">
-																<h5>Metriche esistenti</h5>
-																<div class="md-field">
-																	<input type="search" id="searchExistsMetric" value=""/>
-																	<label for="searchExistsMetric" class="">Ricerca</label>
-																</div>
-																<div id="existsMetric">
-																	<ul id="exists-metric" class="overflowList"></ul>
-																</div>
-															</section>
+													<section class="sectionLists">
+														<h5>Tabelle</h5>
+														<div class="md-field">
+															<input type="search" id="searchTables-filter" value=""/>
+															<label for="searchTables-filter" class="">Ricerca</label>
+														</div>
+														<div id="tableList-filter">
+															<ul id="tables-filter" class="overflowList"></ul>
 														</div>
 													</section>
-												</section>
-											</div>
-										</div>
 
-										<div class="btn">
-											<button id="stepNext" class="md-button">Next</button>
-											<button id="stepDone" class="md-button">Salva/Crea FX</button>
-										</div>
+													<section class="sectionLists" id="sectionFields-filter">
+														<h5>Filtri del Report</h5>
+														<div class="md-field">
+															<input type="search" id="searchFilters" value=""/>
+															<label for="searchFilters" class="">Ricerca</label>
+														</div>
+														<div id="filters">
+															<ul id="createdFilters" class="overflowList"></ul>
+														</div>
+													</section>
+
+													<section class="sectionLists" id="sectionFields-existsfilter">
+														<h5>Filtri esistenti</h5>
+														<div class="md-field">
+															<input type="search" id="searchExistsFilter" value=""/>
+															<label for="searchExistsFilter" class="">Ricerca</label>
+														</div>
+														<div id="existsfilter">
+															<ul id="exists-filter" class="overflowList"></ul>
+														</div>
+													</section>
+												</div>
+											</section>
+										</section>
+
+										<section class="step" data-step="4">
+											<section class="pageContent">
+												<h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
+												<div class="stepLayout">
+
+													<section class="sectionLists">
+														<h5>Tabelle</h5>
+														<div class="md-field">
+															<input type="search" id="searchTables-metric" value=""/>
+															<label for="searchTables-metric" class="">Ricerca</label>
+														</div>
+														<div id="tableList-metric">
+															<ul id="tables-metric" class="overflowList"></ul>
+														</div>
+													</section>
+
+													<section class="sectionLists" id="sectionFields-metric">
+														<h5>Metriche impostate</h5>
+														<div class="md-field">
+															<input type="search" id="searchMetrics" value=""/>
+															<label for="searchMetrics" class="">Ricerca</label>
+														</div>
+														<div id="metrics"></div>
+													</section>
+
+													<section class="sectionLists" id="sectionFields-existsMetric">
+														<h5>Metriche esistenti</h5>
+														<div class="md-field">
+															<input type="search" id="searchExistsMetric" value=""/>
+															<label for="searchExistsMetric" class="">Ricerca</label>
+														</div>
+														<div id="existsMetric">
+															<ul id="exists-metric" class="overflowList"></ul>
+														</div>
+													</section>
+												</div>
+											</section>
+										</section>
 									</div>
 								</div>
-							</section>
+
+								<div class="btn">
+									<button id="stepNext" class="md-button">Next</button>
+									<button id="stepDone" class="md-button">Salva/Crea FX</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
