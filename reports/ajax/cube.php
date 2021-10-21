@@ -33,7 +33,7 @@ if ($baseTable > 0) {
 
 	$result = $q->createDatamart();
 	var_dump($result);
-	return;
+	// return;
 }
 // return;
 ob_clean();

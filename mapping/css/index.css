@@ -97,6 +97,9 @@ div.textarea > span.formulaLogicalOperator{background: brown; color: white;}
 .card.table ul > .element li{list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
   white-space: nowrap;}
 
+.card.table ul > .element li[data-key="PRI"] {list-style-type: none;display: block;padding: 6px;overflow: hidden;text-overflow: ellipsis;
+  white-space: nowrap;background: indianred; color: white; border-radius: 4px;}
+
 .card.table > .cardLayout > .cardTable[mode] ul > .element li:hover{cursor: pointer;}
 
 .card.table > .cardLayout > .cardTable[mode='columns'] ul > .element li:hover{background-color: #9a6a6a;border-radius: 4px;color: white;}

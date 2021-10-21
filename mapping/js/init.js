@@ -354,17 +354,19 @@ var dimension = new Dimension();
 				}
 				break;
 			default:
-				debugger;
 				// se la card è stata imposta con l'attributo mode ...
 				if (cube.card.ref.hasAttribute('mode')) {
 					console.log('columns');
 					e.target.toggleAttribute('columns');
 					if (!e.target.hasAttribute('columns')) {
-						// TODO: elimino la selezione effettuata
-						console.log('TODO Da eliminare');
+						// TODO: spostare nel Metodo dimension.columns queta logica, se l'elemento già esiste lo rimuovo altrimenti lo aggiungo
+						console.log(dimension.columns[dimension.activeCard.getAttribute('name')].indexOf(cube.fieldSelected));
+						const position = dimension.columns[dimension.activeCard.getAttribute('name')].indexOf(cube.fieldSelected);
+						// posizione, nell'array dimension.columns[Azienda] da rimuovere
+						dimension.columns[dimension.activeCard.getAttribute('name')].splice(position, 1);
 					} else {
-						// aggiungo la selezione effettuata
-						dimension.columns = cube.fieldSelected;
+						// aggiungo la selezione effettuata, se non già presente
+						if (!dimension.columns[dimension.activeCard.getAttribute('name')].includes(cube.fieldSelected)) dimension.columns = cube.fieldSelected;
 					}
 				}
 				// if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
@@ -391,13 +393,21 @@ var dimension = new Dimension();
 		cube.metrics = objParam;
 	};
 
+	// click sull'icona di destra "columns" per l'associazione delle colonne
 	app.handlerAddColumns = function(e) {
 		// console.log(e.target);
 		// console.log(e.path);
 		console.log('add columns');
 
 		const cardTable = e.path[3].querySelector('.cardTable');
+		console.log('cardTable : ', cardTable);
 		cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
+		// quando aggiungo la tabella imposto da subito la colonna id in "columns"
+		dimension.activeCard = cardTable; // card attiva
+		const primaryKey = dimension.activeCard.querySelector('ul li[data-key="PRI"]');
+		dimension.columns = primaryKey.getAttribute('label');
+		// con l'attributo columns verrà mostrata l'icona "columns associata"
+		primaryKey.toggleAttribute('columns');
 		cube.mode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
 	};
 
@@ -662,6 +672,7 @@ var dimension = new Dimension();
 	};
 
 	app.getTable = function(table) {
+		// TODO: convertire in promise
 		let tmplList = document.getElementById('templateListColumns');
 		// elemento dove inserire le colonne della tabella
 		let ulContainer = cube.card.ref.querySelector('#columns');
@@ -689,6 +700,7 @@ var dimension = new Dimension();
 						let pos = response[i][1].indexOf('(');
 						let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
 						li.setAttribute('data-type', type);
+						li.setAttribute('data-key', response[i][3]); // PRI : chiave primaria
 						//li.setAttribute('data-table',cube.table);
 						li.id = i;
 						ulContainer.appendChild(element);
