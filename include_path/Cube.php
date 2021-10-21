@@ -38,7 +38,7 @@ class Cube {
 	// per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
 	$this->_from = " FROM ";
 	$this->_from .= implode(", ", $from);
-	// var_dump($this->_from);
+	var_dump($this->_from);
   }
 
   public function n_where($joins) {
@@ -117,7 +117,7 @@ class Cube {
 	if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
 	$sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-	// var_dump($sql);
+	var_dump($sql);
 	return $this->connect->multiInsert($sql);
   }
 
@@ -159,6 +159,7 @@ class Cube {
   }
 
   public function createDatamart() {
+  	// TODO: https://dev.mysql.com/doc/refman/8.0/en/create-table-select.html Il create table può essere migliorato impostando il datatype per ogni colonna e un id univoco
 	$baseTableName = "W_AP_base_".$this->_reportId;
 	$datamartName = "decisyon_cache.FX".$this->_reportId;
 	// se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX

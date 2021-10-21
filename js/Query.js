@@ -2,6 +2,7 @@ class Queries {
 	constructor() {
 		this._select = {};
 		this._from = {};
+		this._fromSet = new Set();
 		this._fromArray = [];
 		this._where = {};
 		this._factRelation = {};
@@ -16,6 +17,10 @@ class Queries {
 
 	get table() {return this._table;}
 
+	set tableId(value) {this._tableId = value;}
+
+	get tableId() {return this._tableId;}
+
 	set field(value) {this._field = value;}
 
 	get field() {return this._field;}
@@ -25,12 +30,15 @@ class Queries {
 	get fieldType() {return this._fieldType;}
 
 	set from(value) {
+		debugger;
 		this._fromArray.push(value);
 		// console.log(this._fromArray);
-		this._from = this._fromArray;
+		this._fromSet.add(value);
+		// this._from = this._fromArray;
+		console.log('from : ', this._fromSet);
 	}
 
-	get from() {return this._from;}
+	get from() {return this._fromSet;}
 
 	set filterName(value) {this._filterName = value};
 
@@ -59,9 +67,14 @@ class Queries {
 	}
 
 	set where(object) {
-		this._where = object;
+		// const key = Object.keys(join);
+		// debugger;
+		// console.log('this.tableId : ', this._tableId);
+		for ( const [key, value] of Object.entries(object)) {
+			if (+key >= this._tableId) this._where[+key] = value;
+		}
+		// this._where[key] = join;
 		console.log(this._where);
-		
 	}
 
 	get where() {return this._where;}
@@ -150,17 +163,19 @@ class Queries {
 
 	get filteredMetrics() {return this._filteredMetrics;}
 
-	save(reportId, name) {
+	save(processId, name) {
 		this._reportProcess = {};
 		this._reportProcess['select'] = this._select;
-		this._reportProcess['from'] = this._from;
+		debugger;
+		this._reportProcess['from'] = Array.from(this._fromSet); // converto il set in un array
+		// this._reportProcess['from'] = this._from;
 		this._reportProcess['where'] = this._where;
 		this._reportProcess['factJoin'] = this._factRelation;
 		this._reportProcess['filters'] = this._filter;
 		this._reportProcess['groupBy'] = this._groupBy;
 		this._reportProcess['metrics'] = this._metrics;
 		this._reportProcess['filteredMetrics'] = this._filteredMetrics;
-		this._reportProcess['processId'] = reportId; // questo creerà il datamart FX[reportId]
+		this._reportProcess['processId'] = processId; // questo creerà il datamart FX[processId]
 		this._reportProcess['name'] = name;
 		this._reportProcess['type'] = 'PROCESS';
 
@@ -171,8 +186,4 @@ class Queries {
 	getJSONProcess(value) {
 		return JSON.parse(window.localStorage.getItem('process_' + value));
 	}
-
-
-
-	
 }

@@ -1,0 +1,168 @@
+{
+    "_select": {
+        "Azienda": {
+            "descrizione": {
+                "SQLFormat": null,
+                "alias": "az"
+            }
+        },
+        "CodSedeDealer": {
+            "Descrizione": {
+                "SQLFormat": null,
+                "alias": "se"
+            }
+        }
+    },
+    "_from": [
+        "DocVenditaDettaglio",
+        "ZonaVenditaCM",
+        "Azienda",
+        "CodSedeDealer",
+        "DocVenditaIntestazione"
+    ],
+    "_fromArray": [
+        "DocVenditaDettaglio",
+        "ZonaVenditaCM",
+        "Azienda",
+        "CodSedeDealer",
+        "DocVenditaIntestazione"
+    ],
+    "_where": {
+        "dimensionJoin_0": [
+            "ZonaVenditaCM.id",
+            "Azienda.id_ZonaVenditaCM"
+        ],
+        "dimensionJoin_1": [
+            "Azienda.id",
+            "CodSedeDealer.id_Azienda"
+        ],
+        "dimensionJoin_2": [
+            "CodSedeDealer.id",
+            "DocVenditaIntestazione.id_CodSedeDealer"
+        ]
+    },
+    "_factRelation": {
+        "cubeJoin_0": [
+            "DocVenditaIntestazione.NumRifInt",
+            "DocVenditaDettaglio.NumRifInt"
+        ],
+        "cubeJoin_1": [
+            "DocVenditaIntestazione.id_Azienda",
+            "DocVenditaDettaglio.id_Azienda"
+        ]
+    },
+    "_filter": {
+        "iperauto": "Azienda.id = 473",
+        "2agosto": "DocVenditaIntestazione.DataDocumento = 20210802"
+    },
+    "_groupBy": {
+        "Azienda": {
+            "descrizione": {
+                "SQLFormat": null
+            }
+        },
+        "CodSedeDealer": {
+            "Descrizione": {
+                "SQLFormat": null
+            }
+        }
+    },
+    "_metrics": {
+        "qta": {
+            "SQLFunction": "SUM",
+            "table": "DocVenditaDettaglio",
+            "field": "Quantita",
+            "name": "qta",
+            "distinct": false,
+            "alias": "qta_alias"
+        }
+    },
+    "_filteredMetrics": {},
+    "_table": "DocVenditaDettaglio",
+    "_tableId": 0,
+    "_field": "Descrizione",
+    "_obj": {
+        "Descrizione": {
+            "SQLFormat": null
+        }
+    },
+    "_filterName": "2agosto",
+    "_metricName": "qta",
+    "_reportProcess": {
+        "select": {
+            "Azienda": {
+                "descrizione": {
+                    "SQLFormat": null,
+                    "alias": "az"
+                }
+            },
+            "CodSedeDealer": {
+                "Descrizione": {
+                    "SQLFormat": null,
+                    "alias": "se"
+                }
+            }
+        },
+        "from": [
+            "DocVenditaDettaglio",
+            "ZonaVenditaCM",
+            "Azienda",
+            "CodSedeDealer",
+            "DocVenditaIntestazione"
+        ],
+        "where": {
+            "dimensionJoin_0": [
+                "ZonaVenditaCM.id",
+                "Azienda.id_ZonaVenditaCM"
+            ],
+            "dimensionJoin_1": [
+                "Azienda.id",
+                "CodSedeDealer.id_Azienda"
+            ],
+            "dimensionJoin_2": [
+                "CodSedeDealer.id",
+                "DocVenditaIntestazione.id_CodSedeDealer"
+            ]
+        },
+        "factJoin": {
+            "cubeJoin_0": [
+                "DocVenditaIntestazione.NumRifInt",
+                "DocVenditaDettaglio.NumRifInt"
+            ],
+            "cubeJoin_1": [
+                "DocVenditaIntestazione.id_Azienda",
+                "DocVenditaDettaglio.id_Azienda"
+            ]
+        },
+        "filters": {
+            "iperauto": "Azienda.id = 473",
+            "2agosto": "DocVenditaIntestazione.DataDocumento = 20210802"
+        },
+        "groupBy": {
+            "Azienda": {
+                "descrizione": {
+                    "SQLFormat": null
+                }
+            },
+            "CodSedeDealer": {
+                "Descrizione": {
+                    "SQLFormat": null
+                }
+            }
+        },
+        "metrics": {
+            "qta": {
+                "SQLFunction": "SUM",
+                "table": "DocVenditaDettaglio",
+                "field": "Quantita",
+                "name": "qta",
+                "distinct": false,
+                "alias": "qta_alias"
+            }
+        },
+        "filteredMetrics": {},
+        "processId": 0,
+        "name": "test-1",
+        "type": "PROCESS"
+    }
+}

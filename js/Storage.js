@@ -258,7 +258,7 @@ class ReportStorage extends Storages {
   }
 }
 
-class ReportProcessStorage extends Storages {
+class ProcessStorage extends Storages {
   constructor() {
     super();
     this.id = 0; // default
@@ -267,6 +267,45 @@ class ReportProcessStorage extends Storages {
   set processId(value) {this.id = value;}
 
   get processId() {return this.id;}
+
+  getIdAvailable() {
+    // ottengo il primo Id disponibile
+    // console.log(this.storageKeys);
+    this.elements = [];
+    this.storageKeys.forEach((key) => {
+      let jsonStorage = JSON.parse(this.storage.getItem(key));
+      // console.log(jsonStorage);
+
+      if (jsonStorage.type === 'PROCESS') {
+        // ottengo il numero di elementi PROCESS nello storage
+        this.elements.push(jsonStorage.processId);
+      }
+
+    });
+    // TODO: cerco il primo id "libero"
+    // ordino l'array
+    this.elements.sort(function (a, b) {
+      // console.log(a);
+      // console.log(b);
+      // TODO: cosa sono a e b ?
+      return a - b;
+    })
+
+    // this.pagesElement.sort((a, b) => a - b);
+    for (let i = 0; i < this.elements.length; i++) {
+      // indice 0
+      // se 0 è presente in elements aggiungo una unità
+      // console.log(this.pagesElement.includes(i));
+
+      if (this.elements.includes(i)) {
+        this.id++;
+        // console.log(this.id);
+      } else {
+        this.id = i;
+      }
+    }
+    return this.id;
+  }
 
   list() {
     let processReports = {};

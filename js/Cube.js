@@ -126,7 +126,8 @@ class Dimension {
 
 	get from() {return this._from;}
 
-	set hierarchies(value) {this._join['dimensionJoin_'+this.relationId] = value;}
+	set hierarchies(value) {this._join[this.relationId] = value;}
+	// set hierarchies(value) {this._join['dimensionJoin_'+this.relationId] = value;}
 
 	get hierarchies() {return this._join;}
 

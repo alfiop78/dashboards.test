@@ -22,6 +22,7 @@ $q->joinFact($cube->{'factJoin'});
 $q->filters($cube->{'filters'});
 $q->n_groupBy($cube->{'groupBy'});
 $baseTable = $q->baseTable();
+var_dump($baseTable);
 
 if ($baseTable > 0) {
 
@@ -32,6 +33,7 @@ if ($baseTable > 0) {
 
 	$result = $q->createDatamart();
 	var_dump($result);
+	return;
 }
 // return;
 ob_clean();

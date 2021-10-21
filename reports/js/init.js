@@ -1,5 +1,6 @@
 var App = new Application();
 var Query = new Queries();
+const Dim = new DimensionStorage();
 
 (() => {
 	var app = {
@@ -81,6 +82,7 @@ var Query = new Queries();
 		const url = 'ajax/cube.php';
 		const params = 'cube='+jsonData;
 		console.log(params);
+		debugger;
 		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
 	    const req = new Request(url, init);
 
@@ -133,7 +135,7 @@ var Query = new Queries();
 
 	// report da processare
 	app.datamartToBeProcessed = function(e) {
-		const storage = new ReportProcessStorage();
+		const storage = new ProcessStorage();
 
 		const toBeProcessed = storage.list();
 		console.log('Lista Report da Processare : ', toBeProcessed);
@@ -214,7 +216,7 @@ var Query = new Queries();
 		// popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
 		// ... i cmapi per impostare i filtri.
 		const dimName = e.target.getAttribute('label');
-		const Dim = new DimensionStorage();
+		// const Dim = new DimensionStorage();
 		Dim.selected = dimName;
 
 		let columns = Dim.selected.columns;
@@ -226,9 +228,9 @@ var Query = new Queries();
 		debugger;
 		// TODO: qui devo fare una modifica:
 		// l'elenco delle relazioni (key "hierarchies") lo devo prendere quando stabilisco le colonne da aggiungere alla FX.
-		// Questo perchè nelle relazioni possono esserci tabelle, i cui campi, non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
+		// Questo perchè nelle relazioni possono esserci tabelle i cui campi non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
 		// Es.: se scelgo le colonne Azienda.descrizione e Sede.Descrizione ma nella dimensione è presente anche ZonaVenditaCM, non devo aggiungere, nella where, la tabella ZonaVenditaCM (tabella non utilizzata nella clausola SELECT)
-		Query.where = Dim.selected.join;
+		// Query.where = Dim.selected.join;
 	};
 
 	// creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -237,7 +239,7 @@ var Query = new Queries();
 		let ul = document.getElementById('tables-filter');
 
 		from.forEach((table, index) => {
-			Query.from = table;
+			// Query.from = table;
 			let li = document.createElement('li');
 			let element = document.createElement('div');
 			let i = document.createElement('i');
@@ -273,7 +275,7 @@ var Query = new Queries();
 			liTable.setAttribute('label', table);
 			elementTable.appendChild(liTable);
 			ulTable.appendChild(elementTable);
-			liTable.onclick = app.handlerTableSelected;
+			liTable.onclick = app.handlerTableSelectedMetrics;
 
 			let tmpl_ulList = document.getElementById('tmpl_ulList');
 			let ulContent = tmpl_ulList.content.cloneNode(true);
@@ -319,7 +321,7 @@ var Query = new Queries();
 			li.setAttribute('label', table);
 			elementTable.appendChild(li);
 			ulTable.appendChild(elementTable);
-			li.onclick = app.handlerTableSelected;
+			li.onclick = app.handlerTableSelectedColumns;
 			// tabella inserita in lista
 
 			// inserisco le ul come fatto con fieldList-filter
@@ -359,28 +361,6 @@ var Query = new Queries();
 		document.querySelectorAll('#operatorList').forEach((li) => {
 			li.onclick = app.handlerFilterOperatorSelected;
 		});
-	};
-
-	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
-	app.handlerTableSelectedFilter = function(e) {
-		const table = e.target.getAttribute('label');
-		const storage = new FilterStorage();
-		const filters = storage.list(table);
-		const ul = document.getElementById('exists-filter');
-		// pulisco la ul prima di visualizzare i filtri relativi alla tabella selezionata
-		ul.querySelectorAll('.element').forEach((el) => {el.remove();});
-	
-		for (let filter in filters) {
-			// console.log(filter); // nome del filtro
-			// console.log(filters[filter]); // formula
-			let content = app.tmplListField.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
-			li.innerText = filter;
-			li.setAttribute('label', filter);
-			ul.appendChild(element);
-			li.onclick = app.handlerFilterSelected;
-		}
 	};
 
 	// selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
@@ -447,8 +427,8 @@ var Query = new Queries();
 		app.dialogMetric.showModal();
 	};
 
-	// selezione della tabella nella sezione Column o metric
-	app.handlerTableSelected = function(e) {
+	// selezione della tabella nella sezione Column
+	app.handlerTableSelectedColumns = function(e) {
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
 		let fieldType = e.target.getAttribute('data-list-type');
 		let tableId = +e.target.getAttribute('data-table-id');
@@ -459,6 +439,46 @@ var Query = new Queries();
 
 		e.target.toggleAttribute('selected');
 		debugger;
+		Query.table = e.target.getAttribute('label');
+		Query.tableId = tableId;
+		// aggiungo, alla from, le tabelle, nella gerarchia superiori al tableId selezionato
+		Dim.selected.from.forEach( (table, index) => {
+			if (index >= Query.tableId) {
+				Query.from = table;
+			}
+		});
+		Query.where = Dim.selected.join;
+		debugger;
+		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
+		const storage = new MetricStorage()
+		// recupero le metriche già esistenti per questa tabella
+		const metrics = storage.list(Query.table);
+		console.log(metrics);
+		// popolo il contenitore delle metriche già esistenti per questa tabella
+		const ul = document.getElementById('exists-metric');
+		for (let metric in metrics) {
+			let content = app.tmplListField.content.cloneNode(true);
+			let element = content.querySelector('.element');
+			let li = element.querySelector('li');
+			li.innerText = metric;
+			li.setAttribute('label', metric);
+			ul.appendChild(element);
+			li.onclick = app.handlerMetricSelected;
+		}
+	};
+
+	// selezione della tabella nella sezione metric
+	app.handlerTableSelectedMetrics = function(e) {
+		debugger;
+		// visualizzo la ul nascosta della tabella selezionata, sezione columns
+		let fieldType = e.target.getAttribute('data-list-type');
+		let tableId = +e.target.getAttribute('data-table-id');
+		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
+		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
+		// rimuovo eventuali altri ul aperti in precedenza
+		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
+
+		e.target.toggleAttribute('selected');
 		Query.table = e.target.getAttribute('label');
 		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
 		const storage = new MetricStorage()
@@ -475,6 +495,28 @@ var Query = new Queries();
 			li.setAttribute('label', metric);
 			ul.appendChild(element);
 			li.onclick = app.handlerMetricSelected;
+		}
+	};
+
+	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
+	app.handlerTableSelectedFilter = function(e) {
+		const table = e.target.getAttribute('label');
+		const storage = new FilterStorage();
+		const filters = storage.list(table);
+		const ul = document.getElementById('exists-filter');
+		// pulisco la ul prima di visualizzare i filtri relativi alla tabella selezionata
+		ul.querySelectorAll('.element').forEach((el) => {el.remove();});
+	
+		for (let filter in filters) {
+			// console.log(filter); // nome del filtro
+			// console.log(filters[filter]); // formula
+			let content = app.tmplListField.content.cloneNode(true);
+			let element = content.querySelector('.element');
+			let li = element.querySelector('li');
+			li.innerText = filter;
+			li.setAttribute('label', filter);
+			ul.appendChild(element);
+			li.onclick = app.handlerFilterSelected;
 		}
 	};
 
@@ -648,12 +690,6 @@ var Query = new Queries();
 		console.log(metricObj)
 		
 		storage.save = metricObj;
-
-		// aggiungo la metrica appena creata nella preview della tabella
-		let table = document.getElementById('tablePreview');
-		const th = document.createElement('th');
-		th.innerText = alias;
-		table.tHead.rows[0].appendChild(th);
 
 		app.dialogMetric.close();
 	};
@@ -1008,23 +1044,24 @@ var Query = new Queries();
 	// salvo il report da processare
 	app.btnSaveReportDone.onclick = function(e) {
 		console.log(Query);
+		debugger;
 		// salvo temporaneamente la query da processare nello storage
 
-		// ottengo un reportId per passarlo a costruttore
-		const storage = new ReportStorage();
-		const reportId = storage.getIdAvailable();
+		// ottengo un processId per passarlo a costruttore
+		const storage = new ProcessStorage();
+		const processId = storage.getIdAvailable();
 		const name = document.getElementById('reportName').value;
 
-		// il datamart sarà creato come FXreportId
-		Query.save(reportId, name);
-		// TODO: aggiungo il report da processare nella list 'reportProcessList'
+		// il datamart sarà creato come FXprocessId
+		Query.save(processId, name);
+		// aggiungo il report da processare nella list 'reportProcessList'
 		const ulReportsProcess = document.getElementById('reportsProcess');
 		let tmplContent = app.tmplListField.content.cloneNode(true);
 		let element = tmplContent.querySelector('.element');
 		let li = element.querySelector('li');
 		li.innerText = name;
 		li.setAttribute('label', 'process_' + name);
-		li.setAttribute('data-id', reportId);
+		li.setAttribute('data-id', processId);
 		ulReportsProcess.appendChild(element);
 		li.onclick = app.handlerReportToBeProcessed;
 		app.dialogSaveReport.close();
@@ -1054,53 +1091,3 @@ var Query = new Queries();
 	});
 
 })();
-
-/* oggetto report in localStoraga*//*
-{id: 2, type: "REPORT", name: "report_KPI", options: {inputSearch: true,…}}
-id: 2
-type: "REPORT"
-datamartId: 2
-name: "report_KPI"
-options: {inputSearch: true,…}
-inputSearch: true
-positioning: [{columns: "zona"}, {columns: "area"}, {columns: "dealer"}, {columns: "cod.ford"},…]
-0: {columns: "zona"}
-columns: "zona"
-1: {columns: "area"}
-columns: "area"
-2: {columns: "dealer"}
-columns: "dealer"
-3: {columns: "cod.ford"}
-columns: "cod.ford"
-4: {metrics: "venduto"}
-metrics: "venduto"
-cols: {0: {columnId: 0, styles: {backgroundColor: "#8db6a5"}, attributes: {}},…}
-0: {columnId: 0, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
-columnId: 0
-styles: {backgroundColor: "#8db6a5"}
-backgroundColor: "#8db6a5"
-attributes: {}
-1: {columnId: 1, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
-columnId: 1
-styles: {backgroundColor: "#8db6a5"}
-backgroundColor: "#8db6a5"
-attributes: {}
-2: {columnId: 2, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
-columnId: 2
-styles: {backgroundColor: "#8db6a5"}
-backgroundColor: "#8db6a5"
-attributes: {}
-3: {columnId: 3, styles: {backgroundColor: "#8db6a5"}, attributes: {}}
-columnId: 3
-styles: {backgroundColor: "#8db6a5"}
-backgroundColor: "#8db6a5"
-attributes: {}
-4: {columnId: 4, styles: {backgroundColor: "#285c47", color: "#ffffff"}, attributes: {}}
-columnId: 4
-styles: {backgroundColor: "#285c47", color: "#ffffff"}
-backgroundColor: "#285c47"
-color: "#ffffff"
-attributes: {}
-
-
-*/
