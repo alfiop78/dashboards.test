@@ -7,7 +7,6 @@ var StorageProcess = new ProcessStorage();
 (() => {
 	App.init();
 	var app = {
-		report : null,
 		// templates
 		tmplListField : document.getElementById('templateListField'),
 		
@@ -16,7 +15,7 @@ var StorageProcess = new ProcessStorage();
 		btnStepDone : document.getElementById('stepDone'),
 		btnSaveAndProcess : document.getElementById('saveAndProcess'),
 
-		btnProcessReport : document.getElementById('btnProcessReport'),
+		btnProcessReport : document.getElementById('btnProcessReport'), // apre la lista dei report da processare "Crea FX"
 
 		// dialog
 		dialogSaveReport: document.getElementById('dialogSaveReport'),
@@ -29,42 +28,9 @@ var StorageProcess = new ProcessStorage();
 		btnMetricDone : document.getElementById('btnMetricDone'), // tasto Salva nella dialogMetric
 		btnSaveReport : document.getElementById('saveReport'),
 		btnSaveReportDone: document.getElementById('btnReportSaveName'),
-		// end dialog
-
-		dialogReportList : document.getElementById('dialog-reportList'),
-		dialogTableList : document.getElementById('table-list'),
-		dialogCubeName : document.getElementById('cube-name'),
-		dialogDimensionName : document.getElementById('dimension-name'),
-		dialogHierarchyName : document.getElementById('hierarchy-name'),
-		dialogCubeList: document.getElementById('dialog-cube-list'),
 		
-		dialogColOption : document.getElementById('columnsOption'),
-		dialogPagebyOption : document.getElementById('pagebyOptions'),
-		btnBack : document.getElementById('mdc-back'),
-		btnPreviewReport : document.getElementById('mdc-preview-report'),
-		btnDashboardLayout : document.getElementById('mdc-dashboard-layout'),
-		btnNewReport: document.getElementById('mdc-new-report'),
-		btnReportSave : document.getElementById('mdcReportSave'),
-		
-		btnNextPage : document.getElementById('mdcNextPage'),
-		btnBackPage : document.getElementById('mdcBack'),
-		btnSaveColOption: document.getElementById('btnSaveColOption'),
-		table: document.getElementById('table-01'),
-		// btn in actions
-		btnOpenReport : document.getElementById('openReport'),
-		// TODO: valutare se questi elementi, con i suoi eventi, bisogna inserirli nella classe Options
-		propertyColHidden: document.getElementById('chkbox-hide-col'),
-		fgColorInput : document.getElementById('fgColor'),
-		bgColorInput: document.getElementById('bgColor'),
-		alignLeft: document.getElementById('align-left'),
-		alignCenter: document.getElementById('align-center'),
-		alignRight: document.getElementById('align-right'),
-		formatBold: document.getElementById('format-bold'),
-		formatItalic: document.getElementById('format-italic'),
-		radioSingleSelection: document.getElementsByName('selection-type'),
-		numberFormat : document.getElementById('numberFormat'),
-
-		reportSection : document.getElementById('reportSection')
+		btnBackPage : document.getElementById('mdcBack'), // da definire
+		table: document.getElementById('table-01')
 	};
 
 	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
@@ -115,7 +81,7 @@ var StorageProcess = new ProcessStorage();
 		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerReportToBeProcessed) );
 	};
 
-	// selezione del cubo
+	// selezione del cubo step-1
 	app.handlerCubeSelected = (e) => {
 		// TODO: usare e.currentTarget
 		debugger;
@@ -544,53 +510,51 @@ var StorageProcess = new ProcessStorage();
 		app.checkFilterForm();
 	};
 
-	// carico elenco colonne dal DB per visualizzare nella dialogFilter
-	app.getFields = function() {
-		// TODO: promise
-		console.log(Query.table);
+	// carico elenco colonne dal DB da visualizzare nella dialogFilter
+	app.getFields = async () => {
 		const url = '/ajax/tableInfo.php';
-		let params = 'tableName='+Query.table;
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					// TODO: pulisco l'elenco dei campi
+		const params = 'tableName='+Query.table;
+		console.log('params : ', params);
+		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
+	    const req = new Request(url, init);
+
+	    await fetch(req)
+			.then( (response) => {
+			if (!response.ok) {throw Error(response.statusText);}
+			return response;
+			})
+			.then( (response) => response.json())
+			.then( (data) => {
+		        // console.log(data);
+		        if (data) {
+		        	// TODO: pulisco l'elenco dei campi
 					let ul = document.getElementById('filter-fieldList');
 					ul.querySelectorAll('div.element').forEach((el) => {el.remove();});
 					let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
-
-					for (let i in response) {
+					for ( const [key, value] of Object.entries(data)) {
 						let content = tmplFieldList.content.cloneNode(true);
 						let element = content.querySelector('.element');
 						let li = element.querySelector('li');
-						li.setAttribute('label', response[i][0]);
-						li.innerText = response[i][0];
+						li.setAttribute('label', value[0]); // nome campo
+						li.innerText = value[0];
 						// scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-						let pos = response[i][1].indexOf('(');
-						let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+						let pos = value[1].indexOf('('); // datatype
+						let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
 						li.setAttribute('data-type', type);
 						// li.id = i; al momento non mi serve
 						ul.appendChild(element);
 						li.onclick = app.handlerFilterFieldSelected;
 					}
-				} else {
-					// TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
+		        } else {
+		          // TODO: no data
+		          console.warning('Dati non recuperati');
+		        }
+		    })
+	    .catch( (err) => console.error(err));
 	};
 
 	// selezione della colonna da inserire nel report
 	app.handlerFieldSelectedColumn = (e) => {
-		// seleziono la colonna da inserire nel report e la inserisco nel reportSection
 		// TODO: e.currentTarget
 		Query.field = e.target.getAttribute('label');
 		app.dialogColumn.showModal();
@@ -737,49 +701,44 @@ var StorageProcess = new ProcessStorage();
 	app.btnFilterDone.onclick = () => app.dialogFilter.close();
 
 	// recupero valori distinti per inserimento nella dialogFilter
-	app.getDistinctValues = () => {
-		// TODO: Fetch API
-		// let tableName = e.target.getAttribute('data-tableName');
-		// let fieldName = document.getElementById('filter-fieldName').innerText;
-		// return;
-		// getDistinctValues
-		// ottengo i valori distinti per la colonna selezionata
-		// TODO: utilizzare le promise
-		var url = 'ajax/columnInfo.php';
-		let params = 'table='+Query.table+'&field='+Query.field;
-		console.log(params);
+	app.getDistinctValues = async () => {
+		const url = 'ajax/columnInfo.php';
+		const params = 'table='+Query.table+'&field='+Query.field;
+		console.log('params : ', params);
 		const ul = document.getElementById('filter-valueList');
 		// pulisco la ul
 		Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
 
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					// console.table(response);
-					for (let i in response) {
-					// console.log(i);
-					// console.log(response[i][fieldName]);
-					let element = document.createElement('div');
-					element.className = 'element';
-					ul.appendChild(element);
-					let li = document.createElement('li');
-					li.id = i;
-					li.className = 'elementSearch';
-					li.setAttribute('label', response[i][Query.field]);
-					li.innerHTML = response[i][Query.field];
-					element.appendChild(li);
-					li.onclick = app.handlerValueFilterSelected;
-					}
-				}
-			}
-		};
+		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
+	    const req = new Request(url, init);
 
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
+	    await fetch(req)
+			.then( (response) => {
+			if (!response.ok) {throw Error(response.statusText);}
+			return response;
+			})
+			.then( (response) => response.json())
+			.then( (data) => {
+		        // console.log(data);
+		        if (data) {
+		        	for (const [key, value] of Object.entries(data)) {
+						let element = document.createElement('div');
+						element.className = 'element';
+						ul.appendChild(element);
+						let li = document.createElement('li');
+						li.id = key;
+						li.className = 'elementSearch';
+						li.setAttribute('label', value[Query.field]);
+						li.innerHTML = value[Query.field];
+						element.appendChild(li);
+						li.onclick = app.handlerValueFilterSelected;
+					}
+		        } else {
+		          // TODO: no data
+		          console.warning('Dati non recuperati');
+		        }
+		    })
+	    .catch( (err) => console.error(err));
 	};
 
 	// selezione di uno o più valori dalla lista dei valori della colonna in dialogFilter
@@ -869,40 +828,6 @@ var StorageProcess = new ProcessStorage();
 		textarea.appendChild(span);
 	};
 	/* events */
-
-	app.handlerColorInput = (e) => {
-		// console.log(e.target.value);
-		// TODO: e.currentTarget
-		let propName = e.target.getAttribute('property');
-		let propValue = e.target.value;
-		// Se non utilizzo le [] in propName l'oggetto sarà {propName: 'red'} invece di {color: 'red'}
-		app.report.style = { [propName]: propValue };
-	};
-
-	app.handlerOption = (e) => {
-		// TODO: e.currentTarget
-		let propName = e.target.getAttribute('property');
-		let propValue = e.target.getAttribute('value');
-		// imposto di un colore lo stile dell'allineamneto applicato (per questa colonna)
-		e.target.style.color = "indianred";
-		// TODO: Quando riapro questa colonna devo riprendere le impostazioni salvate e "riscriverle" qui nella dialog
-		console.log(propName);
-		console.log(propValue);
-		app.report.style = { [propName]: propValue };
-	};
-
-	app.handlerRadioSelectionType = function(e) {
-		console.log('radio : ', e.target);
-		let propName = e.target.getAttribute('property');
-		let propValue = e.target.value;
-
-		app.report.pageByOption = { [propName]: propValue };
-	};
-
-	app.radioSingleSelection.forEach((item, i) => {
-		// console.log(item);
-		item.onchange = app.handlerRadioSelectionType;
-	});
 
 	app.btnPreviousStep.onclick = function() {Step.previous();}
 
