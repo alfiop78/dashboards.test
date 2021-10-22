@@ -3,6 +3,7 @@ var Query = new Queries();
 const Dim = new DimensionStorage();
 
 (() => {
+	App.init();
 	var app = {
 		report : null,
 		// templates
@@ -64,11 +65,8 @@ const Dim = new DimensionStorage();
 		reportSection : document.getElementById('reportSection')
 	};
 
-	App.init();
-
 	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
 	var Step = new Steps('stepTranslate');
-	// TODO: penso si possano spostare anche le altre Classi qui
 
 	// 2021-10-19 click sul report da processare/elaborare. tasto "Process Report"
 	app.handlerReportToBeProcessed = async (e) => {
@@ -101,13 +99,14 @@ const Dim = new DimensionStorage();
 					// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
 		        } else {
 		          // TODO: no data
+		          console.warning('FX non è stata creata');
 		        }
 		    })
 	    .catch( (err) => console.error(err));
 	};
 
 	// report da processare
-	app.datamartToBeProcessed = function(e) {
+	app.datamartToBeProcessed = () => {
 		const storage = new ProcessStorage();
 
 		const toBeProcessed = storage.list();
@@ -130,7 +129,8 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione del cubo
-	app.handlerCubeSelected = function(e) {
+	app.handlerCubeSelected = (e) => {
+		// TODO: usare e.currentTarget
 		const cubeId = e.target.getAttribute('data-cube-id');
 		const cubeName = e.target.getAttribute('label');
 		const storage = new CubeStorage();
@@ -182,8 +182,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione delle dimensioni da utilizzare per la creazione del report
-	app.handlerDimensionSelected = function(e) {
+	app.handlerDimensionSelected = (e) => {
 		// imposto attributo selected sulle dimensioni selezionate
+		// TODO: e.currentTarget
 		e.target.toggleAttribute('selected');
 		//  popolo la sezione step 2, colonne e field
 		// popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
@@ -198,21 +199,17 @@ const Dim = new DimensionStorage();
 
 		app.createListTableFilters(Dim.selected.from);
 
-		debugger;
-		// TODO: qui devo fare una modifica:
 		// l'elenco delle relazioni (key "hierarchies") lo devo prendere quando stabilisco le colonne da aggiungere alla FX.
 		// Questo perchè nelle relazioni possono esserci tabelle i cui campi non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
 		// Es.: se scelgo le colonne Azienda.descrizione e Sede.Descrizione ma nella dimensione è presente anche ZonaVenditaCM, non devo aggiungere, nella where, la tabella ZonaVenditaCM (tabella non utilizzata nella clausola SELECT)
-		// Query.where = Dim.selected.join;
 	};
 
 	// creo la lista delle tabelle nella sezione dello step 3 - Filtri
-	app.createListTableFilters = function(from) {
+	app.createListTableFilters = (from) => {
 		// console.log(from); // array
 		let ul = document.getElementById('tables-filter');
 
 		from.forEach((table, index) => {
-			// Query.from = table;
 			let li = document.createElement('li');
 			let element = document.createElement('div');
 			let i = document.createElement('i');
@@ -231,10 +228,10 @@ const Dim = new DimensionStorage();
 		});
 	};
 
-	app.createListTableMetrics = function(metrics, cubeName) {
+	app.createListTableMetrics = (metrics, cubeName) => {
 
 		let ulTable = document.getElementById('tables-metric');
-
+		// TODO: se metrics è un Object qui si può utilizzare Object.entries()
 		Object.keys(metrics).forEach((table, index) => {
 			console.log(table);
 			console.log(metrics[table]);
@@ -279,10 +276,11 @@ const Dim = new DimensionStorage();
 	};
 
 	// creo la lista delle tabelle nella sezione dello step 2 - Colonne
-	app.createListTableColumns = function(columns) {
+	// TODO: Questa funzione sembra avere la stessa logica di createListTableMetrics e createListTableFilters, valutare se si possono unificare
+	app.createListTableColumns = (columns) => {
 		// console.log(columns); // object
 		let ulTable = document.getElementById('tables-column');
-
+		// TODO: se columns è un Object qui si può utilizzare Object.entries()
 		Object.keys(columns).forEach((table, index) => {
 			// console.log(table);
 			let elementTable = document.createElement('div');  
@@ -324,8 +322,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// tasto add nella sezione Filtri (step 3)
-	app.handlerAddFilter = function(e) {
+	app.handlerAddFilter = (e) => {
 		// carico elenco field per la tabella selezionata
+		// TODO: e.currentTarget
 		Query.table = e.target.getAttribute('label');
 		app.getFields();
 		// apro la dialog filter
@@ -337,8 +336,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
-	app.handlerFilterSelected = function(e) {
+	app.handlerFilterSelected = (e) => {
 		const storage = new FilterStorage();
+		// TODO: e.currentTarget
 		storage.filter = e.target.getAttribute('label');
 		// TODO: recupero dallo storage il filtro selezionato
 		// console.log(storage.filter);
@@ -348,8 +348,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione di una metrica già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
-	app.handlerMetricSelected = function(e) {
+	app.handlerMetricSelected = (e) => {
 		const storage = new MetricStorage();
+		// TODO: e.currentTarget
 		storage.metric = e.target.getAttribute('label');
 		// TODO: recupero dallo storage la metrica selezionata
 		console.log(storage.metric);
@@ -365,7 +366,8 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della metrica, apro la dialog per impostare la metrica
-	app.handlerFieldSelectedMetric = function(e) {
+	app.handlerFieldSelectedMetric = (e) => {
+		// TODO: e.currentTarget
 		Query.field = e.target.getAttribute('label');
 		// carico elenco filtri presenti su tutte le tabelle che fanno parte di tutte le dimensioni selezionate
 		// 1 - recupero le tabelle presenti nel terzo step ul #tables-filter
@@ -393,7 +395,8 @@ const Dim = new DimensionStorage();
 					li.setAttribute('label', filter);
 					//console.log(object[filter]); // la formula
 					ul.appendChild(element);
-					li.onclick = function(e) {e.target.toggleAttribute('selected');};
+					// TODO: e.currentTarget
+					li.onclick = (e) => {e.target.toggleAttribute('selected');};
 				}
 			}
 		});
@@ -401,8 +404,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della tabella nella sezione Column
-	app.handlerTableSelectedColumns = function(e) {
+	app.handlerTableSelectedColumns = (e) => {
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
+		// TODO: e.currentTarget
 		let fieldType = e.target.getAttribute('data-list-type');
 		let tableId = +e.target.getAttribute('data-table-id');
 		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
@@ -441,9 +445,10 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della tabella nella sezione metric
-	app.handlerTableSelectedMetrics = function(e) {
+	app.handlerTableSelectedMetrics = (e) => {
 		debugger;
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
+		// TODO: e.currentTarget
 		let fieldType = e.target.getAttribute('data-list-type');
 		let tableId = +e.target.getAttribute('data-table-id');
 		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
@@ -472,7 +477,8 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
-	app.handlerTableSelectedFilter = function(e) {
+	app.handlerTableSelectedFilter = (e) => {
+		// TODO: e.currentTarget
 		const table = e.target.getAttribute('label');
 		const storage = new FilterStorage();
 		const filters = storage.list(table);
@@ -494,8 +500,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della colonna nella dialogFilter
-	app.handlerFilterFieldSelected = function(e) {
+	app.handlerFilterFieldSelected = (e) => {
 		e.target.toggleAttribute('selected');
+		// TODO: e.currentTarget
 		Query.field = e.target.getAttribute('label');
 		Query.fieldType = e.target.getAttribute('data-type');
 		// inserisco il field selezionato nella textarea, la colonna non è editabile
@@ -510,8 +517,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione dell'operatore nella dialogFilter
-	app.handlerFilterOperatorSelected = function(e) {
+	app.handlerFilterOperatorSelected = (e) => {
 		document.querySelectorAll('#operatorList li').forEach((li) => {li.removeAttribute('selected');});
+		// TODO: e.currentTarget
 		e.target.toggleAttribute('selected');
 		const textarea = document.getElementById('filterFormula');
 		let span = document.createElement('span');
@@ -550,6 +558,7 @@ const Dim = new DimensionStorage();
 
 	// carico elenco colonne dal DB per visualizzare nella dialogFilter
 	app.getFields = function() {
+		// TODO: promise
 		console.log(Query.table);
 		const url = '/ajax/tableInfo.php';
 		let params = 'tableName='+Query.table;
@@ -592,8 +601,9 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione della colonna da inserire nel report
-	app.handlerFieldSelectedColumn = function(e) {
+	app.handlerFieldSelectedColumn = (e) => {
 		// seleziono la colonna da inserire nel report e la inserisco nel reportSection
+		// TODO: e.currentTarget
 		Query.field = e.target.getAttribute('label');
 		app.dialogColumn.showModal();
 
@@ -601,7 +611,7 @@ const Dim = new DimensionStorage();
 	};
 
 	// Salvataggio dell'alias di colonna
-	app.handlerBtnColumnDone = function() {
+	app.handlerBtnColumnDone = () => {
 		// Confermo il nome dell'alias per la colonna
 		// TODO: da inserire anche SQL formula (es.: date_format()) in un textarea oppure un contenteditable
 		const alias = document.getElementById('inputColumnName').value;
@@ -621,7 +631,7 @@ const Dim = new DimensionStorage();
 	};
 
 	// salvo la metrica impostata
-	app.btnMetricDone.onclick = function(e) {
+	app.btnMetricDone.onclick = (e) => {
 		const name = app.dialogMetric.querySelector('#metric-name').value;
 		const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
 		const distinctOption = document.getElementById('checkbox-distinct').checked;
@@ -668,7 +678,7 @@ const Dim = new DimensionStorage();
 	};
 
 	// salvataggio del filtro impostato nella dialog
-	app.btnFilterSave.onclick = function(e) {
+	app.btnFilterSave.onclick = (e) => {
 		// Filter save
 		const textarea = document.getElementById('filterFormula');
 		let filterName = document.getElementById('filter-name');
@@ -736,10 +746,11 @@ const Dim = new DimensionStorage();
 		textarea.querySelectorAll('span').forEach((span) => {span.remove();});
 	};
 
-	app.btnFilterDone.onclick = function(e) {app.dialogFilter.close();};
+	app.btnFilterDone.onclick = () => app.dialogFilter.close();
 
 	// recupero valori distinti per inserimento nella dialogFilter
-	app.getDistinctValues = function() {
+	app.getDistinctValues = () => {
+		// TODO: Fetch API
 		// let tableName = e.target.getAttribute('data-tableName');
 		// let fieldName = document.getElementById('filter-fieldName').innerText;
 		// return;
@@ -784,7 +795,7 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione di uno o più valori dalla lista dei valori della colonna in dialogFilter
-	app.handlerValueFilterSelected = function(e) {
+	app.handlerValueFilterSelected = (e) => {
 		const textarea = document.getElementById('filterFormula');
 		const ul = app.dialogFilter.querySelector('#filter-valueList');
 		let span;
@@ -793,6 +804,7 @@ const Dim = new DimensionStorage();
 		if (!ul.hasAttribute('multi')) {
 			// selezione singola
 			// se l'elemento target è già selezionato faccio il return
+			// TODO: e.currentTarget
 			if (e.target.hasAttribute('selected')) return;
 			// ...altrimenti elimino tutte le selezioni fatte (single) e imposto il target selezionato
 			document.querySelectorAll('#valuesList li').forEach((li) => {li.removeAttribute('selected');});
@@ -834,14 +846,14 @@ const Dim = new DimensionStorage();
 	};
 
 	// carico elenco Cubi su cui creare il report
-	app.loadCubes = function(e) {
+	app.loadCubes = () => {
 		// console.log('loadCubes');
 		const cubes = new CubeStorage();
 		// console.log(storage.list);
 		let ul = document.getElementById('cubes');
 		let obj = cubes.list();
 		console.log('Lista cubi :', obj);
-	
+		// TODO: se obj è un Object utilizzare Object.entries()
 		for (let i in obj) {
 			// console.log(obj[i]['key']);
 			let element = document.createElement('div');
