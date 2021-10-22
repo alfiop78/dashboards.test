@@ -1,7 +1,6 @@
 var App = new Application();
 var cube = new Cube();
 var dimension = new Dimension();
-// TODO: dichiarare qui le altre Classi
 (() => {
 	var app = {
 		dialogCubeName : document.getElementById('cube-name'),
@@ -499,19 +498,18 @@ var dimension = new Dimension();
 		// TODO: controllo struttura gerarchiiccaaa app.checkStepGuide
 	};
 
-	app.getDimensions = function() {
-		// recupero la lista delle dimensioni in localStorage, il Metodo getDimension restituisce un array
-		// const tmplDimension = document.getElementById('dimension');
+	app.getDimensions = () => {
+		// recupero la lista delle dimensioni in localStorage
 		const dimension = new DimensionStorage();
-		let obj = dimension.list();
-		// console.log(obj);
+		// dimensions : è un Object che contiene un array con le tabelle incluse nella dimensione
+		const dimensions = dimension.list();
 		const tmplDimension = document.getElementById('dimension');
-		Array.from(Object.keys(obj)).forEach((dimName) => {
-			// console.log(dimName);
+		for (const [key, value] of Object.entries(dimensions)) {
 			let tmplContent = tmplDimension.content.cloneNode(true);
 			let div = tmplContent.querySelector('.dimensions');
-			div.querySelector('h5').innerHTML = dimName;
-			div.querySelector('h5').setAttribute('label', dimName);
+			div.querySelector('h5').innerHTML = key;
+
+			div.querySelector('h5').setAttribute('label', key);
 			document.querySelector('#dimensions').appendChild(div);
 			div.querySelector('h5').onclick = app.handlerDimensionSelected;
 
@@ -519,137 +517,72 @@ var dimension = new Dimension();
 			// console.log(obj[dimName]); // valore/i
 			const tmplMiniCard = document.getElementById('miniCard');
 
-			obj[dimName].forEach((table) => {
+			value.forEach( (table) => {
 				let contentMiniCard = tmplMiniCard.content.cloneNode(true);
 				let miniCard = contentMiniCard.querySelector('.miniCard');
 				miniCard.querySelector('h6').innerHTML = table;
 				// console.log(table);
 				div.appendChild(miniCard);
 			});
-		});
+		}
 	};
 
-	app.getCubes = function() {
-		// recupero la lista dei Cubi in localStorage
-		const cubes = new CubeStorage();
-		let obj = cubes.list();
+	// recupero la lista dei Cubi in localStorage
+	app.getCubes = () => {
+		const cube = new CubeStorage();
+		let cubes = cube.list();
 		const ul = document.getElementById('cubes');
 
-		for (let i in obj) {
+		for (const [key, value] of Object.entries(cubes)) {
 			let element = document.createElement('div');
 			element.className = 'element';
-			element.setAttribute('label', obj[i]['key']);
+			element.setAttribute('label', key);
 			let li = document.createElement('li');
-			li.innerText = obj[i]['key'];
-			li.setAttribute('label', obj[i]['key']);
-			li.id = 'cubeId_' + obj[i]['cubeId'];
+			li.innerText = key;
+			li.setAttribute('label', key);
+			li.id = 'cubeId_' + value['id'];
 			ul.appendChild(element);
 			element.appendChild(li);
 			li.onclick = app.handlerCubeSelected;
 		}
 	};
 
-	app.handlerCubeSelected = function(e) {
-		// TODO: stabilire quale attività far svolgere quando si clicca sul nome del report/cubo
-		// ricreo un datamart
-
-		let data = window.localStorage.getItem(e.target.getAttribute('label'));
-		// console.log(data);
-		var url = 'ajax/cube.php';
-		let params = 'cube='+data;
-		console.log(params);
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					console.table(response);
-				} else {
-					// TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
-		// return;
-
-		// console.log(this.getAttribute('label'));
-
-		// let reportName = this.getAttribute('label');
-		//
-		// // recupero un datamart FX... già creato e visualizzo l'anteprima
-		// var url = "ajax/reports.php";
-		// let reportId = this.getAttribute('id');
-		// let params = "reportId="+reportId;
-		//
-		// // console.log(params);
-		// var request = new XMLHttpRequest();
-		// request.onreadystatechange = function() {
-		//   if (request.readyState === XMLHttpRequest.DONE) {
-		//     if (request.status === 200) {
-		//       var response = JSON.parse(request.response);
-		//       console.table(response);
-		//       // abilito il tasto btnPreviewReport
-		//       app.btnPreviewReport.disabled = false;
-		//       // app.createReport(response, oStorage.getJSONCube(reportName));
-		//       app.dialogReportList.close();
-		//
-		//     } else {
-		//       // TODO:
-		//     }
-		//   } else {
-		//     // TODO:
-		//   }
-		// };
-		//
-		// request.open('POST', url);
-		// // request.setRequestHeader('Content-Type','application/json');
-		// request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		// request.send(params);
+	app.handlerCubeSelected = (e) => {
+		// TODO: apro la tabella definita come Cubo per consentirne la modifica
 	};
 
-	app.getDatabaseTable = function() {
-		// TODO: utilizzare le promise
-		var url = 'ajax/database.php';
-
-		var request = new XMLHttpRequest();
-
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					// console.table(response);
-					let ul = document.getElementById('tables');
-					for (let i in response) {
+	app.getDatabaseTable = async () => {
+		const url = 'ajax/database.php';
+		await fetch(url)
+			.then( (response) => {
+			if (!response.ok) {throw Error(response.statusText);}
+			return response;
+			})
+			.then( (response) => response.json())
+			.then( (data) => {
+		        // console.log(data);
+		        if (data) {
+		        	let ul = document.getElementById('tables');
+		        	for (let i in data) {
 						let tmpl = document.getElementById('el');
 						let tmplContent = tmpl.content.cloneNode(true);
 						let element = tmplContent.querySelector('.element.card');
 						element.ondragstart = app.handlerDragStart;
 						element.id = 'table-' + i;
-						element.setAttribute('label', response[i][0]);
+						element.setAttribute('label', data[i][0]);
 						ul.appendChild(element);
 						let span = document.createElement('span');
 						span.classList = 'elementSearch';
-						span.setAttribute('label', response[i][0]);
-						span.innerHTML = response[i][0];
+						span.setAttribute('label', data[i][0]);
+						span.innerHTML = data[i][0];
 						element.appendChild(span);
 					}
-				} else {
-					// TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		request.setRequestHeader('Content-Type','application/json');
-		request.send();
+		        } else {
+		          // TODO: no data
+		          console.warning('Non è stato possibile recuperare la lista delle tabelle');
+		        }
+		    })
+	    .catch( (err) => console.error(err));
 	};
 
 	app.handlerAddJoin = function(e) {
@@ -658,54 +591,53 @@ var dimension = new Dimension();
 		cube.mode('relations', 'Selezionare le colonne che saranno messe in relazione');
 	};
 
-	app.getTable = function(table) {
-		// TODO: convertire in promise
+	app.getTable = async (table) => {
 		let tmplList = document.getElementById('templateListColumns');
 		// elemento dove inserire le colonne della tabella
 		let ulContainer = cube.card.ref.querySelector('#columns');
 
-		var url = '/ajax/tableInfo.php';
-		let params = 'tableName='+table;
-		var request = new XMLHttpRequest();
+		const url = '/ajax/tableInfo.php';
+		const params = 'tableName='+table;
+		console.log('table selected : ',params);
+		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
+	    const req = new Request(url, init);
 
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					// console.table(response);
-					ulContainer.removeAttribute('hidden');
-					for (let i in response) {
-						let tmplContent = tmplList.content.cloneNode(true);
+	    await fetch(req)
+			.then( (response) => {
+			if (!response.ok) {throw Error(response.statusText);}
+			return response;
+			})
+			.then( (response) => response.json())
+			.then( (data) => {
+		        // console.log(data);
+		        if (data) {
+		        	ulContainer.removeAttribute('hidden');
+		        	for ( const [key, value] of Object.entries(data)) {
+		        		let tmplContent = tmplList.content.cloneNode(true);
 						let element = tmplContent.querySelector('.element');
 						// element.setAttribute('name', 'columnSearch');
 						let li = element.querySelector('li');
 						li.className = 'elementSearch';
 						// let iElement = element.querySelector('i');
-						li.innerText = response[i][0];
-						li.setAttribute('label', response[i][0]);
+						li.innerText = value[0];
+						li.setAttribute('label', value[0]);
 						// scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-						let pos = response[i][1].indexOf('(');
-						let type = (pos !== -1) ? response[i][1].substring(0, pos) : response[i][1];
+						let pos = value[1].indexOf('(');
+						let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
 						li.setAttribute('data-type', type);
-						li.setAttribute('data-key', response[i][3]); // PRI : chiave primaria
+						li.setAttribute('data-key', value[3]); // PRI : chiave primaria
 						//li.setAttribute('data-table',cube.table);
-						li.id = i;
+						li.id = key;
 						ulContainer.appendChild(element);
 						// li.onclick = cube.handlerColumns.bind(cube);
 						li.onclick = app.handlerColumns;
-					}
-				} else {
-					// TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
+		        	}
+		        } else {
+		          // TODO: no data, handlerConsoleMessage
+		          console.warning('Non è stato possibile recuperare le colonne della tabella : ', table);
+		        }
+		    })
+	    .catch( (err) => console.error(err));
 	};
 
 	/*events */
@@ -890,41 +822,9 @@ var dimension = new Dimension();
 		app.getTable(lastTableInHierarchy);
 	};
 
-	/*events */
-
 	app.getDatabaseTable();
 
 	app.getDimensions();
 
 	app.getCubes();
-
-	// inserisco lo storage che era presente sul pc desktop
-	let storage = new CubeStorage();
-	/*storage.save = {
-		"type":"DIMENSION",
-		"columns":{
-			"ZonaVenditaCM":["Codice","Descrizione"],
-			"Azienda":["descrizione"],
-			"CodSedeDealer":["Descrizione"]
-		},
-		"name":"dim-kpi dealers",
-		"from":["ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],
-		"join":{
-			"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],
-			"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],
-			"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]
-		},
-		"hierarchies":{"0":"ZonaVenditaCM","1":"Azienda","2":"CodSedeDealer","3":"DocVenditaIntestazione"}
-	};*/
-
-	// storage.save = {"type":"FILTER","name":"glm","table":"Azienda","formula":"Azienda.id = 43"};
-	// storage.save = {"type":"METRIC","name":"q","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"},"q":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"q","distinct":false,"alias":"q"}}};
-	// storage.save = {"type":"METRIC","name":"qtaOff","formula":{"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}}};
-
-	// storage.save = {"id":0,"type":"REPORT","name":"rep-0","options":{"inputSearch":true,"positioning":[{"select":"DEALER"},{"select":"SEDE"},{},{},{},{},{},{},{},{},{},{},{},{},{}]},"process":{"select":{"Azienda":{"descrizione":{"SQLFormat":null,"alias":"DEALER"}},"CodSedeDealer":{"Descrizione":{"SQLFormat":null,"alias":"SEDE"}}},"from":["DocVenditaDettaglio","ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],"where":{"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]},"factJoin":{"cubeJoin_1":["DocVenditaDettaglio.NumRifInt","DocVenditaIntestazione.NumRifInt"],"cubeJoin_2":["DocVenditaDettaglio.id_Azienda","DocVenditaIntestazione.id_Azienda"]},"filters":{"glm":"Azienda.id = 43"},"groupBy":{"Azienda":{"descrizione":{"SQLFormat":null}},"CodSedeDealer":{"Descrizione":{"SQLFormat":null}}},"metrics":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"}},"filteredMetrics":{"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}},"processId":0,"name":"rep-0","type":"PROCESS"}};
-	// storage.save = {"type":"FILTER","name":"rep.mag","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"MAG\""};
-	// storage.save = {"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""};
-	// storage.save = {"type":"METRIC","name":"venduto","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"}}};
-	// storage.save = {"select":{"Azienda":{"descrizione":{"SQLFormat":null,"alias":"a"}}},"from":["DocVenditaDettaglio","ZonaVenditaCM","Azienda","CodSedeDealer","DocVenditaIntestazione"],"where":{"dimensionJoin_1":["ZonaVenditaCM.id","Azienda.id_ZonaVenditaCM"],"dimensionJoin_2":["Azienda.id","CodSedeDealer.id_Azienda"],"dimensionJoin_3":["CodSedeDealer.id","DocVenditaIntestazione.id_CodSedeDealer"]},"factJoin":{"cubeJoin_1":["DocVenditaDettaglio.NumRifInt","DocVenditaIntestazione.NumRifInt"],"cubeJoin_2":["DocVenditaDettaglio.id_Azienda","DocVenditaIntestazione.id_Azienda"]},"filters":{"glm":"Azienda.id = 43"},"groupBy":{"Azienda":{"descrizione":{"SQLFormat":null}}},"metrics":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"},"q":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"q","distinct":false,"alias":"q"},"qtaOff":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"Quantita","name":"qtaOff","distinct":false,"alias":"Quantità (off)","filters":{"rep.off":{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}}}},"filteredMetrics":{},"processId":1,"name":"x","type":"PROCESS"};
-
 })();

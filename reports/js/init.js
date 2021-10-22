@@ -87,51 +87,24 @@ const Dim = new DimensionStorage();
 	    const req = new Request(url, init);
 
 	    await fetch(req)
-		.then( (response) => {
-		if (!response.ok) {throw Error(response.statusText);}
-		return response;
-		})
-		.then( (response) => response.json())
-		.then( (data) => {
-	        // console.log(data);
-	        if (data) {
-	        	console.info('FX creata con successo !');
-	        	// NOTE: qui ho creato la FX, a questo punto potrei scegliere di visualizzare il report, per il momento mi serve solo la FX.
-	        	// per come ho gestito la creazione del report è troppo complesso, qui potrei, una volta ottenuto il risultato dalla FX, popolarla con GoogleChart DataTable, da valutare in futuro se serve.
-				// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
-	        } else {
-	          // TODO: no data
-	        }
-	    })
+			.then( (response) => {
+			if (!response.ok) {throw Error(response.statusText);}
+			return response;
+			})
+			.then( (response) => response.json())
+			.then( (data) => {
+		        // console.log(data);
+		        if (data) {
+		        	console.info('FX creata con successo !');
+		        	// NOTE: qui ho creato la FX, a questo punto potrei scegliere di visualizzare il report, per il momento mi serve solo la FX.
+		        	// per come ho gestito la creazione del report è troppo complesso, qui potrei, una volta ottenuto il risultato dalla FX, popolarla con GoogleChart DataTable, da valutare in futuro se serve.
+					// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
+		        } else {
+		          // TODO: no data
+		        }
+		    })
 	    .catch( (err) => console.error(err));
 	};
-
-	// 2021-10-19 al momento non mi interessa andare a creare il report, questa viene chiamata dopo la creazione della FXn, in handlerReportToBeProcessed()
-	/*app.getDatamart = function(datamartId, dataJSON) {
-		var url = 'ajax/reports.php';
-		let params = 'datamartId=' + datamartId;
-
-		// console.log(params);
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					var response = JSON.parse(request.response);
-					console.table(response);
-					app.createReport(response, dataJSON);
-				} else {
-					// TODO:
-				}
-			} else {
-				// TODO:
-			}
-		};
-
-		request.open('POST', url);
-		// request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		request.send(params);
-	};*/
 
 	// report da processare
 	app.datamartToBeProcessed = function(e) {

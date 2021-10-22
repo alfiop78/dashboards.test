@@ -101,7 +101,6 @@ class Dimension {
 		this._join = {}; // relazioni tra le tabelle
 		this._hierarchies = {}; // ordine gerarchico
 		this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
-		this._arrColumns = []; // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
 		this._columnsSet = new Set(); // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
 		this.relationId = 0;
 	}
@@ -153,7 +152,6 @@ class Dimension {
 		(this._columnsSet.has(field)) ? this._columnsSet.delete(field) : this._columnsSet.add(field);
 
 		this._columns[this._tableName] = Array.from(this._columnsSet);
-		// this._columns[this._tableName] = this._arrColumns;
 		console.log(this._columns);
 	}
 
