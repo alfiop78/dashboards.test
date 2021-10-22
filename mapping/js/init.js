@@ -1,5 +1,6 @@
 var App = new Application();
 var cube = new Cube();
+var StorageCube = new CubeStorage();
 var dimension = new Dimension();
 (() => {
 	var app = {
@@ -504,22 +505,10 @@ var dimension = new Dimension();
 
 	// recupero la lista dei Cubi in localStorage
 	app.getCubes = () => {
-		const cube = new CubeStorage();
-		const cubes = cube.list();
 		const ul = document.getElementById('cubes');
-
-		for (const [key, value] of Object.entries(cubes)) {
-			let element = document.createElement('div');
-			element.className = 'element';
-			element.setAttribute('label', key);
-			let li = document.createElement('li');
-			li.innerText = key;
-			li.setAttribute('label', key);
-			li.id = 'cubeId_' + value['id'];
-			ul.appendChild(element);
-			element.appendChild(li);
-			li.onclick = app.handlerCubeSelected;
-		}
+		StorageCube.list(ul);
+		// associo la Fn che gestisce il click sulle <li>
+		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerCubeSelected) );
 	};
 
 	app.handlerCubeSelected = (e) => {
@@ -691,12 +680,11 @@ var dimension = new Dimension();
 
 	app.btnSaveCubeName.onclick = () => {
 		console.log('cube save');
-		let cubeStorage = new CubeStorage();
 		cube.title = document.getElementById('cubeName').value;
 
 		cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
 		// Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-		cube.id = cubeStorage.getIdAvailable();
+		cube.id = StorageCube.getIdAvailable();
 		console.log(cube.id);
 
 		const dimensionStorage = new DimensionStorage();
@@ -715,7 +703,7 @@ var dimension = new Dimension();
 		cube.save();
 
 		// salvo il cubo in localStorage
-		cubeStorage.save = cube.cube;
+		StorageCube.save = cube.cube;
 
 		app.dialogCubeName.close();
 	};

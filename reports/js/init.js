@@ -1,6 +1,8 @@
 var App = new Application();
 var Query = new Queries();
 const Dim = new DimensionStorage();
+var StorageCube = new CubeStorage();
+var StorageProcess = new ProcessStorage();
 
 (() => {
 	App.init();
@@ -105,36 +107,22 @@ const Dim = new DimensionStorage();
 	    .catch( (err) => console.error(err));
 	};
 
-	// report da processare
+	// creo la lista degli elementi da processare
 	app.datamartToBeProcessed = () => {
-		const storage = new ProcessStorage();
-
-		const toBeProcessed = storage.list();
-		console.log('Lista Report da Processare : ', toBeProcessed);
-
 		const ul = document.getElementById('reportsProcess');
-		
-		for (let proc in toBeProcessed) {
-			// console.log(proc);
-			// console.log(toBeProcessed[proc]);
-			let content = app.tmplListField.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
-			li.innerText = proc;
-			li.setAttribute('label', proc);
-			li.setAttribute('data-id', toBeProcessed[proc]['processId']);
-			ul.appendChild(element);
-			li.onclick = app.handlerReportToBeProcessed;
-		}
+		const toProcess = StorageProcess.list(app.tmplListField, ul);
+		// associo la Fn che gestisce il click sulle <li>
+		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerReportToBeProcessed) );
 	};
 
 	// selezione del cubo
 	app.handlerCubeSelected = (e) => {
 		// TODO: usare e.currentTarget
+		debugger;
 		const cubeId = e.target.getAttribute('data-cube-id');
 		const cubeName = e.target.getAttribute('label');
-		const storage = new CubeStorage();
-		let cube = storage.json(cubeName);
+		// const storage = new CubeStorage();
+		let cube = StorageCube.json(cubeName);
 		e.target.toggleAttribute('selected');
 		
 		Query.from = cube.FACT;
@@ -163,10 +151,10 @@ const Dim = new DimensionStorage();
 		liTable.onclick = app.handlerTableSelectedFilter;
 		i.onclick = app.handlerAddFilter; // apro la dialog
 		
-		// recupero l'object Cube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
-		// console.log(storage.associatedDimensions(cubeName));
+		// recupero l'object StorageCube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
+		// console.log(StorageCube.associatedDimensions(cubeName));
 		let ul = document.getElementById('dimensions');
-		const dimensions = storage.associatedDimensions(cubeName);
+		const dimensions = StorageCube.associatedDimensions(cubeName);
 		let element = document.createElement('div');
 		element.classList.add('element');
 		for (dimension in dimensions) {
@@ -846,77 +834,19 @@ const Dim = new DimensionStorage();
 	};
 
 	// carico elenco Cubi su cui creare il report
-	app.loadCubes = () => {
-		// console.log('loadCubes');
-		const cubes = new CubeStorage();
-		// console.log(storage.list);
-		let ul = document.getElementById('cubes');
-		let obj = cubes.list();
-		console.log('Lista cubi :', obj);
-		// TODO: se obj è un Object utilizzare Object.entries()
-		for (let i in obj) {
-			// console.log(obj[i]['key']);
-			let element = document.createElement('div');
-			element.classList.add('element');
-			let li = document.createElement('li');
-			li.innerText = obj[i]['key'];
-			li.id = 'cube-' + obj[i]['id'];
-			li.setAttribute('data-cube-id', obj[i]['id']);
-			li.setAttribute('label', obj[i]['key']);
-			element.appendChild(li);
-			ul.appendChild(element);
-
-			li.onclick = app.handlerCubeSelected;
-		}
+	app.getCubes = () => {
+		const ul = document.getElementById('cubes');
+		StorageCube.list(ul);
+		// associo la Fn che gestisce il click sulle <li>
+		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerCubeSelected) );
 	};
 
-	// 2021-10-19 leggo i dati dal datamart (FXn) appena creato in getDatamart()
-	/*app.createReport = function(response, dataJSON) {
-		console.log('create report');
-		
-		// ottengo un reportId per passarlo a costruttore
-		const storage = new ReportStorage();
-		const reportId = storage.getIdAvailable();
-		console.log(reportId);
-
-		console.log(dataJSON);
-		
-		app.report = new Options(app.table, reportId);
-		console.log(app.report);
-		
-		app.report.cube = dataJSON;
-		// dati estratti dalla query
-		app.report.data = response;
-		// aggiungo le colonne
-		app.report.addColumns();
-		// aggiungo le righe del report
-		app.report.addRows();
-		// aggiungo elementi nelle datalist (page-by)
-		app.report.createDatalist();
-
-		app.report.draw();
-		// salvo nella Classe Reports il nome in modo da ritrovarmelo anche dopo quando, dopo le modifiche al layout del report andrò a salvare il report
-
-		app.report.reportName = dataJSON.name;
-	};*/
-
-	// 2021-10-19 al momento non interessa creare il report, dopo aver creato la FX potrei leggerla usando GoogleCharts e non come ho fatto qui a "manualmente"
-	/*app.openReport = function(response, JSONReportData) {
-	
-		app.report = new OpenReport(app.table, JSONReportData.id, JSONReportData);
-
-		app.report.data = response;
-		app.report.reportName = JSONReportData.name;
-	};*/
-
-	app.loadCubes();
-
-	// app.getReports();
+	app.getCubes();
 
 	app.datamartToBeProcessed();
 
 	// abilito il tasto btnFilterSave se il form per la creazione del filtro è corretto
-	app.checkFilterForm = function() {
+	app.checkFilterForm = () => {
 		const filterName = document.getElementById('filter-name');
 		// textarea della formula, devo verifica se ci sono almento i 3 elementi della formula
 		const filterFormula = document.getElementById('filterFormula');
@@ -928,7 +858,8 @@ const Dim = new DimensionStorage();
 	};
 
 	// selezione di un operatore logica da inserire nella formula (AND, OR, NOT, ecc...)
-	app.handlerLogicalOperatorSelected = function(e) {
+	app.handlerLogicalOperatorSelected = (e) => {
+		// TODO: e.currentTarget
 		console.log(e.target);
 		e.target.toggleAttribute('selected');
 		const textarea = document.getElementById('filterFormula');
@@ -939,37 +870,17 @@ const Dim = new DimensionStorage();
 	};
 	/* events */
 
-	// 2021-10-19 al momento disattivato perchè interessa solo creare la Fx
-	/*app.btnOpenReport.onclick = function(e) {
-		// apro la dialog dialog-reportList
-		app.dialogReportList.showModal();
-	};*/
-
-	app.btnDashboardLayout.onclick = function(e) {window.location.href = '/dashboards/';};
-	
-	/*app.propertyColHidden.onclick = function (e) {
-		console.log('checkbox click');
-
-		// TODO: propertyValue conterrà il valore di questa proprietà selezionata (es.: in questo caso true/false)
-		// console.log(propertyName);
-
-		app.report.attribute = { 'hidden': true };
-	};*/
-
-	app.handlerColorInput = function (e) {
+	app.handlerColorInput = (e) => {
 		// console.log(e.target.value);
+		// TODO: e.currentTarget
 		let propName = e.target.getAttribute('property');
 		let propValue = e.target.value;
 		// Se non utilizzo le [] in propName l'oggetto sarà {propName: 'red'} invece di {color: 'red'}
 		app.report.style = { [propName]: propValue };
 	};
 
-	/*app.fgColorInput.oninput = app.handlerColorInput;
-	// app.fgColorInput.onchange = app.handlerColorInput;
-	app.bgColorInput.oninput = app.handlerColorInput;
-	// app.bgColorInput.onchange = app.handlerColorInput;*/
-
-	app.handlerOption = function (e) {
+	app.handlerOption = (e) => {
+		// TODO: e.currentTarget
 		let propName = e.target.getAttribute('property');
 		let propValue = e.target.getAttribute('value');
 		// imposto di un colore lo stile dell'allineamneto applicato (per questa colonna)
@@ -979,17 +890,6 @@ const Dim = new DimensionStorage();
 		console.log(propValue);
 		app.report.style = { [propName]: propValue };
 	};
-
-	// align
-	/*app.alignLeft.onclick = app.handlerOption;
-	app.alignCenter.onclick = app.handlerOption;
-	app.alignRight.onclick = app.handlerOption;
-
-	// format e style
-	app.formatBold.onclick = app.handlerOption;
-	app.formatItalic.onclick = app.handlerOption;*/
-
-	// console.log(app.radioSingleSelection);
 
 	app.handlerRadioSelectionType = function(e) {
 		console.log('radio : ', e.target);
@@ -1004,17 +904,6 @@ const Dim = new DimensionStorage();
 		item.onchange = app.handlerRadioSelectionType;
 	});
 
-	/*app.numberFormat.onchange = function(e) {
-		let propName = e.target.getAttribute('property');
-		console.log(this.selectedIndex);
-		// NOTE: Esempio utilizzo select per recuperare l'elemento selezionato (value oppure id della option)
-		// console.log(this.options[this.selectedIndex].value);
-		let propValue = this.options[this.selectedIndex].value;
-		// console.log(this.options[this.selectedIndex].label);
-		// value dell'elemento selezionato nella select
-		app.report.attribute = { [propName]: propValue};
-	};*/
-
 	app.btnPreviousStep.onclick = function() {Step.previous();}
 
 	app.btnNextStep.onclick = function() {Step.next();};
@@ -1027,14 +916,13 @@ const Dim = new DimensionStorage();
 	};
 
 	// salvo il report da processare
-	app.btnSaveReportDone.onclick = function(e) {
+	app.btnSaveReportDone.onclick = () => {
 		console.log(Query);
 		debugger;
 		// salvo temporaneamente la query da processare nello storage
 
 		// ottengo un processId per passarlo a costruttore
-		const storage = new ProcessStorage();
-		const processId = storage.getIdAvailable();
+		const processId = StorageProcess.getIdAvailable();
 		const name = document.getElementById('reportName').value;
 
 		// il datamart sarà creato come FXprocessId
@@ -1053,7 +941,7 @@ const Dim = new DimensionStorage();
 	};
 
 	// visualizzo la lista dei report da processare
-	app.btnProcessReport.onclick = function(e) {
+	app.btnProcessReport.onclick = () => {
 		const listReportProcess = document.getElementById('reportProcessList');
 		listReportProcess.toggleAttribute('hidden');
 	};
