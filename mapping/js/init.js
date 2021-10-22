@@ -5,22 +5,16 @@ var dimension = new Dimension();
 	var app = {
 		dialogCubeName : document.getElementById('cube-name'),
 		dialogDimensionName : document.getElementById('dimension-name'),
-		dialogHierarchyName : document.getElementById('hierarchy-name'),
-		dialogReportList : document.getElementById('dialog-report-list'),
+		dialogHierarchyName : document.getElementById('hierarchy-name'), // non utilizzata : questa mi servirà per assegnare un nome alla gerarchia salvata
 
-		hierarchyContainer : document.getElementById('hierarchiesContainer'),
+		hierarchyContainer : document.getElementById('hierarchiesContainer'), // struttura gerarchica sulla destra
 
 		btnBack : document.getElementById('mdc-back'),
-		btnNewReport: document.getElementById('mdc-new-report'),
 
 		btnSaveDimension : document.getElementById('saveDimension'),
 		btnSaveHierarchy : document.getElementById('hierarchySave'),
 		btnSaveCube : document.getElementById('saveCube'),
 		btnSaveCubeName : document.getElementById('btnCubeSaveName'),
-
-		tmplCloseTable : document.getElementById('closeTable'), // tasto close table
-		tmplInputSearch : document.getElementById('inputSearch'), // input per ricerca fields nelle tabelle
-		tmplSectionOption : document.getElementById('sectionOption'), // options laterale per ogni tabella
 
 		// tasto openTableList
 		btnTableList : document.getElementById('openTableList'),
@@ -28,9 +22,9 @@ var dimension = new Dimension();
 		// tasto openDimensionList per l'apertura dell'elenco delle dimensioni
 		btnDimensionList : document.getElementById('openDimensionList'),
 		dimensionList : document.getElementById('dimensionList'),
-
-		btnNewFact : document.getElementById('mdc-newFact'),
-
+		// tasto definisci Cubo
+		btnNewFact : document.getElementById('defineCube'),
+		
 		card : null,
 		cardTitle : null,
 		content : document.getElementById('content'),
@@ -49,7 +43,7 @@ var dimension = new Dimension();
 
 	App.init();
 
-	app.dragStart = function(e) {
+	app.dragStart = (e) => {
 		// mousedown da utilizzare per lo spostamento dell'elemento
 		if (e.target.localName === 'h6') {
 			app.cardTitle = e.target;
@@ -69,7 +63,7 @@ var dimension = new Dimension();
 		if (e.target === app.cardTitle) {app.active = true;}
 	};
 
-	app.dragEnd = function() {
+	app.dragEnd = () => {
 		// console.log(e.target);
 		// mouseup, elemento rilasciato dopo lo spostamento
 		app.initialX = app.currentX;
@@ -77,7 +71,7 @@ var dimension = new Dimension();
 		app.active = false;
 	};
 
-	app.drag = function(e) {
+	app.drag = (e) => {
 		// mousemove elemento si sta spostato
 		// console.log(e.target);
 		// console.log(e);
@@ -109,7 +103,7 @@ var dimension = new Dimension();
 
 	// TODO: aggiungere anhce eventi touch...
 
-	app.handlerDragStart = function(e) {
+	app.handlerDragStart = (e) => {
 		// console.log('start');
 		// dragStart
 		// console.log(e.target.id);
@@ -121,12 +115,12 @@ var dimension = new Dimension();
 		// console.log(e.dataTransfer);
 	};
 
-	app.handlerDragOver = function(e) {
+	app.handlerDragOver = (e) => {
 		// console.log('dragOver');
 		e.preventDefault();
 	};
 
-	app.handlerDragEnter = function(e) {
+	app.handlerDragEnter = (e) => {
 		// console.log('dragEnter');
 		e.preventDefault();
 		// console.log(e.target);
@@ -137,12 +131,12 @@ var dimension = new Dimension();
 		}
 	};
 
-	app.handlerDragLeave = function(e) {
+	app.handlerDragLeave = (e) => {
 		e.preventDefault();
 		// console.log('dragLeave');
 	};
 
-	app.handlerDragEnd = function(e) {
+	app.handlerDragEnd = (e) => {
 		e.preventDefault();
 		// console.log('dragEnd');
 		// console.log(e.target);
@@ -150,7 +144,7 @@ var dimension = new Dimension();
 		app.getTable(cube.card.tableName);
 	};
 
-	app.handlerDrop = function(e) {
+	app.handlerDrop = (e) => {
 		e.preventDefault();
 		// console.log('drop');
 		// console.log(e.target);
@@ -236,7 +230,7 @@ var dimension = new Dimension();
 		card.querySelector('i[columns]').onclick = app.handlerAddColumns;
 	};
 
-	app.hierDragStart = function(e) {
+	app.hierDragStart = (e) => {
 		console.log('hier drag start');
 		e.dataTransfer.setData('text/plain', e.target.id);
 		// disattivo temporaneamente gli eventi drop e dragend su app.content
@@ -244,13 +238,13 @@ var dimension = new Dimension();
 		app.content.removeEventListener('drop', app.handlerDrop, true);
 	};
 
-	app.hierDragOver = function(e) {
+	app.hierDragOver = (e) => {
 		console.log('dragover');
 		e.preventDefault();
 		// console.log(e.target);
 	};
 
-	app.hierDragEnter = function(e) {
+	app.hierDragEnter = (e) => {
 		e.preventDefault();
 		console.log(e.target);
 
@@ -260,16 +254,16 @@ var dimension = new Dimension();
 		}
 	};
 
-	app.hierDragLeave = function(e) {e.preventDefault();};
+	app.hierDragLeave = (e) => {e.preventDefault();};
 
-	app.hierDragEnd = function(e) {
+	app.hierDragEnd = (e) => {
 		e.preventDefault();
 		// reimposto gli eventi drop e dragend su app.content
 		app.content.addEventListener('dragend', app.handlerDragEnd, true);
 		app.content.addEventListener('drop', app.handlerDrop, true);
 	};
 
-	app.hierDrop = function(e) {
+	app.hierDrop = (e) => {
 		e.preventDefault();
 		let data = e.dataTransfer.getData('text/plain');
 		console.log(data);
@@ -291,11 +285,11 @@ var dimension = new Dimension();
 	// app.content.ondragend = app.handlerDragEnd;
 	app.content.addEventListener('dragend', app.handlerDragEnd, true);
 
-	app.handlerColumns = function(e) {
+	app.handlerColumns = (e) => {
 		// selezione della colonna nella card table
 		// console.log(e.target);
 		dimension.activeCard = e.path[3];
-		cube.fieldSelected = e.target.getAttribute('label');
+		cube.fieldSelected = e.currentTarget.getAttribute('label');
 	
 		// console.log(cube.activeCard);
 
@@ -308,31 +302,31 @@ var dimension = new Dimension();
 
 		switch (attrs) {
 			case 'relations':
-				if (e.target.hasAttribute('data-relation-id')) {
+				if (e.currentTarget.hasAttribute('data-relation-id')) {
 					// debugger;
 					/* oltre a fare il toggle dell'attributo, se questa colonna era stata già messa in
 					relazione con un altra tabella (quindi attributo [data-relation-id] presente) elimino anche la relazione tra i due campi.
 					Bisogna eliminarla sia dal DOM, eliminando [data-relation-id] che dall'array this.hierarchy
 					*/
-					e.target.toggleAttribute('selected');
-					// recupero tutti gli attributi di e.target e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
-					for (let name of e.target.getAttributeNames()) {
+					e.currentTarget.toggleAttribute('selected');
+					// recupero tutti gli attributi di e.currentTarget e vado a ciclare this.removeHierarchy(relationId) per verificare uno alla volta quale posso eliminare
+					for (let name of e.currentTarget.getAttributeNames()) {
 						// console.log(name);
 						let relationId, value;
 						if (name.substring(0, 9) === 'data-rel-') {
 							relationId = name;
-							value = e.target.getAttribute(name);
+							value = e.currentTarget.getAttribute(name);
 							app.removeHierarchy(relationId, value);
 						}
 					}
 				} else {
 					let liRelationSelected = dimension.card.querySelector('li[relations]:not([data-relation-id])');
 					// console.log(liRelationSelected);
-					e.target.toggleAttribute('relations');
-					e.target.toggleAttribute('selected');
+					e.currentTarget.toggleAttribute('relations');
+					e.currentTarget.toggleAttribute('selected');
 					// se ho selezionato una colonna diversa da quella già selezionata, rimuovo la selezione corrente e imposto quella nuova
 					// se è stata selezionata una colonna già selezionata la deseleziono
-					if (liRelationSelected && (liRelationSelected.id !== e.target.id)) {
+					if (liRelationSelected && (liRelationSelected.id !== e.currentTarget.id)) {
 						liRelationSelected.toggleAttribute('relations');
 						liRelationSelected.toggleAttribute('selected');
 					}
@@ -341,46 +335,27 @@ var dimension = new Dimension();
 				break;
 			case 'metrics':
 				console.log('metrics');
-				e.target.toggleAttribute('metrics');
+				e.currentTarget.toggleAttribute('metrics');
 
-				if (!e.target.hasAttribute('metrics')) {
-				  console.log('da eliminare');
-				  //delete cube.metrics[tableName][fieldName];
-				  
+				if (!e.currentTarget.hasAttribute('metrics')) {
+					// TODO: delete cube.metrics[tableName][fieldName];
 				} else {
-
-				  cube.metrics = cube.fieldSelected;
+					cube.metrics = cube.fieldSelected;
 				}
 				break;
 			default:
 				// se la card è stata imposta con l'attributo mode ...
 				if (cube.card.ref.hasAttribute('mode')) {
 					console.log('columns');
-					e.target.toggleAttribute('columns');
+					e.currentTarget.toggleAttribute('columns');
 					// nel metodo columns c'è la logica per controllare se devo rimuovere/aggiungere la colonna selezionata
 					dimension.columns = cube.fieldSelected;
 				}
 		}
 	};
 
-	app.handlerBtnMetricDone = function(e) {    
-		// TODO: eliminare dopo averla spostata in /reports
-		const metricName = app.dialogMetrics.querySelector('#metric-name').value;
-		const sqlFunction = document.querySelector('#function-list > li[selected]').innerText;
-		const distinctOption = document.getElementById('checkbox-distinct').checked;
-		const alias = document.getElementById('alias-metric').value;
-
-		console.log(cube.fieldSelected);
-
-		let objParam = {};
-		cube.arrMetrics.push({sqlFunction, 'fieldName': cube.fieldSelected, metricName, 'distinct' : distinctOption, 'alias' : alias});
-		// cube.arrMetrics.forEach((metric) => {objParam[metric.metricName] = metric;});
-		cube.arrMetrics.forEach((metric) => {objParam = metric;});
-		cube.metrics = objParam;
-	};
-
 	// click sull'icona di destra "columns" per l'associazione delle colonne
-	app.handlerAddColumns = function(e) {
+	app.handlerAddColumns = (e) => {
 		// console.log(e.target);
 		// console.log(e.path);
 		console.log('add columns');
@@ -397,14 +372,14 @@ var dimension = new Dimension();
 		cube.mode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
 	};
 
-	app.handlerAddMetric = function(e) {
+	app.handlerAddMetric = (e) => {
 		// imposto il metrics mode
 		const cardTable = e.path[3].querySelector('.cardTable');
 		cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
 		cube.mode('metrics', 'Seleziona le colonne da impostare come Metriche');
 	};
 
-	app.createHierarchy = function(e) {
+	app.createHierarchy = (e) => {
 		console.log('create Relations');
 		let hier = [];
 		// let hierObj = {};
@@ -443,7 +418,7 @@ var dimension = new Dimension();
 		});
 	};
 
-	app.removeHierarchy = function(relationId, value) {
+	app.removeHierarchy = (relationId, value) => {
 		console.log(relationId);
 		console.log(value);
 		debugger;
@@ -487,7 +462,7 @@ var dimension = new Dimension();
 		}
 	};
 
-	app.handlerCloseCard = function(e) {
+	app.handlerCloseCard = (e) => {
 		// elimino la card e la rivisualizzo nel drawer (spostata durante il drag&drop)
 		console.log(e.target);
 		console.log(e.path);
@@ -495,7 +470,7 @@ var dimension = new Dimension();
 		e.path[5].remove();
 		// TODO: eliminare anche dal flusso delle gerarchie sulla destra
 
-		// TODO: controllo struttura gerarchiiccaaa app.checkStepGuide
+		// TODO: controllo struttura gerarchica
 	};
 
 	app.getDimensions = () => {
@@ -530,7 +505,7 @@ var dimension = new Dimension();
 	// recupero la lista dei Cubi in localStorage
 	app.getCubes = () => {
 		const cube = new CubeStorage();
-		let cubes = cube.list();
+		const cubes = cube.list();
 		const ul = document.getElementById('cubes');
 
 		for (const [key, value] of Object.entries(cubes)) {
@@ -551,6 +526,7 @@ var dimension = new Dimension();
 		// TODO: apro la tabella definita come Cubo per consentirne la modifica
 	};
 
+	// get tabelle del database
 	app.getDatabaseTable = async () => {
 		const url = 'ajax/database.php';
 		await fetch(url)
@@ -563,20 +539,20 @@ var dimension = new Dimension();
 		        // console.log(data);
 		        if (data) {
 		        	let ul = document.getElementById('tables');
-		        	for (let i in data) {
-						let tmpl = document.getElementById('el');
+		        	for (const [key, value] of Object.entries(data)) {
+		        		let tmpl = document.getElementById('el');
 						let tmplContent = tmpl.content.cloneNode(true);
 						let element = tmplContent.querySelector('.element.card');
 						element.ondragstart = app.handlerDragStart;
-						element.id = 'table-' + i;
-						element.setAttribute('label', data[i][0]);
+						element.id = 'table-' + key;
+						element.setAttribute('label', value[0]);
 						ul.appendChild(element);
 						let span = document.createElement('span');
 						span.classList = 'elementSearch';
-						span.setAttribute('label', data[i][0]);
-						span.innerHTML = data[i][0];
+						span.setAttribute('label', value[0]);
+						span.innerHTML = value[0];
 						element.appendChild(span);
-					}
+		        	}
 		        } else {
 		          // TODO: no data
 		          console.warning('Non è stato possibile recuperare la lista delle tabelle');
@@ -585,7 +561,7 @@ var dimension = new Dimension();
 	    .catch( (err) => console.error(err));
 	};
 
-	app.handlerAddJoin = function(e) {
+	app.handlerAddJoin = (e) => {
 		const cardTable = e.path[3].querySelector('.cardTable');
 		cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
 		cube.mode('relations', 'Selezionare le colonne che saranno messe in relazione');
@@ -640,10 +616,19 @@ var dimension = new Dimension();
 	    .catch( (err) => console.error(err));
 	};
 
+	app.getDatabaseTable();
+
+	app.getDimensions();
+
+	app.getCubes();
+
 	/*events */
 
+	// tasto report nella sezione controls -> fabs
+	document.getElementById('mdc-report').onclick = () => {window.location.href = '/reports/';};
+
 	/* tasto OK nella dialog dimension name*/
-	document.getElementById('btnDimensionSaveName').onclick = function() {
+	document.getElementById('btnDimensionSaveName').onclick = () => {
 		/*
 		  Salvo la dimensione, senza il legame con la FACT.
 		  Salvo in localStorage la dimensione creata
@@ -681,19 +666,20 @@ var dimension = new Dimension();
 		delete dimension.dimension;
 	};
 
-	app.closeCards = function() {
+	// viene invocata da btnDimensionSaveName.onclick, quando viene salvata una dimensione, vengono chiuse tutte le card aperte attualmente
+	app.closeCards = () => {
 		document.querySelectorAll('.card.table').forEach((item) => {
 			console.log(item);
 			item.remove();
 		});
 	};
 
-	app.btnSaveDimension.onclick = function(e) {
+	app.btnSaveDimension.onclick = (e) => {
 		if (e.target.hasAttribute('disabled')) return;
 		app.dialogDimensionName.showModal();
 	};
 
-	app.btnSaveHierarchy.onclick = function(e) {
+	app.btnSaveHierarchy.onclick = (e) => {
 		if (e.target.hasAttribute('disabled')) return;
 		// TODO salvo la gerarchia che andrà inserita in dimension
 		// TODO abilito il tasto save dimension
@@ -701,9 +687,9 @@ var dimension = new Dimension();
 		app.btnSaveDimension.classList.remove('md-dark', 'md-inactive');
 	};
 
-	app.btnSaveCube.onclick = function() {app.dialogCubeName.showModal();};
+	app.btnSaveCube.onclick = () => {app.dialogCubeName.showModal();};
 
-	app.btnSaveCubeName.onclick = function() {
+	app.btnSaveCubeName.onclick = () => {
 		console.log('cube save');
 		let cubeStorage = new CubeStorage();
 		cube.title = document.getElementById('cubeName').value;
@@ -732,47 +718,45 @@ var dimension = new Dimension();
 		cubeStorage.save = cube.cube;
 
 		app.dialogCubeName.close();
-
-		// TODO: visualizzo il tasto crea report che rimanda alla pagina /reports
-		// app.btnNewReport.removeAttribute('hidden');
 	};
 
-	app.handlerOpenTableList = function() {
+	app.handlerOpenTableList = () => {
 		const tableList = document.getElementById('tableList');
 		app.btnTableList.toggleAttribute('open');
 		tableList.toggleAttribute('hidden');
 		document.getElementById('tableSearch').focus();
 	};
 
-	app.btnNewFact.onclick = function() {
+	app.btnNewFact.onclick = () => {
 		app.btnTableList.setAttribute('fact', true);
 		app.handlerOpenTableList();
 	};
 
-	app.btnBack.onclick = function() {};
+	app.btnBack.onclick = () => {};
 
 	/* ricerca in lista tabelle */
 	document.getElementById('tableSearch').oninput = App.searchInList;
 
 	app.btnTableList.onclick = app.handlerOpenTableList;
 
-	document.getElementById('processCube').onclick = function(e) {
-		// visualizzo la lista delle tabelle
+	document.getElementById('processCube').onclick = (e) => {
+		// visualizzo la lista dei cubi esistenti
 		const cubeList = document.getElementById('cubesList');
 		cubeList.toggleAttribute('hidden');
 		e.target.toggleAttribute('open');
 		document.getElementById('cubeSearch').focus();
 	};
 
-	app.btnDimensionList.onclick = function(e) {
+	app.btnDimensionList.onclick = (e) => {
 		const dimensionList = document.getElementById('dimensionList');
 		dimensionList.toggleAttribute('hidden');
 		e.target.toggleAttribute('open');
 		document.getElementById('dimensionSearch').focus();
 	};
 
-	app.handlerDimensionSelected = function(e) {
-		// selezione di una dimensione da inserire nel body
+	// selezione di una dimensione da inserire nel body, per legarla al cubo
+	// TODO: ottimizzare
+	app.handlerDimensionSelected = (e) => {
 		console.log(e.target);
 		debugger;
 		const storage = new DimensionStorage();
@@ -821,10 +805,4 @@ var dimension = new Dimension();
 
 		app.getTable(lastTableInHierarchy);
 	};
-
-	app.getDatabaseTable();
-
-	app.getDimensions();
-
-	app.getCubes();
 })();
