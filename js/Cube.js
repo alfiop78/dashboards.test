@@ -102,6 +102,7 @@ class Dimension {
 		this._hierarchies = {}; // ordine gerarchico
 		this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
 		this._arrColumns = []; // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
+		this._columnsSet = new Set(); // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
 		this.relationId = 0;
 	}
 
@@ -147,12 +148,12 @@ class Dimension {
 	}
 
 	set columns(field) {
-		// se il nome della tabella è già presente, aggiungo l'array, altrimenti pulisco l'array per non duplicare gli elementi in entrambi gli object this._columns[nometabella]
-		if (!this._columns.hasOwnProperty(this._tableName)) {this._arrColumns = [];}
+		// se il nome della tabella è già presente, aggiungo l'elemento al Set, altrimenti pulisco il Set per azzerare le colonne già inserite in un'altra tabella
+		if (!this._columns.hasOwnProperty(this._tableName)) {this._columnsSet.clear();}
+		(this._columnsSet.has(field)) ? this._columnsSet.delete(field) : this._columnsSet.add(field);
 
-		this._arrColumns.push(field);
-
-		this._columns[this._tableName] = this._arrColumns;
+		this._columns[this._tableName] = Array.from(this._columnsSet);
+		// this._columns[this._tableName] = this._arrColumns;
 		console.log(this._columns);
 	}
 

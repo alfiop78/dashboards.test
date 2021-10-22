@@ -358,22 +358,9 @@ var dimension = new Dimension();
 				if (cube.card.ref.hasAttribute('mode')) {
 					console.log('columns');
 					e.target.toggleAttribute('columns');
-					if (!e.target.hasAttribute('columns')) {
-						// TODO: spostare nel Metodo dimension.columns queta logica, se l'elemento già esiste lo rimuovo altrimenti lo aggiungo
-						console.log(dimension.columns[dimension.activeCard.getAttribute('name')].indexOf(cube.fieldSelected));
-						const position = dimension.columns[dimension.activeCard.getAttribute('name')].indexOf(cube.fieldSelected);
-						// posizione, nell'array dimension.columns[Azienda] da rimuovere
-						dimension.columns[dimension.activeCard.getAttribute('name')].splice(position, 1);
-					} else {
-						// aggiungo la selezione effettuata, se non già presente
-						if (!dimension.columns[dimension.activeCard.getAttribute('name')].includes(cube.fieldSelected)) dimension.columns = cube.fieldSelected;
-					}
+					// nel metodo columns c'è la logica per controllare se devo rimuovere/aggiungere la colonna selezionata
+					dimension.columns = cube.fieldSelected;
 				}
-				// if (!e.target.hasAttribute('columns') && Object.keys(this.columns).length > 0) {
-				//   delete dimension.columns[tableName][fieldName];
-				//   if (Object.keys(dimension.columns[tableName]).length === 0) {delete dimension.columns[tableName];}
-				// }
-				// console.log(dimension.columns);
 		}
 	};
 
