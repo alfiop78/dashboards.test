@@ -3,39 +3,37 @@ La classe recupera il local storage ad ogni accesso alla pagina e contiene Metod
 */
 class Storages {
 
-  constructor() {
-	this.storage = window.localStorage;
-	this.storageKeys = Object.keys(window.localStorage);
-	// this.cubeId = this._cubeId;
-	this.JSONData = null;
-  }
+	constructor() {
+		this.storage = window.localStorage;
+		this.storageKeys = Object.keys(window.localStorage);
+		// this.cubeId = this._cubeId;
+		this.JSONData = null;
+	}
 
-  set save(value) {
-	// salvo nello storage
-	window.localStorage.setItem(value.name, JSON.stringify(value));
-  }
+	set save(value) {
+		// salvo nello storage
+		window.localStorage.setItem(value.name, JSON.stringify(value));
+	}
 
-  set reportConfig(value) {
-	window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));
-  }
+	set reportConfig(value) {
+		window.localStorage.setItem(Object.keys(value), JSON.stringify(value[Object.keys(value)]));
+	}
 
-  // set dimension(value) {
-  //   // console.log(Object.keys(value));
-  //   // console.log(value.title);
-  //   //
-  //   window.localStorage.setItem(value.title, JSON.stringify(value));
-  //   this.dimensionName = value.title;
-  // }
+	// set dimension(value) {
+	//   // console.log(Object.keys(value));
+	//   // console.log(value.title);
+	//   //
+	//   window.localStorage.setItem(value.title, JSON.stringify(value));
+	//   this.dimensionName = value.title;
+	// }
 
-  // // restituisco il nome della dimensione
-  // get dimension() {return this.dimensionName;}
+	// // restituisco il nome della dimensione
+	// get dimension() {return this.dimensionName;}
 
-  JSONFormat(name) {
-	// restituisco un object convertito in json, questo mi servirà per ricostruire la struttura
-	return JSON.parse(window.localStorage.getItem(name));
-  }
-
-
+	JSONFormat(name) {
+		// restituisco un object convertito in json, questo mi servirà per ricostruire la struttura
+		return JSON.parse(window.localStorage.getItem(name));
+	}
 }
 
 class CubeStorage extends Storages {
@@ -339,88 +337,88 @@ class ProcessStorage extends Storages {
 }
 
 class DimensionStorage extends Storages {
-  // Metodi per leggere/scrivere Dimensioni nello Storage
-  // TODO: da completare in base alla logica di PageStorage
-  constructor() {
-	super();
-	this.id = 0; // default
-	this._name;
-  }
-
-  set dimensionId(value) {
-	this.id = value;
-  }
-
-  get dimensionId() { return this.id; }
-
-  set selected(value) {
-	// imposto la dimensione selezionata
-	this._name = value;
-  }
-
-  get selected() {
-	return JSON.parse(this.storage.getItem(this._name));
-  }
-
-  list() {
-	// let dimensions = [];
-	let dimObj = {};
-	this.storageKeys.forEach((key) => {
-	  // console.log(key);
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(jsonStorage);
-	  // console.log(jsonStorage.type);
-	  if (jsonStorage.type === 'DIMENSION') {
-		// console.log(key);
-		dimObj[key] = jsonStorage.from;
-	  }
-	});
-	// return dimensions;
-	return dimObj;
-  }
-
-  getIdAvailable() {
-	// ottengo il primo Id disponibile
-	console.log(this.storageKeys);
-	this.dimensionsElement = [];
-	this.storageKeys.forEach((key, index) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(jsonStorage);
-
-	  if (jsonStorage.type === 'DIMENSION') {
-		// ottengo il numero di elementi PAGE nello storage
-		this.dimensionsElement.push(jsonStorage.id);
-	  }
-	});
-
-	// ordino l'array
-	this.dimensionsElement.sort(function (a, b) {
-	  console.log(a);
-	  console.log(b);
-	  // TODO: cosa sono a e b ?
-	  return a - b;
-	})
-	// this.dimensionsElement.sort((a, b) => a - b); versione compatta
-
-	for (let i = 0; i < this.dimensionsElement.length; i++) {
-	  if (this.dimensionsElement.includes(i)) {
-		this.id++;
-	  } else {
-		this.id = i;
-	  }
+	// Metodi per leggere/scrivere Dimensioni nello Storage
+	// TODO: da completare in base alla logica di PageStorage
+	constructor() {
+		super();
+		this.id = 0; // default
+		this._name;	
 	}
-	return this.id;
-  }
 
-  getFields(table) {
-	// resituisco un array con il nome delle tabelle incluse in .columns
-	this.item = JSON.parse(this.storage.getItem(this._name));
-	this.tables = [];
-	for (let table in this.item.from) {
-	  this.tables.push(table);
+	set dimensionId(value) {
+		this.id = value;
 	}
-	return this.tables;
-  }
+
+	get dimensionId() { return this.id; }
+
+	set selected(value) {
+		// imposto la dimensione selezionata
+		this._name = value;
+	}
+
+	get selected() {
+		return JSON.parse(this.storage.getItem(this._name));
+	}
+
+	list() {
+		// let dimensions = [];
+		let dimObj = {};
+		this.storageKeys.forEach((key) => {
+			// console.log(key);
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(jsonStorage);
+			// console.log(jsonStorage.type);
+			if (jsonStorage.type === 'DIMENSION') {
+				// console.log(key);
+				dimObj[key] = jsonStorage.from;
+			}
+		});
+		// return dimensions;
+		return dimObj;
+	}
+
+	getIdAvailable() {
+		// ottengo il primo Id disponibile
+		console.log(this.storageKeys);
+		this.dimensionsElement = [];
+		this.storageKeys.forEach((key, index) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(jsonStorage);
+
+			if (jsonStorage.type === 'DIMENSION') {
+				// ottengo il numero di elementi PAGE nello storage
+				this.dimensionsElement.push(jsonStorage.id);
+			}
+		});
+
+		// ordino l'array
+		this.dimensionsElement.sort(function (a, b) {
+			console.log(a);
+			console.log(b);
+			// TODO: cosa sono a e b ?
+			return a - b;
+		})
+		// this.dimensionsElement.sort((a, b) => a - b); versione compatta
+
+		for (let i = 0; i < this.dimensionsElement.length; i++) {
+			if (this.dimensionsElement.includes(i)) {
+				this.id++;
+			} else {
+				this.id = i;
+			}
+		}
+		return this.id;
+	}
+
+	getFields(table) {
+		// resituisco un array con il nome delle tabelle incluse in .columns
+		this.item = JSON.parse(this.storage.getItem(this._name));
+		this.tables = [];
+		for (let table in this.item.from) {
+			this.tables.push(table);
+		}
+		return this.tables;
+	}
 
 }
 

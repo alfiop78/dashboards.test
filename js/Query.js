@@ -30,11 +30,8 @@ class Queries {
 	get fieldType() {return this._fieldType;}
 
 	set from(value) {
-		debugger;
 		this._fromArray.push(value);
-		// console.log(this._fromArray);
 		this._fromSet.add(value);
-		// this._from = this._fromArray;
 		console.log('from : ', this._fromSet);
 	}
 
@@ -81,7 +78,7 @@ class Queries {
 
 	set factRelation(object) {
 		this._factRelation = object;
-		console.log(this._factRelation);
+		console.log('fact join : ', this._factRelation);
 	}
 
 	get factRelation() {this._factRelation;}

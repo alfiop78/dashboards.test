@@ -38,7 +38,7 @@ var StorageProcess = new ProcessStorage();
 
 	// 2021-10-19 click sul report da processare/elaborare. tasto "Process Report"
 	app.handlerReportToBeProcessed = async (e) => {
-	    const label = e.target.getAttribute('label');
+		const label = e.target.getAttribute('label');
 		console.log(label);
 		const reportId = +e.target.getAttribute('data-id');
 		console.log('reportId : ',reportId);
@@ -50,27 +50,27 @@ var StorageProcess = new ProcessStorage();
 		console.log(params);
 		debugger;
 		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
-	    const req = new Request(url, init);
+		const req = new Request(url, init);
 
-	    await fetch(req)
+		await fetch(req)
 			.then( (response) => {
 			if (!response.ok) {throw Error(response.statusText);}
 			return response;
 			})
 			.then( (response) => response.json())
 			.then( (data) => {
-		        // console.log(data);
-		        if (data) {
-		        	console.info('FX creata con successo !');
-		        	// NOTE: qui ho creato la FX, a questo punto potrei scegliere di visualizzare il report, per il momento mi serve solo la FX.
-		        	// per come ho gestito la creazione del report è troppo complesso, qui potrei, una volta ottenuto il risultato dalla FX, popolarla con GoogleChart DataTable, da valutare in futuro se serve.
+				// console.log(data);
+				if (data) {
+					console.info('FX creata con successo !');
+					// NOTE: qui ho creato la FX, a questo punto potrei scegliere di visualizzare il report, per il momento mi serve solo la FX.
+					// per come ho gestito la creazione del report è troppo complesso, qui potrei, una volta ottenuto il risultato dalla FX, popolarla con GoogleChart DataTable, da valutare in futuro se serve.
 					// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
-		        } else {
-		          // TODO: no data
-		          console.warning('FX non è stata creata');
-		        }
-		    })
-	    .catch( (err) => console.error(err));
+				} else {
+				  // TODO: no data
+				  console.warning('FX non è stata creata');
+				}
+			})
+		.catch( (err) => console.error(err));
 	};
 
 	// creo la lista degli elementi da processare
@@ -83,15 +83,13 @@ var StorageProcess = new ProcessStorage();
 
 	// selezione del cubo step-1
 	app.handlerCubeSelected = (e) => {
-		// TODO: usare e.currentTarget
-		debugger;
-		const cubeId = e.target.getAttribute('data-cube-id');
-		const cubeName = e.target.getAttribute('label');
-		// const storage = new CubeStorage();
+		const cubeId = e.currentTarget.getAttribute('data-cube-id');
+		const cubeName = e.currentTarget.getAttribute('label');
 		let cube = StorageCube.json(cubeName);
-		e.target.toggleAttribute('selected');
-		
+		e.currentTarget.toggleAttribute('selected');
+		// aggiungo la fact table nella clausola FROM
 		Query.from = cube.FACT;
+		// ...e la join presente nella fact, stabilita in Mapping
 		Query.factRelation = cube.relations;
 		
 		app.createListTableMetrics(cube.metrics, cubeName);
@@ -105,7 +103,6 @@ var StorageProcess = new ProcessStorage();
 		i.innerText = 'add';
 		i.setAttribute('label', cube.FACT);
 		elementTable.className = 'element';
-
 		liTable.innerText = cube.FACT;
 		//li.id = 'table-filter-' + index;
 		//li.setAttribute('data-table-id', index);
@@ -138,17 +135,13 @@ var StorageProcess = new ProcessStorage();
 	// selezione delle dimensioni da utilizzare per la creazione del report
 	app.handlerDimensionSelected = (e) => {
 		// imposto attributo selected sulle dimensioni selezionate
-		// TODO: e.currentTarget
-		e.target.toggleAttribute('selected');
-		//  popolo la sezione step 2, colonne e field
-		// popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact, alla selezione della quale saranno visualizzati i campi da selezionare
-		// ... i cmapi per impostare i filtri.
-		const dimName = e.target.getAttribute('label');
-		// const Dim = new DimensionStorage();
+		e.currentTarget.toggleAttribute('selected');
+		// popolo la sezione step 2, "colonne"
+		// popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact
+		const dimName = e.currentTarget.getAttribute('label');
 		Dim.selected = dimName;
-
-		let columns = Dim.selected.columns;
-
+		console.log('Dimensione selezionata : ', Dim.selected);
+		debugger;
 		app.createListTableColumns(Dim.selected.columns);
 
 		app.createListTableFilters(Dim.selected.from);
@@ -183,13 +176,20 @@ var StorageProcess = new ProcessStorage();
 	};
 
 	app.createListTableMetrics = (metrics, cubeName) => {
-
+		// ulTable conterrà le tabelle che hanno metriche (step-4 1° colonna)
 		let ulTable = document.getElementById('tables-metric');
-		// TODO: se metrics è un Object qui si può utilizzare Object.entries()
+		// metrics è un Object che contiene un'array di campi impostati, nel Mapping, come metriche
+		/*
+			DocVenditaDettaglio: Array(3)
+				0: "NettoRiga"
+				1: "PrzMedioPond"
+				2: "Quantita"
+		*/
+		// per ogni tabella contenente metriche ciclo i suoi campi per aggiungerli nella lista sectionFields-metrics
 		Object.keys(metrics).forEach((table, index) => {
-			console.log(table);
-			console.log(metrics[table]);
-
+			// console.log(table);
+			// console.log(metrics[table]);
+			// aggiunta elenco tabelle
 			let liTable = document.createElement('li');
 			let elementTable = document.createElement('div');
 			elementTable.className = 'element';
@@ -200,13 +200,13 @@ var StorageProcess = new ProcessStorage();
 			elementTable.appendChild(liTable);
 			ulTable.appendChild(elementTable);
 			liTable.onclick = app.handlerTableSelectedMetrics;
-
+			// aggiunta ul con elenco metriche 
 			let tmpl_ulList = document.getElementById('tmpl_ulList');
 			let ulContent = tmpl_ulList.content.cloneNode(true);
 			let ulField = ulContent.querySelector('ul[data-id="fields-metric"]');
 			const parentElement = document.getElementById('sectionFields-metric'); // elemento a cui aggiungere la ul
 
-			let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
+			let tmplFieldList = document.getElementById('templateListField');
 
 			ulField.setAttribute('data-table-id', index);
 
@@ -232,9 +232,14 @@ var StorageProcess = new ProcessStorage();
 	// creo la lista delle tabelle nella sezione dello step 2 - Colonne
 	// TODO: Questa funzione sembra avere la stessa logica di createListTableMetrics e createListTableFilters, valutare se si possono unificare
 	app.createListTableColumns = (columns) => {
+		debugger;
 		// console.log(columns); // object
 		let ulTable = document.getElementById('tables-column');
-		// TODO: se columns è un Object qui si può utilizzare Object.entries()
+		// TODO: se columns è un Object qui si può utilizzare Object.entries().
+		// prima di aggiungere object.entries devo valutare l'inserimento di index, questo influisce sulla selezione delle tabelle e quindi anche sulle join da aggiungere
+		// for ( const [table, field] of (Object.entries(columns))) {
+
+		// }
 		Object.keys(columns).forEach((table, index) => {
 			// console.log(table);
 			let elementTable = document.createElement('div');  
@@ -255,10 +260,7 @@ var StorageProcess = new ProcessStorage();
 			let ulField = ulContent.querySelector('ul[data-id="fields-column"]');
 			const parentElement = document.getElementById('fieldList-column'); // elemento a cui aggiungere la ul
 
-			//let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
-
 			ulField.setAttribute('data-table-id', index);
-
 			for (let i in columns[table]) {
 				let field = columns[table][i]; // nome del campo della tabella
 				// inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
@@ -360,26 +362,29 @@ var StorageProcess = new ProcessStorage();
 	// selezione della tabella nella sezione Column
 	app.handlerTableSelectedColumns = (e) => {
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
-		// TODO: e.currentTarget
-		let fieldType = e.target.getAttribute('data-list-type');
-		let tableId = +e.target.getAttribute('data-table-id');
+		let fieldType = e.currentTarget.getAttribute('data-list-type');
+		let tableId = +e.currentTarget.getAttribute('data-table-id');
 		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
 		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
 		// rimuovo eventuali altri ul aperti in precedenza
 		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
 
-		e.target.toggleAttribute('selected');
-		debugger;
-		Query.table = e.target.getAttribute('label');
+		e.currentTarget.toggleAttribute('selected');
+		Query.table = e.currentTarget.getAttribute('label');
 		Query.tableId = tableId;
-		// aggiungo, alla from, le tabelle, nella gerarchia superiori al tableId selezionato
-		Dim.selected.from.forEach( (table, index) => {
-			if (index >= Query.tableId) {
-				Query.from = table;
-			}
-		});
-		Query.where = Dim.selected.join;
-		debugger;
+		if (e.currentTarget.hasAttribute('selected')) {
+			// aggiungo, alla from, le tabelle, nelle gerarchie SUPERIORI al tableId selezionato
+			Dim.selected.from.forEach( (table, index) => {
+				if (index >= Query.tableId) {
+					Query.from = table;
+				}
+			});
+			// in base al tableId selezionato, stabilisco quale join devo includere nel Query.where
+			Query.where = Dim.selected.join;
+		} else {
+			debugger;			
+		}
+		
 		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
 		const storage = new MetricStorage()
 		// recupero le metriche già esistenti per questa tabella
@@ -516,18 +521,18 @@ var StorageProcess = new ProcessStorage();
 		const params = 'tableName='+Query.table;
 		console.log('params : ', params);
 		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
-	    const req = new Request(url, init);
+		const req = new Request(url, init);
 
-	    await fetch(req)
+		await fetch(req)
 			.then( (response) => {
 			if (!response.ok) {throw Error(response.statusText);}
 			return response;
 			})
 			.then( (response) => response.json())
 			.then( (data) => {
-		        // console.log(data);
-		        if (data) {
-		        	// TODO: pulisco l'elenco dei campi
+				// console.log(data);
+				if (data) {
+					// TODO: pulisco l'elenco dei campi
 					let ul = document.getElementById('filter-fieldList');
 					ul.querySelectorAll('div.element').forEach((el) => {el.remove();});
 					let tmplFieldList = document.getElementById('templateListField'); // TODO: da modificare con app.tmplListField
@@ -545,12 +550,12 @@ var StorageProcess = new ProcessStorage();
 						ul.appendChild(element);
 						li.onclick = app.handlerFilterFieldSelected;
 					}
-		        } else {
-		          // TODO: no data
-		          console.warning('Dati non recuperati');
-		        }
-		    })
-	    .catch( (err) => console.error(err));
+				} else {
+				  // TODO: no data
+				  console.warning('Dati non recuperati');
+				}
+			})
+		.catch( (err) => console.error(err));
 	};
 
 	// selezione della colonna da inserire nel report
@@ -710,18 +715,18 @@ var StorageProcess = new ProcessStorage();
 		Array.from(ul.querySelectorAll('.element')).forEach((item) => {item.remove();});
 
 		const init = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, method: 'POST', body: params};
-	    const req = new Request(url, init);
+		const req = new Request(url, init);
 
-	    await fetch(req)
+		await fetch(req)
 			.then( (response) => {
 			if (!response.ok) {throw Error(response.statusText);}
 			return response;
 			})
 			.then( (response) => response.json())
 			.then( (data) => {
-		        // console.log(data);
-		        if (data) {
-		        	for (const [key, value] of Object.entries(data)) {
+				// console.log(data);
+				if (data) {
+					for (const [key, value] of Object.entries(data)) {
 						let element = document.createElement('div');
 						element.className = 'element';
 						ul.appendChild(element);
@@ -733,12 +738,12 @@ var StorageProcess = new ProcessStorage();
 						element.appendChild(li);
 						li.onclick = app.handlerValueFilterSelected;
 					}
-		        } else {
-		          // TODO: no data
-		          console.warning('Dati non recuperati');
-		        }
-		    })
-	    .catch( (err) => console.error(err));
+				} else {
+				  // TODO: no data
+				  console.warning('Dati non recuperati');
+				}
+			})
+		.catch( (err) => console.error(err));
 	};
 
 	// selezione di uno o più valori dalla lista dei valori della colonna in dialogFilter
