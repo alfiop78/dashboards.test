@@ -6,7 +6,7 @@ var dimension = new Dimension();
 	var app = {
 		dialogCubeName : document.getElementById('cube-name'),
 		dialogDimensionName : document.getElementById('dimension-name'),
-		dialogHierarchyName : document.getElementById('hierarchy-name'), // non utilizzata : questa mi servirà per assegnare un nome alla gerarchia salvata
+		dialogHierarchyName : document.getElementById('hierarchy-name'),
 
 		hierarchyContainer : document.getElementById('hierarchiesContainer'), // struttura gerarchica sulla destra
 
@@ -14,6 +14,7 @@ var dimension = new Dimension();
 
 		btnSaveDimension : document.getElementById('saveDimension'),
 		btnSaveHierarchy : document.getElementById('hierarchySave'),
+		btnHierarchySaveName : document.getElementById('btnHierarchySaveName'),
 		btnSaveCube : document.getElementById('saveCube'),
 		btnSaveCubeName : document.getElementById('btnCubeSaveName'),
 
@@ -512,7 +513,7 @@ var dimension = new Dimension();
 	};
 
 	app.handlerCubeSelected = (e) => {
-		// TODO: apro la tabella definita come Cubo per consentirne la modifica
+		// TODO: apro la tabella definita come Cubo per consentirne la modifica e l'aggiunta di altre dimensioni al cubo
 	};
 
 	// get tabelle del database
@@ -605,12 +606,6 @@ var dimension = new Dimension();
 	    .catch( (err) => console.error(err));
 	};
 
-	app.getDatabaseTable();
-
-	app.getDimensions();
-
-	app.getCubes();
-
 	/*events */
 
 	// tasto report nella sezione controls -> fabs
@@ -633,12 +628,6 @@ var dimension = new Dimension();
 		});
 		dimension.from = from;
 
-		// ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
-		let hierarchyOrder = {};
-		Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
-			hierarchyOrder[i] = table.getAttribute('label');
-		});
-		dimension.hierarchyOrder = hierarchyOrder;
 	
 		dimension.save();
 		storage.save = dimension.dimension;
@@ -670,10 +659,24 @@ var dimension = new Dimension();
 
 	app.btnSaveHierarchy.onclick = (e) => {
 		if (e.target.hasAttribute('disabled')) return;
-		// TODO salvo la gerarchia che andrà inserita in dimension
-		// TODO abilito il tasto save dimension
+		// TODO: salvo la gerarchia che andrà inserita in dimension
+		app.dialogHierarchyName.showModal();
+
+		// abilito il tasto save dimension
 		app.btnSaveDimension.removeAttribute('disabled');
 		app.btnSaveDimension.classList.remove('md-dark', 'md-inactive');
+	};
+
+	app.btnHierarchySaveName.onclick = () => {
+		const hierTitle = document.getElementById('hierarchyName').value;
+		debugger;
+		// ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
+		let hierarchyOrder = {};
+		Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
+			hierarchyOrder[i] = table.getAttribute('label');
+		});
+		dimension.hierarchyOrder = {title : hierTitle, hierarchyOrder};
+		app.dialogHierarchyName.close();
 	};
 
 	app.btnSaveCube.onclick = () => {app.dialogCubeName.showModal();};
@@ -743,7 +746,6 @@ var dimension = new Dimension();
 	};
 
 	// selezione di una dimensione da inserire nel body, per legarla al cubo
-	// TODO: ottimizzare
 	app.handlerDimensionSelected = (e) => {
 		console.log(e.target);
 		debugger;
@@ -762,7 +764,7 @@ var dimension = new Dimension();
 			// recupero l'ultima tabella dalla unica presente, quindi nella from dell'oggetto
 			lastTableInHierarchy = storage.selected.from;
 		}
-		// TODO: creo la card (lastTableInHierarchy)
+		// creo la card (lastTableInHierarchy)
 		let card = document.createElement('div');
 		card.className = 'card table';
 		card.setAttribute('label',lastTableInHierarchy);
@@ -793,4 +795,10 @@ var dimension = new Dimension();
 
 		app.getTable(lastTableInHierarchy);
 	};
+
+	app.getDatabaseTable();
+
+	app.getDimensions();
+
+	app.getCubes();
 })();

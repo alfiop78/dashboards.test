@@ -131,7 +131,11 @@ class Dimension {
 
 	get hierarchies() {return this._join;}
 
-	set hierarchyOrder(values) {this._hierarchies = values;}
+	set hierarchyOrder(object) {
+		// console.log('object : ', object);
+		this._hierarchies[object.title] = object.hierarchyOrder;
+		console.log('this._hierarchies : ', this._hierarchies);
+	}
 
 	get hierarchyOrder() {return this._hierarchies;}
 
