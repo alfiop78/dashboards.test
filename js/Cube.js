@@ -177,7 +177,7 @@ class Dimension {
 		this._dimension.name = this._title;
 		this._dimension.from = this._from;
 		this._dimension.join = this._join;
-		this._dimension.cubes = []; // array con i nomi dei cubi che hanno associazione con questa dimensione. Questa viene popolata quando si associa la dimensione al cubo
+		this._dimension.cubes = {}; // object con i nomi dei cubi che hanno associazione con questa dimensione. Questa viene popolata quando si associa la dimensione al cubo
 		this._dimension.lastTableInHierarchy = this._lastTableInHierarchy;
 		this._dimension.hierarchies = this._hierarchies;
 		console.log(this._dimension);

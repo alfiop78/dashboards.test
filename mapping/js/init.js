@@ -645,8 +645,9 @@ var dimension = new Dimension();
 			// il metodo selected restituisce la dimensione che sto ciclando, la salvo in dimensionObject per modificarla (aggiunta cubi)
 			dimensionObject[dimensionName] = dimensionStorage.selected;
 			// salvo il cubo all'interno della dimensione, comprese la sua join con questa dimensione
-			dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
-
+			// dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
+			// TODO: impostare cubes come un object e non come un array, in questo modo è più semplice recuperarlo da report/init.js "app.handlerDimensionSelected()"
+			dimensionObject[dimensionName].cubes[cube._title] = cube.relations;
 			console.log(dimensionObject[dimensionName]);
 			// salvo il nome della dimensione/i associate al cubo. In questo modo, il cubo andrà a leggere la dimensione, tramite nome, se la dimensione viene modificata la modifica si riflette su tutti i cubi che hanno questa dimensione
 			cube.associatedDimensions = dimensionName;
@@ -733,6 +734,7 @@ var dimension = new Dimension();
 
 	app.btnSaveCube.onclick = () => {app.dialogCubeName.showModal();};
 
+	// salvataggio di un nuovo cubo
 	app.btnSaveCubeName.onclick = () => {
 		console.log('cube save');
 		debugger;
@@ -753,7 +755,8 @@ var dimension = new Dimension();
 			// il metodo selected restituisce la dimensione che sto ciclando, la salvo in dimensionObject per modificarla (aggiunta cubi)
 			dimensionObject[dimensionName] = dimensionStorage.selected;
 			// salvo il cubo all'interno della dimensione, comprese la sua join con questa dimensione
-			dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
+			// dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
+			dimensionObject[dimensionName].cubes[cube._title] = cube.relations;
 
 			console.log(dimensionObject[dimensionName]);
 			// salvo il nome della dimensione/i associate al cubo. In questo modo, il cubo andrà a leggere la dimensione, tramite nome, se la dimensione viene modificata la modifica si riflette su tutti i cubi che hanno questa dimensione
