@@ -527,9 +527,9 @@ var dimension = new Dimension();
 		});
 		app.addCard(StorageCube.selected.FACT, true);
 		// visualizzo il tasto saveOpenedCube al posto di SaveCube
-		btnSaveOpenedCube.parentElement.toggleAttribute('hide');
+		app.btnSaveOpenedCube.parentElement.toggleAttribute('hide');
 		// nascondo btnSaveCube
-		btnSaveOpenedCube.parentElement.toggleAttribute('hide');
+		app.btnSaveCube.parentElement.toggleAttribute('hide');
 	};
 
 	// get tabelle del database
@@ -628,12 +628,12 @@ var dimension = new Dimension();
 	app.btnSaveOpenedCube.onclick = () => {
 		console.log('cube opened save');
 		console.log(StorageCube.selected);
-		return;
+		cube.title = StorageCube.selected.name;
 
-		cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
+		cube.FACT = StorageCube.selected.FACT;
 		// Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
-		cube.id = StorageCube.getIdAvailable();
-		console.log(cube.id);
+		cube.id = StorageCube.selected.id;
+		debugger;
 
 		const dimensionStorage = new DimensionStorage();
 		
