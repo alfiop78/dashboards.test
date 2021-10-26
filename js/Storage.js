@@ -126,10 +126,10 @@ class CubeStorage extends Storages {
 
 	get stringifyObject() {return this._stringify;}
 
-	json(cubeName) {
-		// un object del cube convertito in json, questo mi servirà per ricostruire la struttura (non per ajax request o DB)
+	/*json(cubeName) {
+		// un object del cube convertito in json, questo mi servirà per ricostruire la struttura
 		return JSON.parse(window.localStorage.getItem(cubeName));
-	}
+	}*/
 
 	getMetrics(cubeName) {
 		this._cube = JSON.parse(window.localStorage.getItem(cubeName));

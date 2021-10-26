@@ -84,15 +84,17 @@ var StorageProcess = new ProcessStorage();
 	// selezione del cubo step-1
 	app.handlerCubeSelected = (e) => {
 		const cubeId = e.currentTarget.getAttribute('data-cube-id');
-		const cubeName = e.currentTarget.getAttribute('label');
-		let cube = StorageCube.json(cubeName);
+		StorageCube.selected = e.currentTarget.getAttribute('label');
+		console.log('cube selected : ', StorageCube.selected);
 		e.currentTarget.toggleAttribute('selected');
 		// aggiungo la fact table nella clausola FROM
-		Query.from = cube.FACT;
+		Query.from = StorageCube.selected.FACT;
 		// ...e la join presente nella fact, stabilita in Mapping
-		Query.factRelation = cube.relations;
+		// la join non è più presente nella fact ma nelle dimensioni
+		// Query.factRelation = StorageCube.selected.relations;
 		
-		app.createListTableMetrics(cube.metrics, cubeName);
+		app.createListTableMetrics(StorageCube.selected.metrics, StorageCube.selected.name);
+		debugger;
 		// aggiungo la tabella fact selezionata alla lista dello step 3 - filters
 		// OPTIMIZE: Ottimizzare quando verranno aggiunti più cubi, inserendo un data-table-id, index e altre cose che mancano
 		let ulTable = document.getElementById('tables-filter');
@@ -101,12 +103,12 @@ var StorageProcess = new ProcessStorage();
 		let i = document.createElement('i');
 		i.className = 'material-icons md-18';
 		i.innerText = 'add';
-		i.setAttribute('label', cube.FACT);
+		i.setAttribute('label', StorageCube.selected.FACT);
 		elementTable.className = 'element';
-		liTable.innerText = cube.FACT;
+		liTable.innerText = StorageCube.selected.FACT;
 		//li.id = 'table-filter-' + index;
 		//li.setAttribute('data-table-id', index);
-		liTable.setAttribute('label', cube.FACT);
+		liTable.setAttribute('label', StorageCube.selected.FACT);
 		elementTable.appendChild(liTable);
 		elementTable.appendChild(i);
 		ulTable.appendChild(elementTable);
@@ -117,19 +119,18 @@ var StorageProcess = new ProcessStorage();
 		// recupero l'object StorageCube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
 		// console.log(StorageCube.associatedDimensions(cubeName));
 		let ul = document.getElementById('dimensions');
-		const dimensions = StorageCube.associatedDimensions(cubeName);
+		// dimensioni associate al cubo selezionato
+		const dimensions = StorageCube.associatedDimensions(StorageCube.selected.name);
 		let element = document.createElement('div');
 		element.classList.add('element');
-		for (dimension in dimensions) {
-			// console.log(dimension);
-			// console.log(dimensions);
+		dimensions.forEach( (dimension) => {
 			let li = document.createElement('li');
 			li.innerText = dimension;
 			li.setAttribute('label', dimension);
 			ul.appendChild(element);
 			element.appendChild(li);
 			li.onclick = app.handlerDimensionSelected;
-		}
+		});
 	};
 
 	// selezione delle dimensioni da utilizzare per la creazione del report
@@ -141,6 +142,17 @@ var StorageProcess = new ProcessStorage();
 		const dimName = e.currentTarget.getAttribute('label');
 		Dim.selected = dimName;
 		console.log('Dimensione selezionata : ', Dim.selected);
+		// nella dimensione selezionata c'è la join con il cubo
+		// console.log('join fact : ', Dim.selected.cubes[StorageCube.selected.name]);
+		console.log(Dim.selected.cubes[StorageCube.selected.name]);
+		debugger;
+		for ( const [k, v] of Object.entries(Dim.selected.cubes[StorageCube.selected.name])) {
+			console.log('k : ', k);
+			console.log('v : ', v);
+		}
+		// da valutare se passare le join a Query.where una alla volta (ciclo for) oppure passandogli tutto l'object che poi si va a ciclare all'iinterno del Query.where
+		debugger;
+		Query.where = Dim.selected.cubes[StorageCube.selected.name];
 		debugger;
 		app.createListTableColumns(Dim.selected.columns);
 
@@ -368,22 +380,26 @@ var StorageProcess = new ProcessStorage();
 		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
 		// rimuovo eventuali altri ul aperti in precedenza
 		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
-
 		e.currentTarget.toggleAttribute('selected');
 		Query.table = e.currentTarget.getAttribute('label');
 		Query.tableId = tableId;
-		if (e.currentTarget.hasAttribute('selected')) {
-			// aggiungo, alla from, le tabelle, nelle gerarchie SUPERIORI al tableId selezionato
-			Dim.selected.from.forEach( (table, index) => {
-				if (index >= Query.tableId) {
-					Query.from = table;
-				}
-			});
-			// in base al tableId selezionato, stabilisco quale join devo includere nel Query.where
-			Query.where = Dim.selected.join;
-		} else {
-			debugger;			
-		}
+		Dim.selected.from.forEach( table => Query.from = table);
+		// Query.from = Dim.selected.from;
+		Query.where = Dim.selected.join;
+
+		debugger;
+		// if (e.currentTarget.hasAttribute('selected')) {
+		// 	// aggiungo, alla from, le tabelle, nelle gerarchie SUPERIORI al tableId selezionato
+		// 	Dim.selected.from.forEach( (table, index) => {
+		// 		if (index >= Query.tableId) {
+		// 			Query.from = table;
+		// 			debugger;
+		// 			console.log('join : ', Dim.selected.join[index]);
+		// 		}
+		// 	});
+		// } else {
+		// 	debugger;			
+		// }
 		
 		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
 		const storage = new MetricStorage()

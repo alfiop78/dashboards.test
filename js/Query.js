@@ -63,15 +63,12 @@ class Queries {
 		return this._select[this._table][this._field]['alias'];
 	}
 
-	set where(object) {
+	set where(join) {
 		// const key = Object.keys(join);
-		// debugger;
-		// console.log('this.tableId : ', this._tableId);
-		for ( const [key, value] of Object.entries(object)) {
-			if (+key >= this._tableId) this._where[+key] = value;
+		for ( const [k, v] of Object.entries(join)) {
+			this._where[k] = v;
 		}
-		// this._where[key] = join;
-		console.log(this._where);
+		console.log('where : ', this._where);
 	}
 
 	get where() {return this._where;}
@@ -126,7 +123,7 @@ class Queries {
 		debugger;
 		// object = {sqlFunction: "SUM", field: "NettoRiga", metricName: "netto riga", distinct: false, alias: "Venduto"}
 		this._metrics[this._metricName] = object;
-		console.log(this._metrics);
+		console.log('metrics : ', this._metrics);
 		// NOTE: object metric da salvare in storage
 		    /*matricName: 
 				type: "METRIC"
