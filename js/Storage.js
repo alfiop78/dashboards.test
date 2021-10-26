@@ -53,7 +53,16 @@ class CubeStorage extends Storages {
 
 	set cubeId(value) {this.id = value;}
 
-	get cubeId() { return this.id; }
+	get cubeId() {return this.id;}
+
+	set selected(value) {
+		// imposto il cubo selezionato
+		this._name = value;
+	}
+
+	get selected() {
+		return JSON.parse(this.storage.getItem(this._name));
+	}
 
 	getIdAvailable() {
 		// ottengo il primo Id disponibile

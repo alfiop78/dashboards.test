@@ -7,6 +7,7 @@ class Cube {
 		this.relationId = 0;
 		this._join = {};
 		this._dimensions = []; // dimensioni selezionate da associare al cube
+		this._associatedDimension = [];
 	}
 
 	set id(value) {this._id = value;}
@@ -67,7 +68,7 @@ class Cube {
 		this._cube.type = 'CUBE';
 		this._cube.name = this._title;
 		this._cube.metrics = this._metrics;
-		this._cube.relations = this._join;
+		// this._cube.relations = this._join; // questa deve essere salvata all'interno della dimensione, non nel cubo
 		this._cube.FACT = this._fact;
 		this._cube.id = this._id;
 		this._cube.associatedDimensions = this._associatedDimension;
@@ -89,7 +90,11 @@ class Cube {
 
 	get dimensionsSelected() {return this._dimensions;}
 
-	set associatedDimensions(obj) {this._associatedDimension = obj;}
+	set associatedDimensions(obj) {
+		debugger;
+		this._associatedDimension.push(obj);
+		// this._associatedDimension = obj;
+	}
 
 	get associatedDimensions() {return this._associatedDimension;}
 
@@ -100,6 +105,7 @@ class Dimension {
 		this._dimension = {};
 		this._join = {}; // relazioni tra le tabelle
 		this._hierarchies = {}; // ordine gerarchico
+		this._lastTableInHierarchy;
 		this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
 		this._columnsSet = new Set(); // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
 		this.relationId = 0;
@@ -132,9 +138,11 @@ class Dimension {
 	get hierarchies() {return this._join;}
 
 	set hierarchyOrder(object) {
-		// console.log('object : ', object);
+		console.log('object : ', object);
 		this._hierarchies[object.title] = object.hierarchyOrder;
+		this._lastTableInHierarchy = object.hierarchyOrder[Object.keys(object.hierarchyOrder).length-1];
 		console.log('this._hierarchies : ', this._hierarchies);
+		console.log('this._lastTableInHierarchy : ', this._lastTableInHierarchy);
 	}
 
 	get hierarchyOrder() {return this._hierarchies;}
@@ -168,6 +176,8 @@ class Dimension {
 		this._dimension.name = this._title;
 		this._dimension.from = this._from;
 		this._dimension.join = this._join;
+		this._dimension.cubes = [];
+		this._dimension.lastTableInHierarchy = this._lastTableInHierarchy;
 		this._dimension.hierarchies = this._hierarchies;
 		console.log(this._dimension);
 	}

@@ -383,6 +383,7 @@ var dimension = new Dimension();
 
 	app.createHierarchy = (e) => {
 		console.log('create Relations');
+		debugger;
 		let hier = [];
 		// let hierObj = {};
 		let colSelected = [];
@@ -513,7 +514,17 @@ var dimension = new Dimension();
 	};
 
 	app.handlerCubeSelected = (e) => {
-		// TODO: apro la tabella definita come Cubo per consentirne la modifica e l'aggiunta di altre dimensioni al cubo
+		// apro la tabella definita come Cubo
+		console.log('e.currentTarget : ', e.currentTarget);
+		StorageCube.selected = e.currentTarget.getAttribute('label');
+		console.log('cube selected : ', StorageCube.selected);
+		// ridefinisco le proprietà del cubo, leggendo da quello selezionato, nello storage, per consentirne la modifica o l'aggiunto di dimensioni al cubo
+		cube._metrics = StorageCube.selected.metrics;
+		debugger;
+		StorageCube.selected.associatedDimensions.forEach( (dim) => {
+			cube.associatedDimensions = dim;
+		});
+		app.addCard(StorageCube.selected.FACT, true);
 	};
 
 	// get tabelle del database
@@ -600,7 +611,7 @@ var dimension = new Dimension();
 		        	}
 		        } else {
 		          // TODO: no data, handlerConsoleMessage
-		          console.warning('Non è stato possibile recuperare le colonne della tabella : ', table);
+		          console.error('Non è stato possibile recuperare le colonne della tabella : ', table);
 		        }
 		    })
 	    .catch( (err) => console.error(err));
@@ -611,7 +622,7 @@ var dimension = new Dimension();
 	// tasto report nella sezione controls -> fabs
 	document.getElementById('mdc-report').onclick = () => {window.location.href = '/reports/';};
 
-	/* tasto OK nella dialog dimension name*/
+	/* Salvataggio della dimensione, dalla dialog */
 	document.getElementById('btnDimensionSaveName').onclick = () => {
 		/*
 		  Salvo la dimensione, senza il legame con la FACT.
@@ -627,7 +638,6 @@ var dimension = new Dimension();
 			if (card.getAttribute('name')) {from.push(card.getAttribute('name'));}
 		});
 		dimension.from = from;
-
 	
 		dimension.save();
 		storage.save = dimension.dimension;
@@ -669,7 +679,6 @@ var dimension = new Dimension();
 
 	app.btnHierarchySaveName.onclick = () => {
 		const hierTitle = document.getElementById('hierarchyName').value;
-		debugger;
 		// ordine gerarchico (per stabilire quale tabella è da associare al cubo) questo dato viene preso dalla struttura di destra
 		let hierarchyOrder = {};
 		Array.from(document.querySelectorAll('#hierarchies .hier.table')).forEach((table, i) => {
@@ -683,6 +692,7 @@ var dimension = new Dimension();
 
 	app.btnSaveCubeName.onclick = () => {
 		console.log('cube save');
+		debugger;
 		cube.title = document.getElementById('cubeName').value;
 
 		cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
@@ -699,7 +709,14 @@ var dimension = new Dimension();
 			dimensionStorage.selected = dimensionName;
 			console.log(dimensionStorage.selected);      
 			dimensionObject[dimensionName] = dimensionStorage.selected;
+			// salvo il cubo all'interno della dimensione
+			dimensionObject[dimensionName]['cubes'].push({[cube._title] : [cube.relations]});
+			debugger;
+			console.log(dimensionObject[dimensionName]);
 			// salvo la/le dimenioni scelte nell'object cube
+			// la join con il cubo la salvo all'interno della dimensione
+			dimensionObject[dimensionName]['cubeJoin'] = cube.relations;
+			// cube.associatedDimensions = dimensionName;
 			cube.associatedDimensions = dimensionObject;
 		});
 
@@ -745,29 +762,13 @@ var dimension = new Dimension();
 		document.getElementById('dimensionSearch').focus();
 	};
 
-	// selezione di una dimensione da inserire nel body, per legarla al cubo
-	app.handlerDimensionSelected = (e) => {
-		console.log(e.target);
-		debugger;
-		const storage = new DimensionStorage();
-		let lastTableInHierarchy;
-		storage.selected = e.target.getAttribute('label');
-		// memorizzo la dimensione selezionata per recuperarla nel salvataggio del cubo
-		cube.dimensionsSelected = e.target.getAttribute('label');
-		// recupero tutta la dimensione selezionata, dallo storage
-		console.log(storage.selected);
-		// TODO: tramite questa dimensione vado a ricreare l'ultima tabella della relazione, reimpostando le colonne/filtri/groupBy impostati su questa tabella
-		if (storage.selected.hasOwnProperty('hierarchies')) {
-			// recupero l'ultima tabella da hierarchyOrder
-			lastTableInHierarchy = storage.selected.hierarchies[Object.keys(storage.selected.hierarchies).length-1];
-		} else {
-			// recupero l'ultima tabella dalla unica presente, quindi nella from dell'oggetto
-			lastTableInHierarchy = storage.selected.from;
-		}
-		// creo la card (lastTableInHierarchy)
+	app.addCard = (label, fact) => {
+		// creo la card (label)
+		// fact : true/false
 		let card = document.createElement('div');
 		card.className = 'card table';
-		card.setAttribute('label',lastTableInHierarchy);
+		card.setAttribute('label',label);
+		if (fact) card.setAttribute('fact', true);
 		card.onmousedown = app.dragStart;
 		card.onmouseup = app.dragEnd;
 		card.onmousemove = app.drag;
@@ -779,7 +780,7 @@ var dimension = new Dimension();
 		cardLayout.querySelector('.cardTable').setAttribute('fact', true);
 		// imposto il titolo in h6
 
-		cardLayout.querySelector('h6').innerHTML = lastTableInHierarchy;
+		cardLayout.querySelector('h6').innerHTML = label;
 		card.appendChild(cardLayout);
 		console.log(card);
 		app.body.appendChild(card);
@@ -793,7 +794,22 @@ var dimension = new Dimension();
 		// event sui tasti section[options]
 		card.querySelector('i[join]').onclick = app.handlerAddJoin;
 
-		app.getTable(lastTableInHierarchy);
+		app.getTable(label);
+	};
+
+	// selezione di una dimensione da inserire nel body, per legarla al cubo
+	app.handlerDimensionSelected = (e) => {
+		console.log(e.target);
+		const storage = new DimensionStorage();
+		storage.selected = e.target.getAttribute('label');
+		
+		// memorizzo la dimensione selezionata per recuperarla nel salvataggio del cubo
+		cube.dimensionsSelected = e.target.getAttribute('label');
+		// recupero tutta la dimensione selezionata, dallo storage
+		console.log(storage.selected);
+		debugger;
+		app.addCard(storage.selected.lastTableInHierarchy, false);
+		
 	};
 
 	app.getDatabaseTable();
