@@ -17,6 +17,7 @@ var dimension = new Dimension();
 		btnHierarchySaveName : document.getElementById('btnHierarchySaveName'),
 		btnSaveCube : document.getElementById('saveCube'),
 		btnSaveCubeName : document.getElementById('btnCubeSaveName'),
+		btnSaveOpenedCube : document.getElementById('saveOpenedCube'),
 
 		// tasto openTableList
 		btnTableList : document.getElementById('openTableList'),
@@ -525,6 +526,10 @@ var dimension = new Dimension();
 			cube.associatedDimensions = dim;
 		});
 		app.addCard(StorageCube.selected.FACT, true);
+		// visualizzo il tasto saveOpenedCube al posto di SaveCube
+		btnSaveOpenedCube.parentElement.toggleAttribute('hide');
+		// nascondo btnSaveCube
+		btnSaveOpenedCube.parentElement.toggleAttribute('hide');
 	};
 
 	// get tabelle del database
@@ -619,6 +624,44 @@ var dimension = new Dimension();
 
 	/*events */
 
+	// salvataggio di un cubo già esistente
+	app.btnSaveOpenedCube.onclick = () => {
+		console.log('cube opened save');
+		console.log(StorageCube.selected);
+		return;
+
+		cube.FACT = document.querySelector('.card.table[fact]').getAttribute('label');
+		// Creo il cubeId basandomi sui cubi già creati in Storage, il cubeId lo associo al cubo che sto per andare a salvare.
+		cube.id = StorageCube.getIdAvailable();
+		console.log(cube.id);
+
+		const dimensionStorage = new DimensionStorage();
+		
+		cube.dimensionsSelected.forEach((dimensionName) => {
+			let dimensionObject = {};
+			console.log(dimensionName);
+			dimensionStorage.selected = dimensionName;
+			console.log(dimensionStorage.selected);
+			// il metodo selected restituisce la dimensione che sto ciclando, la salvo in dimensionObject per modificarla (aggiunta cubi)
+			dimensionObject[dimensionName] = dimensionStorage.selected;
+			// salvo il cubo all'interno della dimensione, comprese la sua join con questa dimensione
+			dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
+
+			console.log(dimensionObject[dimensionName]);
+			// salvo il nome della dimensione/i associate al cubo. In questo modo, il cubo andrà a leggere la dimensione, tramite nome, se la dimensione viene modificata la modifica si riflette su tutti i cubi che hanno questa dimensione
+			cube.associatedDimensions = dimensionName;
+			// salvo la "nuova" dimensione, la dimensione avrà la proprietà cubes valorizzata
+			dimensionStorage.save = dimensionObject[dimensionName];
+		});
+
+		cube.save();
+
+		// salvo il cubo in localStorage
+		StorageCube.save = cube.cube;
+
+		app.dialogCubeName.close();
+	};
+
 	// tasto report nella sezione controls -> fabs
 	document.getElementById('mdc-report').onclick = () => {window.location.href = '/reports/';};
 
@@ -702,22 +745,21 @@ var dimension = new Dimension();
 
 		const dimensionStorage = new DimensionStorage();
 		
-		let dimensionObject = {};
-
 		cube.dimensionsSelected.forEach((dimensionName) => {
+			let dimensionObject = {};
 			console.log(dimensionName);
 			dimensionStorage.selected = dimensionName;
-			console.log(dimensionStorage.selected);      
+			console.log(dimensionStorage.selected);
+			// il metodo selected restituisce la dimensione che sto ciclando, la salvo in dimensionObject per modificarla (aggiunta cubi)
 			dimensionObject[dimensionName] = dimensionStorage.selected;
-			// salvo il cubo all'interno della dimensione
-			dimensionObject[dimensionName]['cubes'].push({[cube._title] : [cube.relations]});
-			debugger;
+			// salvo il cubo all'interno della dimensione, comprese la sua join con questa dimensione
+			dimensionObject[dimensionName].cubes.push({[cube._title] : cube.relations});
+
 			console.log(dimensionObject[dimensionName]);
-			// salvo la/le dimenioni scelte nell'object cube
-			// la join con il cubo la salvo all'interno della dimensione
-			dimensionObject[dimensionName]['cubeJoin'] = cube.relations;
-			// cube.associatedDimensions = dimensionName;
-			cube.associatedDimensions = dimensionObject;
+			// salvo il nome della dimensione/i associate al cubo. In questo modo, il cubo andrà a leggere la dimensione, tramite nome, se la dimensione viene modificata la modifica si riflette su tutti i cubi che hanno questa dimensione
+			cube.associatedDimensions = dimensionName;
+			// salvo la "nuova" dimensione, la dimensione avrà la proprietà cubes valorizzata
+			dimensionStorage.save = dimensionObject[dimensionName];
 		});
 
 		cube.save();

@@ -90,9 +90,9 @@ class Cube {
 
 	get dimensionsSelected() {return this._dimensions;}
 
-	set associatedDimensions(obj) {
+	set associatedDimensions(dimensionName) {
 		debugger;
-		this._associatedDimension.push(obj);
+		this._associatedDimension.push(dimensionName);
 		// this._associatedDimension = obj;
 	}
 
@@ -170,13 +170,14 @@ class Dimension {
 	get columns() {return this._columns;}
 
 	save() {
+		debugger;
 		this._dimension.type = 'DIMENSION';
 		// TODO Aggiungere dimensionId
 		this._dimension.columns = this._columns;
 		this._dimension.name = this._title;
 		this._dimension.from = this._from;
 		this._dimension.join = this._join;
-		this._dimension.cubes = [];
+		this._dimension.cubes = []; // array con i nomi dei cubi che hanno associazione con questa dimensione. Questa viene popolata quando si associa la dimensione al cubo
 		this._dimension.lastTableInHierarchy = this._lastTableInHierarchy;
 		this._dimension.hierarchies = this._hierarchies;
 		console.log(this._dimension);
