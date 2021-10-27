@@ -20,7 +20,8 @@ var StorageProcess = new ProcessStorage();
 		// dialog
 		dialogSaveReport: document.getElementById('dialogSaveReport'),
 		dialogFilter : document.getElementById('dialogFilter'),
-		dialogColumn : document.getElementById('dialogColumn'),
+		// dialogColumn : document.getElementById('dialogColumn'),
+		dialogTables : document.getElementById('dialogTables'),
 		dialogMetric : document.getElementById('dialogMetric'),
 		btnFilterSave : document.getElementById('btnFilterSave'), //tasto salva nella dialog filter
 		btnFilterDone : document.getElementById('btnFilterDone'), //tasto fatto nella dialog filter
@@ -94,7 +95,7 @@ var StorageProcess = new ProcessStorage();
 		// Query.factRelation = StorageCube.selected.relations;
 		
 		app.createListTableMetrics(StorageCube.selected.metrics, StorageCube.selected.name);
-		debugger;
+		// debugger;
 		// aggiungo la tabella fact selezionata alla lista dello step 3 - filters
 		// OPTIMIZE: Ottimizzare quando verranno aggiunti più cubi, inserendo un data-table-id, index e altre cose che mancano
 		let ulTable = document.getElementById('tables-filter');
@@ -153,7 +154,6 @@ var StorageProcess = new ProcessStorage();
 		// da valutare se passare le join a Query.where una alla volta (ciclo for) oppure passandogli tutto l'object che poi si va a ciclare all'iinterno del Query.where
 		// debugger;
 		Query.where = Dim.selected.cubes[StorageCube.selected.name];
-		debugger;
 		app.createListHierarchies(Dim.selected.hierarchies);
 
 		// app.createListTableColumns(Dim.selected.columns);
@@ -284,7 +284,7 @@ var StorageProcess = new ProcessStorage();
 
 	// creo la lista delle tabelle nella sezione dello step 2 - Colonne
 	// TODO: Questa funzione sembra avere la stessa logica di createListTableMetrics e createListTableFilters, valutare se si possono unificare
-	app.createListTableColumns = (columns) => {
+	/*app.createListTableColumns = (columns) => {
 		debugger;
 		// console.log(columns); // object
 		let ulTable = document.getElementById('tables-column');
@@ -328,7 +328,7 @@ var StorageProcess = new ProcessStorage();
 			}
 			parentElement.appendChild(ulField);
 		});
-	};
+	};*/
 
 	// tasto add nella sezione Filtri (step 3)
 	app.handlerAddFilter = (e) => {
@@ -414,6 +414,15 @@ var StorageProcess = new ProcessStorage();
 
 	// selezione della tabella nella sezione Column
 	app.handlerTableSelectedColumns = (e) => {
+		console.log('e.currentTarget : ', e.currentTarget);
+		// TODO: visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
+		app.dialogTables.querySelector('section').setAttribute('data-table-selected', e.currentTarget.getAttribute('label'));
+		// l'object 'columns' della dimensione contiene l'elenco dei campi mappati appartenenti alla tabella selezionata
+		const fields = Dim.selected.columns[e.currentTarget.getAttribute('label')];
+		console.log('fields : ', fields);
+		debugger;
+		app.dialogTables.showModal();
+		return;
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
 		let fieldType = e.currentTarget.getAttribute('data-list-type');
 		let tableId = +e.currentTarget.getAttribute('data-table-id');
@@ -430,7 +439,6 @@ var StorageProcess = new ProcessStorage();
 
 		// TODO: quando si seleziona una tabella bisogna includere automaticamente il campo id in Query.columns da recuperare in app.handlerBtnColumnDone
 		Query.select = {SQLFormat : null, alias : Query.table+"-"+id};
-		debugger;
 		
 		// aggiungo la colonna selezionata a Query.groupBy
 		obj = {};
@@ -471,22 +479,21 @@ var StorageProcess = new ProcessStorage();
 
 	// selezione della gerarchia
 	app.handlerHierSelected = (e) => {
-		console.log('e.currentTarget : ', e.currentTarget);
-		console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
+		// console.log('e.currentTarget : ', e.currentTarget);
+		// console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
 		// visualizzo la ul nascosta della gerarchia selezionata
 		let fieldType = e.currentTarget.getAttribute('data-list-type');
-		debugger;
 		let hierId = +e.currentTarget.getAttribute('data-hier-id');
 		// rimuovo eventuali altri ul aperti in precedenza
 		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-hier-id='"+hierId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
 		// visualizzo, nella sezione di destra "Tabelle disponibili" le tabelle disponibili mappate con questa gerarchia
 		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-hier-id='"+hierId+"']").removeAttribute('hidden');
-		debugger;
+		// debugger;
 	};
 
 	// selezione della tabella nella sezione metric
 	app.handlerTableSelectedMetrics = (e) => {
-		debugger;
+		// debugger;
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
 		// TODO: e.currentTarget
 		let fieldType = e.target.getAttribute('data-list-type');
