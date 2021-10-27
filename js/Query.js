@@ -49,15 +49,25 @@ class Queries {
 			if (!this._select[this._table].hasOwnProperty(this._field)) {
 				// field NON presente in _select[_table], lo aggiungo
 				this._select[this._table][this._field] = object;
-			}
+			} /*else {
+				delete this._select[this._table][this._field];
+			}*/
 		} else {
 			this._obj[this._field] = object;
 			this._select[this._table] = this._obj;
 		}
-		console.log(this._select);
+		console.log('select : ', this._select);
 	}
 
 	get select() {return this._select;}
+
+	deleteSelect() {
+		delete this._select[this._table][this._field];
+		// verifico se this._select[this._table] contiene altri elementi, se non li contiene elimino anche la proprietà che include il nome della tabella
+		if (Object.keys(this._select[this._table]).length === 0) delete this._select[this._table];
+
+		console.log('select : ', this._select);
+	}
 
 	getAliasColumn() {
 		return this._select[this._table][this._field]['alias'];
@@ -99,7 +109,6 @@ class Queries {
 		// aggiungo l'object per il group by
 		// es.: this._groupBy[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format)}
 		this._obj = {};
-		console.log(object);
 		if (this._groupBy.hasOwnProperty(this._table)) {
 			// tabella già presente nell'object _select
 			if (!this._groupBy[this._table].hasOwnProperty(this._field)) {
@@ -110,10 +119,18 @@ class Queries {
 			this._obj[this._field] = object;
 			this._groupBy[this._table] = this._obj;
 		}
-		console.log(this._groupBy);
+		console.log('groupBy : ', this._groupBy);
 	}
 
 	get groupBy() {return this._groupBy;}
+
+	deleteGroupBy() {
+		delete this._groupBy[this._table][this._field];
+		// verifico se this._select[this._table] contiene altri elementi, se non li contiene elimino anche la proprietà che include il nome della tabella
+		if (Object.keys(this._groupBy[this._table]).length === 0) delete this._groupBy[this._table];
+
+		console.log('groupBy : ', this._groupBy);
+	}
 
 	set metricName(value) {this._metricName = value;}
 

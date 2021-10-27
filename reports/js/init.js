@@ -14,6 +14,7 @@ var StorageProcess = new ProcessStorage();
 		btnNextStep : document.getElementById('stepNext'),
 		btnStepDone : document.getElementById('stepDone'),
 		btnSaveAndProcess : document.getElementById('saveAndProcess'),
+		btnSaveColumn : document.getElementById('btnSaveColumn'), // salvataggio di un alias/sql di colonna nella dialog dialogTables
 
 		btnProcessReport : document.getElementById('btnProcessReport'), // apre la lista dei report da processare "Crea FX"
 
@@ -25,7 +26,7 @@ var StorageProcess = new ProcessStorage();
 		dialogMetric : document.getElementById('dialogMetric'),
 		btnFilterSave : document.getElementById('btnFilterSave'), //tasto salva nella dialog filter
 		btnFilterDone : document.getElementById('btnFilterDone'), //tasto fatto nella dialog filter
-		btnColumnDone : document.getElementById('btnColumnDone'), // tasto ok nella dialogColumn
+		btnColumnDone : document.getElementById('btnColumnDone'), // tasto ok nella dialogTables
 		btnMetricDone : document.getElementById('btnMetricDone'), // tasto Salva nella dialogMetric
 		btnSaveReport : document.getElementById('saveReport'),
 		btnSaveReportDone: document.getElementById('btnReportSaveName'),
@@ -187,13 +188,14 @@ var StorageProcess = new ProcessStorage();
 			const parentElement = document.getElementById('fieldList-tables'); // elemento a cui aggiungere la ul
 
 			ulTables.setAttribute('data-hier-id', index);
-			for (let i in hierarchies[hier]) {
-				const table = hierarchies[hier][i]; // nome del campo della tabella
+
+			for (const [tableId, table] of Object.entries(hierarchies[hier])) {
 				// inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
 				let content = app.tmplListField.content.cloneNode(true);
 				let element = content.querySelector('.element');
 				let li = element.querySelector('li');
 				li.innerText = table;
+				li.setAttribute('data-table-id', tableId);
 
 				li.setAttribute('label', table);
 				element.appendChild(li);
@@ -419,9 +421,17 @@ var StorageProcess = new ProcessStorage();
 		app.dialogTables.querySelector('section').setAttribute('data-table-selected', e.currentTarget.getAttribute('label'));
 		// l'object 'columns' della dimensione contiene l'elenco dei campi mappati appartenenti alla tabella selezionata
 		const fields = Dim.selected.columns[e.currentTarget.getAttribute('label')];
-		console.log('fields : ', fields);
-		debugger;
+		const ul = document.getElementById('table-fieldList');
+		fields.forEach( (field) => {
+			const li = document.createElement('li');
+			li.innerText = field;
+			li.setAttribute('label', field);
+			ul.appendChild(li);
+			li.onclick = app.selectColumn;
+		});
 		app.dialogTables.showModal();
+		Query.table = e.currentTarget.getAttribute('label');
+		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
 		return;
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
 		let fieldType = e.currentTarget.getAttribute('data-list-type');
@@ -465,16 +475,30 @@ var StorageProcess = new ProcessStorage();
 		const metrics = storage.list(Query.table);
 		console.log(metrics);
 		// popolo il contenitore delle metriche già esistenti per questa tabella
-		const ul = document.getElementById('exists-metric');
+		const ull = document.getElementById('exists-metric');
 		for (let metric in metrics) {
 			let content = app.tmplListField.content.cloneNode(true);
 			let element = content.querySelector('.element');
 			let li = element.querySelector('li');
 			li.innerText = metric;
 			li.setAttribute('label', metric);
-			ul.appendChild(element);
+			ull.appendChild(element);
 			li.onclick = app.handlerMetricSelected;
 		}
+	};
+
+	app.selectColumn = (e) => {
+		console.log('e.currentTarget : ', e.currentTarget);
+		e.currentTarget.toggleAttribute('selected');
+		Query.field = e.target.getAttribute('label');
+		if (!e.currentTarget.hasAttribute('selected')) {
+			// deselezionato
+			Query.deleteSelect();
+			Query.deleteGroupBy();
+		}
+		// passo il focus alla textarea
+		// document.getElementById('sqlFormula').focus();
+		document.getElementById('inputColumnName').focus();
 	};
 
 	// selezione della gerarchia
@@ -488,7 +512,6 @@ var StorageProcess = new ProcessStorage();
 		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-hier-id='"+hierId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
 		// visualizzo, nella sezione di destra "Tabelle disponibili" le tabelle disponibili mappate con questa gerarchia
 		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-hier-id='"+hierId+"']").removeAttribute('hidden');
-		// debugger;
 	};
 
 	// selezione della tabella nella sezione metric
@@ -657,22 +680,9 @@ var StorageProcess = new ProcessStorage();
 
 	// Salvataggio dell'alias di colonna
 	app.handlerBtnColumnDone = () => {
-		// Confermo il nome dell'alias per la colonna
-		// TODO: da inserire anche SQL formula (es.: date_format()) in un textarea oppure un contenteditable
-		const alias = document.getElementById('inputColumnName').value;
-		//console.log(alias);
-		//let obj = {'SQLFormat': null, alias};
-		let obj = {};
-		obj = {'SQLFormat': null, alias};
-		
-		Query.select = obj;
-		
-		// aggiungo la colonna selezionata a Query.groupBy
-		obj = {};
-		obj = {'SQLFormat': null};
-		Query.groupBy = obj;
-
-		app.dialogColumn.close();
+		// TODO: salvo la from contenente la tabella selezionata + tutte le tabelle al di sotto, di livello gerarchico
+		// TODO: salvo la where andando a prendere solo le join appartenenti alle tabelle selezionate e aggiunte nella from
+		app.dialogTables.close();
 	};
 
 	// salvo la metrica impostata
@@ -976,9 +986,24 @@ var StorageProcess = new ProcessStorage();
 		app.checkFilterForm();
 	};
 
+	document.getElementById('inputColumnName').oninput = (e) => {
+		(e.target.value.length === 0) ? app.btnSaveColumn.disabled = true : app.btnSaveColumn.disabled = false;
+	};
+
 	// operatori logici nella dialog Filter (AND, OR, NOT, ecc...)
 	document.querySelectorAll('#logicalOperator > span').forEach((span) => {
 		span.onclick = app.handlerLogicalOperatorSelected;
 	});
+
+	app.btnSaveColumn.onclick = (e) => {
+		console.clear();
+		const alias = document.getElementById('inputColumnName').value;
+		const textarea = (document.getElementById('sqlFormula').value.length === 0) ? null : document.getElementById('sqlFormula').value;
+
+		Query.select = {SQLFormat: textarea, alias};
+		// aggiungo la colonna selezionata a Query.groupBy
+		Query.groupBy = {SQLFormat: textarea};
+		document.getElementById('inputColumnName').value = '';
+	};
 
 })();

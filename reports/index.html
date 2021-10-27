@@ -64,7 +64,7 @@
 							<!-- <label for="inputColumnFormula" class="">SQL</label> -->
 						</div>
 						<div class="md-field">
-							<input type="text" id="inputColumnName" name="columnName" value=""/>
+							<input type="text" id="inputColumnName" name="columnName" autocomplete="off" />
 							<label for="inputColumnName" class="">Alias per la colonna</label>
 						</div>
 					</section>
@@ -73,6 +73,7 @@
 
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
+					<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
 					<button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
 				</div>
 			</section>
