@@ -218,7 +218,6 @@
 			</div> -->
 		</dialog>
 
-
 		<main>
 			<div id="drawer">
 				<section class="account"><h5>user</h5><i class="material-icons md-light">person</i></section>
@@ -263,6 +262,7 @@
 						<template id="tmpl_ulList">
 							<ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
 							<ul data-id="fields-column" class="overflowList" hidden="true"></ul>
+							<ul data-id="fields-tables" class="overflowList" hidden="true"></ul>
 							<ul data-id="fields-metric" class="overflowList" hidden="true"></ul>
 						</template>
 
@@ -302,8 +302,37 @@
 												</div>
 											</section>
 										</section>
-									
+
 										<section class="step" data-step="2">
+											<section class="pageContent">
+												<h4>Gerarchie</h4><h6>Seleziona le gerarchie per visualizzare le tabelle associate</h6>
+
+												<div class="stepLayout">
+
+													<section class="sectionLists">
+														<h5>Gerarchie</h5>
+														<div class="md-field">
+															<input type="search" id="searchTables-hierarchies" value=""/>
+															<label for="searchTables-hierarchies" class="">Ricerca</label>
+														</div>
+														<div id="tableList-hierarchies">
+															<ul id="dimension-hierarchies" class="overflowList"></ul>
+														</div>
+													</section>
+
+													<section class="sectionLists" id="sectionFields-tables">
+														<h5>Tabelle disponibili</h5>
+														<div class="md-field">
+															<input type="search" id="searchTables" value=""/>
+															<label for="searchTables" class="">Ricerca</label>
+														</div>
+														<div id="fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
+													</section>
+												</div>
+											</section>
+										</section>
+									
+										<section class="step" data-step="3">
 											<section class="pageContent">
 												<h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
 
@@ -332,7 +361,7 @@
 											</section>
 										</section>
 
-										<section class="step" data-step="3">
+										<section class="step" data-step="4">
 											<section class="pageContent">
 												<h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
@@ -374,7 +403,7 @@
 											</section>
 										</section>
 
-										<section class="step" data-step="4">
+										<section class="step" data-step="5">
 											<section class="pageContent">
 												<h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
 												<div class="stepLayout">

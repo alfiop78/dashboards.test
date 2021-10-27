@@ -3,7 +3,7 @@ class Queries {
 		this._select = {};
 		this._from = {};
 		this._fromSet = new Set();
-		this._fromArray = [];
+		// this._fromArray = [];
 		this._where = {};
 		this._factRelation = {};
 		this._filter = {}
@@ -30,7 +30,7 @@ class Queries {
 	get fieldType() {return this._fieldType;}
 
 	set from(value) {
-		this._fromArray.push(value);
+		// this._fromArray.push(value); // TODO: probabilmente questo non viene mai utilizzato (da verificare)
 		this._fromSet.add(value);
 		console.log('from : ', this._fromSet);
 	}

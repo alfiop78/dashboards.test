@@ -144,23 +144,64 @@ var StorageProcess = new ProcessStorage();
 		console.log('Dimensione selezionata : ', Dim.selected);
 		// nella dimensione selezionata c'è la join con il cubo
 		// console.log('join fact : ', Dim.selected.cubes[StorageCube.selected.name]);
-		console.log(Dim.selected.cubes[StorageCube.selected.name]);
-		debugger;
-		for ( const [k, v] of Object.entries(Dim.selected.cubes[StorageCube.selected.name])) {
-			console.log('k : ', k);
-			console.log('v : ', v);
-		}
+		console.log(Dim.selected.cubes[StorageCube.selected.name]); // relazione con il cubo presente nella dimensione
+		// debugger;
+		// for ( const [k, v] of Object.entries(Dim.selected.cubes[StorageCube.selected.name])) {
+		// 	console.log('k : ', k);
+		// 	console.log('v : ', v);
+		// }
 		// da valutare se passare le join a Query.where una alla volta (ciclo for) oppure passandogli tutto l'object che poi si va a ciclare all'iinterno del Query.where
-		debugger;
+		// debugger;
 		Query.where = Dim.selected.cubes[StorageCube.selected.name];
 		debugger;
-		app.createListTableColumns(Dim.selected.columns);
+		app.createListHierarchies(Dim.selected.hierarchies);
+
+		// app.createListTableColumns(Dim.selected.columns);
 
 		app.createListTableFilters(Dim.selected.from);
 
 		// l'elenco delle relazioni (key "hierarchies") lo devo prendere quando stabilisco le colonne da aggiungere alla FX.
 		// Questo perchè nelle relazioni possono esserci tabelle i cui campi non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
 		// Es.: se scelgo le colonne Azienda.descrizione e Sede.Descrizione ma nella dimensione è presente anche ZonaVenditaCM, non devo aggiungere, nella where, la tabella ZonaVenditaCM (tabella non utilizzata nella clausola SELECT)
+	};
+
+	// crreo la lista delle gerarchie presenti nella dimensione selezionata
+	app.createListHierarchies = (hierarchies) => {
+		const ul = document.getElementById('dimension-hierarchies');
+		console.log('ul dimension-hierarchies : ', ul);
+		Object.keys(hierarchies).forEach( (hier, index) => {
+			let elementTable = document.createElement('div');  
+			elementTable.className = 'element';
+			let li = document.createElement('li');
+			li.innerText = hier;
+			li.setAttribute('data-list-type', 'tables');
+			li.setAttribute('label', hier);
+			li.setAttribute('data-hier-id', index);
+			elementTable.appendChild(li);
+			ul.appendChild(elementTable);
+			li.onclick = app.handlerHierSelected;
+
+			let tmpl_ulList = document.getElementById('tmpl_ulList');
+			let ulContent = tmpl_ulList.content.cloneNode(true);
+			let ulTables = ulContent.querySelector('ul[data-id="fields-tables"]');
+			const parentElement = document.getElementById('fieldList-tables'); // elemento a cui aggiungere la ul
+
+			ulTables.setAttribute('data-hier-id', index);
+			for (let i in hierarchies[hier]) {
+				const table = hierarchies[hier][i]; // nome del campo della tabella
+				// inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
+				let content = app.tmplListField.content.cloneNode(true);
+				let element = content.querySelector('.element');
+				let li = element.querySelector('li');
+				li.innerText = table;
+
+				li.setAttribute('label', table);
+				element.appendChild(li);
+				ulTables.appendChild(element);
+				li.onclick = app.handlerTableSelectedColumns; // tabella selezionata
+			}
+			parentElement.appendChild(ulTables);
+		});
 	};
 
 	// creo la lista delle tabelle nella sezione dello step 3 - Filtri
@@ -387,6 +428,15 @@ var StorageProcess = new ProcessStorage();
 		// Query.from = Dim.selected.from;
 		Query.where = Dim.selected.join;
 
+		// TODO: quando si seleziona una tabella bisogna includere automaticamente il campo id in Query.columns da recuperare in app.handlerBtnColumnDone
+		Query.select = {SQLFormat : null, alias : Query.table+"-"+id};
+		debugger;
+		
+		// aggiungo la colonna selezionata a Query.groupBy
+		obj = {};
+		obj = {'SQLFormat': null};
+		Query.groupBy = obj;
+
 		debugger;
 		// if (e.currentTarget.hasAttribute('selected')) {
 		// 	// aggiungo, alla from, le tabelle, nelle gerarchie SUPERIORI al tableId selezionato
@@ -417,6 +467,21 @@ var StorageProcess = new ProcessStorage();
 			ul.appendChild(element);
 			li.onclick = app.handlerMetricSelected;
 		}
+	};
+
+	// selezione della gerarchia
+	app.handlerHierSelected = (e) => {
+		console.log('e.currentTarget : ', e.currentTarget);
+		console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
+		// visualizzo la ul nascosta della gerarchia selezionata
+		let fieldType = e.currentTarget.getAttribute('data-list-type');
+		debugger;
+		let hierId = +e.currentTarget.getAttribute('data-hier-id');
+		// rimuovo eventuali altri ul aperti in precedenza
+		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-hier-id='"+hierId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
+		// visualizzo, nella sezione di destra "Tabelle disponibili" le tabelle disponibili mappate con questa gerarchia
+		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-hier-id='"+hierId+"']").removeAttribute('hidden');
+		debugger;
 	};
 
 	// selezione della tabella nella sezione metric
