@@ -1,7 +1,7 @@
 class Queries {
 	constructor() {
 		this._select = {};
-		this._from = {};
+		this._fromCubes = new Set(); // qui memorizzo solo i cubi, clausola FROM
 		this._fromSet = new Set();
 		// this._fromArray = [];
 		this._where = {};
@@ -10,7 +10,6 @@ class Queries {
 		this._groupBy = {};
 		this._metrics = {};
 		this._filteredMetrics = {};
-
 	}
 
 	set table(value) {this._table = value;}
@@ -180,12 +179,21 @@ class Queries {
 
 	get filteredMetrics() {return this._filteredMetrics;}
 
+	addFromCubes(value) {
+		this._fromCubes.add(value);
+		console.log('fromCubes : ', this._fromCubes);
+	}
+
+	deleteFromCubes(value) {
+		this._fromCubes.delete(value);
+		console.log('fromCubes : ', this._fromCubes);
+	}
+
 	save(processId, name) {
 		this._reportProcess = {};
 		this._reportProcess['select'] = this._select;
 		debugger;
 		this._reportProcess['from'] = Array.from(this._fromSet); // converto il set in un array
-		// this._reportProcess['from'] = this._from;
 		this._reportProcess['where'] = this._where;
 		this._reportProcess['factJoin'] = this._factRelation;
 		this._reportProcess['filters'] = this._filter;

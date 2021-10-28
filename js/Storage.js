@@ -39,17 +39,19 @@ class Storages {
 class CubeStorage extends Storages {
 	constructor() {
 		super();
-		this.cubes = {}; // lista dei cubi presenti nello storage
+		this._cubes = {}; // lista dei cubi presenti nello storage
 		this.id = 0; // default
 		// imposto la lista dei cubi in this.cubes
 		this.storageKeys.forEach((key) => {
 			let jsonStorage = JSON.parse(this.storage.getItem(key));
-			// console.log(key);
 			if (jsonStorage.type === 'CUBE') {
-				this.cubes[key] = {'id' : jsonStorage['id'], 'FACT' : jsonStorage['FACT'], 'key' : key};
+				this._cubes[key] = jsonStorage;
+				// this._cubes[key] = {'id' : jsonStorage['id'], 'FACT' : jsonStorage['FACT'], 'key' : key};
 			}
 		});
 	}
+
+	get cubes() {return this._cubes;}
 
 	set cubeId(value) {this.id = value;}
 
@@ -102,8 +104,9 @@ class CubeStorage extends Storages {
 		return this.id;
 	}
 
+	// da rivedere quando viene utilizzata
 	list(ul) {
-		for (const [key, value] of Object.entries(this.cubes)) {
+		for (const [key, value] of Object.entries(this._cubes)) {
 			let element = document.createElement('div');
 			element.className = 'element';
 			element.setAttribute('label', key);
@@ -112,7 +115,6 @@ class CubeStorage extends Storages {
 			li.setAttribute('label', key);
 			li.id = 'cube-id-' + value['id'];
 			li.setAttribute('data-cube-id', value['id']);
-			li.setAttribute('label', value['key']);
 			ul.appendChild(element);
 			element.appendChild(li);
 		}
@@ -350,8 +352,17 @@ class DimensionStorage extends Storages {
 	// TODO: da completare in base alla logica di PageStorage
 	constructor() {
 		super();
+		this._dimensions = {}; // lista dimensioni presenti nello storaga
 		this.id = 0; // default
-		this._name;	
+		this._name;
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'DIMENSION') {
+				this._dimensions[key] = jsonStorage;
+				// console.log('this._dimensions : ', this._dimensions);
+			}
+		});
 	}
 
 	set dimensionId(value) {
@@ -428,6 +439,8 @@ class DimensionStorage extends Storages {
 		}
 		return this.tables;
 	}
+
+	get dimensions() {return this._dimensions;}
 
 }
 

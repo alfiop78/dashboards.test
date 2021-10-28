@@ -289,10 +289,12 @@
 						</template>
 
 						<template id="tmpl_ulList">
-							<ul data-id="fields-filter" class="overflowList" hidden="true"></ul>
-							<ul data-id="fields-column" class="overflowList" hidden="true"></ul>
-							<ul data-id="fields-tables" class="overflowList" hidden="true"></ul>
-							<ul data-id="fields-metric" class="overflowList" hidden="true"></ul>
+							<ul data-id="fields-filter" class="overflowList" hidden></ul>
+							<ul data-id="fields-dimensions" class="overflowList" hidden></ul>
+							<ul data-id="fields-hierarchies" class="overflowList" hidden></ul>
+							<ul data-id="fields-column" class="overflowList" hidden></ul>
+							<ul data-id="fields-tables" class="overflowList" hidden></ul>
+							<ul data-id="fields-metric" class="overflowList" hidden></ul>
 						</template>
 
 						<div id="step" class="steps" data-step="1">
@@ -325,7 +327,7 @@
 															<label for="searchDimension" class="">Ricerca</label>
 														</div>
 														<div id="dimensionList">
-															<ul id="dimensions" class="overflowList"></ul>
+															<!-- <ul data-id="fields-dimensions" class="overflowList" hidden></ul> -->
 														</div>
 													</section>
 												</div>
@@ -334,7 +336,7 @@
 
 										<section class="step" data-step="2">
 											<section class="pageContent">
-												<h4>Gerarchie</h4><h6>Dopo aver selezionato la gerarchia, seleziona le tabelle per aggiungere le colonne alla query</h6>
+												<h4>Campi</h4><h6>Dopo aver selezionato la gerarchia, seleziona le tabelle per aggiungere le colonne</h6>
 
 												<div class="stepLayout">
 
@@ -345,7 +347,7 @@
 															<label for="searchTables-hierarchies" class="">Ricerca</label>
 														</div>
 														<div id="tableList-hierarchies">
-															<ul id="dimension-hierarchies" class="overflowList"></ul>
+															<!-- <ul data-id="fields-hierarchies" class="overflowList" hidden></ul> -->
 														</div>
 													</section>
 
@@ -373,10 +375,7 @@
 															<input type="search" id="searchTables-filter" value=""/>
 															<label for="searchTables-filter" class="">Ricerca</label>
 														</div>
-														<div id="tableList-filter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter--></div>
-														<!-- <div id="tableList-filter">
-															<ul id="tables-filter" class="overflowList"></ul>
-														</div> -->
+														<div id="tableList-filter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-tables che conterrà l'elenco delle tabelle--></div>
 													</section>
 
 													<section class="sectionLists" id="sectionFields-filter">
@@ -396,10 +395,7 @@
 															<input type="search" id="searchExistsFilter" value=""/>
 															<label for="searchExistsFilter" class="">Ricerca</label>
 														</div>
-														<div id="fieldList-existFilter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter--></div>
-														<!-- <div id="existsfilter">
-															<ul id="exists-filter" class="overflowList"></ul>
-														</div> -->
+														<div id="fieldList-existFilter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter che conterrà l'elenco dei filtri per la tabella selezionata--></div>
 													</section>
 												</div>
 											</section>
