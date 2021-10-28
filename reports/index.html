@@ -26,21 +26,9 @@
 	</head>
 	<body>
 
-		<!-- <dialog id="dialogColumn">
-			<div class="md-field">
-				<input type="text" id="inputColumnName" name="columnName" value=""/>
-				<label for="inputColumnName" class="">Alias per la colonna</label>
-			</div>
-
-			<div class="dialog-buttons">
-				<button type="button" name="cancel" class="md-button">annulla</button>
-				<button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
-			</div>
-		</dialog> -->
-
 		<dialog id="dialogTables">
 			<section data-table-selected>
-				<h4>Seleziona le colonne da includere nella query</h4>
+				<h4>Seleziona le colonne da includere per la tabella <span>da definire</span></h4>
 
 				<div class="formulaDefine">
 
@@ -372,37 +360,8 @@
 												</div>
 											</section>
 										</section>
-									
+
 										<section class="step" data-step="3">
-											<section class="pageContent">
-												<h4>Colonne</h4><h6>Seleziona le colonne da aggiungere al Report</h6>
-
-												<div class="stepLayout">
-
-													<section class="sectionLists">
-														<h5>Tabelle</h5>
-														<div class="md-field">
-															<input type="search" id="searchTables-column" value=""/>
-															<label for="searchTables-column" class="">Ricerca</label>
-														</div>
-														<div id="tableList-column">
-															<ul id="tables-column" class="overflowList"></ul>
-														</div>
-													</section>
-
-													<section class="sectionLists" id="sectionFields-column">
-														<h5>Colonne disponibili</h5>
-														<div class="md-field">
-															<input type="search" id="searchColumns" value=""/>
-															<label for="searchColumns" class="">Ricerca</label>
-														</div>
-														<div id="fieldList-column"><!-- qui viene inserito il template tmpl_ulList--></div>
-													</section>
-												</div>
-											</section>
-										</section>
-
-										<section class="step" data-step="4">
 											<section class="pageContent">
 												<h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
 
@@ -414,9 +373,10 @@
 															<input type="search" id="searchTables-filter" value=""/>
 															<label for="searchTables-filter" class="">Ricerca</label>
 														</div>
-														<div id="tableList-filter">
+														<div id="tableList-filter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter--></div>
+														<!-- <div id="tableList-filter">
 															<ul id="tables-filter" class="overflowList"></ul>
-														</div>
+														</div> -->
 													</section>
 
 													<section class="sectionLists" id="sectionFields-filter">
@@ -436,15 +396,16 @@
 															<input type="search" id="searchExistsFilter" value=""/>
 															<label for="searchExistsFilter" class="">Ricerca</label>
 														</div>
-														<div id="existsfilter">
+														<div id="fieldList-existFilter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter--></div>
+														<!-- <div id="existsfilter">
 															<ul id="exists-filter" class="overflowList"></ul>
-														</div>
+														</div> -->
 													</section>
 												</div>
 											</section>
 										</section>
 
-										<section class="step" data-step="5">
+										<section class="step" data-step="4">
 											<section class="pageContent">
 												<h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
 												<div class="stepLayout">

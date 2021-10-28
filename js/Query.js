@@ -92,7 +92,7 @@ class Queries {
 
 	set filters(object) {
 		this._filter[this._filterName] = object;
-		console.log(this._filter);
+		console.log('filter : ', this._filter);
 		// NOTE: object filter salvato in storage
 		    /* filter_name: {
 		        'formula' : "id_Azienda = 43",
@@ -103,7 +103,13 @@ class Queries {
 		    */
 	}
 
-	get filters() {return this._filters};
+	get filters() {return this._filter};
+
+	deleteFilter() {
+		debugger;
+		delete this._filter[this.filterName];
+		console.log('filter : ', this._filter);
+	}
 
 	set groupBy(object) {
 		// aggiungo l'object per il group by
