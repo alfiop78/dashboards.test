@@ -113,6 +113,7 @@ class CubeStorage extends Storages {
 			let li = document.createElement('li');
 			li.innerText = key;
 			li.setAttribute('label', key);
+			// li.setAttribute('data-list-type', 'dimensions'); // questo influenza la <ul> delle dimensioni
 			li.id = 'cube-id-' + value['id'];
 			li.setAttribute('data-cube-id', value['id']);
 			ul.appendChild(element);
@@ -352,7 +353,7 @@ class DimensionStorage extends Storages {
 	// TODO: da completare in base alla logica di PageStorage
 	constructor() {
 		super();
-		this._dimensions = {}; // lista dimensioni presenti nello storaga
+		this._dimensions = {}; // lista dimensioni presenti nello storage
 		this.id = 0; // default
 		this._name;
 		this.storageKeys.forEach((key) => {

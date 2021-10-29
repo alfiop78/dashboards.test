@@ -288,12 +288,31 @@
 							</div>
 						</template>
 
+						<template id="templateListHidden">
+							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+								<div class="element" name="">
+									<li class="elementSearch" label=""></li>
+									<i id="columns-icon" class="material-icons md-18">view_list</i>
+									<i id="filter-icon" class="material-icons md-18">filter_alt</i>
+								</div>	
+							</section>
+						</template>
+
+						<template id="templateListSection">
+							<section hidden data-label-search>
+								<div class="element" name="">
+									<li class="elementSearch" label=""></li>
+								</div>	
+							</section>
+						</template>
+
 						<template id="tmpl_ulList">
+							<ul data-id="fields-cubes" class="overflowList"></ul>
 							<ul data-id="fields-filter" class="overflowList" hidden></ul>
-							<ul data-id="fields-dimensions" class="overflowList" hidden></ul>
-							<ul data-id="fields-hierarchies" class="overflowList" hidden></ul>
+							<ul data-id="fields-dimensions" class="overflowList"></ul>
+							<ul data-id="fields-hierarchies" class="overflowList"></ul>
 							<ul data-id="fields-column" class="overflowList" hidden></ul>
-							<ul data-id="fields-tables" class="overflowList" hidden></ul>
+							<ul data-id="fields-tables" class="overflowList"></ul>
 							<ul data-id="fields-metric" class="overflowList" hidden></ul>
 						</template>
 
@@ -315,8 +334,8 @@
 															<input type="search" id="searchCube" value=""/>
 															<label for="searchCube" class="">Ricerca</label>
 														</div>
-														<div id="cubeList">
-															<ul id="cubes" class="overflowList"></ul>
+														<div id="fieldList-cubes">
+															
 														</div>
 													</section>
 

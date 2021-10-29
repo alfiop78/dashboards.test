@@ -1,3 +1,5 @@
+// TODO: Da valutare se la property 'from', all'interno della dimensione mi serve ancora visto che le tabelle sono elencate, in ordine gerarchico, anche nella property 'hierarchies'
+// TODO: visto che, nella property lastTableInHierarchy ho l'ultima tabella della gerarchia, potrei togliere questa tabella dalla property 'hierarchies'. In questo modo, 'hierarchies' e 'join' hanno lo stesso indice, da valutare
 var App = new Application();
 var cube = new Cube();
 var StorageCube = new CubeStorage();

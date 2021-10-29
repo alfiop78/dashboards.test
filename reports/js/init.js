@@ -11,6 +11,8 @@ var StorageFilter = new FilterStorage();
 		// templates
 		tmplListField : document.getElementById('templateListField'),
 		tmpl_ulList : document.getElementById('tmpl_ulList'),
+		tmpl_ulListHidden : document.getElementById('templateListHidden'),
+		tmpl_ulListSection : document.getElementById('templateListSection'),
 
 		// btn		
 		btnPreviousStep : document.getElementById('stepPrevious'),
@@ -86,8 +88,47 @@ var StorageFilter = new FilterStorage();
 		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerReportToBeProcessed) );
 	};
 
-	// selezione del cubo step-1
 	app.handlerCubeSelected = (e) => {
+		const cubeId = e.currentTarget.getAttribute('data-cube-id');
+		// const fieldType = e.currentTarget.getAttribute('data-list-type');
+		StorageCube.selected = e.currentTarget.getAttribute('label');
+		console.log('cube selected : ', StorageCube.selected);
+		e.currentTarget.toggleAttribute('selected');
+		if (e.currentTarget.hasAttribute('selected')) {
+			// Query.addFromCubes(StorageCube.selected.FACT);
+			// visualizzo la <ul> contentente le dimensioni appartenenti al cubo selezionato
+			// document.querySelectorAll("ul[data-id='fields-dimensions'] > .element[data-cube-id='"+cubeId+"']").forEach( (dim) => {
+			// 	console.log('elenco dimensioni appartententi al cubo selezionato : ', dim);
+			// 	// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
+			// });
+			document.querySelectorAll("ul[data-id='fields-dimensions'] > section[data-label-search='"+cubeId+"']").forEach( (dimension) => {
+				console.log('tabelle appartententi alla gerarchia selezionata : ', dimension);
+				dimension.hidden = false;
+				// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
+			});
+		} else {
+			// TODO: deselect cube
+		}
+	};
+
+	app.handlerDimensionSelected = (e) => {
+		const dimName = e.currentTarget.getAttribute('data-dimension-id');
+		Dim.selected = dimName;
+		console.log('Dimensione selezionata : ', Dim.selected);
+		Query.where = Dim.selected.cubes[StorageCube.selected.name];
+		e.currentTarget.toggleAttribute('selected');
+		if (e.currentTarget.hasAttribute('selected')) {
+			document.querySelectorAll("ul[data-id='fields-hierarchies'] > .element[data-dimension-id='"+dimName+"']").forEach( (hier) => {
+				console.log('elenco gerarchie appartententi alla dimensione selezionata : ', hier);
+				// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
+			});
+		} else {
+			// TODO: deselect cube
+		}
+	};
+
+	// selezione del cubo step-1
+	/*app.handlerCubeSelected = (e) => {
 		const cubeId = e.currentTarget.getAttribute('data-cube-id');
 		StorageCube.selected = e.currentTarget.getAttribute('label');
 		console.log('cube selected : ', StorageCube.selected);
@@ -113,10 +154,10 @@ var StorageFilter = new FilterStorage();
 		} else {
 			Query.deleteFromCubes(StorageCube.selected.FACT);
 		}
-	};
+	};*/
 
 	// selezione delle dimensioni da utilizzare per la creazione del report
-	app.handlerDimensionSelected = (e) => {
+	/*app.handlerDimensionSelected = (e) => {
 		// imposto attributo selected sulle dimensioni selezionate
 		e.currentTarget.toggleAttribute('selected');
 		// popolo la sezione step 2, "colonne"
@@ -144,6 +185,20 @@ var StorageFilter = new FilterStorage();
 		// l'elenco delle relazioni (key "hierarchies") lo devo prendere quando stabilisco le colonne da aggiungere alla FX.
 		// Questo perchè nelle relazioni possono esserci tabelle i cui campi non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
 		// Es.: se scelgo le colonne Azienda.descrizione e Sede.Descrizione ma nella dimensione è presente anche ZonaVenditaCM, non devo aggiungere, nella where, la tabella ZonaVenditaCM (tabella non utilizzata nella clausola SELECT)
+	};*/
+
+	// selezione della gerarchia
+	app.handlerHierSelected = (e) => {
+		console.clear();
+		// console.log('e.currentTarget : ', e.currentTarget);
+		console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
+		// visualizzo la ul nascosta della gerarchia selezionata
+		let hierId = e.currentTarget.getAttribute('data-hier-id'); // TODO: valutare l'inserimento di un hierId invece del nome, i nomi possono ripetersi (per dimensioni differenti)
+		document.querySelectorAll("ul[data-id='fields-tables'] > section[data-label-search='"+hierId+"']").forEach( (table) => {
+			console.log('tabelle appartententi alla gerarchia selezionata : ', table);
+			table.hidden = false;
+			// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
+		});
 	};
 
 	// crreo la lista delle gerarchie presenti nella dimensione selezionata
@@ -496,20 +551,6 @@ var StorageFilter = new FilterStorage();
 		// passo il focus alla textarea
 		// document.getElementById('sqlFormula').focus();
 		document.getElementById('inputColumnName').focus();
-	};
-
-	// selezione della gerarchia
-	app.handlerHierSelected = (e) => {
-		console.clear();
-		// console.log('e.currentTarget : ', e.currentTarget);
-		// console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
-		// visualizzo la ul nascosta della gerarchia selezionata
-		let fieldType = e.currentTarget.getAttribute('data-list-type');
-		let hierId = +e.currentTarget.getAttribute('data-hier-id');
-		// rimuovo eventuali altri ul aperti in precedenza
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-hier-id='"+hierId+"'])")).forEach( ul => ul.setAttribute('hidden', true));
-		// visualizzo, nella sezione di destra "Tabelle disponibili" e nell'elenco tabelle dello step Filtri, le tabelle disponibili mappate con questa gerarchia
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"'][data-hier-id='"+hierId+"']")).forEach( ul => ul.removeAttribute('hidden'));
 	};
 
 	// selezione della tabella nella sezione metric
@@ -890,87 +931,107 @@ var StorageFilter = new FilterStorage();
 
 	// carico elenco Cubi su cui creare il report
 	app.getCubes = () => {
-		const ul = document.getElementById('cubes');
-		StorageCube.list(ul);
-		// associo la Fn che gestisce il click sulle <li>
-		ul.querySelectorAll('li').forEach( li => li.addEventListener('click', app.handlerCubeSelected));
-		
+		// StorageCube.list(ul);
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-cubes']");
+		const parent = document.getElementById('fieldList-cubes'); // dove verrà inserita la <ul>
+		for (const [key, value] of Object.entries(StorageCube.cubes)) {
+			const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+			const section = contentElement.querySelector('section');
+			const element = section.querySelector('.element');
+			const li = element.querySelector('li');
+			section.setAttribute('data-label-search', key);
+			section.removeAttribute('hidden');
+			element.setAttribute('data-cube-id', value.id);
+			li.innerText = key;
+			li.setAttribute('label', key);
+			li.setAttribute('data-cube-id', value.id);
+			ul.appendChild(section);
+			li.onclick = app.handlerCubeSelected;
+		}
+		parent.appendChild(ul);
 	};
 
 	app.getDimensions = () => {
-		// per ogni cubo creo una <ul> con dentro le dimensioni associate al cubo in ciclo
+		// elenco di tutte le dimensioni
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-dimensions']");
+		const parent = document.getElementById('dimensionList'); // dove verrà inserita la <ul>
+		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
 		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
 		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
 			console.log('key : ', cubeName);
 			console.log('value : ', cubeValue); // tutto il contenuto del cubo
 			console.log('dimensioni associate : ', cubeValue.associatedDimensions);
-			// per ogni cubo creo una <ul> con le dimensioni appartenti al cubo
-			const content = app.tmpl_ulList.content.cloneNode(true);
-			const ul = content.querySelector("ul[data-id='fields-dimensions']");
-			const parent = document.getElementById('dimensionList'); // dove verrà inserita la <ul>
-			// inserisco un data-cube-id sulla lista ul[data-id='fields-dimensions'] in modo da visualizzarla/nasconderla solo quando si seleziona il relativo cubo
-			ul.setAttribute('data-cube-id', cubeValue.id);
 			// per ogni dimensione presente in associatedDimensions inserisco un element (preso dal template app.tmplListField)
 			cubeValue.associatedDimensions.forEach( (dimension, index) => {
-				const contentElement = app.tmplListField.content.cloneNode(true);
-				const element = contentElement.querySelector('.element');
+				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+				const section = contentElement.querySelector('section');
+				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
+				section.setAttribute('data-label-search', dimension);
+				// element.setAttribute('data-dimension-id', dimName);
+				// element.setAttribute('data-hier-id', hier);
 				li.innerText = dimension;
-				element.appendChild(li);
-				ul.appendChild(element);
+				ul.appendChild(section);
+				li.onclick = app.handlerDimensionSelected;
 			}); // forse index si deve sostituire con un dimensionId (che attualmente non viene creato quando si crea una dimensione)
 			parent.appendChild(ul);
 		}
 	};
 
 	app.getHierarchies = () => {
+		// lista di tutte le gerarchie, imposto un data-dimension-id/name sugli .element della lista gerarchie, in questo modo posso filtrarle quando seleziono le dimensioni nello step precedente
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-hierarchies']");
+		const parent = document.getElementById('tableList-hierarchies'); // dove verrà inserita la <ul>
+
 		// ottengo l'elenco delle gerarchie per ogni dimensione presente in storage, successivamente, quando la dimensione viene selezionata, visualizzo/nascondo solo quella selezionata
 		console.log('lista dimensioni :', Dim.dimensions);
-		// per ogni dimensione presente creo una lista <ul> con le gerarchie presenti nella dimension in ciclo
-		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {
-			console.log('key : ', dimName);
-			console.log('value : ', dimValue); // tutto il contenuto della dimensione
-			console.log('gerarchie della dimensione : ', dimValue.hierarchies);
-			// per ogni cubo creo una <ul> con le dimensioni appartenti al cubo
-			const content = app.tmpl_ulList.content.cloneNode(true);
-			const ul = content.querySelector("ul[data-id='fields-hierarchies']");
-			const parent = document.getElementById('tableList-hierarchies'); // dove verrà inserita la <ul>
-			// inserisco un data-cube-id sulla lista ul[data-id='fields-dimensions'] in modo da visualizzarla/nasconderla solo quando si seleziona il relativo cubo
+		// per ogni dimensione presente aggiungo gli elementi nella ul con le gerarchie
+		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {	
 			ul.setAttribute('data-dimension-id', dimValue.name); // TODO: al momento metto il nome ma andrà sostituito con dimensionId
 			// per ogni dimensione presente in associatedDimensions inserisco un element (preso dal template app.tmplListField)
 			for (const hier in dimValue.hierarchies) {
 				const contentElement = app.tmplListField.content.cloneNode(true);
 				const element = contentElement.querySelector('.element');
 				const li = element.querySelector('li');
+				element.setAttribute('data-dimension-id', dimValue.name); // TODO: al momento metto il nome ma andrà sostituito con dimensionId
 				li.innerText = hier;
+				li.setAttribute('data-hier-id', hier);
 				element.appendChild(li);
 				ul.appendChild(element);
+				li.onclick = app.handlerHierSelected;
 			}
 			parent.appendChild(ul);
 		}
-		debugger;
-		/*
-		const ul = document.getElementById('dimension-hierarchies');
-		console.log('ul dimension-hierarchies : ', ul);
-		Object.keys(hierarchies).forEach( (hier, index) => {
-			let elementTable = document.createElement('div');  
-			elementTable.className = 'element';
-			let li = document.createElement('li');
-			li.innerText = hier;
-			li.setAttribute('data-list-type', 'tables');
-			li.setAttribute('label', hier);
-			li.setAttribute('data-hier-id', index);
-			elementTable.appendChild(li);
-			ul.appendChild(elementTable);
-			li.onclick = app.handlerHierSelected;
+	};
 
-			// creo lista tabelle nello step "tabelle" 2
-			app.createTableListForColumns(index, hierarchies[hier]);
-
-			// creo lista tabelle nello step "filtri" 3
-			app.createTableListForFilters(index, hierarchies[hier]);
-		});
-		*/
+	app.getTablesInHierarchies = () => {
+		// lista di tutte le tabelle, incluse nelle dimensioni e di conseguenza, nelle gerarchie
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-tables']");
+		const parent = document.getElementById('fieldList-tables'); // dove verrà inserita la <ul>
+		// per ogni dimensione, vado a leggere le hierarchies presenti, le ciclo per creare una <ul>, in sectionFields-tables, con le tabelle presenti nella gerarchia in ciclo
+		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {
+			Dim.selected = dimName;
+			console.log('hierarchies : ', Dim.selected.hierarchies);
+			for (const hier in Dim.selected.hierarchies) {
+				for (const table in Dim.selected.hierarchies[hier]) {
+					// ciclo le tabelle presenti nella gerarchia
+					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
+					const section = contentElement.querySelector('section');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					section.setAttribute('data-label-search', hier);
+					element.setAttribute('data-dimension-id', dimName);
+					element.setAttribute('data-hier-id', hier);
+					li.innerText = Dim.selected.hierarchies[hier][table];
+					ul.appendChild(section);
+				}
+				parent.appendChild(ul);
+			}
+		}
 	};
 
 	app.getCubes();
@@ -978,6 +1039,8 @@ var StorageFilter = new FilterStorage();
 	app.getDimensions();
 
 	app.getHierarchies();
+
+	app.getTablesInHierarchies();
 
 	app.datamartToBeProcessed();
 
