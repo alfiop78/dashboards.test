@@ -38,6 +38,8 @@ i[open]{color: red;}
 
 .stepLayout .sectionLists{height: inherit;}
 
+dialog.dialog-filters .stepLayout{grid-template-columns: 69% 29%; grid-column-gap: 2%; height: inherit;}
+
 .overflowList{max-height: 400px; min-height: 350px; overflow-y: auto; background: gainsboro;}
 #fieldList-filter{padding: 0 16px;}
 /* reportSection anteprima */

@@ -28,7 +28,7 @@
 
 		<dialog id="dialogTables">
 			<section data-table-selected>
-				<h4>Seleziona le colonne da includere per la tabella <span>da definire</span></h4>
+				<h4>Seleziona le colonne da includere per la tabella <span></span></h4>
 
 				<div class="formulaDefine">
 
@@ -42,7 +42,8 @@
 								<input type="search" id="fieldSearch" value=""/>
 								<label for="fieldSearch" class="">Ricerca</label>
 							</div>
-							<ul id="table-fieldList" class="list middleList"></ul>
+							<div id="table-fieldList"></div>
+							<!-- <div id="table-fieldList" class="list middleList"></div> -->
 						</div>
 					</section>
 
@@ -84,7 +85,40 @@
 		</dialog>
 
 		<dialog id="dialogFilter" class="dialog-filters">
-			<section>
+			<section data-table-selected>
+				<h4>Selezione filtri</h4>
+				<div class="stepLayout">
+					
+					<section class="sectionLists">
+						<h5>Crea filtro</h5>
+						<div class="md-field">
+							<input type="search" id="" value=""/>
+							<label for="" class="">Ricerca</label>
+						</div>
+						<div id="fieldList-fields"><!-- template ul--></div>
+						
+					</section>
+
+					<section class="sectionLists">
+						<h5>Filtri esistenti</h5>
+						<div class="md-field">
+							<input type="search" id="searchExistsFilter" value=""/>
+							<label for="searchExistsFilter" class="">Ricerca</label>
+						</div>
+						<div id="existFilters"><!-- template ul--></div>
+					</section>
+				</div>
+
+				<div class="dialog-buttons">
+					<button type="button" name="cancel" class="md-button">annulla</button>
+					<button id="btnFilterSave" type="button" name="save" class="md-button" disabled="true">salva</button>
+					<button id="btnFilterDone" type="button" name="done" class="md-button">fine</button>
+				</div>
+			</section>
+		</dialog>
+
+		<!-- <dialog id="dialogFilter" class="dialog-filters">
+			<section data-table-selected>
 				<h4>Inserisci qui la condizione di filtro
 				<div class="md-field">
 					<input type="text" id="filter-name" value=""/>
@@ -129,7 +163,6 @@
 						</div>
 					</section>
 
-					<!-- TODO: rinominare la .formula in section.... -->
 					<section class="formula">
 						<div class="title">
 						  <h5>Lista valori</h5><h6>Seleziona i valori per creare il filtro</h6>
@@ -158,10 +191,6 @@
 					<div class="formulaContent">
 						<div id="filterFormula" class="textarea">
 				  
-							<!-- <span class="formulaField">id</span>
-							<span class="formulaOperator"> =</span>
-							<span class="formulaValues">443</span> -->
-							
 						</div>
 						<div class="formulaIcons">
 							<span class="popupContent"><i class="material-icons md-18">clear</i><small class="popup">Rimuovi</small></span>
@@ -176,7 +205,7 @@
 					<button id="btnFilterDone" type="button" name="done" class="md-button">fine</button>
 				</div>
 			</section>
-		</dialog>
+		</dialog> -->
 
 		<dialog id="dialogMetric" class="dialog-metrics">
 			<section>
@@ -308,10 +337,10 @@
 
 						<template id="tmpl_ulList">
 							<ul data-id="fields-cubes" class="overflowList"></ul>
-							<ul data-id="fields-filter" class="overflowList" hidden></ul>
+							<ul data-id="fields-filter" class="overflowList"></ul>
 							<ul data-id="fields-dimensions" class="overflowList"></ul>
 							<ul data-id="fields-hierarchies" class="overflowList"></ul>
-							<ul data-id="fields-column" class="overflowList" hidden></ul>
+							<ul data-id="fields-column" class="list middleList"></ul>
 							<ul data-id="fields-tables" class="overflowList"></ul>
 							<ul data-id="fields-metric" class="overflowList" hidden></ul>
 						</template>

@@ -448,6 +448,14 @@ class DimensionStorage extends Storages {
 class FilterStorage extends Storages {
   constructor() {
 	super();
+	this._filters = {};
+	this.storageKeys.forEach((key) => {
+		let jsonStorage = JSON.parse(this.storage.getItem(key));
+		// console.log(key);
+		if (jsonStorage.type === 'FILTER') {
+			this._filters[key] = jsonStorage;
+		}
+	});
 	this.id = 0; // default
   }
 
@@ -458,25 +466,25 @@ class FilterStorage extends Storages {
   get filterId() { return this.id; }
 
   set filter(value) {
-	this._filter = value;
+	this._name = value;
   }
 
   get filter() {
-	return JSON.parse(this.storage.getItem(this._filter));
+	return JSON.parse(this.storage.getItem(this._name));
   }
 
-  list(table) {
-	// ottengo la lista dei filtri create
-	this.filters = {};
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(key);
-	  if (jsonStorage.type === "FILTER" && jsonStorage.table === table) {
-		this.filters[key] = jsonStorage.formula;
-	  }
-	});
-	return this.filters;
-  }
+ //  list(table) {
+	// // ottengo la lista dei filtri create
+	// this.filters = {};
+	// this.storageKeys.forEach((key) => {
+	//   let jsonStorage = JSON.parse(this.storage.getItem(key));
+	//   // console.log(key);
+	//   if (jsonStorage.type === "FILTER" && jsonStorage.table === table) {
+	// 	this.filters[key] = jsonStorage.formula;
+	//   }
+	// });
+	// return this.filters;
+ //  }
 
   getIdAvailable() {
 	// ottengo il primo Id disponibile
@@ -484,10 +492,7 @@ class FilterStorage extends Storages {
 	this.filtersElement = [];
 	this.storageKeys.forEach((key, index) => {
 	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(jsonStorage);
-
 	  if (jsonStorage.type === "FILTERS") {
-		// ottengo il numero di elementi PAGE nello storage
 		this.filtersElement.push(jsonStorage.id);
 	  }
 
@@ -516,6 +521,21 @@ class FilterStorage extends Storages {
 	}
 	return this.id;
   }
+  get filters() {return this._filters;} // tutti i filtri
+
+  tableFilters(table) {
+  	console.clear();
+  	// recupero tutti i filtri appartenenti alla table e restituisco un array
+  	// console.log(table);
+  	this._tableFilters = [];
+  	for ( const [key, value] of Object.entries(this._filters)) {
+  		if (value.table === table) {
+  			this._tableFilters.push(value);
+  		}
+  	}
+  	return this._tableFilters;
+  }
+
 }
 
 class MetricStorage extends Storages {

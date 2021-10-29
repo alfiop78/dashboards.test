@@ -101,7 +101,7 @@ var StorageFilter = new FilterStorage();
 			// 	console.log('elenco dimensioni appartententi al cubo selezionato : ', dim);
 			// 	// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
 			// });
-			document.querySelectorAll("ul[data-id='fields-dimensions'] > section[data-label-search='"+cubeId+"']").forEach( (dimension) => {
+			document.querySelectorAll("ul[data-id='fields-dimensions'] > section[data-cube-search='"+cubeId+"']").forEach( (dimension) => {
 				console.log('tabelle appartententi alla gerarchia selezionata : ', dimension);
 				dimension.hidden = false;
 				// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
@@ -115,11 +115,12 @@ var StorageFilter = new FilterStorage();
 		const dimName = e.currentTarget.getAttribute('data-dimension-id');
 		Dim.selected = dimName;
 		console.log('Dimensione selezionata : ', Dim.selected);
-		Query.where = Dim.selected.cubes[StorageCube.selected.name];
+		// Query.where = Dim.selected.cubes[StorageCube.selected.name];
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
-			document.querySelectorAll("ul[data-id='fields-hierarchies'] > .element[data-dimension-id='"+dimName+"']").forEach( (hier) => {
-				console.log('elenco gerarchie appartententi alla dimensione selezionata : ', hier);
+			document.querySelectorAll("ul[data-id='fields-hierarchies'] > section[data-dimension-id='"+dimName+"']").forEach( (hier) => {
+				// console.log('elenco gerarchie appartententi alla dimensione selezionata : ', hier);
+				hier.hidden = false;
 				// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
 			});
 		} else {
@@ -191,18 +192,22 @@ var StorageFilter = new FilterStorage();
 	app.handlerHierSelected = (e) => {
 		console.clear();
 		// console.log('e.currentTarget : ', e.currentTarget);
-		console.log('attribute data-hier-id : ', e.currentTarget.getAttribute('data-hier-id'));
-		// visualizzo la ul nascosta della gerarchia selezionata
 		let hierId = e.currentTarget.getAttribute('data-hier-id'); // TODO: valutare l'inserimento di un hierId invece del nome, i nomi possono ripetersi (per dimensioni differenti)
-		document.querySelectorAll("ul[data-id='fields-tables'] > section[data-label-search='"+hierId+"']").forEach( (table) => {
-			console.log('tabelle appartententi alla gerarchia selezionata : ', table);
-			table.hidden = false;
-			// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
-		});
+		e.currentTarget.toggleAttribute('selected');
+		if (e.currentTarget.hasAttribute('selected')) {
+			document.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-id='"+hierId+"']").forEach( (table) => {
+				// console.log('tabelle appartententi alla gerarchia selezionata : ', table);
+				table.hidden = false;
+				// TODO: visualizzare con l'attr hide oppure hidden (da decidere in base alla class .element che ha display: flex quindi hidden non è disponibile)
+			});
+		} else {
+			// deselezionata la gerarchia
+			document.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-id='"+hierId+"']").forEach( table => table.hidden = true);
+		}
 	};
 
 	// crreo la lista delle gerarchie presenti nella dimensione selezionata
-	app.createListHierarchies = (hierarchies) => {
+	/*app.createListHierarchies = (hierarchies) => {
 		const ul = document.getElementById('dimension-hierarchies');
 		console.log('ul dimension-hierarchies : ', ul);
 		Object.keys(hierarchies).forEach( (hier, index) => {
@@ -223,10 +228,10 @@ var StorageFilter = new FilterStorage();
 			// creo lista tabelle nello step "filtri" 3
 			app.createTableListForFilters(index, hierarchies[hier]);
 		});
-	};
+	};*/
 
 	// creo l'elenco delle tabelle nel div fieldList-tables, nello step "Gerarchie/Tabelle"
-	app.createTableListForColumns = (index, elements) => {
+	/*app.createTableListForColumns = (index, elements) => {
 		let tmpl_ulList = document.getElementById('tmpl_ulList');
 		let ulContent = tmpl_ulList.content.cloneNode(true);
 		let ulTables = ulContent.querySelector('ul[data-id="fields-tables"]');
@@ -248,10 +253,10 @@ var StorageFilter = new FilterStorage();
 			li.onclick = app.handlerTableSelectedColumns; // tabella selezionata
 		}
 		parentElement.appendChild(ulTables);
-	};
+	};*/
 
 	// creo elenco tabelle nel div tableList-filter presente nello step Filtri
-	app.createTableListForFilters = (index, elements) => {
+	/*app.createTableListForFilters = (index, elements) => {
 		let tmpl_ulList = document.getElementById('tmpl_ulList');
 		let ulContent = tmpl_ulList.content.cloneNode(true);
 		let ulTables = ulContent.querySelector('ul[data-id="fields-tables"]');
@@ -296,7 +301,7 @@ var StorageFilter = new FilterStorage();
 			parentElement.appendChild(ulFilters);
 		}
 		parentElement.appendChild(ulTables);
-	};
+	};*/
 
 	// creo la lista delle tabelle nella sezione dello step 3 - Filtri
 	/*app.createListTableFilters = (from) => {
@@ -323,7 +328,7 @@ var StorageFilter = new FilterStorage();
 		});
 	};*/
 
-	app.createListTableMetrics = (metrics, cubeName) => {
+	/*app.createListTableMetrics = (metrics, cubeName) => {
 		// ulTable conterrà le tabelle che hanno metriche (step-4 1° colonna)
 		let ulTable = document.getElementById('tables-metric');
 		// metrics è un Object che contiene un'array di campi impostati, nel Mapping, come metriche
@@ -332,7 +337,7 @@ var StorageFilter = new FilterStorage();
 				0: "NettoRiga"
 				1: "PrzMedioPond"
 				2: "Quantita"
-		*/
+		*//*
 		// per ogni tabella contenente metriche ciclo i suoi campi per aggiungerli nella lista sectionFields-metrics
 		Object.keys(metrics).forEach((table, index) => {
 			// console.log(table);
@@ -375,21 +380,21 @@ var StorageFilter = new FilterStorage();
 			});
 			parentElement.appendChild(ulField);
 		});
-	};
+	};*/
 
 	// tasto add nella sezione Filtri (step 3)
-	app.handlerAddFilter = (e) => {
-		// carico elenco field per la tabella selezionata
-		// TODO: e.currentTarget
-		Query.table = e.target.getAttribute('label');
-		app.getFields();
-		// apro la dialog filter
-		app.dialogFilter.showModal();
-		// event su <li> degli operatori
-		document.querySelectorAll('#operatorList').forEach((li) => {
-			li.onclick = app.handlerFilterOperatorSelected;
-		});
-	};
+	// app.handlerAddFilter = (e) => {
+	// 	// carico elenco field per la tabella selezionata
+	// 	debugger;
+	// 	Query.table = e.currentTarget.getAttribute('label');
+	// 	// app.getFields();
+	// 	// apro la dialog filter
+	// 	app.dialogFilter.showModal();
+	// 	// event su <li> degli operatori
+	// 	document.querySelectorAll('#operatorList').forEach((li) => {
+	// 		li.onclick = app.handlerFilterOperatorSelected;
+	// 	});
+	// };
 
 	// selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
 	app.handlerFilterSelected = (e) => {
@@ -468,61 +473,28 @@ var StorageFilter = new FilterStorage();
 
 	// selezione della tabella nella sezione Column
 	app.handlerTableSelectedColumns = (e) => {
-		console.log('e.currentTarget : ', e.currentTarget);
-		// TODO: visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
-		app.dialogTables.querySelector('section').setAttribute('data-table-selected', e.currentTarget.getAttribute('label'));
-		// l'object 'columns' della dimensione contiene l'elenco dei campi mappati appartenenti alla tabella selezionata
-		const fields = Dim.selected.columns[e.currentTarget.getAttribute('label')];
-		const ul = document.getElementById('table-fieldList');
-		fields.forEach( (field) => {
-			const li = document.createElement('li');
-			li.innerText = field;
-			li.setAttribute('label', field);
-			ul.appendChild(li);
-			li.onclick = app.selectColumn;
-		});
-		app.dialogTables.showModal();
-		Query.table = e.currentTarget.getAttribute('label');
-		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
-		return;
-		// visualizzo la ul nascosta della tabella selezionata, sezione columns
-		let fieldType = e.currentTarget.getAttribute('data-list-type');
-		let tableId = +e.currentTarget.getAttribute('data-table-id');
-		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
-		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
-		// rimuovo eventuali altri ul aperti in precedenza
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
-		e.currentTarget.toggleAttribute('selected');
-		Query.table = e.currentTarget.getAttribute('label');
-		Query.tableId = tableId;
-		Dim.selected.from.forEach( table => Query.from = table);
-		// Query.from = Dim.selected.from;
-		Query.where = Dim.selected.join;
-
-		// TODO: quando si seleziona una tabella bisogna includere automaticamente il campo id in Query.columns da recuperare in app.handlerBtnColumnDone
-		Query.select = {SQLFormat : null, alias : Query.table+"-"+id};
-		
-		// aggiungo la colonna selezionata a Query.groupBy
-		obj = {};
-		obj = {'SQLFormat': null};
-		Query.groupBy = obj;
-
+		console.clear();
 		debugger;
-		// if (e.currentTarget.hasAttribute('selected')) {
-		// 	// aggiungo, alla from, le tabelle, nelle gerarchie SUPERIORI al tableId selezionato
-		// 	Dim.selected.from.forEach( (table, index) => {
-		// 		if (index >= Query.tableId) {
-		// 			Query.from = table;
-		// 			debugger;
-		// 			console.log('join : ', Dim.selected.join[index]);
-		// 		}
-		// 	});
-		// } else {
-		// 	debugger;			
-		// }
+		// console.log('e.currentTarget : ', e.currentTarget);
+		console.info('Tabella selezionata: ', e.currentTarget.getAttribute('data-table-name'));
+		const tableSelected = e.currentTarget.getAttribute('data-table-name');
+		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
+		app.dialogTables.querySelector('section').setAttribute('data-table-selected', tableSelected);
+		// visualizzo solo i campi della tabella selezionata
+		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+tableSelected+"']").forEach( table => table.hidden = false);
+		// nascondo i field NON appartenenti alla tabella selezionata
+		document.querySelectorAll("ul[data-id='fields-column'] > section:not([data-table-name='"+tableSelected+"'])").forEach( table => table.hidden = true);
+		app.dialogTables.querySelector('h4 > span').innerHTML = tableSelected;
+		app.dialogTables.showModal();
+		Query.table = tableSelected;
+		// Query.tableId = +e.currentTarget.getAttribute('data-table-id');
+
+		// Dim.selected.from.forEach( table => Query.from = table);
+		// // Query.from = Dim.selected.from;
+		// Query.where = Dim.selected.join;
 		
 		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
-		const storage = new MetricStorage()
+		/*const storage = new MetricStorage()
 		// recupero le metriche già esistenti per questa tabella
 		const metrics = storage.list(Query.table);
 		console.log(metrics);
@@ -536,13 +508,13 @@ var StorageFilter = new FilterStorage();
 			li.setAttribute('label', metric);
 			ull.appendChild(element);
 			li.onclick = app.handlerMetricSelected;
-		}
+		}*/
 	};
 
 	app.selectColumn = (e) => {
 		console.log('e.currentTarget : ', e.currentTarget);
 		e.currentTarget.toggleAttribute('selected');
-		Query.field = e.target.getAttribute('label');
+		Query.field = e.currentTarget.getAttribute('label');
 		if (!e.currentTarget.hasAttribute('selected')) {
 			// deselezionato
 			Query.deleteSelect();
@@ -587,14 +559,20 @@ var StorageFilter = new FilterStorage();
 
 	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
 	app.handlerTableSelectedFilter = (e) => {
-		// visualizzo/nascondo i filtri appartenenti alla tabella selezionata
-		const fieldType = e.target.getAttribute('data-list-type');
-		const table = e.currentTarget.getAttribute('label');
-		const tableId = +e.currentTarget.getAttribute('data-table-id');
-		// rimuovo eventuali altri ul aperti in precedenza
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach( ul => ul.setAttribute('hidden', true));
-		// visualizzo, nella sezione di destra "Tabelle disponibili" e nell'elenco tabelle dello step Filtri, le tabelle disponibili mappate con questa gerarchia
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']")).forEach( ul => ul.removeAttribute('hidden'));
+		console.info('Tabella selezionata: ', e.currentTarget.getAttribute('data-table-name'));
+		Query.table = e.currentTarget.getAttribute('data-table-name');
+		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
+		app.dialogFilter.querySelector('section').setAttribute('data-table-selected', Query.table);
+		console.log('Query.table : ', Query.table);
+		// app.getFields(); // recupero i campi della tabella selezionata
+		// console.log('lista filtri : ', StorageFilter.tableFilters(Query.table));
+		// const filters = StorageFilter.tableFilters(Query.table)
+		// visualizzo i filtri esistenti sulla tabella selezionata
+		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( filter => filter.hidden = false);
+		// nascondo i filter NON appartenenti alla tabella selezionata
+		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( filter => filter.hidden = true);
+		app.dialogFilter.showModal();
+
 	};
 
 	// selezione della colonna nella dialogFilter
@@ -969,10 +947,13 @@ var StorageFilter = new FilterStorage();
 				const section = contentElement.querySelector('section');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
-				section.setAttribute('data-label-search', dimension);
+				section.setAttribute('data-label-search', dimension); // questo attr consente la ricerca dalla input sopra
+				section.setAttribute('data-cube-search', cubeValue.id); // questo attr consente la ricerca dalla selezione del cubo
 				// element.setAttribute('data-dimension-id', dimName);
 				// element.setAttribute('data-hier-id', hier);
 				li.innerText = dimension;
+				li.setAttribute('data-dimension-id', dimension);
+				li.setAttribute('label', dimension);
 				ul.appendChild(section);
 				li.onclick = app.handlerDimensionSelected;
 			}); // forse index si deve sostituire con un dimensionId (che attualmente non viene creato quando si crea una dimensione)
@@ -990,17 +971,18 @@ var StorageFilter = new FilterStorage();
 		console.log('lista dimensioni :', Dim.dimensions);
 		// per ogni dimensione presente aggiungo gli elementi nella ul con le gerarchie
 		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {	
-			ul.setAttribute('data-dimension-id', dimValue.name); // TODO: al momento metto il nome ma andrà sostituito con dimensionId
 			// per ogni dimensione presente in associatedDimensions inserisco un element (preso dal template app.tmplListField)
 			for (const hier in dimValue.hierarchies) {
-				const contentElement = app.tmplListField.content.cloneNode(true);
-				const element = contentElement.querySelector('.element');
+				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+				const section = contentElement.querySelector('section');
+				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
-				element.setAttribute('data-dimension-id', dimValue.name); // TODO: al momento metto il nome ma andrà sostituito con dimensionId
+				section.setAttribute('data-label-search', hier); // ricerca dalla input sopra
+				section.setAttribute('data-dimension-id', dimValue.name); // TODO: al momento metto il nome ma andrà sostituito con dimensionId
+				section.setAttribute('data-hier-id', hier); // il nome della gerarchia
 				li.innerText = hier;
-				li.setAttribute('data-hier-id', hier);
-				element.appendChild(li);
-				ul.appendChild(element);
+				li.setAttribute('data-hier-id', hier); // al momento uso il nome della gerarchia, da valutare se usare un hierId
+				ul.appendChild(section);
 				li.onclick = app.handlerHierSelected;
 			}
 			parent.appendChild(ul);
@@ -1023,14 +1005,114 @@ var StorageFilter = new FilterStorage();
 					const section = contentElement.querySelector('section');
 					const element = section.querySelector('.element');
 					const li = element.querySelector('li');
-					section.setAttribute('data-label-search', hier);
-					element.setAttribute('data-dimension-id', dimName);
-					element.setAttribute('data-hier-id', hier);
-					li.innerText = Dim.selected.hierarchies[hier][table];
+					const iColumns = element.querySelector('#columns-icon');
+					const iFilter = element.querySelector('#filter-icon');
+					section.setAttribute('data-label-search', dimValue.hierarchies[hier][table]); // utilizzabile per la ricerca dalla input sopra
+					section.setAttribute('data-dimension-id', dimName); // utilizzabile dalla dimensione + gerarchia selezionata
+					section.setAttribute('data-hier-id', hier);
+					li.innerText = dimValue.hierarchies[hier][table];
+					iColumns.setAttribute('data-dimension-name', dimName); // attributo che viene letto in app.handlerTableSelected per recuperare la property 'columns' della dimensione
+					iColumns.setAttribute('data-table-name', dimValue.hierarchies[hier][table]);
+					iFilter.setAttribute('data-dimension-id', dimName);
+					iFilter.setAttribute('data-table-name', dimValue.hierarchies[hier][table]);
+					// imposto onclick sulle icone columns e filter
+					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
+					iFilter.onclick = app.handlerTableSelectedFilter; // apre la dialog dialogFilter per impostare i filtri
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
 			}
+		}
+	};
+
+	app.getColumnsInTable = () => {
+		console.clear();
+		// lista di tutte le colonne, incluse nelle dimensioni, property 'columns'
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-column']");
+		const parent = document.getElementById('table-fieldList'); // dove verrà inserita la <ul>
+		// per ogni dimensione, recupero la property 'columns'
+		console.log('Dim.dimension : ', Dim.dimensions);
+		for (const [key, value] of (Object.entries(Dim.dimensions))) {
+			// key : nome della dimensione
+			// value : tutte le property della dimensione
+			console.log('key : ', key);
+			// console.log('value : ', value.columns);
+			for ( const [table, fields] of Object.entries(value.columns)) {
+				console.log('table : ', table);
+				// console.log('fields : ', fields);
+				fields.forEach( (field) => {
+					const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+					const section = contentElement.querySelector('section');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					section.setAttribute('data-label-search', field);
+					section.setAttribute('data-table-name', table);
+					li.innerText = field;
+					li.setAttribute('label', field);
+					ul.appendChild(section);
+					li.onclick = app.selectColumn;
+				});
+				parent.appendChild(ul);
+			}
+			/*Dim.selected = dimName;
+			console.log('hierarchies : ', Dim.selected.hierarchies);
+			for (const hier in Dim.selected.hierarchies) {
+				for (const table in Dim.selected.hierarchies[hier]) {
+					// ciclo le tabelle presenti nella gerarchia
+					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
+					const section = contentElement.querySelector('section');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					const iColumns = element.querySelector('#columns-icon');
+					const iFilter = element.querySelector('#filter-icon');
+					section.setAttribute('data-label-search', Dim.selected.hierarchies[hier][table]); // utilizzabile per la ricerca dalla input sopra
+					section.setAttribute('data-dimension-id', dimName); // utilizzabile dalla dimensione + gerarchia selezionata
+					section.setAttribute('data-hier-id', hier);
+					li.innerText = Dim.selected.hierarchies[hier][table];
+					iColumns.setAttribute('data-dimension-name', dimName); // attributo che viene letto in app.handlerTableSelected per recuperare la property 'columns' della dimensione
+					iColumns.setAttribute('data-table-name', Dim.selected.hierarchies[hier][table]);
+					// imposto onclick sulle icone columns e filter
+					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
+					// iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogFilter per impostare i filtri
+					ul.appendChild(section);
+				}
+				parent.appendChild(ul);
+			}*/
+		}
+	};
+
+	app.getFiltersInFrom = () => {
+		console.clear();
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-filter']");
+		const parent = document.getElementById('existFilters'); // dove verrà inserita la <ul>
+		// per ogni dimensione, recupero la property 'columns'
+		console.log('Dim.dimension : ', Dim.dimensions);
+		for (const [key, value] of (Object.entries(Dim.dimensions))) {
+			// key : nome della dimensione
+			// value : tutte le property della dimensione
+			console.log('key : ', key);
+			// console.log('value : ', value.from);
+			value.from.forEach( (table) => {
+				console.log('table : ', table);
+				const filters = StorageFilter.tableFilters(table)
+				filters.forEach( (filter) => {
+					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
+					const section = contentElement.querySelector('section');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					const iColumns = element.querySelector('#columns-icon');
+					const iFilter = element.querySelector('#filter-icon');
+					section.setAttribute('data-label-search', filter.name);
+					section.setAttribute('data-table-name', table);
+					li.innerText = filter.name;
+					li.setAttribute('label', filter.name);
+					ul.appendChild(section);
+					// li.onclick = app.selectColumn;
+				});
+				parent.appendChild(ul);
+			});
 		}
 	};
 
@@ -1041,6 +1123,10 @@ var StorageFilter = new FilterStorage();
 	app.getHierarchies();
 
 	app.getTablesInHierarchies();
+
+	app.getColumnsInTable();
+
+	app.getFiltersInFrom();
 
 	app.datamartToBeProcessed();
 
@@ -1116,13 +1202,13 @@ var StorageFilter = new FilterStorage();
 	document.getElementById('fieldSearch').oninput = App.searchInList;
 
 	// input di ricerca nella dialogFilter, ricerca nell'elenco dei valori
-	document.getElementById('valuesSearch').oninput = App.searchInList;
+	// document.getElementById('valuesSearch').oninput = App.searchInList;
 
 	// input per filter-name, controllo se il form per la creazione del filtro è convalidato
-	document.getElementById('filter-name').oninput = function(e) {
+	/*document.getElementById('filter-name').oninput = function(e) {
 		// TODO: controllo se il form è completato
 		app.checkFilterForm();
-	};
+	};*/
 
 	document.getElementById('inputColumnName').oninput = (e) => {
 		(e.target.value.length === 0) ? app.btnSaveColumn.disabled = true : app.btnSaveColumn.disabled = false;
