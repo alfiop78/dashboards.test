@@ -36,7 +36,7 @@
 		public function distinctValues($table, $field) {
 			$l = new ConnectDB('automotive_bi_data');
 			// $l = new ConnectDB('Sql1073234_1');
-			$query = "SELECT DISTINCT($field) FROM $table ORDER BY $field DESC LIMIT 2500;";
+			$query = "SELECT DISTINCT($field) FROM $table ORDER BY $field ASC LIMIT 500;";
 			// return $query;
 			$this->_result = $l->getResultAssoc($query);
 			// $this->_result = $l->getResultAssoc("SHOW TABLES;");

@@ -38,7 +38,7 @@ i[open]{color: red;}
 
 .stepLayout .sectionLists{height: inherit;}
 
-dialog.dialog-filters .stepLayout{grid-template-columns: 69% 29%; grid-column-gap: 2%; height: inherit;}
+dialog.dialog-filters .stepLayout{grid-template-columns: 26% 39% 29%; grid-column-gap: 3%; height: inherit;}
 
 .overflowList{max-height: 400px; min-height: 350px; overflow-y: auto; background: gainsboro;}
 #fieldList-filter{padding: 0 16px;}
@@ -55,7 +55,7 @@ dialog.dialog-filters .stepLayout{grid-template-columns: 69% 29%; grid-column-ga
 .formulaDefine{display: grid;grid-template-columns: auto auto auto; grid-gap: 16px;}
 .listContent{align-items: left;display: flex;min-height: 200px;flex-flow: column;}
 dialog .miniList{max-height: 150px;overflow-y: auto;}
-dialog .middleList{height: 220px;overflow-y: auto;width: 250px;}
+dialog .middleList{height: 220px;overflow-y: auto;}
 .formulaContent {display: flex;}
 div.textarea {border: solid thin gainsboro;height: 120px;padding: 8px;font-size: .8rem;width: 90%;}
 div.textarea > span{padding: 4px;color: #494949;}
