@@ -12,7 +12,11 @@ var StorageFilter = new FilterStorage();
 		tmplListField : document.getElementById('templateListField'),
 		tmpl_ulList : document.getElementById('tmpl_ulList'),
 		tmpl_ulListHidden : document.getElementById('templateListHidden'),
+		tmpl_ulListWithEdit : document.getElementById('templateListWithEdit'),
 		tmpl_ulListSection : document.getElementById('templateListSection'),
+
+		// toast
+		toast : document.getElementById('toast'),
 
 		// btn		
 		btnPreviousStep : document.getElementById('stepPrevious'),
@@ -38,6 +42,35 @@ var StorageFilter = new FilterStorage();
 		
 		btnBackPage : document.getElementById('mdcBack'), // da definire
 		ulDimensions : document.getElementById('dimensions')
+	};
+
+	app.updateDisplay = (e) => {
+		// console.log('pageX : ', e.pageX);
+		// console.log('pageY : ', e.pageY);
+		// console.log('offset : ', e.offsetX);
+		// console.log('screen : ', e.screenX);
+		const yPosition = e.target.getBoundingClientRect().bottom + 10;
+		const xPosition = e.target.getBoundingClientRect().left;
+		// app.toast.style.left = xPosition+"px";
+		// app.toast.style.top = yPosition+"px";
+		app.toast.style.setProperty('--left', xPosition+"px");
+		app.toast.style.setProperty('--top', yPosition+"px");
+		// app.toast.style.visibility = 'visible';
+		app.toast.querySelector('small').style.visibility = 'visible';
+		app.toast.querySelector('small').setAttribute('show', true);
+		/*app.toast.querySelector('small').animate([
+			{ // from
+				transform: 'scale(.2)'
+			},
+			{ // to
+				transform: 'scale(1)'
+			}
+		], { duration: 500, /*fill: 'forwards', easing: 'ease-in-out' });*/
+
+
+		// console.log(e.target.getBoundingClientRect().bottom);
+		// console.log(e.target.getBoundingClientRect().left);
+		// console.log(' : ', rect);
 	};
 
 	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
@@ -74,7 +107,7 @@ var StorageFilter = new FilterStorage();
 					// app.getDatamart(reportId, jsonDataParsed); // recupero i dati dalla FX appena creata
 				} else {
 				  // TODO: no data
-				  console.warning('FX non è stata creata');
+				  console.debug('FX non è stata creata');
 				}
 			})
 		.catch( (err) => console.error(err));
@@ -1001,6 +1034,7 @@ var StorageFilter = new FilterStorage();
 					// imposto onclick sulle icone columns e filter
 					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
 					iFilter.onclick = app.handlerTableSelectedFilter; // apre la dialog dialogFilter per impostare i filtri
+					iFilter.addEventListener("mouseenter", app.updateDisplay, false);
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
@@ -1070,7 +1104,6 @@ var StorageFilter = new FilterStorage();
 		const content = app.tmpl_ulList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-filter']");
 		const parent = document.getElementById('existFilters'); // dove verrà inserita la <ul>
-		// per ogni dimensione, recupero la property 'columns'
 		console.log('Dim.dimension : ', Dim.dimensions);
 		for (const [key, value] of (Object.entries(Dim.dimensions))) {
 			// key : nome della dimensione
@@ -1079,14 +1112,13 @@ var StorageFilter = new FilterStorage();
 			// console.log('value : ', value.from);
 			value.from.forEach( (table) => {
 				console.log('table : ', table);
-				const filters = StorageFilter.tableFilters(table)
+				const filters = StorageFilter.tableFilters(table);
 				filters.forEach( (filter) => {
-					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
+					const contentElement = app.tmpl_ulListWithEdit.content.cloneNode(true);
 					const section = contentElement.querySelector('section');
 					const element = section.querySelector('.element');
 					const li = element.querySelector('li');
-					const iColumns = element.querySelector('#columns-icon');
-					const iFilter = element.querySelector('#filter-icon');
+					const iEdit = element.querySelector('#edit-icon');
 					section.setAttribute('data-label-search', filter.name);
 					section.setAttribute('data-table-name', table);
 					li.innerText = filter.name;

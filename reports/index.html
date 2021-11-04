@@ -25,6 +25,7 @@
 		<title>Creazione Report</title>
 	</head>
 	<body>
+		<span id="toast"><small class="popupToast">text</small></span>
 
 		<dialog id="dialogTables">
 			<section data-table-selected>
@@ -317,6 +318,8 @@
 						<div class="actions">
 							<span class="popupContent"><i id="btnProcessReport" class="material-icons md-24">folder_open</i><small class="popup">Crea FX</small></span>
 						</div>
+						
+
 						<div class="lists">
 							<div class="absList" id="reportProcessList" hidden>
 								<div class="md-field">
@@ -326,6 +329,10 @@
 								<ul id="reportsProcess"></ul>
 							</div>
 						</div>
+
+						<!-- <template id="toast">
+							
+						</template> -->
 	  
 						<template id="templateListField">
 							<div class="element" name="">
@@ -339,6 +346,18 @@
 									<li class="elementSearch" label=""></li>
 									<i id="columns-icon" class="material-icons md-18">view_list</i>
 									<i id="filter-icon" class="material-icons md-18">filter_alt</i>
+								</div>	
+							</section>
+						</template>
+
+						<template id="templateListWithEdit">
+							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+								<div class="element" name="">
+									<li class="elementSearch" label=""></li>
+									<span class="popupContent">
+										<i id="edit-icon" class="material-icons md-18">edit</i>
+										<small class="popup">Modifica filtro</small>
+									</span>
 								</div>	
 							</section>
 						</template>
