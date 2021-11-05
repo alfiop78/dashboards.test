@@ -129,6 +129,7 @@ class Application {
 	// Ricerca in una lista, il tag section ha l'attributo data-label-search
 	searchInSectionList(e, es) {
 		console.clear();
+		debugger;
 		console.log('es : ', es);
 		// console.log(e.path);
 		// console.log(e.target.value);

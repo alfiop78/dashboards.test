@@ -149,123 +149,122 @@ class CubeStorage extends Storages {
 }
 
 class ReportStorage extends Storages {
-  // Metodi per leggere/scrivere Report nello Storage
-  constructor() {
-	super();
-	this.id = 0;
-  }
-
-  set reportId(value) {
-	this.id = value;
-  }
-
-  get reportId() { return this.id; }
-
-  getIdAvailable() {
-	// ottengo il primo Id disponibile
-	// console.log(this.storageKeys);
-	this.elements = [];
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(jsonStorage);
-
-	  if (jsonStorage.type === 'REPORT') {
-		// ottengo il numero di elementi PAGE nello storage
-		this.elements.push(jsonStorage.id);
-	  }
-
-	});
-	// TODO: cerco il primo id "libero"
-	// ordino l'array
-	this.elements.sort(function (a, b) {
-	  // console.log(a);
-	  // console.log(b);
-	  // TODO: cosa sono a e b ?
-	  return a - b;
-	})
-
-	// this.pagesElement.sort((a, b) => a - b);
-	for (let i = 0; i < this.elements.length; i++) {
-	  // indice 0
-	  // se 0 è presente in elements aggiungo una unità
-	  // console.log(this.pagesElement.includes(i));
-
-	  if (this.elements.includes(i)) {
-		this.id++;
-		// console.log(this.id);
-	  } else {
-		this.id = i;
-	  }
+	// Metodi per leggere/scrivere Report nello Storage
+	constructor() {
+		super();
+		this.id = 0;
 	}
-	return this.id;
-  }
 
-  set settings(report_id) {
-	// TODO: da rivedere e ottimizzare
-	this.reportParams = null;
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(key);
-	  if (jsonStorage.type === 'REPORT') {
-		// console.log("report : "+key);
-		// console.log(jsonStorage.id);
-		// console.log(report_id);
-		// console.log(jsonStorage);
-		if (jsonStorage.id === report_id) {
-		  this.reportParams = jsonStorage;
-		  this.reportName = jsonStorage.name;
+	set reportId(value) {
+		this.id = value;
+	}
+
+	get reportId() { return this.id; }
+
+	getIdAvailable() {
+		// ottengo il primo Id disponibile
+		// console.log(this.storageKeys);
+		this.elements = [];
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(jsonStorage);
+
+			if (jsonStorage.type === 'REPORT') {
+				// ottengo il numero di elementi PAGE nello storage
+				this.elements.push(jsonStorage.id);
+			}
+		});
+		// TODO: cerco il primo id "libero"
+		// ordino l'array
+		this.elements.sort(function (a, b) {
+		  // console.log(a);
+		  // console.log(b);
+		  // TODO: cosa sono a e b ?
+		  return a - b;
+		});
+
+		// this.pagesElement.sort((a, b) => a - b);
+		for (let i = 0; i < this.elements.length; i++) {
+			// indice 0
+			// se 0 è presente in elements aggiungo una unità
+			// console.log(this.pagesElement.includes(i));
+
+			if (this.elements.includes(i)) {
+				this.id++;
+				// console.log(this.id);
+			} else {
+				this.id = i;
+			}
 		}
-	  }
-	});
-  }
+		return this.id;
+	}
 
-  set reportName(value) {this.name = value;}
+	set settings(report_id) {
+		// TODO: da rivedere e ottimizzare
+		this.reportParams = null;
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'REPORT') {
+				// console.log("report : "+key);
+				// console.log(jsonStorage.id);
+				// console.log(report_id);
+				// console.log(jsonStorage);
+				if (jsonStorage.id === report_id) {
+					this.reportParams = jsonStorage;
+					this.reportName = jsonStorage.name;
+				}
+			}
+		});
+	}
 
-  get reportName() { return this.name;}
+	set reportName(value) {this.name = value;}
 
-  get settings() {return JSON.stringify(this.reportParams);}
+	get reportName() { return this.name;}
 
-  set options(report_id) {
-	// TODO: da rivedere e ottimizzare
-	this._options = null;
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(key);
-	  if (jsonStorage.type === 'REPORT') {
-		// console.log("report : "+key);
-		// console.log(jsonStorage.id);
-		// console.log(report_id);
-		// console.log(jsonStorage.options);
-		if (jsonStorage.id === report_id) {
-		  this._options = jsonStorage.options;
-		}
-	  }
-	});
-  }
+	get settings() {return JSON.stringify(this.reportParams);}
 
-  get options() {return JSON.stringify(this._options);}
+	set options(report_id) {
+		// TODO: da rivedere e ottimizzare
+		this._options = null;
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'REPORT') {
+				// console.log("report : "+key);
+				// console.log(jsonStorage.id);
+				// console.log(report_id);
+				// console.log(jsonStorage.options);
+				if (jsonStorage.id === report_id) {
+					this._options = jsonStorage.options;
+				}
+			}
+		});
+	}
 
-  list() {
-	// let reports = [];
-	let reports = {};
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(key);
-	  if (jsonStorage.type === 'REPORT') {
-		// console.log("cubo : "+key);
-		let reportProperties = {'name' : key, 'reportId' : jsonStorage.id, 'datamartId' : jsonStorage.datamartId};
-		// reports.push(reportProperties);
-		reports[key] = reportProperties;
-	  }
-	});
-	return reports;
-  }
+	get options() {return JSON.stringify(this._options);}
 
-  getJSON(value) {
-	let reports = {};
-	let report = JSON.parse(this.storage.getItem(value));
-	return report;
-  }
+	list() {
+		// let reports = [];
+		let reports = {};
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'REPORT') {
+				// console.log("cubo : "+key);
+				let reportProperties = {'name' : key, 'reportId' : jsonStorage.id, 'datamartId' : jsonStorage.datamartId};
+				// reports.push(reportProperties);
+				reports[key] = reportProperties;
+			}
+		});
+		return reports;
+	}
+
+	getJSON(value) {
+		let reports = {};
+		let report = JSON.parse(this.storage.getItem(value));
+		return report;
+	}
 }
 
 class ProcessStorage extends Storages {
@@ -446,139 +445,152 @@ class DimensionStorage extends Storages {
 }
 
 class FilterStorage extends Storages {
-  constructor() {
-	super();
-	this._filters = {};
-	this.storageKeys.forEach((key) => {
-		let jsonStorage = JSON.parse(this.storage.getItem(key));
-		// console.log(key);
-		if (jsonStorage.type === 'FILTER') {
-			this._filters[key] = jsonStorage;
-		}
-	});
-	this.id = 0; // default
-  }
-
-  set filterId(value) {
-	this.id = value;
-  }
-
-  get filterId() { return this.id; }
-
-  set filter(value) {
-	this._name = value;
-  }
-
-  get filter() {
-	return JSON.parse(this.storage.getItem(this._name));
-  }
-
- //  list(table) {
-	// // ottengo la lista dei filtri create
-	// this.filters = {};
-	// this.storageKeys.forEach((key) => {
-	//   let jsonStorage = JSON.parse(this.storage.getItem(key));
-	//   // console.log(key);
-	//   if (jsonStorage.type === "FILTER" && jsonStorage.table === table) {
-	// 	this.filters[key] = jsonStorage.formula;
-	//   }
-	// });
-	// return this.filters;
- //  }
-
-  getIdAvailable() {
-	// ottengo il primo Id disponibile
-	console.log(this.storageKeys);
-	this.filtersElement = [];
-	this.storageKeys.forEach((key, index) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  if (jsonStorage.type === "FILTERS") {
-		this.filtersElement.push(jsonStorage.id);
-	  }
-
-	});
-
-	// ordino l'array
-	this.filtersElement.sort(function (a, b) {
-	  console.log(a);
-	  console.log(b);
-	  // TODO: cosa sono a e b ?
-	  return a - b;
-	})
-
-	// this.pagesElement.sort((a, b) => a - b);
-	for (let i = 0; i < this.filtersElement.length; i++) {
-	  // indice 0
-	  // se 0 è presente in pagesElement aggiungo una unità
-	  // console.log(this.pagesElement.includes(i));
-
-	  if (this.filtersElement.includes(i)) {
-		this.id++;
-		// console.log(this.id);
-	  } else {
-		this.id = i;
-	  }
+	constructor() {
+		super();
+		this._filters = {};
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'FILTER') {
+				this._filters[key] = jsonStorage;
+			}
+		});
+		this.id = 0; // default
 	}
-	return this.id;
-  }
-  get filters() {return this._filters;} // tutti i filtri
 
-  tableFilters(table) {
-  	console.clear();
-  	// recupero tutti i filtri appartenenti alla table e restituisco un array
-  	// console.log(table);
-  	this._tableFilters = [];
-  	for ( const [key, value] of Object.entries(this._filters)) {
-  		if (value.table === table) {
-  			this._tableFilters.push(value);
-  		}
-  	}
-  	return this._tableFilters;
-  }
+	set filterId(value) {
+		this.id = value;
+	}
 
+	get filterId() { return this.id; }
+
+	set filter(value) {
+		this._name = value;
+	}
+
+	get filter() {
+		return JSON.parse(this.storage.getItem(this._name));
+	}
+
+	//  list(table) {
+		// // ottengo la lista dei filtri create
+		// this.filters = {};
+		// this.storageKeys.forEach((key) => {
+		//   let jsonStorage = JSON.parse(this.storage.getItem(key));
+		//   // console.log(key);
+		//   if (jsonStorage.type === "FILTER" && jsonStorage.table === table) {
+		// 	this.filters[key] = jsonStorage.formula;
+		//   }
+		// });
+		// return this.filters;
+ 	//  }
+
+	getIdAvailable() {
+		// ottengo il primo Id disponibile
+		console.log(this.storageKeys);
+		this.filtersElement = [];
+		this.storageKeys.forEach((key, index) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			if (jsonStorage.type === "FILTERS") {this.filtersElement.push(jsonStorage.id);}
+		});
+
+		// ordino l'array
+		this.filtersElement.sort(function (a, b) {
+			console.log(a);
+			console.log(b);
+			// TODO: cosa sono a e b ?
+			return a - b;
+		});
+
+		// this.pagesElement.sort((a, b) => a - b);
+		for (let i = 0; i < this.filtersElement.length; i++) {
+			// indice 0
+			// se 0 è presente in pagesElement aggiungo una unità
+			// console.log(this.pagesElement.includes(i));
+
+			if (this.filtersElement.includes(i)) {
+				this.id++;
+				// console.log(this.id);
+			} else {
+				this.id = i;
+			}
+		}
+		return this.id;
+	}
+
+	get filters() {return this._filters;} // tutti i filtri
+
+	tableFilters(table) {
+		console.clear();
+		// recupero tutti i filtri appartenenti alla table e restituisco un array
+		// console.log(table);
+		this._tableFilters = [];
+		for ( const [key, value] of Object.entries(this._filters)) {
+			if (value.table === table) {
+				this._tableFilters.push(value);
+			}
+		}
+		return this._tableFilters;
+	}
 }
 
 class MetricStorage extends Storages {
-  constructor() {
-	super();
-	this.id = 0; // default
-  }
+	constructor() {
+		super();
+		this._metrics = {};
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+			if (jsonStorage.type === 'METRIC') {
+				this._metrics[key] = jsonStorage;
+			}
+		});
+		// console.log('_metrics : ', this._metrics);
+		// debugger;
+		this.id = 0; // default
+	}
 
-  set metricId(value) {
-	this.id = value;
-  }
+	set metricId(value) {this.id = value;}
 
-  get metricId() { return this.id; }
+	get metricId() { return this.id; }
 
-  set metric(value) {
-	this._metric = value;
-  }
+	set metric(value) {this._metric = value;}
 
-  get metric() {
-	return JSON.parse(this.storage.getItem(this._metric));
-  }
+	get metric() {return JSON.parse(this.storage.getItem(this._metric));}
 
-  list(table) {
-	// ottengo la lista delle pagine create
-	this.metrics = {};
-	this.storageKeys.forEach((key) => {
-	  let jsonStorage = JSON.parse(this.storage.getItem(key));
-	  // console.log(key);
-	  
-	  // if (jsonStorage.type === "METRIC" && jsonStorage.formula.table === table) {
-		
-	  //   this.metrics[key] = jsonStorage.formula;
-	  // }
+	get metrics() {return this._metrics;}
 
-	  if (jsonStorage.type === "METRIC") {
-		console.log(jsonStorage.formula[key].table);
-		if (jsonStorage.formula[key].table === table) {
-		  this.metrics[key] = jsonStorage.formula[key];
+	tableMetrics(table) {
+		this._tableMetrics = {};
+		for ( const [key, value] of Object.entries(this._metrics)) {
+			if (value.table === table) {
+				this._tableMetrics.push(value);
+			}
 		}
-	  }
-	});
-	debugger;
-	return this.metrics;
-  }
+		return this._tableMetrics;
+	}
+
+	/*list(table) {
+		// ottengo la lista delle pagine create
+		this.metrics = {};
+		this.storageKeys.forEach((key) => {
+			let jsonStorage = JSON.parse(this.storage.getItem(key));
+			// console.log(key);
+
+			// if (jsonStorage.type === "METRIC" && jsonStorage.formula.table === table) {
+
+			//   this.metrics[key] = jsonStorage.formula;
+			// }
+
+			if (jsonStorage.type === "METRIC") {
+				console.log(jsonStorage.formula[key].table);
+				if (jsonStorage.formula[key].table === table) {
+					this.metrics[key] = jsonStorage.formula[key];
+				}
+			}
+		});
+		debugger;
+		return this.metrics;
+	}*/
 
 }

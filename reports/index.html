@@ -226,31 +226,31 @@
 		</dialog> -->
 
 		<dialog id="dialogMetric" class="dialog-metrics">
-			<section>
-				<h4>Inserisci qui la funzione per la metrica <span id="fieldName" class="highlight"></span></h4>
+			<section data-table-selected>
+				<h4>Inserisci qui la funzione per la metrica&nbsp;<span></span></h4>
 
 				<div class="name-alias">
 					<div class="md-field">
-						<input type="text" id="metric-name" value=""/>
+						<input type="text" id="metric-name" value="" autocomplete="off" />
 						<label for="metric-name" class="">Nome</label>
 					</div>
 
 					<div class="md-field">
-						<input type="text" id="alias-metric" value=""/>
+						<input type="text" id="alias-metric" value="" autocomplete="off" />
 						<label for="alias-metrics" class="">Alias</label>
 					</div>
 				</div>
 
 				<div class="formulaDefine">
 					<section class="formula">
-						<h6>SQL Function</h6><small>Scorri la lista delle SQL function</small>
+						<h6>SQL Function</h6><small>Scorri la lista delle funzioni di aggregazione</small>
 						<div class="listContent">
 					  		<ul id="function-list" class="miniList">
-								<li id="0" selected>SUM</li>
-								<li id="1">COUNT</li>
-								<li id="2">AVG</li>
-								<li id="3">MAX</li>
-								<li id="4">MIN</li>
+								<li id="SUM" label="SUM" selected>SUM</li>
+								<li id="COUNT" label="COUNT">COUNT</li>
+								<li id="AVG" label="AVG">AVG</li>
+								<li id="MAX" label="MAX">MAX</li>
+								<li id="MIN" label="MIN">MIN</li>
 							</ul>
 						</div>
 						<label class="mdc-checkbox">
@@ -266,7 +266,7 @@
 							<label for="searchExistsFilter_Metric" class="">Ricerca</label>
 						</div>
 						<div id="existsFilter_Metric">
-							<ul id="ul-existsFilter_Metric" class="overflowList"></ul>
+							<!-- ul-->
 						</div>
 					</section>
 
@@ -284,7 +284,7 @@
 
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
-					<button id="btnMetricDone" type="button" name="done" class="md-button">ok</button>
+					<button id="btnMetricDone" type="button" name="done" class="md-button" disabled>fatto</button>
 				</div>
 			</section>
 
@@ -355,9 +355,7 @@
 							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
-									<span class="popupContent">
-										<i id="edit-icon" class="material-icons md-18">edit</i>
-									</span>
+									<i id="edit-icon" class="material-icons md-18">edit</i>
 								</div>	
 							</section>
 						</template>
@@ -477,9 +475,7 @@
 															<input type="search" id="searchExistsMetric" value="" autocomplete="off" />
 															<label for="searchExistsMetric" class="">Ricerca</label>
 														</div>
-														<div id="existsMetric">
-															<ul id="exists-metric" class="overflowList"></ul>
-														</div>
+														<div id="existMetrics"></div>
 													</section>
 												</div>
 											</section>

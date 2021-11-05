@@ -4,6 +4,7 @@ const Dim = new DimensionStorage();
 var StorageCube = new CubeStorage();
 var StorageProcess = new ProcessStorage();
 var StorageFilter = new FilterStorage();
+var StorageMetric = new MetricStorage();
 
 (() => {
 	App.init();
@@ -41,7 +42,8 @@ var StorageFilter = new FilterStorage();
 		btnSaveReportDone: document.getElementById('btnReportSaveName'),
 		
 		btnBackPage : document.getElementById('mdcBack'), // da definire
-		ulDimensions : document.getElementById('dimensions')
+		ulDimensions : document.getElementById('dimensions'),
+		aggregationFunction : document.getElementById('function-list')
 	};
 
 	app.showPopup = (e) => {
@@ -478,6 +480,7 @@ var StorageFilter = new FilterStorage();
 
 	// selezione di una metrica già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
 	app.handlerMetricSelected = (e) => {
+		debugger;
 		const storage = new MetricStorage();
 		// TODO: e.currentTarget
 		storage.metric = e.target.getAttribute('label');
@@ -495,40 +498,42 @@ var StorageFilter = new FilterStorage();
 	};
 
 	// selezione della metrica, apro la dialog per impostare la metrica
-	app.handlerFieldSelectedMetric = (e) => {
-		// TODO: e.currentTarget
-		Query.field = e.target.getAttribute('label');
+	app.handlerSelectedMetricToSet = (e) => {
+		Query.field = e.currentTarget.getAttribute('label');
+		app.dialogMetric.querySelector('h4 > span').innerHTML = Query.field;
+		app.dialogMetric.querySelector('section').setAttribute('data-table-selected', e.currentTarget.getAttribute('data-table-name'));
+
+		// ul.querySelectorAll('.element').forEach((el) => {el.remove();});
 		// carico elenco filtri presenti su tutte le tabelle che fanno parte di tutte le dimensioni selezionate
-		// 1 - recupero le tabelle presenti nel terzo step ul #tables-filter
-		const storage = new FilterStorage();
-		let filters = [];
-		document.querySelectorAll('#tables-filter > .element >li').forEach((table) => {filters.push(storage.list(table.getAttribute('label')));});
-		console.log(filters);
-		// 2 - per ogni tabella recupero i filtri impostati dallo storage e li visualizzo in ul-existsFilter_Metric
-		const ul = document.getElementById('ul-existsFilter_Metric');
-		// pulisco la lista dei filtri
-		ul.querySelectorAll('.element').forEach((el) => {el.remove();});
+		// 1 new : per ogni tabella presente nelle dimensioni dei cubi selezionati, visualizzo l'elenco dei filtri presenti nello storage
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-filter']");
+		const parent = document.getElementById('existsFilter_Metric'); // dove verrà inserita la <ul>
+		// ripulisco la lista dei filtri
+		if (parent.querySelector('ul')) parent.querySelector('ul').remove();
+		console.log('Dim.dimension : ', Dim.dimensions);
+		for (const [key, value] of (Object.entries(Dim.dimensions))) {
+			// per ogni tabella presente nella property 'from' recupero i filtri presenti nello storage
+			value.from.forEach( (table) => {
+				console.log('table : ', table);
+				const filters = StorageFilter.tableFilters(table);
+				filters.forEach( (filter) => {
+					const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+					const section = contentElement.querySelector('section');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					section.hidden = false;
+					section.setAttribute('data-label-search', filter.name);
+					section.setAttribute('data-table-name', table);
+					li.innerText = filter.name;
+					li.setAttribute('label', filter.name);
+					ul.appendChild(section);
+					li.onclick = e => e.currentTarget.toggleAttribute('selected');
+				});
+				parent.appendChild(ul);
+			});
+		}
 	
-		//console.log(ulContent);
-		//let element = ulContent.querySelector('.element');
-		filters.forEach((object) => {
-			//console.log(object);
-			if (Object.keys(object).length > 0) {
-			
-				for (let filter in object) {
-					let ulContent = app.tmplListField.content.cloneNode(true);
-					let element = ulContent.querySelector('.element');
-					let li = element.querySelector('li');
-					console.log(filter); // il nome del filtro
-					li.innerText = filter;
-					li.setAttribute('label', filter);
-					//console.log(object[filter]); // la formula
-					ul.appendChild(element);
-					// TODO: e.currentTarget
-					li.onclick = (e) => {e.target.toggleAttribute('selected');};
-				}
-			}
-		});
 		app.dialogMetric.showModal();
 	};
 
@@ -589,35 +594,21 @@ var StorageFilter = new FilterStorage();
 		document.getElementById('inputColumnName').focus();
 	};
 
-	// selezione della tabella nella sezione metric
+	// selezione della FACT nella sezione metric
 	app.handlerTableSelectedMetrics = (e) => {
-		debugger;
-		// visualizzo la ul nascosta della tabella selezionata, sezione columns
-		// TODO: e.currentTarget
-		let fieldType = e.target.getAttribute('data-list-type');
-		let tableId = +e.target.getAttribute('data-table-id');
-		// visualizzo, nella sezione di destra "Colonne disponibili" le colonna disponibili mappate con questa dimensione
-		document.querySelector("ul[data-id='fields-"+fieldType+"'][data-table-id='"+tableId+"']").removeAttribute('hidden');
-		// rimuovo eventuali altri ul aperti in precedenza
-		Array.from(document.querySelectorAll("ul[data-id='fields-"+fieldType+"']:not([data-table-id='"+tableId+"'])")).forEach((ul) => {ul.setAttribute('hidden', true);});
-
-		e.target.toggleAttribute('selected');
-		Query.table = e.target.getAttribute('label');
-		// in base alla tabella selezionata, recupero le metriche già esistenti, nello storage, per questa tabella
-		const storage = new MetricStorage()
-		// recupero le metriche già esistenti per questa tabella
-		const metrics = storage.list(Query.table);
-		console.log(metrics);
-		// popolo il contenitore delle metriche già esistenti per questa tabella
-		const ul = document.getElementById('exists-metric');
-		for (let metric in metrics) {
-			let content = app.tmplListField.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
-			li.innerText = metric;
-			li.setAttribute('label', metric);
-			ul.appendChild(element);
-			li.onclick = app.handlerMetricSelected;
+		const fact = e.currentTarget.getAttribute('data-fact');
+		e.currentTarget.toggleAttribute('selected');
+		if (e.currentTarget.hasAttribute('selected')) {
+			document.querySelectorAll("ul[data-id='fields-metric'] > section[data-fact='"+fact+"']").forEach( (metric) => {
+				metric.hidden = false;
+				metric.toggleAttribute('data-searchable');
+			});
+		} else {
+			// deselezione
+			document.querySelectorAll("ul[data-id='fields-metric'] > section[data-fact='"+fact+"']").forEach( (metric) => {
+				metric.hidden = true;
+				metric.toggleAttribute('data-searchable');
+			});
 		}
 	};
 
@@ -654,7 +645,7 @@ var StorageFilter = new FilterStorage();
 	};
 
 	// selezione dell'operatore nella dialogFilter
-	app.handlerFilterOperatorSelected = (e) => {
+	/*app.handlerFilterOperatorSelected = (e) => {
 		document.querySelectorAll('#operatorList li').forEach((li) => {li.removeAttribute('selected');});
 		// TODO: e.currentTarget
 		e.target.toggleAttribute('selected');
@@ -691,7 +682,7 @@ var StorageFilter = new FilterStorage();
 				// TODO: valutare le operazioni da svolgere per questo blocco
 		}
 		app.checkFilterForm();
-	};
+	};*/
 
 	// carico elenco colonne dal DB da visualizzare nella dialogFilter
 	app.getFields = async () => {
@@ -764,26 +755,29 @@ var StorageFilter = new FilterStorage();
 		app.dialogTables.close();
 	};
 
-	// salvo la metrica impostata
+	// tasto 'fatto' nella dialogMetric, salvo la metrica impostata
 	app.btnMetricDone.onclick = (e) => {
 		const name = app.dialogMetric.querySelector('#metric-name').value;
-		const SQLFunction = document.querySelector('#function-list > li[selected]').innerText;
-		const distinctOption = document.getElementById('checkbox-distinct').checked;
 		const alias = document.getElementById('alias-metric').value;
+		const SQLFunction = document.querySelector('#function-list > li[selected]').getAttribute('label');
+		const distinctOption = document.getElementById('checkbox-distinct').checked;
+		Query.table = app.dialogMetric.querySelector('section').getAttribute('data-table-selected');
 		Query.metricName = name;
 		console.log(Query.metricName);
 		//console.log(Query.table);
 		// verifico se ci sono filtri da associare a questa metrica
-		const ul = document.getElementById('ul-existsFilter_Metric');
+		const ul = app.dialogMetric.querySelector('#existsFilter_Metric > ul');
+		console.log('ul con filtri all\'interno della metrica : ', ul);
 		let filtersAssociated = {};
-		const filterStorage = new FilterStorage()
-		ul.querySelectorAll('.element > li[selected]').forEach((filter) => {
+		// const filterStorage = new FilterStorage()
+		ul.querySelectorAll('section li[selected]').forEach((filter) => {
 			// filtersAssociated.push(filter.getAttribute('label'));
 			// set il nome del filtro
-			filterStorage.filter = filter.getAttribute('label');
+			StorageFilter.filter = filter.getAttribute('label');
 			// recupero dallo storage il contenuto del filtro per inserirlo in un object (quest'ultimo verrà inserito nella metrica)
-			filtersAssociated[filter.getAttribute('label')] = filterStorage.filter;
+			filtersAssociated[filter.getAttribute('label')] = StorageFilter.filter;
 		});
+		debugger;
 
 		let metricObj = {};
 		// se filtersAssociated > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
@@ -802,11 +796,12 @@ var StorageFilter = new FilterStorage();
 			//console.log(metricObj);
 		}
 
-		const storage = new MetricStorage();
+		// const storage = new MetricStorage();
 		// salvo la nuova metrica nello storage
 		console.log(metricObj)
+		StorageMetric.save = metricObj
 		
-		storage.save = metricObj;
+		// storage.save = metricObj;
 
 		app.dialogMetric.close();
 	};
@@ -1116,7 +1111,7 @@ var StorageFilter = new FilterStorage();
 		}
 	};
 
-	// visualizzo elenco filtri già esistenti, appartenenti alla tabella selezionata
+	// recupero elenco di tutti i filtri presenti nello storage, per ogni dimensione
 	app.getFiltersInFrom = () => {
 		console.clear();
 		const content = app.tmpl_ulList.content.cloneNode(true);
@@ -1150,8 +1145,7 @@ var StorageFilter = new FilterStorage();
 		}
 	};
 
-	app.getTableHasMetric = () => {
-		// elenco di tutte le dimensioni
+	app.getTables = () => {
 		const content = app.tmpl_ulList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-tables']");
 		const parent = document.getElementById('tableList-metric'); // dove verrà inserita la <ul>
@@ -1171,17 +1165,25 @@ var StorageFilter = new FilterStorage();
 			section.setAttribute('data-label-search', cubeValue.FACT); // questo attr consente la ricerca dalla input sopra
 			section.setAttribute('data-cube-name', cubeName); // questo attr consente la ricerca dalla selezione del cubo
 			li.innerText = cubeValue.FACT;
-			li.setAttribute('data-cube-name', cubeName);
+			li.setAttribute('data-fact', cubeValue.FACT);
 			li.setAttribute('label', cubeValue.FACT);
 			ul.appendChild(section);
 			li.onclick = app.handlerTableSelectedMetrics;
 			parent.appendChild(ul);
-			// per ogni FACT aggiungo l'elenco delle metriche impostate sul cubo nel div #metrics
-			const ulMetrics = content.querySelector("ul[data-id='fields-metric']");
-			const parentMetrics = document.getElementById('metrics'); // dove verrà inserita la <ul>
+		}
+	};
 
+	// elenco di tutte le metriche impostate all'interno del cubo, queste sono le metriche che si possono impostare, quindi mettere la funzione (SUM, AVG, ecc...), il distinct e l'alias
+	app.getMetricsInCubes = () => {
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-metric']");
+		const parent = document.getElementById('metrics'); // dove verrà inserita la <ul>
+		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
+		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
+			// per ogni FACT aggiungo l'elenco delle metriche impostate sul cubo nel div #metrics
 			cubeValue.metrics[cubeValue.FACT].forEach( (metric) => {
-				console.log('metric : ', metric);
+				// console.log('metric : ', metric);
 				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
 				const section = contentElement.querySelector('section');
 				const element = section.querySelector('.element');
@@ -1189,12 +1191,37 @@ var StorageFilter = new FilterStorage();
 				section.setAttribute('data-label-search', metric); // questo attr consente la ricerca dalla input sopra
 				section.setAttribute('data-fact', cubeValue.FACT); // questo attr consente la ricerca dalla selezione del cubo
 				li.innerText = metric;
-				li.setAttribute('data-fact', cubeValue.FACT);
-				li.setAttribute('label', cubeValue.FACT);
-				ulMetrics.appendChild(section);
-				// li.onclick = app.handlerTableSelectedMetrics;
-				parentMetrics.appendChild(ulMetrics);
+				li.setAttribute('label', metric);
+				li.setAttribute('data-table-name', cubeValue.FACT);
+				ul.appendChild(section);
+				li.onclick = app.handlerSelectedMetricToSet; // metrica da impostare
+				parent.appendChild(ul);
 			});
+		}
+	};
+
+	// recupero tutte le metriche esistenti dallo storage, per tutti i cubi. Queste sono le metriche che sono state già impostate e quindi si possono già utilizzare nel report che si sta creando
+	app.getMetrics = () => {
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-metric']");
+		const parent = document.getElementById('existMetrics'); // dove verrà inserita la <ul>
+		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
+		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
+			console.log('StorageMetric : ', StorageMetric.metrics);
+			for ( const [metricName, metric] of Object.entries(StorageMetric.metrics)) {
+				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+				const section = contentElement.querySelector('section');
+				const element = section.querySelector('.element');
+				const li = element.querySelector('li');
+				section.setAttribute('data-label-search', metricName); // questo attr consente la ricerca dalla input sopra
+				section.setAttribute('data-fact', cubeValue.FACT); // questo attr consente la ricerca dalla selezione del cubo
+				li.innerText = metricName;
+				li.setAttribute('label', metricName);
+				ul.appendChild(section);
+				li.onclick = app.handlerMetricSelected;
+				parent.appendChild(ul);
+			}
 		}
 	};
 
@@ -1210,7 +1237,11 @@ var StorageFilter = new FilterStorage();
 
 	app.getFiltersInFrom();
 
-	app.getTableHasMetric();
+	app.getTables();
+
+	app.getMetricsInCubes();
+
+	app.getMetrics();
 
 	app.datamartToBeProcessed();
 
@@ -1281,7 +1312,7 @@ var StorageFilter = new FilterStorage();
 	};
 
 	// input di ricerca nella dialogFilter, ricerca nell'elenco dei fields
-	document.getElementById('fieldSearch').oninput = App.searchInList;
+	// document.getElementById('fieldSearch').oninput = App.searchInList;
 
 	document.addEventListener('input', (e) => {
 		// console.log('currentTarget : ', e.target);
@@ -1309,10 +1340,29 @@ var StorageFilter = new FilterStorage();
 		(e.target.value.length === 0) ? app.btnSaveColumn.disabled = true : app.btnSaveColumn.disabled = false;
 	};
 
+	app.checkDialogMetric = () => {
+		const metricName = document.getElementById('metric-name').value;
+		const aliasMetric = document.getElementById('alias-metric').value;
+		(metricName.length !== 0 && aliasMetric.length !== 0) ? app.btnMetricDone.disabled = false : app.btnMetricDone.disabled = true;
+
+	};
+
+	document.getElementById('alias-metric').oninput = () => app.checkDialogMetric();
+
+	document.getElementById('metric-name').oninput = () => app.checkDialogMetric();
+
 	// operatori logici nella dialog Filter (AND, OR, NOT, ecc...)
 	document.querySelectorAll('#logicalOperator > span').forEach((span) => {
 		span.onclick = app.handlerLogicalOperatorSelected;
 	});
+
+	// funzioni di aggregazione da selezionare nella dialogMetrics
+	app.aggregationFunction.onclick = (e) => {
+		// deseleziono altre funzioni di aggregazione precedentemente selezionate e seleziono quella e.target
+		e.path[1].querySelector('li[selected]').toggleAttribute('selected');
+		// console.log('e.target : ', e.target.toggleAttribute('selected'))
+		e.target.toggleAttribute('selected');
+	};
 
 	app.btnSaveColumn.onclick = (e) => {
 		console.clear();
