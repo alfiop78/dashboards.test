@@ -26,7 +26,7 @@
 	</head>
 	<body>
 
-		<small id="popup" class="popupToast">TEST</small>
+		<small id="popup" class="popupToast"></small>
 
 		<dialog id="dialogTables">
 			<section data-table-selected>
@@ -64,7 +64,7 @@
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
 					<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
-					<button id="btnColumnDone" type="button" name="done" class="md-button">ok</button>
+					<button id="btnColumnDone" type="button" name="done" class="md-button">fatto</button>
 				</div>
 			</section>
 		</dialog>
@@ -357,7 +357,6 @@
 									<li class="elementSearch" label=""></li>
 									<span class="popupContent">
 										<i id="edit-icon" class="material-icons md-18">edit</i>
-										<small class="popup">Modifica filtro</small>
 									</span>
 								</div>	
 							</section>
@@ -380,7 +379,7 @@
 							<ul data-id="fields-field" class="list middleList"></ul>
 							<ul data-id="fields-values" class="list middleList"></ul>
 							<ul data-id="fields-tables" class="overflowList"></ul>
-							<ul data-id="fields-metric" class="overflowList" hidden></ul>
+							<ul data-id="fields-metric" class="overflowList"></ul>
 						</template>
 
 						<div id="step" class="steps" data-step="1">
@@ -451,45 +450,7 @@
 
 										<section class="step" data-step="3">
 											<section class="pageContent">
-												<h4>Filtri</h4><h6>Aggiungi i filtri da applicare al report o alle metriche</h6>
-
-												<div class="stepLayout"> 
-
-													<section class="sectionLists">
-														<h5>Tabelle</h5>
-														<div class="md-field">
-															<input type="search" id="searchTables-filter" value="" autocomplete="off" />
-															<label for="searchTables-filter" class="">Ricerca</label>
-														</div>
-														<div id="tableList-filter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-tables che conterrà l'elenco delle tabelle--></div>
-													</section>
-
-													<section class="sectionLists" id="sectionFields-filter">
-														<h5>Filtri del Report</h5>
-														<div class="md-field">
-															<input type="search" id="searchFilters" value="" autocomplete="off" />
-															<label for="searchFilters" class="">Ricerca</label>
-														</div>
-														<div id="filters">
-															<ul id="createdFilters" class="overflowList"></ul>
-														</div>
-													</section>
-
-													<section class="sectionLists" id="sectionFields-existsfilter">
-														<h5>Filtri esistenti</h5>
-														<div class="md-field">
-															<input type="search" id="searchExistsFilter" value="" autocomplete="off" />
-															<label for="searchExistsFilter" class="">Ricerca</label>
-														</div>
-														<div id="fieldList-existFilter"><!-- qui viene inserito il template tmpl_ulList con data-id=fields-filter che conterrà l'elenco dei filtri per la tabella selezionata--></div>
-													</section>
-												</div>
-											</section>
-										</section>
-
-										<section class="step" data-step="4">
-											<section class="pageContent">
-												<h4>Step 4</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
+												<h4>Step 3</h4><h6>Seleziona le metriche da aggiungere al Report</h6>
 												<div class="stepLayout">
 
 													<section class="sectionLists">
@@ -498,9 +459,7 @@
 															<input type="search" id="searchTables-metric" value="" autocomplete="off" />
 															<label for="searchTables-metric" class="">Ricerca</label>
 														</div>
-														<div id="tableList-metric">
-															<ul id="tables-metric" class="overflowList"></ul>
-														</div>
+														<div id="tableList-metric"><!-- ul --></div>
 													</section>
 
 													<section class="sectionLists" id="sectionFields-metric">
@@ -509,7 +468,7 @@
 															<input type="search" id="searchMetrics" value="" autocomplete="off" />
 															<label for="searchMetrics" class="">Ricerca</label>
 														</div>
-														<div id="metrics"></div>
+														<div id="metrics"><!-- ul fields-metric --></div>
 													</section>
 
 													<section class="sectionLists" id="sectionFields-existsMetric">

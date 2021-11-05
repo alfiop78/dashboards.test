@@ -145,12 +145,23 @@ var StorageFilter = new FilterStorage();
 				dimension.hidden = false;
 				dimension.toggleAttribute('data-searchable');
 			});
+			// visualizzo la FACT nello step 3 Metrics
+			document.querySelectorAll("ul[data-id='fields-tables'] > section[data-cube-name='"+StorageCube.selected.name+"']").forEach( (table) => {
+				table.hidden = false;
+				table.toggleAttribute('data-searchable');
+			});
 		} else {
 			// TODO: deselect cube
 			document.querySelectorAll("ul[data-id='fields-dimensions'] > section[data-cube-name='"+StorageCube.selected.name+"']").forEach( (table) => {
 				table.hidden = true;
-				dimension.toggleAttribute('data-searchable');
+				table.toggleAttribute('data-searchable');
 			});
+			// nascondo la FACT nello step 3
+			document.querySelectorAll("ul[data-id='fields-tables'] > section[data-cube-name='"+StorageCube.selected.name+"']").forEach( (table) => {
+				table.hidden = true;
+				table.toggleAttribute('data-searchable');
+			});
+
 		}
 	};
 
@@ -450,7 +461,6 @@ var StorageFilter = new FilterStorage();
 	// selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
 	app.handlerFilterSelected = (e) => {
 		const storage = new FilterStorage();
-		debugger;
 		storage.filter = e.currentTarget.getAttribute('label');
 		e.currentTarget.toggleAttribute('selected');
 		Query.filterName = storage.filter.name;
@@ -581,7 +591,7 @@ var StorageFilter = new FilterStorage();
 
 	// selezione della tabella nella sezione metric
 	app.handlerTableSelectedMetrics = (e) => {
-		// debugger;
+		debugger;
 		// visualizzo la ul nascosta della tabella selezionata, sezione columns
 		// TODO: e.currentTarget
 		let fieldType = e.target.getAttribute('data-list-type');
@@ -726,7 +736,7 @@ var StorageFilter = new FilterStorage();
 					}
 				} else {
 				  // TODO: no data
-				  console.warning('Dati non recuperati');
+				  console.debug('Dati non recuperati');
 				}
 			})
 		.catch( (err) => console.error(err));
@@ -737,19 +747,19 @@ var StorageFilter = new FilterStorage();
 		// TODO: verifico se l'object select contiene la tabella selezionta, se i campi non sono stati selezionati e salvati, questa tabella non verrà inclusa nel from 
 		// ...(e nemmeno le altre tabelle con data-table-id inferiore a questa)
 		if (Query.select.hasOwnProperty(Query.table)) {
-			Dim.selected.from.forEach( (table, index) => {
-				console.log('data-table-id : ', table);
-				// debugger;
-				if (index >= Query.tableId) {
-					Query.from = table;
-					// debugger;
-					// se è l'ultimo elemento non lo considero per la join perchè l'ultimo elemento ha la join con la fact
-					if (index !== Dim.selected.from.length-1) {
-						console.log('join : ', Dim.selected.join[index]);
-						// Query.where = Dim.selected.join[index];
-					}
-				}
-			});
+			Query.from = Query.table;
+			// Dim.selected.from.forEach( (table, index) => {
+			// 	console.log('data-table-id : ', table);
+			// 	if (index >= Query.tableId) {
+					
+			// 		// debugger;
+			// 		// se è l'ultimo elemento non lo considero per la join perchè l'ultimo elemento ha la join con la fact
+			// 		if (index !== Dim.selected.from.length-1) {
+			// 			console.log('join : ', Dim.selected.join[index]);
+			// 			// Query.where = Dim.selected.join[index];
+			// 		}
+			// 	}
+			// });
 		}
 		app.dialogTables.close();
 	};
@@ -1041,8 +1051,7 @@ var StorageFilter = new FilterStorage();
 					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
 					iFilter.onclick = app.handlerTableSelectedFilter; // apre la dialog dialogFilter per impostare i filtri
 					iFilter.setAttribute('data-popup-label', 'Filtri');
-					iFilter.addEventListener("mouseenter", app.showPopup, false);
-					iFilter.addEventListener("mouseleave", app.hidePopup, false);
+					iColumns.setAttribute('data-popup-label', 'Colonne');
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
@@ -1107,6 +1116,7 @@ var StorageFilter = new FilterStorage();
 		}
 	};
 
+	// visualizzo elenco filtri già esistenti, appartenenti alla tabella selezionata
 	app.getFiltersInFrom = () => {
 		console.clear();
 		const content = app.tmpl_ulList.content.cloneNode(true);
@@ -1127,14 +1137,63 @@ var StorageFilter = new FilterStorage();
 					const element = section.querySelector('.element');
 					const li = element.querySelector('li');
 					const iEdit = element.querySelector('#edit-icon');
+					iEdit.setAttribute('data-popup-label', "Modifica filtro");
 					section.setAttribute('data-label-search', filter.name);
 					section.setAttribute('data-table-name', table);
 					li.innerText = filter.name;
 					li.setAttribute('label', filter.name);
 					ul.appendChild(section);
-					// li.onclick = app.selectColumn;
+					li.onclick = app.handlerFilterSelected;
 				});
 				parent.appendChild(ul);
+			});
+		}
+	};
+
+	app.getTableHasMetric = () => {
+		// elenco di tutte le dimensioni
+		const content = app.tmpl_ulList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-tables']");
+		const parent = document.getElementById('tableList-metric'); // dove verrà inserita la <ul>
+		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
+		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
+			console.log('key : ', cubeName);
+			console.log('value : ', cubeValue); // tutto il contenuto del cubo
+			console.log('metriche : ', cubeValue.metrics);
+			console.log('metriche : ', cubeValue.FACT);
+			// debugger;
+			// per ogni cubo leggo la fact
+			const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+			const section = contentElement.querySelector('section');
+			const element = section.querySelector('.element');
+			const li = element.querySelector('li');
+			section.setAttribute('data-label-search', cubeValue.FACT); // questo attr consente la ricerca dalla input sopra
+			section.setAttribute('data-cube-name', cubeName); // questo attr consente la ricerca dalla selezione del cubo
+			li.innerText = cubeValue.FACT;
+			li.setAttribute('data-cube-name', cubeName);
+			li.setAttribute('label', cubeValue.FACT);
+			ul.appendChild(section);
+			li.onclick = app.handlerTableSelectedMetrics;
+			parent.appendChild(ul);
+			// per ogni FACT aggiungo l'elenco delle metriche impostate sul cubo nel div #metrics
+			const ulMetrics = content.querySelector("ul[data-id='fields-metric']");
+			const parentMetrics = document.getElementById('metrics'); // dove verrà inserita la <ul>
+
+			cubeValue.metrics[cubeValue.FACT].forEach( (metric) => {
+				console.log('metric : ', metric);
+				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+				const section = contentElement.querySelector('section');
+				const element = section.querySelector('.element');
+				const li = element.querySelector('li');
+				section.setAttribute('data-label-search', metric); // questo attr consente la ricerca dalla input sopra
+				section.setAttribute('data-fact', cubeValue.FACT); // questo attr consente la ricerca dalla selezione del cubo
+				li.innerText = metric;
+				li.setAttribute('data-fact', cubeValue.FACT);
+				li.setAttribute('label', cubeValue.FACT);
+				ulMetrics.appendChild(section);
+				// li.onclick = app.handlerTableSelectedMetrics;
+				parentMetrics.appendChild(ulMetrics);
 			});
 		}
 	};
@@ -1150,6 +1209,8 @@ var StorageFilter = new FilterStorage();
 	app.getColumnsInTable();
 
 	app.getFiltersInFrom();
+
+	app.getTableHasMetric();
 
 	app.datamartToBeProcessed();
 
@@ -1227,6 +1288,12 @@ var StorageFilter = new FilterStorage();
 		if (e.target.hasAttribute('type') && e.target.getAttribute('type') === 'search') {
 			e.target.oninput = App.searchInSectionList;
 		}
+	});
+
+	// eventi mouseEnter/Leave su tutte le icon con l'attributo data-popup-label
+	document.querySelectorAll('i[data-popup-label]').forEach( (icon) => {
+		icon.onmouseenter = app.showPopup;
+		icon.onmouseleave = app.hidePopup;
 	});
 
 	// input di ricerca nella dialogFilter, ricerca nell'elenco dei valori
