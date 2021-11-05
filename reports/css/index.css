@@ -83,16 +83,6 @@ div.textarea > span.formulaLogicalOperator{background: brown; border-radius: 4px
 .element:hover > li ~ span{visibility: visible;}
 /* element */
 
-/*toast*/
-#toast{position: absolute;z-index: 9999; left: var(--left); top: var(--top);}
-#toast > small{visibility: hidden;background: #494949; border-radius: 4px; color: white; font-size: .7rem; white-space: nowrap; box-shadow: 0 2px 4px 0 black; padding: 4px 8px;}
-#toast > small[show]{background: #494949; border-radius: 4px; color: white; font-size: .7rem; white-space: nowrap; box-shadow: 0 2px 4px 0 black; padding: 4px 8px; visibility: visible;
-	animation: toast 400ms ease;}
-
-/*span.popupContent:hover small{visibility: visible; animation: popup 50ms ease;top: 42px;}*/
-
-@keyframes toast {
-  0% {transform: scale(.2);}
-  75% {transform: scale(1.10);}
-  100% {transition: scale(1);}
-}
+/*toast Popup*/
+small.popupToast{z-index: 9999;background: #494949;border-radius: 4px;color: white;font-size: .7rem;display: none;white-space: nowrap;
+  box-shadow: 0 2px 4px 0 black;padding: 4px 8px;position: absolute; top: var(--top); left: var(--left);}

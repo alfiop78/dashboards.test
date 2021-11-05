@@ -15,8 +15,8 @@ var StorageFilter = new FilterStorage();
 		tmpl_ulListWithEdit : document.getElementById('templateListWithEdit'),
 		tmpl_ulListSection : document.getElementById('templateListSection'),
 
-		// toast
-		toast : document.getElementById('toast'),
+		// popup
+		popup : document.getElementById('popup'),
 
 		// btn		
 		btnPreviousStep : document.getElementById('stepPrevious'),
@@ -44,33 +44,39 @@ var StorageFilter = new FilterStorage();
 		ulDimensions : document.getElementById('dimensions')
 	};
 
-	app.updateDisplay = (e) => {
+	app.showPopup = (e) => {
+		// const toast = document.getElementById('toast');
 		// console.log('pageX : ', e.pageX);
 		// console.log('pageY : ', e.pageY);
 		// console.log('offset : ', e.offsetX);
 		// console.log('screen : ', e.screenX);
 		const yPosition = e.target.getBoundingClientRect().bottom + 10;
-		const xPosition = e.target.getBoundingClientRect().left;
-		// app.toast.style.left = xPosition+"px";
-		// app.toast.style.top = yPosition+"px";
-		app.toast.style.setProperty('--left', xPosition+"px");
-		app.toast.style.setProperty('--top', yPosition+"px");
-		// app.toast.style.visibility = 'visible';
-		app.toast.querySelector('small').style.visibility = 'visible';
-		app.toast.querySelector('small').setAttribute('show', true);
-		/*app.toast.querySelector('small').animate([
-			{ // from
-				transform: 'scale(.2)'
-			},
-			{ // to
-				transform: 'scale(1)'
-			}
-		], { duration: 500, /*fill: 'forwards', easing: 'ease-in-out' });*/
-
+		const left = e.target.getBoundingClientRect().left;
+		const right = e.target.getBoundingClientRect().right;
+		// ottengo il centro dell'icona
+		let centerElement = left + ((right - left) / 2);
+		app.popup.innerHTML = e.currentTarget.getAttribute('data-popup-label');
+		app.popup.style.display = 'block';
+		// ottengo la metà del popup, la sua width varia a seconda di cosa c'è scritto dentro, quindi qui devo prima visualizzarlo (display: block) e dopo posso vedere la width
+		const elementWidth = app.popup.offsetWidth / 2;
+		// il popup verrà posizionato al centro dell'icona
+		const xPosition = centerElement - elementWidth;
+		
+		app.popup.style.setProperty('--left', xPosition+"px");
+		app.popup.style.setProperty('--top', yPosition+"px");
+		app.popup.animate([
+			{transform: 'scale(.2)'},
+			{transform: 'scale(1.2)'},
+			{transform: 'scale(1)'}
+		], { duration: 50, easing: 'ease-in-out' });
 
 		// console.log(e.target.getBoundingClientRect().bottom);
 		// console.log(e.target.getBoundingClientRect().left);
 		// console.log(' : ', rect);
+	};
+
+	app.hidePopup = (e) => {
+		app.popup.style.display = 'none';
 	};
 
 	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
@@ -1034,7 +1040,9 @@ var StorageFilter = new FilterStorage();
 					// imposto onclick sulle icone columns e filter
 					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
 					iFilter.onclick = app.handlerTableSelectedFilter; // apre la dialog dialogFilter per impostare i filtri
-					iFilter.addEventListener("mouseenter", app.updateDisplay, false);
+					iFilter.setAttribute('data-popup-label', 'Filtri');
+					iFilter.addEventListener("mouseenter", app.showPopup, false);
+					iFilter.addEventListener("mouseleave", app.hidePopup, false);
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
