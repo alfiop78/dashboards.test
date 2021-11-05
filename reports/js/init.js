@@ -480,20 +480,18 @@ var StorageMetric = new MetricStorage();
 
 	// selezione di una metrica già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
 	app.handlerMetricSelected = (e) => {
+		StorageMetric.metric = e.currentTarget.getAttribute('label');
+		// recupero dallo StorageMetric la metrica selezionata
+		console.log(StorageMetric.metric);
+		console.log(StorageMetric.metric.name);
+		console.log(StorageMetric.metric.formula);
+		Query.metricName = StorageMetric.metric.name;
 		debugger;
-		const storage = new MetricStorage();
-		// TODO: e.currentTarget
-		storage.metric = e.target.getAttribute('label');
-		// TODO: recupero dallo storage la metrica selezionata
-		console.log(storage.metric);
-		console.log(storage.metric.name);
-		console.log(storage.metric.formula);
-		Query.metricName = storage.metric.name;
-		// TODO: se la metrica contiene un filtro bisogna aggiungerla a Query.filteredMetrics e non a Query.metrics
-		if (storage.metric.formula[storage.metric.name].hasOwnProperty('filters')) {
-			Query.filteredMetrics = storage.metric.formula[storage.metric.name];
+		// TODO: se la metrica contiene un filtro bisogna aggiungerla a Query.filteredMetrics altrimenti a Query.metrics
+		if (StorageMetric.metric.formula[StorageMetric.metric.name].hasOwnProperty('filters')) {
+			Query.filteredMetrics = StorageMetric.metric.formula[StorageMetric.metric.name];
 		} else {
-			Query.metrics = storage.metric.formula[storage.metric.name];
+			Query.metrics = StorageMetric.metric.formula[StorageMetric.metric.name];
 		}
 	};
 
@@ -597,6 +595,7 @@ var StorageMetric = new MetricStorage();
 	// selezione della FACT nella sezione metric
 	app.handlerTableSelectedMetrics = (e) => {
 		const fact = e.currentTarget.getAttribute('data-fact');
+		Query.from = fact;
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
 			document.querySelectorAll("ul[data-id='fields-metric'] > section[data-fact='"+fact+"']").forEach( (metric) => {
@@ -777,7 +776,6 @@ var StorageMetric = new MetricStorage();
 			// recupero dallo storage il contenuto del filtro per inserirlo in un object (quest'ultimo verrà inserito nella metrica)
 			filtersAssociated[filter.getAttribute('label')] = StorageFilter.filter;
 		});
-		debugger;
 
 		let metricObj = {};
 		// se filtersAssociated > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
@@ -796,7 +794,6 @@ var StorageMetric = new MetricStorage();
 			//console.log(metricObj);
 		}
 
-		// const storage = new MetricStorage();
 		// salvo la nuova metrica nello storage
 		console.log(metricObj)
 		StorageMetric.save = metricObj
@@ -875,7 +872,17 @@ var StorageMetric = new MetricStorage();
 		textarea.querySelectorAll('span').forEach((span) => {span.remove();});
 	};
 
-	app.btnFilterDone.onclick = () => app.dialogFilter.close();
+	app.btnFilterDone.onclick = () => {
+		console.log(Query.filters);
+		// recupero la tabella che contiene i filtri selezionati
+		Object.keys(Query.filters).forEach( (filterName) => {
+			StorageFilter.filter = filterName;
+			// console.log(StorageFilter.filter.table);
+			// tabella viene aggiunta al from della Query
+			Query.from = StorageFilter.filter.table;
+		});
+		app.dialogFilter.close();
+	};
 
 	// recupero valori distinti per inserimento nella dialogFilter
 	app.getDistinctValues = async () => {
@@ -1282,6 +1289,8 @@ var StorageMetric = new MetricStorage();
 	// salvo il report da processare
 	app.btnSaveReportDone.onclick = () => {
 		console.log(Query);
+		// recupero tutte le colonne/filtro selezionate per impostare _from
+		console.log('Query.filters : ', Query.filters);
 		debugger;
 		// aggiungo, nella from, il cubo selezionato nel primo step
 		// salvo temporaneamente la query da processare nello storage
