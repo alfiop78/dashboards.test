@@ -16,6 +16,7 @@
 .material-icons[open]{color: var(--main-secondary-color);}
 .material-icons[fact]{color: var(--main-primary-color);}
 
+.material-icons[selected] {color: brown;}
 
 /* Rules for using icons as white on a dark background. */
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }

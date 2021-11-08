@@ -41,28 +41,35 @@ class Cube {
 	var_dump($this->_from);
   }
 
-  public function n_where($joins) {
-	$i = 0;
-	foreach ($joins as $join) {
-	  $relation = array();
-	  $relation = implode(" = ", $join);
-	  ($i === 0) ? $this->_where .= " WHERE ".$relation : $this->_where .= " AND " . $relation;
-	  $i++;
+	public function n_where($joins) {
+		$i = 0;
+		foreach ($joins as $join) {
+			$relation = array();
+			$relation = implode(" = ", $join);
+			($i === 0) ? $this->_where .= " WHERE ".$relation : $this->_where .= " AND " . $relation;
+			$i++;
+		}
+		// var_dump($this->_where);
+		// return $this->_where;
 	}
-	// var_dump($this->_where);
-	// return $this->_where;
-  }
 
-  public function joinFact($joins) {
-	$this->_ands = array();
-	$this->_and = " AND ";
-	foreach ($joins as $join) {
-	  $this->_ands[] = implode(" = ", $join);
+	public function joinFact($joins) {
+		$this->_ands = array();
+		$this->_and = " AND ";
+		foreach ($joins as $dim) {
+			// var_dump($dim);
+			foreach ($dim as $cube) {
+				// var_dump($cube);
+				foreach ($cube as $join)
+				$this->_ands[] = implode(" = ", $join);
+			}
+		}
+		// foreach ($joins as $join) {
+		// 	$this->_ands[] = implode(" = ", $join);
+		// }
+		$this->_and .= implode(" AND ", $this->_ands);
+		// var_dump($this->_and);
 	}
-	$this->_and .= implode(" AND ", $this->_ands);
-	// var_dump($this->_and);
-
-  }
 
   public function filters($filters) {
 	/* definisco i filtri del report*/
@@ -159,7 +166,7 @@ class Cube {
   }
 
   public function createDatamart() {
-  	// TODO: https://dev.mysql.com/doc/refman/8.0/en/create-table-select.html Il create table può essere migliorato impostando il datatype per ogni colonna e un id univoco
+	// TODO: https://dev.mysql.com/doc/refman/8.0/en/create-table-select.html Il create table può essere migliorato impostando il datatype per ogni colonna e un id univoco
 	$baseTableName = "W_AP_base_".$this->_reportId;
 	$datamartName = "decisyon_cache.FX".$this->_reportId;
 	// se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX

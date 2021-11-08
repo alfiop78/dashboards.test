@@ -3,6 +3,7 @@ class Queries {
 		this._select = {};
 		this._fromCubes = new Set(); // qui memorizzo solo i cubi, clausola FROM
 		this._fromSet = new Set();
+		this._whereMap = new Map();
 		// this._fromArray = [];
 		this._where = {};
 		this._factRelation = {};
@@ -35,6 +36,11 @@ class Queries {
 	}
 
 	get from() {return this._fromSet;}
+
+	deleteFrom(tableName) {
+		this._fromSet.delete(tableName);
+		console.log('_from : ', this._fromSet);
+	}
 
 	set filterName(value) {this._filterName = value};
 
@@ -72,18 +78,31 @@ class Queries {
 		return this._select[this._table][this._field]['alias'];
 	}
 
+	set joinId(value) {this._joinId = value;}
+
+	get joinId() {return this._joinId;}
+
 	set where(join) {
+		console.log('join : ', join);
+		this._where[this.joinId] = join;
+		// this._where = join;
+		debugger;
 		// const key = Object.keys(join);
-		for ( const [k, v] of Object.entries(join)) {
-			this._where[k] = v;
-		}
+		// this._where = this._joinId;
+		// let w = {};
+		// for ( const [k, v] of Object.entries(join)) {
+		// 	// w[k] = v;
+		// 	// this._where[k] = v;
+		// }
+		// this._where[this._joinId] = w;
 		console.log('where : ', this._where);
 	}
 
 	get where() {return this._where;}
 
-	set factRelation(object) {
-		this._factRelation = object;
+	set factRelation(dimension) {
+		console.log('dimName : ', dimension.name);
+		this._factRelation[dimension.name] = dimension.cubes;
 		console.log('fact join : ', this._factRelation);
 	}
 
@@ -158,6 +177,12 @@ class Queries {
 
 	get metrics() {return this._metrics;}
 
+	deleteMetric() {
+		debugger;
+		delete this._metrics[this._metricName];
+		console.log('_metrics : ', this._metrics);
+	}
+
 	set filteredMetrics(object) {
 		console.log(object);
 		this._filteredMetrics[this._metricName] = object;
@@ -178,6 +203,12 @@ class Queries {
 	}
 
 	get filteredMetrics() {return this._filteredMetrics;}
+
+	deleteFilteredMetric() {
+		debugger;
+		delete this._filteredMetrics[this._metricName];
+		console.log('_filteredMetrics : ', this._filteredMetrics);
+	}
 
 	addFromCubes(value) {
 		this._fromCubes.add(value);
