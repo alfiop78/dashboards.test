@@ -85,17 +85,12 @@ class Queries {
 	set where(join) {
 		console.log('join : ', join);
 		this._where[this.joinId] = join;
-		// this._where = join;
-		debugger;
-		// const key = Object.keys(join);
-		// this._where = this._joinId;
-		// let w = {};
-		// for ( const [k, v] of Object.entries(join)) {
-		// 	// w[k] = v;
-		// 	// this._where[k] = v;
-		// }
-		// this._where[this._joinId] = w;
 		console.log('where : ', this._where);
+	}
+
+	deleteWhere() {
+		delete this._where[this._joinId];
+		console.log('where : ', this._where);	
 	}
 
 	get where() {return this._where;}
@@ -109,7 +104,7 @@ class Queries {
 	get factRelation() {this._factRelation;}
 
 	set filters(object) {
-		this._filter[this._filterName] = object;
+		this._filter[this._filterName] = {table : object.table, formula : object.formula};
 		console.log('filter : ', this._filter);
 		// NOTE: object filter salvato in storage
 		    /* filter_name: {

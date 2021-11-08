@@ -466,7 +466,8 @@ var StorageMetric = new MetricStorage();
 			console.log(StorageFilter.filter);
 			console.log(StorageFilter.filter.formula);
 
-			Query.filters = StorageFilter.filter.formula;
+			// Query.filters = StorageFilter.filter.formula;
+			Query.filters = StorageFilter.filter;
 		} else {
 			// delete filter
 			Query.deleteFilter();
@@ -720,13 +721,21 @@ var StorageMetric = new MetricStorage();
 	app.btnColumnDone.onclick = (e) => {
 		console.log('Query.table : ', Query.table);
 		console.log('Query.tableId : ', Query.tableId);
-		let hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
+		const hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
-		// console.log('filterIcon : ', filterIcon);
-		console.log(Object.keys(Query.select));
-		if (Object.keys(Query.select).length !== 0) {
+		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
+		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table);
+		console.log('query.select : ', Query.select[Query.table]);
+		if (Query.select[Query.table]) {
 			// sono stati selezionati dei filtri per questa tabella, imposto il nome della tabella con l'attr 'selected' in 'fieldList-tables'
+			// Ci sono campi selezionati, aggiungo anche il campo 'id' di questa tabella
+			// TODO: al momento disattivato
+			/*const fieldList = document.getElementById('table-fieldList');
+			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"]').getAttribute('data-label-search');
+			Query.select = {SQLFormat: null, alias : Query.table+"_"+Query.field};
+			// aggiungo la colonna selezionata a Query.groupBy
+			Query.groupBy = {SQLFormat: null};*/
 			
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
@@ -738,36 +747,27 @@ var StorageMetric = new MetricStorage();
 					};
 				};
 			}
-			list.querySelectorAll('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"]').forEach( (section) => {
-				section.querySelector('li').setAttribute('data-columns', true);
-				section.querySelector('#columns-icon-'+hier+"-"+Query.table).setAttribute('selected', true);
-			});
+			liTable.setAttribute('data-columns', true);
+			columnIcon.setAttribute('selected', true);
 		} else {
+			debugger;
 			// non ci sono filtri impostati/selezionati per questa tabella, la elimina da Query.from e deseleziono con l'attr 'selected' in 'fieldList-tables'
-			list.querySelectorAll('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"]').forEach( (section) => {
-				section.querySelector('li').removeAttribute('data-columns');
-				section.querySelector('#columns-icon-'+hier+"-"+Query.table).removeAttribute('selected');
-			});
-			Query.deleteFrom(Query.table);
+			liTable.removeAttribute('data-columns');
+			columnIcon.removeAttribute('selected');
+			// se l'elemento <li> con il nome della tabella NON contiene l'attr data-filters (quindi su questa tabella non è stato impostato un filtro) la posso eliminare dalla _from e dalla _join
+			if (!liTable.hasAttribute('data-filters')) {
+				for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
+					// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
+					if (+k <= Query.tableId) {
+						Query.deleteFrom(Query.table);
+						if (Dim.selected.join[+k]) {
+							Query.joinId = +k;
+							Query.deleteWhere();
+						};
+					};
+				}
+			}
 		}
-
-		// TODO: verifico se l'object select contiene la tabella selezionta, se i campi non sono stati selezionati e salvati, questa tabella non verrà inclusa nel from 
-		// ...(e nemmeno le altre tabelle con data-table-id inferiore a questa)
-		/*if (Query.select.hasOwnProperty(Query.table)) {
-			Query.from = Query.table;
-			// Dim.selected.from.forEach( (table, index) => {
-			// 	console.log('data-table-id : ', table);
-			// 	if (index >= Query.tableId) {
-					
-			// 		// debugger;
-			// 		// se è l'ultimo elemento non lo considero per la join perchè l'ultimo elemento ha la join con la fact
-			// 		if (index !== Dim.selected.from.length-1) {
-			// 			console.log('join : ', Dim.selected.join[index]);
-			// 			// Query.where = Dim.selected.join[index];
-			// 		}
-			// 	}
-			// });
-		}*/
 		app.dialogTables.close();
 	};
 
@@ -822,50 +822,32 @@ var StorageMetric = new MetricStorage();
 
 	// salvataggio del filtro impostato nella dialog
 	app.btnFilterSave.onclick = (e) => {
+		console.log(Query.table);
 		// Filter save
-		const textarea = document.getElementById('filterFormula');
-		let filterName = document.getElementById('filter-name');
+		const textarea = document.getElementById('filterSQLFormula');
+		let filterName = document.getElementById('inputFilterName');
 		
-		console.log(filterName.value);
 		Query.filterName = filterName.value;
-		let operator = app.dialogFilter.querySelector('#filterFormula .formulaOperator').innerText;
-		// FIXME: In futuro dovrò modificare la gestione dei filtri perchè al momento non posso inserire filtri (es.: in AND o OR) appartenenti a due tabelle diverse
 
-		let values = [], value;
-
-		switch (operator) {
-			case 'IN':
-			case 'NOT IN':
-				value = app.dialogFilter.querySelector('#filterFormula .formulaValues').innerHTML;
-				// console.log(value);
-				// console.log('IN / NOT IN');
-				values = value.split(',');
-				break;
-			default:
-				value = app.dialogFilter.querySelector('#filterFormula .formulaValues').innerHTML;
-				values.push(value);
-		}
-
-		let formula = '';
+		debugger;
+		const formula = `${Query.table}.${textarea.value}`;
 		// ciclo gli elementi nella formula per creare il filtro
-		Array.from(document.querySelectorAll('#filterFormula > span')).forEach((span) => {
-			//console.log(span);
-			formula += (span.classList.contains('formulaField')) ? `${Query.table}.${span.innerText} `: `${span.innerText} `;
-		});
+		// Array.from(document.querySelectorAll('#filterFormula > span')).forEach((span) => {
+		// 	//console.log(span);
+		// 	formula += (span.classList.contains('formulaField')) ? `${Query.table}.${span.innerText} `: `${span.innerText} `;
+		// });
 	
 		console.log(formula);
-		console.log(Query.table);
 
-		Query.filters = formula.trimEnd();
+		// Query.filters = formula.trimEnd();
 		// Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
 		// ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli ricreare
-		const storage = new FilterStorage();
-		let = filterObj = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, 'formula': formula.trimEnd()};
-		storage.save = filterObj;
+		// const filterObj = ;
+		StorageFilter.save = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, formula};
 	
 		// visualizzo il filtro appena creato nella section #sectionFields-filter
 		// TODO: e anche nella lista dei filtri esistenti all'interno della metrica, se si vuole utilizzarlo nella metrica 
-		const ulFilterMetric = document.getElementById('ul-existsFilter_Metric');
+		/*const ulFilterMetric = document.getElementById('ul-existsFilter_Metric');
 		let ulContent = app.tmplListField.content.cloneNode(true);
 		let elementFilterMetric = ulContent.querySelector('.element');
 		let liFilterMetric = elementFilterMetric.querySelector('li');
@@ -886,7 +868,7 @@ var StorageMetric = new MetricStorage();
 		filterName.value = '';
 		filterName.focus();
 		// pulisco la textarea
-		textarea.querySelectorAll('span').forEach((span) => {span.remove();});
+		textarea.querySelectorAll('span').forEach((span) => {span.remove();});*/
 	};
 
 	app.btnFilterDone.onclick = () => {
@@ -895,7 +877,11 @@ var StorageMetric = new MetricStorage();
 		let hier = app.dialogFilter.querySelector('section').getAttribute('data-hier-name');
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogFilter.querySelector('section').getAttribute('data-dimension-name');
+		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
+		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+Query.table);
 		// console.log('filterIcon : ', filterIcon);
+		console.log(Query.filters);
+		debugger;
 		if (Object.keys(Query.filters).length !== 0) {
 			// sono stati selezionati dei filtri per questa tabella, imposto il nome della tabella con l'attr 'selected' in 'fieldList-tables'
 			
@@ -1305,9 +1291,6 @@ var StorageMetric = new MetricStorage();
 	app.checkFilterForm = () => {
 		const filterName = document.getElementById('inputFilterName');
 		const filterFormula = document.getElementById('filterSQLFormula');
-		//console.log(filterFormula.childElementCount);
-		// verifica se il nome del filtro è stato inserito
-		// verifica se la formula è stata inserita
 		( (filterName.value.length !== 0) && (filterFormula.value.length !== 0) ) ? app.btnFilterSave.disabled = false : app.btnFilterSave.disabled = true;
 	};
 
@@ -1402,12 +1385,15 @@ var StorageMetric = new MetricStorage();
 		const metricName = document.getElementById('metric-name').value;
 		const aliasMetric = document.getElementById('alias-metric').value;
 		(metricName.length !== 0 && aliasMetric.length !== 0) ? app.btnMetricDone.disabled = false : app.btnMetricDone.disabled = true;
-
 	};
 
 	document.getElementById('alias-metric').oninput = () => app.checkDialogMetric();
 
 	document.getElementById('metric-name').oninput = () => app.checkDialogMetric();
+
+	document.getElementById('inputFilterName').oninput = () => app.checkFilterForm();
+
+	document.getElementById('filterSQLFormula').oninput = () => app.checkFilterForm();
 
 	// operatori logici nella dialog Filter (AND, OR, NOT, ecc...)
 	document.querySelectorAll('#logicalOperator > span').forEach((span) => {
