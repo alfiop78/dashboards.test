@@ -371,7 +371,8 @@ var dimension = new Dimension();
 		// quando aggiungo la tabella imposto da subito la colonna id in "columns"
 		dimension.activeCard = cardTable; // card attiva
 		const primaryKey = dimension.activeCard.querySelector('ul li[data-key="PRI"]');
-		dimension.columns = primaryKey.getAttribute('label');
+		dimension.columns = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
+		// dimension.columns = primaryKey.getAttribute('label');
 		// con l'attributo columns verrà mostrata l'icona "columns associata"
 		primaryKey.toggleAttribute('columns');
 		cube.mode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
