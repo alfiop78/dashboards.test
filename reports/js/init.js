@@ -731,6 +731,7 @@ var StorageMetric = new MetricStorage();
 			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"]').getAttribute('data-label-search');
 			Query.select = {SQLFormat: null, alias : Query.table+"_"+Query.field};
 			*/
+			// TODO: aggiungo anche la primaryKey per questa tabella (Questo serve per fare la join tra le varie temp table quando ci sono metriche filtrate)
 			
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
