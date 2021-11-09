@@ -133,13 +133,13 @@ var StorageMetric = new MetricStorage();
 		// const cubeId = e.currentTarget.getAttribute('data-cube-id');
 		// const fieldType = e.currentTarget.getAttribute('data-list-type');
 		StorageCube.selected = e.currentTarget.getAttribute('label');
-		console.log('cube selected : ', StorageCube.selected);
+		console.log('cube selected : ', StorageCube.selected.name);
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
-			Query.addFromCubes(StorageCube.selected.FACT);
+			// Query.addFromCubes(StorageCube.selected.FACT);
 			// visualizzo la <ul> contentente le dimensioni appartenenti al cubo selezionato
 			document.querySelectorAll("ul[data-id='fields-dimensions'] > section[data-cube-name='"+StorageCube.selected.name+"']").forEach( (dimension) => {
-				console.log('tabelle appartententi alla gerarchia selezionata : ', dimension);
+				// console.log('Dimensioni del cubo selezionato : ', dimension);
 				dimension.hidden = false;
 				dimension.toggleAttribute('data-searchable');
 			});
@@ -716,26 +716,24 @@ var StorageMetric = new MetricStorage();
 	};
 
 	app.btnColumnDone.onclick = (e) => {
-		console.log('Query.table : ', Query.table);
-		console.log('Query.tableId : ', Query.tableId);
+		// console.log('Query.table : ', Query.table);
+		// console.log('Query.tableId : ', Query.tableId);
 		const hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
 		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
 		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table);
-		console.log('query.select : ', Query.select[Query.table]);
+		// console.log('query.select : ', Query.select[Query.table]);
 		if (Query.select[Query.table]) {
-			// sono stati selezionati dei filtri per questa tabella, imposto il nome della tabella con l'attr 'selected' in 'fieldList-tables'
-			// Ci sono campi selezionati, aggiungo anche il campo 'id' di questa tabella
+			// Ci sono campi selezionati per questa tabella, aggiungo anche il campo 'id' di questa tabella.
 			// TODO: al momento disattivato
 			/*const fieldList = document.getElementById('table-fieldList');
 			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"]').getAttribute('data-label-search');
 			Query.select = {SQLFormat: null, alias : Query.table+"_"+Query.field};
-			// aggiungo la colonna selezionata a Query.groupBy
-			Query.groupBy = {SQLFormat: null};*/
+			*/
 			
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
-				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
+				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
 				if (+k >= Query.tableId) {
 					Query.from = table;
 					if (Dim.selected.join[+k]) {
@@ -1192,12 +1190,12 @@ var StorageMetric = new MetricStorage();
 		const ul = content.querySelector("ul[data-id='fields-tables']");
 		const parent = document.getElementById('tableList-metric'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
-		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		// console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
 		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
-			console.log('key : ', cubeName);
-			console.log('value : ', cubeValue); // tutto il contenuto del cubo
-			console.log('metriche : ', cubeValue.metrics);
-			console.log('metriche : ', cubeValue.FACT);
+			// console.log('key : ', cubeName);
+			// console.log('value : ', cubeValue); // tutto il contenuto del cubo
+			// console.log('metriche : ', cubeValue.metrics);
+			// console.log('metriche : ', cubeValue.FACT);
 			// debugger;
 			// per ogni cubo leggo la fact
 			const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
@@ -1221,7 +1219,7 @@ var StorageMetric = new MetricStorage();
 		const ul = content.querySelector("ul[data-id='fields-metric']");
 		const parent = document.getElementById('metrics'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
-		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		// console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
 		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
 			// per ogni FACT aggiungo l'elenco delle metriche impostate sul cubo nel div #metrics
 			cubeValue.metrics[cubeValue.FACT].forEach( (metric) => {
@@ -1248,9 +1246,9 @@ var StorageMetric = new MetricStorage();
 		const ul = content.querySelector("ul[data-id='fields-metric']");
 		const parent = document.getElementById('existMetrics'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
-		console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
+		// console.log('lista cubi : ', StorageCube.cubes); // tutta la lista dei cubi
 		for (const [cubeName, cubeValue] of (Object.entries(StorageCube.cubes))) {
-			console.log('StorageMetric : ', StorageMetric.metrics);
+			// console.log('StorageMetric : ', StorageMetric.metrics);
 			for ( const [metricName, metric] of Object.entries(StorageMetric.metrics)) {
 				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
 				const section = contentElement.querySelector('section');
@@ -1408,6 +1406,7 @@ var StorageMetric = new MetricStorage();
 		e.target.toggleAttribute('selected');
 	};
 
+	// 'Salva' nella dialogTables
 	app.btnSaveColumn.onclick = (e) => {
 		console.clear();
 		const alias = document.getElementById('inputColumnName').value;

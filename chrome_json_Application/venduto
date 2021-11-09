@@ -1,1 +1,0 @@
-{"type":"METRIC","name":"venduto","formula":{"venduto":{"SQLFunction":"SUM","table":"DocVenditaDettaglio","field":"NettoRiga","name":"venduto","distinct":false,"alias":"Venduto"}}}

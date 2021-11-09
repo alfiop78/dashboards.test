@@ -1,1 +1,0 @@
-{"type":"FILTER","name":"rep.off","table":"DocVenditaIntestazione","formula":"DocVenditaIntestazione.Reparto = \"OFF\""}

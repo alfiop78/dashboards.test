@@ -1,9 +1,9 @@
 class Queries {
 	constructor() {
 		this._select = {};
-		this._fromCubes = new Set(); // qui memorizzo solo i cubi, clausola FROM
+		// this._fromCubes = new Set(); // qui memorizzo solo i cubi, clausola FROM
 		this._fromSet = new Set();
-		this._whereMap = new Map();
+		// this._whereMap = new Map();
 		// this._fromArray = [];
 		this._where = {};
 		this._factRelation = {};
@@ -206,7 +206,7 @@ class Queries {
 		console.log('_filteredMetrics : ', this._filteredMetrics);
 	}
 
-	addFromCubes(value) {
+	/*addFromCubes(value) {
 		this._fromCubes.add(value);
 		console.log('fromCubes : ', this._fromCubes);
 	}
@@ -214,12 +214,11 @@ class Queries {
 	deleteFromCubes(value) {
 		this._fromCubes.delete(value);
 		console.log('fromCubes : ', this._fromCubes);
-	}
+	}*/
 
 	save(processId, name) {
 		this._reportProcess = {};
 		this._reportProcess['select'] = this._select;
-		debugger;
 		this._reportProcess['from'] = Array.from(this._fromSet); // converto il set in un array
 		this._reportProcess['where'] = this._where;
 		this._reportProcess['factJoin'] = this._factRelation;
@@ -228,6 +227,7 @@ class Queries {
 		this._reportProcess['metrics'] = this._metrics;
 		this._reportProcess['filteredMetrics'] = this._filteredMetrics;
 		this._reportProcess['processId'] = processId; // questo creerà il datamart FX[processId]
+		//  al posto del processId voglio utilizzare il nome del report legato alla FX_
 		this._reportProcess['name'] = name;
 		this._reportProcess['type'] = 'PROCESS';
 

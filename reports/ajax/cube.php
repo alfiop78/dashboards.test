@@ -14,6 +14,7 @@ $cube = json_decode($_POST['cube']); // object
 
 $q = new Cube();
 $q->setReportId($cube->{'processId'});
+$q->reportName = $cube->{'name'};
 $q->n_select($cube->{'select'});
 $q->metrics($cube->{'metrics'});
 $q->n_from($cube->{'from'});
@@ -23,12 +24,12 @@ $q->filters($cube->{'filters'});
 $q->n_groupBy($cube->{'groupBy'});
 $baseTable = $q->baseTable();
 var_dump($baseTable);
-return;
+// return;
 
 if ($baseTable > 0) {
 
 	$metricTable = $q->createMetricDatamarts($cube->{'filteredMetrics'});
-	var_dump($metricTable);
+	// var_dump($metricTable);
 
 	echo 'elaborazione createDatamart';
 
