@@ -54,9 +54,7 @@ class Queries {
 			if (!this._select[this._table].hasOwnProperty(this._field)) {
 				// field NON presente in _select[_table], lo aggiungo
 				this._select[this._table][this._field] = object;
-			} /*else {
-				delete this._select[this._table][this._field];
-			}*/
+			}
 		} else {
 			this._obj[this._field] = object;
 			this._select[this._table] = this._obj;
@@ -104,16 +102,19 @@ class Queries {
 	get factRelation() {this._factRelation;}
 
 	set filters(object) {
-		this._filter[this._filterName] = {table : object.table, formula : object.formula};
+		this._obj = {};
+		if (this._filter.hasOwnProperty(this._table)) {
+			// tabella già presente nell'object _select
+			if (!this._filter[this._table].hasOwnProperty(this._filterName)) {
+				this._filter[this._table][this._filterName] = object;
+			}
+		} else {
+			this._obj[this._filterName] = object;
+			this._filter[this._table] = this._obj;
+		}
+		// *********************
+		// this._filter[this._filterName] = {table : object.table, formula : object.formula};
 		console.log('filter : ', this._filter);
-		// NOTE: object filter salvato in storage
-		    /* filter_name: {
-		        'formula' : "id_Azienda = 43",
-		        'table' : 'Azienda',
-		        'TYPE' : 'FILTER'
-		        'name' : nome del filtro
-		    }
-		    */
 	}
 
 	get filters() {return this._filter};

@@ -465,9 +465,7 @@ var StorageMetric = new MetricStorage();
 			// recupero dallo storage il filtro selezionato
 			console.log(StorageFilter.filter);
 			console.log(StorageFilter.filter.formula);
-
-			// Query.filters = StorageFilter.filter.formula;
-			Query.filters = StorageFilter.filter;
+			Query.filters = StorageFilter.filter.formula;
 		} else {
 			// delete filter
 			Query.deleteFilter();
@@ -545,7 +543,6 @@ var StorageMetric = new MetricStorage();
 		// console.log('e.currentTarget : ', e.currentTarget);
 		console.log('Query.table : ', Query.table);
 		console.log('Query.tableId : ', Query.tableId);
-		debugger;
 		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
 		app.dialogTables.querySelector('section').setAttribute('data-table-selected', Query.table);
 		app.dialogTables.querySelector('section').setAttribute('data-hier-name', e.currentTarget.getAttribute('data-hier-name'));
@@ -881,8 +878,10 @@ var StorageMetric = new MetricStorage();
 		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+Query.table);
 		// console.log('filterIcon : ', filterIcon);
 		console.log(Query.filters);
+		console.log(Query.filters[Query.table]);
 		debugger;
-		if (Object.keys(Query.filters).length !== 0) {
+		if (Query.filters[Query.table]) {
+		// if (Object.keys(Query.filters).length !== 0) {
 			// sono stati selezionati dei filtri per questa tabella, imposto il nome della tabella con l'attr 'selected' in 'fieldList-tables'
 			
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
@@ -900,6 +899,7 @@ var StorageMetric = new MetricStorage();
 				section.querySelector('#filter-icon-'+hier+"-"+Query.table).setAttribute('selected', true);
 			});
 		} else {
+			debugger;
 			// non ci sono filtri impostati/selezionati per questa tabella, la elimina da Query.from e deseleziono con l'attr 'selected' in 'fieldList-tables'
 			list.querySelectorAll('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"]').forEach( (section) => {
 				section.querySelector('li').removeAttribute('data-filters');

@@ -23,6 +23,7 @@ $q->filters($cube->{'filters'});
 $q->n_groupBy($cube->{'groupBy'});
 $baseTable = $q->baseTable();
 var_dump($baseTable);
+return;
 
 if ($baseTable > 0) {
 

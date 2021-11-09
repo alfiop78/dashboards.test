@@ -71,15 +71,17 @@ class Cube {
 		// var_dump($this->_and);
 	}
 
-  public function filters($filters) {
-	/* definisco i filtri del report*/
-	$and = " AND ";
-	foreach ($filters as $filter) {
-	  //var_dump($filter); // condizione di filtro
-	  $this->_reportFilters .= $and.$filter;
+	public function filters($tables) {
+		/* definisco i filtri del report*/
+		$and = " AND ";
+		foreach ($tables as $table) {
+			// var_dump($table);
+			foreach ($table as $filter) {
+				$this->_reportFilters .= $and.$filter;
+			}
+		}
+		// var_dump($this->_reportFilters);
 	}
-	//var_dump($this->_reportFilters);
-  }
 
   public function metrics($metrics) {
 	// metriche non filtrate
