@@ -722,6 +722,7 @@ var StorageMetric = new MetricStorage();
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
 		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
+		debugger;
 		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table);
 		// console.log('query.select : ', Query.select[Query.table]);
 		if (Query.select[Query.table]) {
@@ -744,6 +745,7 @@ var StorageMetric = new MetricStorage();
 				};
 			}
 			liTable.setAttribute('data-columns', true);
+			debugger;
 			columnIcon.setAttribute('selected', true);
 		} else {
 			debugger;
@@ -1110,9 +1112,10 @@ var StorageMetric = new MetricStorage();
 			// console.log('value : ', value.columns);
 			for ( const [table, fields] of Object.entries(value.columns)) {
 				console.log('table : ', table);
-				debugger;
 				// console.log('fields : ', fields);
-				fields.forEach( (field) => {
+				for (const field in fields) {
+					// console.log(fields[field]); // type
+					// console.log(field); // field
 					const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
 					const section = contentElement.querySelector('section');
 					const element = section.querySelector('.element');
@@ -1121,35 +1124,12 @@ var StorageMetric = new MetricStorage();
 					section.setAttribute('data-table-name', table);
 					li.innerText = field;
 					li.setAttribute('label', field);
+					li.setAttribute('data-key', fields[field]);
 					ul.appendChild(section);
 					li.onclick = app.selectColumn;
-				});
-				parent.appendChild(ul);
-			}
-			/*Dim.selected = dimName;
-			console.log('hierarchies : ', Dim.selected.hierarchies);
-			for (const hier in Dim.selected.hierarchies) {
-				for (const table in Dim.selected.hierarchies[hier]) {
-					// ciclo le tabelle presenti nella gerarchia
-					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
-					const section = contentElement.querySelector('section');
-					const element = section.querySelector('.element');
-					const li = element.querySelector('li');
-					const iColumns = element.querySelector('#columns-icon');
-					const iFilter = element.querySelector('#filter-icon');
-					section.setAttribute('data-label-search', Dim.selected.hierarchies[hier][table]); // utilizzabile per la ricerca dalla input sopra
-					section.setAttribute('data-dimension-id', dimName); // utilizzabile dalla dimensione + gerarchia selezionata
-					section.setAttribute('data-hier-id', hier);
-					li.innerText = Dim.selected.hierarchies[hier][table];
-					iColumns.setAttribute('data-dimension-name', dimName); // attributo che viene letto in app.handlerTableSelected per recuperare la property 'columns' della dimensione
-					iColumns.setAttribute('data-table-name', Dim.selected.hierarchies[hier][table]);
-					// imposto onclick sulle icone columns e filter
-					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
-					// iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogFilter per impostare i filtri
-					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
-			}*/
+			}
 		}
 	};
 
