@@ -69,7 +69,7 @@ class Queries {
 	deleteSelect() {
 		delete this.#select[this._table][this._field];
 		// verifico se this.#select[this._table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this.#select[this._table]).length <= 1 ) delete this.#select[this._table];
+		if (Object.keys(this.#select[this._table]).length === 0) delete this.#select[this._table];
 
 		console.log('select : ', this.#select);
 	}
@@ -148,8 +148,8 @@ class Queries {
 
 	deleteGroupBy() {
 		delete this.#groupBy[this._table][this._field];
-		// stesa logica di deleteSelect()
-		if (Object.keys(this.#groupBy[this._table]).length <= 1) delete this.#groupBy[this._table];
+		// stessa logica di deleteSelect()
+		if (Object.keys(this.#groupBy[this._table]).length === 0) delete this.#groupBy[this._table];
 
 		console.log('groupBy : ', this.#groupBy);
 	}

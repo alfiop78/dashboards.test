@@ -721,12 +721,13 @@ var StorageMetric = new MetricStorage();
 		// ... quindi, oltre a verificare se ci sono colonne selezionate, devo verificare anche se ce n'è una sola, quella è la primaryKey
 
 		if (Query.select[Query.table]) {
+			// TODO: L'aggiunta della primaryKey NON deve essere impostata per ogni tabella...10.10.2021 in corso di valutazione. Probabilmente deve essere impostato solo sulla prima tabella della gerarchia
 			// Ci sono colonne selezionate per questa tabella, quindi aggiungo anche la primaryKey (contrassegnata dall'attr data-key)
-			const fieldList = document.getElementById('table-fieldList'); // contiene la ul con i nomi dei field
+			/*const fieldList = document.getElementById('table-fieldList'); // contiene la ul con i nomi dei field
 			// cerco la <li> che ha data-key='PRI'
 			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"] li[data-key="PRI"]').getAttribute('label');
 			Query.select = {SQLFormat: null, alias : "pri_"+Query.table+"_"+Query.field};
-			Query.groupBy = {SQLFormat: null};
+			Query.groupBy = {SQLFormat: null};*/
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
 				if (+k >= Query.tableId) {
