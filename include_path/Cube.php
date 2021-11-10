@@ -136,6 +136,7 @@ class Cube {
 		// $sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
 		$sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->reportName." AS ".$this->_sql.";";
 		var_dump($sql);
+		// return;
 		return $this->connect->multiInsert($sql);
 	}
 

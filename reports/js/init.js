@@ -775,24 +775,36 @@ var StorageMetric = new MetricStorage();
 		//console.log(Query.table);
 		// verifico se ci sono filtri da associare a questa metrica
 		debugger;
-		const ul = app.dialogMetric.querySelector('#existsFilter_Metric > ul');
+		let associatedFilters = {};
+		app.dialogMetric.querySelectorAll('#existsFilter_Metric > ul > section li[selected]').forEach( (filterSelected) => {
+			// set il nome del filtro
+			StorageFilter.filter = filterSelected.getAttribute('label');
+			// recupero dallo storage il contenuto del filtro per inserirlo in un object (quest'ultimo verrà inserito nella metrica)
+			console.log(StorageFilter.filter.name);
+			// debugger;
+			// associatedFilters[filterSelected.getAttribute('label')] = StorageFilter.filter;
+			associatedFilters[StorageFilter.filter.name] = StorageFilter.filter;
+		});
+		// ****************************
+		/*const ul = app.dialogMetric.querySelector('#existsFilter_Metric > ul');
 		console.log('ul con filtri all\'interno della metrica : ', ul);
-		let filtersAssociated = {};
+		let associatedFilters = {};
 		// const filterStorage = new FilterStorage()
 		ul.querySelectorAll('section li[selected]').forEach((filter) => {
-			// filtersAssociated.push(filter.getAttribute('label'));
+			// associatedFilters.push(filter.getAttribute('label'));
 			// set il nome del filtro
 			StorageFilter.filter = filter.getAttribute('label');
 			// recupero dallo storage il contenuto del filtro per inserirlo in un object (quest'ultimo verrà inserito nella metrica)
-			filtersAssociated[filter.getAttribute('label')] = StorageFilter.filter;
-		});
+			associatedFilters[filter.getAttribute('label')] = StorageFilter.filter;
+		});*/
+		// ******************************
 
 		let metricObj = {};
-		// se filtersAssociated > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
-		if (Object.keys(filtersAssociated).length > 0) {
+		// se associatedFilters > 0 sarà una metrica filtrata, altrimenti una metrica a livello di report (senza nessun filtro all'interno della metrica)
+		if (Object.keys(associatedFilters).length > 0) {
 			// metrica filtrata
 			console.log('metrica filtrata');
-			Query.filteredMetrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias, 'filters': filtersAssociated};
+			Query.filteredMetrics = {SQLFunction, 'table': Query.table, 'field': Query.field, name, 'distinct' : distinctOption, alias, 'filters': associatedFilters};
 
 			console.log(Query.filteredMetrics);
 			metricObj = {'type': 'METRIC', name, 'formula' : Query.filteredMetrics};
