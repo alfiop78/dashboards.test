@@ -28,6 +28,7 @@
 		<small id="popup" class="popupToast"></small>
 
 		<dialog id="dialogTables">
+			<small id="dialog-popup-tables" class="popupToast"></small>
 			<section data-table-selected>
 				<h4>Seleziona le colonne da includere per la tabella <span></span></h4>
 
@@ -85,6 +86,7 @@
 		</dialog>
 
 		<dialog id="dialogFilter" class="dialog-filters">
+			<small id="dialog-popup-filters" class="popupToast"></small>
 			<section data-table-selected>
 				<h4>Selezione filtri per la tabella <span></span></h4>
 				<div class="stepLayout">
@@ -133,96 +135,6 @@
 				</div>
 			</section>
 		</dialog>
-
-		<!-- <dialog id="dialogFilter" class="dialog-filters">
-			<section data-table-selected>
-				<h4>Inserisci qui la condizione di filtro
-				<div class="md-field">
-					<input type="text" id="filter-name" value=""/>
-					<label for="filter-name" class="">Nome</label>
-				</div>
-
-				<div class="formulaDefine">
-
-					<section class="formula">
-						<div class="title">
-							<h5>Colonne</h5><h6>Seleziona le colonne da filtrare</h6>
-						</div>
-
-						<div class="listContent">
-							<div class="md-field" value>
-								<input type="search" id="fieldSearch" value=""/>
-								<label for="fieldSearch" class="">Ricerca</label>
-							</div>
-							<ul id="filter-fieldList" class="list middleList"></ul>
-						</div>
-					</section>
-
-					<section class="formula">
-						<div class="title">
-							<h5>SQL operatori</h5><h6>Scorri la lista degli operatori</h6>
-						</div>
-
-						<div class="listContent">
-							<ul id="operatorList" class="list miniList">
-								<li label="=">&equals;</li>
-								<li label="<>">&lt;&gt;</li>
-								<li label="<">&lt;</li>
-								<li label=">">&gt;</li>
-								<li label="<=">&lt;&equals;</li>
-								<li label=">=">&gt;&equals;</li>
-								<li label="BETWEEN">BETWEEN&nbsp;...&nbsp;AND&nbsp;</li>
-								<li label="IN">IN</li>
-								<li label="NOT IN">NOT IN</li>
-								<li label="IS NULL">IS NULL</li>
-								<li label="IS NOT NULL">IS NOT NULL</li>
-							</ul>
-						</div>
-					</section>
-
-					<section class="formula">
-						<div class="title">
-						  <h5>Lista valori</h5><h6>Seleziona i valori per creare il filtro</h6>
-						</div>
-
-						<div class="listContent">
-							<div class="md-field" value>
-								<input type="search" id="valuesSearch" value=""/>
-								<label for="valuesSearch" class="">Ricerca</label>
-							</div>
-							<ul id="filter-valueList" class="list middleList"></ul>
-						</div>
-					</section>
-				</div>
-
-				<div class="formulaDefined">
-					<div class="logicalOperator" id="logicalOperator">
-						<span label='AND'>AND</span>
-						<span label='OR'>OR</span>
-						<span label='AND NOT'>AND NOT</span>
-						<span label='OR NOT'>OR NOT</span>
-						<span label='('>(</span>
-						<span label=')'>)</span>
-					</div>
-
-					<div class="formulaContent">
-						<div id="filterFormula" class="textarea">
-				  
-						</div>
-						<div class="formulaIcons">
-							<span class="popupContent"><i class="material-icons md-18">clear</i><small class="popup">Rimuovi</small></span>
-							<span class="popupContent"><i class="material-icons md-18">edit</i><small class="popup">Modifica</small></span>
-						</div>
-					</div>
-				</div>
-
-				<div class="dialog-buttons">
-					<button type="button" name="cancel" class="md-button">annulla</button>
-					<button id="btnFilterSave" type="button" name="save" class="md-button" disabled="true">salva</button>
-					<button id="btnFilterDone" type="button" name="done" class="md-button">fine</button>
-				</div>
-			</section>
-		</dialog> -->
 
 		<dialog id="dialogMetric" class="dialog-metrics">
 			<section data-table-selected>

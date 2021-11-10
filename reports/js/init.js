@@ -18,6 +18,8 @@ var StorageMetric = new MetricStorage();
 
 		// popup
 		popup : document.getElementById('popup'),
+		dialogPopupTables : document.getElementById('dialog-popup-tables'),
+		dialogPopupFilters : document.getElementById('dialog-popup-filters'),
 
 		// btn		
 		btnPreviousStep : document.getElementById('stepPrevious'),
@@ -45,6 +47,29 @@ var StorageMetric = new MetricStorage();
 		ulDimensions : document.getElementById('dimensions'),
 		aggregationFunction : document.getElementById('function-list')
 	};
+
+	app.showPopupDialog = (e) => {
+		// debugger;
+		const yPosition = e.target.getBoundingClientRect().bottom + 10;
+		const left = e.target.getBoundingClientRect().left;
+		const right = e.target.getBoundingClientRect().right;
+		// ottengo il centro dell'icona
+		let centerElement = left + ((right - left) / 2);
+		app.dialogPopupFilters.innerHTML = e.currentTarget.getAttribute('data-popup-label');
+		app.dialogPopupFilters.style.display = 'block';
+		// ottengo la metà del dialogPopupFilters, la sua width varia a seconda di cosa c'è scritto dentro, quindi qui devo prima visualizzarlo (display: block) e dopo posso vedere la width
+		const elementWidth = app.dialogPopupFilters.offsetWidth / 2;
+		// il dialogPopupFilters verrà posizionato al centro dell'icona
+		const xPosition = centerElement - elementWidth;
+		
+		app.dialogPopupFilters.style.setProperty('--left', xPosition+"px");
+		app.dialogPopupFilters.style.setProperty('--top', yPosition+"px");
+		app.dialogPopupFilters.animate([
+			{transform: 'scale(.2)'},
+			{transform: 'scale(1.2)'},
+			{transform: 'scale(1)'}
+		], { duration: 50, easing: 'ease-in-out' });
+	}
 
 	app.showPopup = (e) => {
 		// const toast = document.getElementById('toast');
@@ -599,75 +624,41 @@ var StorageMetric = new MetricStorage();
 		console.info('Tabella selezionata: ', e.currentTarget.getAttribute('data-table-name'));
 		Query.table = e.currentTarget.getAttribute('data-table-name');
 		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
-		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
 		app.dialogFilter.querySelector('section').setAttribute('data-table-selected', Query.table);
 		app.dialogFilter.querySelector('section').setAttribute('data-hier-name', e.currentTarget.getAttribute('data-hier-name'));
 		app.dialogFilter.querySelector('section').setAttribute('data-dimension-name', e.currentTarget.getAttribute('data-dimension-name'));
 		// visualizzo il nome della tabella nel tag h4 > span
 		app.dialogFilter.querySelector('h4 > span').innerHTML = Query.table;
-		console.log('Query.table : ', Query.table);
+		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
+		// rimuovo, se già presente, la <ul> contenuto all'interno di #filter-fieldList per mostrare le colonne (recuperate dal DB) della tabella selezionata (esiste su selezione precedente)
+		const listRef = app.dialogFilter.querySelector('#filter-fieldList');
+		if (listRef.querySelector('ul')) listRef.querySelector('ul').remove();
 		app.getFields(); // recupero i campi della tabella selezionata
-		// console.log('lista filtri : ', StorageFilter.tableFilters(Query.table));
-		// const filters = StorageFilter.tableFilters(Query.table)
-		// visualizzo i filtri esistenti sulla tabella selezionata
+		// visualizzo i filtri ESISTENTI della tabella selezionata
 		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( filter => filter.hidden = false);
 		// nascondo i filter NON appartenenti alla tabella selezionata
 		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( filter => filter.hidden = true);
 		app.dialogFilter.showModal();
-
 	};
 
 	// selezione del field nella dialogFilter
 	app.handlerFilterFieldSelected = (e) => {
+		// rimuovo eventuali altre selezioni precedenti
+		const fieldList = app.dialogFilter.querySelector('#filter-fieldList');
+		fieldList.querySelectorAll('ul li[selected]').forEach( element => element.toggleAttribute('selected'));
 		e.currentTarget.toggleAttribute('selected');
 		Query.field = e.target.getAttribute('label');
 		Query.fieldType = e.target.getAttribute('data-type');
 		// inserisco il field selezionato nella textarea
-		const textarea = document.getElementById('filterSQLFormula');
-		textarea.value = Query.field;
-		textarea.focus();
-		app.getDistinctValues();
-	};
-
-	// selezione dell'operatore nella dialogFilter
-	/*app.handlerFilterOperatorSelected = (e) => {
-		document.querySelectorAll('#operatorList li').forEach((li) => {li.removeAttribute('selected');});
-		// TODO: e.currentTarget
-		e.target.toggleAttribute('selected');
-		const textarea = document.getElementById('filterFormula');
-		let span = document.createElement('span');
-		span.className = 'formulaOperator';
-		span.innerText = e.target.getAttribute('label');
-		span.setAttribute('label', e.target.getAttribute('label'));
-		textarea.appendChild(span);
-		let openPar, closePar, formulaValues;
-		// OPTIMIZE: da ottimizzare
-		switch (e.target.getAttribute('label')) {
-			case 'IN':
-			case 'NOT IN':
-				openPar = document.createElement('span');
-				closePar = document.createElement('span');
-				formulaValues = document.createElement('span');
-				// inserisco anche formulaValues tra le parentesi della IN/NOT IN
-				openPar.className = 'openPar';
-				formulaValues.className = 'formulaValues';
-				// formulaValues.setAttribute('contenteditable', true);
-				closePar.className = 'closePar';
-				openPar.innerText = '( ';
-				closePar.innerText = ' )';
-
-				textarea.appendChild(openPar);
-				textarea.appendChild(formulaValues);
-				textarea.appendChild(closePar);
-				formulaValues.focus();
-				//  imposto la lista dei valori in multiselezione (una IN può avere un elenco di valori separati da virgola)
-				app.dialogFilter.querySelector('#filterValueList').setAttribute('multi', true);
-				break;
-			default:
-				// TODO: valutare le operazioni da svolgere per questo blocco
+		if (e.currentTarget.hasAttribute('selected')) {
+			const listRef = app.dialogFilter.querySelector('#filter-valueList');
+			if (listRef.querySelector('ul')) listRef.querySelector('ul').remove();
+			app.getDistinctValues();
+			const textarea = document.getElementById('filterSQLFormula');
+			textarea.value = Query.field;
+			textarea.focus();
 		}
-		app.checkFilterForm();
-	};*/
+	};
 
 	// carico elenco colonne dal DB da visualizzare nella dialogFilter
 	app.getFields = async () => {
@@ -783,6 +774,7 @@ var StorageMetric = new MetricStorage();
 		console.log(Query.metricName);
 		//console.log(Query.table);
 		// verifico se ci sono filtri da associare a questa metrica
+		debugger;
 		const ul = app.dialogMetric.querySelector('#existsFilter_Metric > ul');
 		console.log('ul con filtri all\'interno della metrica : ', ul);
 		let filtersAssociated = {};
@@ -832,44 +824,32 @@ var StorageMetric = new MetricStorage();
 
 		debugger;
 		const formula = `${Query.table}.${textarea.value}`;
-		// ciclo gli elementi nella formula per creare il filtro
-		// Array.from(document.querySelectorAll('#filterFormula > span')).forEach((span) => {
-		// 	//console.log(span);
-		// 	formula += (span.classList.contains('formulaField')) ? `${Query.table}.${span.innerText} `: `${span.innerText} `;
-		// });
-	
 		console.log(formula);
-
-		// Query.filters = formula.trimEnd();
-		// Quando creo un filtro su una determinata tabella posso riutilizzarlo elencando la lista dei filtri già creati, successivamnete...
-		// ...cliccando una determinata tabella mostro l'elenco dei filtri già creati per questa tabella, in modo da non duplicarli e/o non doverli ricreare
-		// const filterObj = ;
 		StorageFilter.save = {'type': 'FILTER', 'name': filterName.value, 'table': Query.table, formula};
-	
-		// visualizzo il filtro appena creato nella section #sectionFields-filter
-		// TODO: e anche nella lista dei filtri esistenti all'interno della metrica, se si vuole utilizzarlo nella metrica 
-		/*const ulFilterMetric = document.getElementById('ul-existsFilter_Metric');
-		let ulContent = app.tmplListField.content.cloneNode(true);
-		let elementFilterMetric = ulContent.querySelector('.element');
-		let liFilterMetric = elementFilterMetric.querySelector('li');
-		liFilterMetric.setAttribute('label', filterName.value);
-		liFilterMetric.innerText = filterName.value;
-		elementFilterMetric.appendChild(liFilterMetric);
-		ulFilterMetric.appendChild(elementFilterMetric);
+		const existFilterRef = app.dialogFilter.querySelector('#existFilters');
+		const ul = existFilterRef.querySelector("ul[data-id='fields-filter']");
+		// const parent = document.getElementById('existFilters'); // dove verrà inserita la <ul>
 
-		let ul = document.getElementById('createdFilters');
-		let li = document.createElement('li');
-		let element = document.createElement('div');
-		li.innerText = filterName.value;
-		li.setAttribute('label', filterName.value);
-		element.className = 'element';
-		element.appendChild(li)
-		ul.appendChild(element);
+		const contentElement = app.tmpl_ulListWithEdit.content.cloneNode(true);
+		const section = contentElement.querySelector('section');
+		const element = section.querySelector('.element');
+		const li = element.querySelector('li');
+		const iEdit = element.querySelector('#edit-icon');
+		section.hidden = false;
+		section.setAttribute('data-label-search', Query.filterName);
+		section.setAttribute('data-table-name', Query.table);
+		li.innerText = Query.filterName;
+		li.setAttribute('label', Query.filterName);
+		iEdit.setAttribute("data-popup-label", "Modifica filtro");
+		ul.appendChild(section);
+		li.onclick = app.handlerFilterSelected;
+
+	
 		// reset del form
-		filterName.value = '';
+		filterName.value = "";
 		filterName.focus();
 		// pulisco la textarea
-		textarea.querySelectorAll('span').forEach((span) => {span.remove();});*/
+		textarea.value = "";
 	};
 
 	app.btnFilterDone.onclick = () => {
@@ -1157,7 +1137,7 @@ var StorageMetric = new MetricStorage();
 					const element = section.querySelector('.element');
 					const li = element.querySelector('li');
 					const iEdit = element.querySelector('#edit-icon');
-					iEdit.setAttribute('data-popup-label', "Modifica filtro");
+					iEdit.setAttribute('data-popup-label', "Modifica filtro"); // TODO: aggiungere eventListener
 					section.setAttribute('data-label-search', filter.name);
 					section.setAttribute('data-table-name', table);
 					li.innerText = filter.name;
@@ -1349,6 +1329,10 @@ var StorageMetric = new MetricStorage();
 	document.querySelectorAll('i[data-popup-label]').forEach( (icon) => {
 		icon.onmouseenter = app.showPopup;
 		icon.onmouseleave = app.hidePopup;
+	});
+
+	document.querySelectorAll('dialog i[data-popup-label').forEach( (icon) => {
+		icon.onmouseenter = app.showPopupDialog;
 	});
 
 	// input di ricerca nella dialogFilter, ricerca nell'elenco dei valori
