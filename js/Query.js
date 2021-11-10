@@ -1,6 +1,8 @@
 class Queries {
+	#select;
 	constructor() {
-		this._select = {};
+		// this._select = {};
+		this.#select = {};
 		// this._fromCubes = new Set(); // qui memorizzo solo i cubi, clausola FROM
 		this._fromSet = new Set();
 		// this._whereMap = new Map();
@@ -47,33 +49,33 @@ class Queries {
 	get filterName() {return this._filterName;}
 
 	set select(object) {
-		// es.: this._select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
+		// es.: this.#select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
 		this._obj = {};
-		if (this._select.hasOwnProperty(this._table)) {
-			// tabella già presente nell'object _select
-			if (!this._select[this._table].hasOwnProperty(this._field)) {
-				// field NON presente in _select[_table], lo aggiungo
-				this._select[this._table][this._field] = object;
+		if (this.#select.hasOwnProperty(this._table)) {
+			// tabella già presente nell'object #select
+			if (!this.#select[this._table].hasOwnProperty(this._field)) {
+				// field NON presente in #select[_table], lo aggiungo
+				this.#select[this._table][this._field] = object;
 			}
 		} else {
 			this._obj[this._field] = object;
-			this._select[this._table] = this._obj;
+			this.#select[this._table] = this._obj;
 		}
-		console.log('select : ', this._select);
+		console.log('select : ', this.#select);
 	}
 
-	get select() {return this._select;}
+	get select() {return this.#select;}
 
 	deleteSelect() {
-		delete this._select[this._table][this._field];
-		// verifico se this._select[this._table] contiene altri elementi, se non li contiene elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this._select[this._table]).length === 0) delete this._select[this._table];
+		delete this.#select[this._table][this._field];
+		// verifico se this.#select[this._table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
+		if (Object.keys(this.#select[this._table]).length <= 1 ) delete this.#select[this._table];
 
-		console.log('select : ', this._select);
+		console.log('select : ', this.#select);
 	}
 
 	getAliasColumn() {
-		return this._select[this._table][this._field]['alias'];
+		return this.#select[this._table][this._field]['alias'];
 	}
 
 	set joinId(value) {this._joinId = value;}
@@ -104,7 +106,7 @@ class Queries {
 	set filters(object) {
 		this._obj = {};
 		if (this._filter.hasOwnProperty(this._table)) {
-			// tabella già presente nell'object _select
+			// tabella già presente nell'object #select
 			if (!this._filter[this._table].hasOwnProperty(this._filterName)) {
 				this._filter[this._table][this._filterName] = object;
 			}
@@ -130,7 +132,7 @@ class Queries {
 		// es.: this._groupBy[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format)}
 		this._obj = {};
 		if (this._groupBy.hasOwnProperty(this._table)) {
-			// tabella già presente nell'object _select
+			// tabella già presente nell'object #select
 			if (!this._groupBy[this._table].hasOwnProperty(this._field)) {
 				// field NON presente in _groupBy[_table], lo aggiungo
 				this._groupBy[this._table][this._field] = object;
@@ -146,8 +148,8 @@ class Queries {
 
 	deleteGroupBy() {
 		delete this._groupBy[this._table][this._field];
-		// verifico se this._select[this._table] contiene altri elementi, se non li contiene elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this._groupBy[this._table]).length === 0) delete this._groupBy[this._table];
+		// stesa logica di deleteSelect()
+		if (Object.keys(this._groupBy[this._table]).length <= 1) delete this._groupBy[this._table];
 
 		console.log('groupBy : ', this._groupBy);
 	}
@@ -218,7 +220,7 @@ class Queries {
 
 	save(processId, name) {
 		this._reportProcess = {};
-		this._reportProcess['select'] = this._select;
+		this._reportProcess['select'] = this.#select;
 		this._reportProcess['from'] = Array.from(this._fromSet); // converto il set in un array
 		this._reportProcess['where'] = this._where;
 		this._reportProcess['factJoin'] = this._factRelation;

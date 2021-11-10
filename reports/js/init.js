@@ -566,10 +566,13 @@ var StorageMetric = new MetricStorage();
 			// deselezionato
 			Query.deleteSelect();
 			Query.deleteGroupBy();
+		} else {
+			// selezionato
+			// passo il focus alla textarea
+			// document.getElementById('sqlFormula').focus();
+			document.getElementById('inputColumnName').focus();
 		}
-		// passo il focus alla textarea
-		// document.getElementById('sqlFormula').focus();
-		document.getElementById('inputColumnName').focus();
+		
 	};
 
 	// selezione della FACT nella sezione metric
@@ -715,7 +718,7 @@ var StorageMetric = new MetricStorage();
 		.catch( (err) => console.error(err));
 	};
 
-	app.btnColumnDone.onclick = (e) => {
+	app.btnColumnDone.onclick = () => {
 		// console.log('Query.table : ', Query.table);
 		// console.log('Query.tableId : ', Query.tableId);
 		const hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
@@ -723,17 +726,16 @@ var StorageMetric = new MetricStorage();
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
 		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
 		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table);
+		// verifico se l'object _select ha elementi selezionati (per una determinata tabella). _select avrà sempre almeno 1 elemento selezionato, si tratta della primaryKey
+		// ... quindi, oltre a verificare se ci sono colonne selezionate, devo verificare anche se ce n'è una sola, quella è la primaryKey
+
 		if (Query.select[Query.table]) {
-			// Ci sono campi selezionati per questa tabella, aggiungo anche la primaryKey di questa tabella, contrassegnata dall'attr data-key
-			// TODO: al momento disattivato
+			// Ci sono colonne selezionate per questa tabella, quindi aggiungo anche la primaryKey (contrassegnata dall'attr data-key)
 			const fieldList = document.getElementById('table-fieldList'); // contiene la ul con i nomi dei field
 			// cerco la <li> che ha data-key='PRI'
 			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"] li[data-key="PRI"]').getAttribute('label');
-			debugger;
-			Query.select = {SQLFormat: null, alias : Query.table+"_"+Query.field};
-			
-			// TODO: aggiungo anche la primaryKey per questa tabella (Questo serve per fare la join tra le varie temp table quando ci sono metriche filtrate)
-			
+			Query.select = {SQLFormat: null, alias : "pri_"+Query.table+"_"+Query.field};
+			Query.groupBy = {SQLFormat: null};
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
 				if (+k >= Query.tableId) {
@@ -748,10 +750,11 @@ var StorageMetric = new MetricStorage();
 			columnIcon.setAttribute('selected', true);
 		} else {
 			debugger;
-			// non ci sono filtri impostati/selezionati per questa tabella, la elimina da Query.from e deseleziono con l'attr 'selected' in 'fieldList-tables'
+			// non ci sono colonne impostati/selezionati per questa tabella, oppure c'è solo l'id impostato (in automatico) per questa tabella. 
+			// La elimino da Query.from e dalla Query.join, deseleziono con l'attr 'selected' in 'fieldList-tables'
+			// se l'elemento <li> con il nome della tabella NON contiene l'attr data-filters (quindi su questa tabella non è stato impostata un filtro) la posso eliminare dalla _from e dalla _join
 			liTable.removeAttribute('data-columns');
 			columnIcon.removeAttribute('selected');
-			// se l'elemento <li> con il nome della tabella NON contiene l'attr data-filters (quindi su questa tabella non è stato impostato un filtro) la posso eliminare dalla _from e dalla _join
 			if (!liTable.hasAttribute('data-filters')) {
 				for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
 					// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
@@ -764,6 +767,7 @@ var StorageMetric = new MetricStorage();
 					};
 				}
 			}
+			
 		}
 		app.dialogTables.close();
 	};
@@ -1392,7 +1396,7 @@ var StorageMetric = new MetricStorage();
 		console.clear();
 		const alias = document.getElementById('inputColumnName').value;
 		const textarea = (document.getElementById('sqlFormula').value.length === 0) ? null : document.getElementById('sqlFormula').value;
-
+		debugger;
 		Query.select = {SQLFormat: textarea, alias};
 		// aggiungo la colonna selezionata a Query.groupBy
 		Query.groupBy = {SQLFormat: textarea};
