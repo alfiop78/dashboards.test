@@ -45,7 +45,7 @@ var StorageMetric = new MetricStorage();
 		
 		btnBackPage : document.getElementById('mdcBack'), // da definire
 		ulDimensions : document.getElementById('dimensions'),
-		aggregationFunction : document.getElementById('function-list')
+		aggregationFunction : document.getElementById('sql-aggregation-list')
 	};
 
 	app.showPopupDialog = (e) => {
@@ -535,6 +535,7 @@ var StorageMetric = new MetricStorage();
 		// ripulisco la lista dei filtri
 		if (parent.querySelector('ul')) parent.querySelector('ul').remove();
 		console.log('Dim.dimension : ', Dim.dimensions);
+		debugger;
 		for (const [key, value] of (Object.entries(Dim.dimensions))) {
 			// per ogni tabella presente nella property 'from' recupero i filtri presenti nello storage
 			value.from.forEach( (table) => {

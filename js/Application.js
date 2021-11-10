@@ -127,10 +127,9 @@ class Application {
 	}
 
 	// Ricerca in una lista, il tag section ha l'attributo data-label-search
-	searchInSectionList(e, es) {
+	searchInSectionList(e) {
 		console.clear();
 		debugger;
-		console.log('es : ', es);
 		// console.log(e.path);
 		// console.log(e.target.value);
 		const ul = e.path[2].querySelector('ul');
