@@ -722,16 +722,16 @@ var StorageMetric = new MetricStorage();
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
 		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
-		debugger;
 		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table);
-		// console.log('query.select : ', Query.select[Query.table]);
 		if (Query.select[Query.table]) {
-			// Ci sono campi selezionati per questa tabella, aggiungo anche il campo 'id' di questa tabella.
+			// Ci sono campi selezionati per questa tabella, aggiungo anche la primaryKey di questa tabella, contrassegnata dall'attr data-key
 			// TODO: al momento disattivato
-			/*const fieldList = document.getElementById('table-fieldList');
-			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"]').getAttribute('data-label-search');
+			const fieldList = document.getElementById('table-fieldList'); // contiene la ul con i nomi dei field
+			// cerco la <li> che ha data-key='PRI'
+			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"] li[data-key="PRI"]').getAttribute('label');
+			debugger;
 			Query.select = {SQLFormat: null, alias : Query.table+"_"+Query.field};
-			*/
+			
 			// TODO: aggiungo anche la primaryKey per questa tabella (Questo serve per fare la join tra le varie temp table quando ci sono metriche filtrate)
 			
 			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
@@ -745,7 +745,6 @@ var StorageMetric = new MetricStorage();
 				};
 			}
 			liTable.setAttribute('data-columns', true);
-			debugger;
 			columnIcon.setAttribute('selected', true);
 		} else {
 			debugger;

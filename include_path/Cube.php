@@ -148,9 +148,11 @@ class Cube {
 
 			unset($this->_sql);
 			$metric = "{$metrics->SQLFunction}({$metrics->table}.{$metrics->field}) AS `{$metrics->alias}`";
-			echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $metrics->filters);
+			// echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $metrics->filters);
+			echo $this->createMetricTable('W_AP_metric_'.$this->reportName."_".$i, $metric, $metrics->filters);
 			// a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-			$this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
+			// $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
+			$this->_metricTable["W_AP_metric_".$this->reportName."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
 			$i++;
 		}
 	}
