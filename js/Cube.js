@@ -50,6 +50,7 @@ class Cube {
 	get fieldSelected() {return this._field;}
 
 	set metrics(field) {
+		// TODO: da rivedere, utilizzare la stessa logica utilizzata in dimension.columns() per aggiungere/rimuovere la field selezionata
 		if (!this._metrics.hasOwnProperty(this._tableName)) {this._arrMetrics = [];}
 
 		this._arrMetrics.push(field);
@@ -101,21 +102,25 @@ class Cube {
 }
 
 class Dimension {
-	#cols;
+	#columns; // private
+	#field;
 	constructor() {
 		this._dimension = {};
 		this._join = {}; // relazioni tra le tabelle
 		this._hierarchies = {}; // ordine gerarchico
 		this._lastTableInHierarchy;
-		this._columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
-		this._columnsSet = new Set(); // array contente le colonne selezionate, questo array verrà inserito nel'object this._columns
-		this.#cols = {};
+		this.#columns = {}; // Object di colonne selezionate, queste potranno essere inserite nella creazione del report {'nometabella' : [array di colonne]}
+		this.#field = {};
 		this.relationId = 0;
 	}
 
 	set id(value) {this._id = value;}
 
 	get id() {return this._id;}
+
+	set field(object) {this.#field = object;}
+
+	get field() {return this.#field;}
 
 	set activeCard(cardRef) {
 		// la card su cui si sta operando
@@ -160,24 +165,30 @@ class Dimension {
 		});
 	}
 
-	set columns(object) {
-		console.log('object : ', object);
-		debugger;
-		// se il nome della tabella è già presente, aggiungo l'elemento al Set, altrimenti pulisco il Set per azzerare le colonne già inserite in un'altra tabella
-		if (!this._columns.hasOwnProperty(this._tableName)) {this._columnsSet.clear();}
-		(this._columnsSet.has(field)) ? this._columnsSet.delete(field) : this._columnsSet.add(field);
-
-		this._columns[this._tableName] = Array.from(this._columnsSet);
-		console.log(this._columns);
+	columns() {
+		this._obj = {};
+		if (!this.#columns.hasOwnProperty(this._tableName)) {
+			// #columns non ha l'attributo _tableName, lo aggiungo
+			this._obj[this.#field.field] = this.#field.type;
+			this.#columns[this._tableName] = this._obj;
+		} else {
+			// tabella già presente, verifico se il campo è già presente, se non lo è lo aggiungo altrimenti lo elimino
+			if (!this.#columns[this._tableName].hasOwnProperty(this.#field.field)) {
+				// field non esistente per questa tabella, lo aggiungo
+				this.#columns[this._tableName][this.#field.field] = this.#field.type;
+			} else {
+				// field già esiste per questa tabella, lo elimino
+				delete this.#columns[this._tableName][this.#field.field];
+			}
+		}
+		console.log('this.#columns : ', this.#columns);
 	}
-
-	get columns() {return this._columns;}
 
 	save() {
 		debugger;
 		this._dimension.type = 'DIMENSION';
 		// TODO Aggiungere dimensionId
-		this._dimension.columns = this._columns;
+		this._dimension.columns = this.#columns;
 		this._dimension.name = this._title;
 		this._dimension.from = this._from;
 		this._dimension.join = this._join;

@@ -1110,6 +1110,7 @@ var StorageMetric = new MetricStorage();
 			// console.log('value : ', value.columns);
 			for ( const [table, fields] of Object.entries(value.columns)) {
 				console.log('table : ', table);
+				debugger;
 				// console.log('fields : ', fields);
 				fields.forEach( (field) => {
 					const contentElement = app.tmpl_ulListSection.content.cloneNode(true);

@@ -295,6 +295,8 @@ var dimension = new Dimension();
 		// console.log(e.target);
 		dimension.activeCard = e.path[3];
 		cube.fieldSelected = e.currentTarget.getAttribute('label');
+		// TODO: utilizzare uno dei due qui, cube.fieldSelected oppure dimension.field, da rivedere
+		dimension.field = {field : e.currentTarget.getAttribute('label'), type : e.currentTarget.getAttribute('data-key')};
 	
 		// console.log(cube.activeCard);
 
@@ -354,7 +356,7 @@ var dimension = new Dimension();
 					console.log('columns');
 					e.currentTarget.toggleAttribute('columns');
 					// nel metodo columns c'è la logica per controllare se devo rimuovere/aggiungere la colonna selezionata
-					dimension.columns = cube.fieldSelected;
+					dimension.columns();
 				}
 		}
 	};
@@ -371,7 +373,9 @@ var dimension = new Dimension();
 		// quando aggiungo la tabella imposto da subito la colonna id in "columns"
 		dimension.activeCard = cardTable; // card attiva
 		const primaryKey = dimension.activeCard.querySelector('ul li[data-key="PRI"]');
-		dimension.columns = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
+		dimension.field = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
+		// dimension.columns = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
+		dimension.columns();
 		// dimension.columns = primaryKey.getAttribute('label');
 		// con l'attributo columns verrà mostrata l'icona "columns associata"
 		primaryKey.toggleAttribute('columns');
