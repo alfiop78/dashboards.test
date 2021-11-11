@@ -279,14 +279,13 @@ class DimensionStorage extends Storages {
 		return JSON.parse(this.storage.getItem(this.#name));
 	}
 
-	addDimensions() {
+	add() {
 		// creo un object con le dimensioni che sono state selezionate
-		// this.#dimensions.add(this.#name);
 		this.#dimensions.set(this.#name, this.selected.from);
 		console.log('#dimensions : ', this.#dimensions);
 	}
 
-	deleteDimensions() {
+	delete() {
 		this.#dimensions.delete(this.#name);
 		console.log('#dimensions : ', this.#dimensions);
 	}

@@ -22,8 +22,7 @@ var StorageMetric = new MetricStorage();
 
 		// popup
 		popup : document.getElementById('popup'),
-		dialogPopupTables : document.getElementById('dialog-popup-tables'),
-		dialogPopupFilters : document.getElementById('dialog-popup-filters'),
+		dialogPopup : null,
 
 		// btn		
 		btnPreviousStep : document.getElementById('stepPrevious'),
@@ -53,27 +52,31 @@ var StorageMetric = new MetricStorage();
 	};
 
 	app.showPopupDialog = (e) => {
-		// debugger;
-		const yPosition = e.target.getBoundingClientRect().bottom + 10;
-		const left = e.target.getBoundingClientRect().left;
-		const right = e.target.getBoundingClientRect().right;
+		// console.log('e : ', e);
+		const yPosition = e.target.offsetTop + e.target.clientHeight + 10; // offsetTop : altezza dall'elemento dialog + clienteHeight : altezza dell'icona
+		const left = e.target.offsetLeft;
+		const right = e.target.offsetLeft + e.target.clientWidth;
+		// console.log('left : ', left);
+		// console.log('right : ', right);
 		// ottengo il centro dell'icona
 		let centerElement = left + ((right - left) / 2);
-		app.dialogPopupFilters.innerHTML = e.currentTarget.getAttribute('data-popup-label');
-		app.dialogPopupFilters.style.display = 'block';
-		// ottengo la metà del dialogPopupFilters, la sua width varia a seconda di cosa c'è scritto dentro, quindi qui devo prima visualizzarlo (display: block) e dopo posso vedere la width
-		const elementWidth = app.dialogPopupFilters.offsetWidth / 2;
-		// il dialogPopupFilters verrà posizionato al centro dell'icona
+		app.dialogPopup.innerHTML = e.currentTarget.getAttribute('data-popup-label');
+		app.dialogPopup.style.display = 'block';
+		// ottengo la metà del dialogPopup, la sua width varia a seconda di cosa c'è scritto dentro, quindi qui devo prima visualizzarlo (display: block) e dopo posso vedere la width
+		const elementWidth = app.dialogPopup.offsetWidth / 2;
+		// il dialogPopup verrà posizionato al centro dell'icona
 		const xPosition = centerElement - elementWidth;
 		
-		app.dialogPopupFilters.style.setProperty('--left', xPosition+"px");
-		app.dialogPopupFilters.style.setProperty('--top', yPosition+"px");
-		app.dialogPopupFilters.animate([
+		app.dialogPopup.style.setProperty('--left', xPosition+"px");
+		app.dialogPopup.style.setProperty('--top', yPosition+"px");
+		app.dialogPopup.animate([
 			{transform: 'scale(.2)'},
 			{transform: 'scale(1.2)'},
 			{transform: 'scale(1)'}
 		], { duration: 50, easing: 'ease-in-out' });
 	}
+
+	app.hidePopupDialog = () => app.dialogPopup.style.display = 'none';
 
 	app.showPopup = (e) => {
 		// const toast = document.getElementById('toast');
@@ -84,6 +87,8 @@ var StorageMetric = new MetricStorage();
 		const yPosition = e.target.getBoundingClientRect().bottom + 10;
 		const left = e.target.getBoundingClientRect().left;
 		const right = e.target.getBoundingClientRect().right;
+		// console.log('left : ', left);
+		// console.log('right : ', right);
 		// ottengo il centro dell'icona
 		let centerElement = left + ((right - left) / 2);
 		app.popup.innerHTML = e.currentTarget.getAttribute('data-popup-label');
@@ -205,7 +210,7 @@ var StorageMetric = new MetricStorage();
 			Query.factRelation = Dim.selected;
 			// imposto, in un object le dimensioni selezionate, questo mi servirà nella dialog-metrics per visualizzare/nascondere solo i filtri appartenenti alle dimensioni selezionate
 			// ... probabilmente mi servirà anche nella dialog-filter per lo stesso utilizzo
-			Dim.addDimensions();
+			Dim.add();
 		} else {
 			document.querySelectorAll("ul[data-id='fields-hierarchies'] > section[data-dimension-name='"+Dim.selected.name+"']").forEach( (hier) => {
 				hier.hidden = true;
@@ -213,7 +218,7 @@ var StorageMetric = new MetricStorage();
 			});
 			// TODO: delete factRelation
 			Query.deleteFactRelation(Dim.selected.name);
-			Dim.deleteDimensions();
+			Dim.delete();
 		}
 	};
 
@@ -334,7 +339,7 @@ var StorageMetric = new MetricStorage();
 				li.onclick = e => e.currentTarget.toggleAttribute('selected');
 			});
 		}
-		debugger;
+		app.dialogPopup = app.dialogMetric.querySelector('#dialog-popup');
 		app.dialogMetric.showModal();
 	};
 
@@ -416,6 +421,7 @@ var StorageMetric = new MetricStorage();
 		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( filter => filter.hidden = false);
 		// nascondo i filter NON appartenenti alla tabella selezionata
 		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( filter => filter.hidden = true);
+		app.dialogPopup = app.dialogFilter.querySelector('#dialog-popup');
 		app.dialogFilter.showModal();
 	};
 
@@ -1064,6 +1070,26 @@ var StorageMetric = new MetricStorage();
 	app.checkSelection = () => {
 		debugger;
 		// TODO: devo sapere in quale step mi trovo per poter verificare se sono stati selezionati gli elementi per proseguire
+		const activeStep = document.querySelector('.step[selected]');
+		const dataStep = +activeStep.getAttribute('data-step');
+		switch (dataStep) {
+			case 1:
+				// cubi e dimensioni
+				if (StorageCube.cubeSelected.size === 0) {
+					console.log('Cubo non selezionato');
+					return false;
+				}
+				if (Dim.selectedDimensions.size === 0) {
+					console.log('Dimensione non selezionata');
+					return false;
+				}
+			break
+			case 2:
+			break
+			default :
+			// step 3
+		}
+			
 	};
 
 	app.btnPreviousStep.onclick = () => {
@@ -1072,8 +1098,7 @@ var StorageMetric = new MetricStorage();
 
 	app.btnNextStep.onclick = () => {
 		// verifica selezioni cubo e dimensioni
-		app.checkSelection();
-		Step.next();
+		if (app.checkSelection()) Step.next();
 	};
 
 	// tasto completato nello step 4, // dialog per il salvataggio del nome del report
@@ -1135,6 +1160,7 @@ var StorageMetric = new MetricStorage();
 
 	document.querySelectorAll('dialog i[data-popup-label').forEach( (icon) => {
 		icon.onmouseenter = app.showPopupDialog;
+		icon.onmouseleave = app.hidePopupDialog;
 	});
 
 	// input di ricerca nella dialogFilter, ricerca nell'elenco dei valori
