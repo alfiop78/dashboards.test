@@ -37,6 +37,8 @@ class Storages {
 }
 
 class CubeStorage extends Storages {
+	#cubeSelected = new Set();
+	#name;
 	constructor() {
 		super();
 		this._cubes = {}; // lista dei cubi presenti nello storage
@@ -59,12 +61,24 @@ class CubeStorage extends Storages {
 
 	set selected(value) {
 		// imposto il cubo selezionato
-		this._name = value;
+		this.#name = value;
 	}
 
 	get selected() {
-		return JSON.parse(this.storage.getItem(this._name));
+		return JSON.parse(this.storage.getItem(this.#name));
 	}
+
+	addCube() {
+		this.#cubeSelected.add(this.selected.FACT);
+		console.log('#cubeSelected : ', this.#cubeSelected);
+	}
+
+	deleteCube() {
+		this.#cubeSelected.delete(this.selected.FACT);
+		console.log('#cubeSelected : ', this.#cubeSelected);
+	}
+
+	get cubeSelected() {return this.#cubeSelected;}
 
 	getIdAvailable() {
 		// ottengo il primo Id disponibile
@@ -145,125 +159,6 @@ class CubeStorage extends Storages {
 		if (jsonStorage.type === 'CUBE') {
 		  return jsonStorage.associatedDimensions;
 		}
-	}
-}
-
-class ReportStorage extends Storages {
-	// Metodi per leggere/scrivere Report nello Storage
-	constructor() {
-		super();
-		this.id = 0;
-	}
-
-	set reportId(value) {
-		this.id = value;
-	}
-
-	get reportId() { return this.id; }
-
-	getIdAvailable() {
-		// ottengo il primo Id disponibile
-		// console.log(this.storageKeys);
-		this.elements = [];
-		this.storageKeys.forEach((key) => {
-			let jsonStorage = JSON.parse(this.storage.getItem(key));
-			// console.log(jsonStorage);
-
-			if (jsonStorage.type === 'REPORT') {
-				// ottengo il numero di elementi PAGE nello storage
-				this.elements.push(jsonStorage.id);
-			}
-		});
-		// TODO: cerco il primo id "libero"
-		// ordino l'array
-		this.elements.sort(function (a, b) {
-		  // console.log(a);
-		  // console.log(b);
-		  // TODO: cosa sono a e b ?
-		  return a - b;
-		});
-
-		// this.pagesElement.sort((a, b) => a - b);
-		for (let i = 0; i < this.elements.length; i++) {
-			// indice 0
-			// se 0 è presente in elements aggiungo una unità
-			// console.log(this.pagesElement.includes(i));
-
-			if (this.elements.includes(i)) {
-				this.id++;
-				// console.log(this.id);
-			} else {
-				this.id = i;
-			}
-		}
-		return this.id;
-	}
-
-	set settings(report_id) {
-		// TODO: da rivedere e ottimizzare
-		this.reportParams = null;
-		this.storageKeys.forEach((key) => {
-			let jsonStorage = JSON.parse(this.storage.getItem(key));
-			// console.log(key);
-			if (jsonStorage.type === 'REPORT') {
-				// console.log("report : "+key);
-				// console.log(jsonStorage.id);
-				// console.log(report_id);
-				// console.log(jsonStorage);
-				if (jsonStorage.id === report_id) {
-					this.reportParams = jsonStorage;
-					this.reportName = jsonStorage.name;
-				}
-			}
-		});
-	}
-
-	set reportName(value) {this.name = value;}
-
-	get reportName() { return this.name;}
-
-	get settings() {return JSON.stringify(this.reportParams);}
-
-	set options(report_id) {
-		// TODO: da rivedere e ottimizzare
-		this._options = null;
-		this.storageKeys.forEach((key) => {
-			let jsonStorage = JSON.parse(this.storage.getItem(key));
-			// console.log(key);
-			if (jsonStorage.type === 'REPORT') {
-				// console.log("report : "+key);
-				// console.log(jsonStorage.id);
-				// console.log(report_id);
-				// console.log(jsonStorage.options);
-				if (jsonStorage.id === report_id) {
-					this._options = jsonStorage.options;
-				}
-			}
-		});
-	}
-
-	get options() {return JSON.stringify(this._options);}
-
-	list() {
-		// let reports = [];
-		let reports = {};
-		this.storageKeys.forEach((key) => {
-			let jsonStorage = JSON.parse(this.storage.getItem(key));
-			// console.log(key);
-			if (jsonStorage.type === 'REPORT') {
-				// console.log("cubo : "+key);
-				let reportProperties = {'name' : key, 'reportId' : jsonStorage.id, 'datamartId' : jsonStorage.datamartId};
-				// reports.push(reportProperties);
-				reports[key] = reportProperties;
-			}
-		});
-		return reports;
-	}
-
-	getJSON(value) {
-		let reports = {};
-		let report = JSON.parse(this.storage.getItem(value));
-		return report;
 	}
 }
 
@@ -348,13 +243,16 @@ class ProcessStorage extends Storages {
 }
 
 class DimensionStorage extends Storages {
+	#dimensions = new Map();
+	#name;
 	// Metodi per leggere/scrivere Dimensioni nello Storage
 	// TODO: da completare in base alla logica di PageStorage
 	constructor() {
 		super();
+		// this.#dimensions = new Set();
 		this._dimensions = {}; // lista dimensioni presenti nello storage
 		this.id = 0; // default
-		this._name;
+		// this.#name;
 		this.storageKeys.forEach((key) => {
 			let jsonStorage = JSON.parse(this.storage.getItem(key));
 			// console.log(key);
@@ -373,12 +271,27 @@ class DimensionStorage extends Storages {
 
 	set selected(value) {
 		// imposto la dimensione selezionata
-		this._name = value;
+		this.#name = value;
+		console.log('#name : ', this.#name);
 	}
 
 	get selected() {
-		return JSON.parse(this.storage.getItem(this._name));
+		return JSON.parse(this.storage.getItem(this.#name));
 	}
+
+	addDimensions() {
+		// creo un object con le dimensioni che sono state selezionate
+		// this.#dimensions.add(this.#name);
+		this.#dimensions.set(this.#name, this.selected.from);
+		console.log('#dimensions : ', this.#dimensions);
+	}
+
+	deleteDimensions() {
+		this.#dimensions.delete(this.#name);
+		console.log('#dimensions : ', this.#dimensions);
+	}
+
+	get selectedDimensions() {return this.#dimensions;}
 
 	list() {
 		// let dimensions = [];
@@ -442,6 +355,7 @@ class DimensionStorage extends Storages {
 
 	get dimensions() {return this._dimensions;}
 
+
 }
 
 class FilterStorage extends Storages {
@@ -483,7 +397,7 @@ class FilterStorage extends Storages {
 		//   }
 		// });
 		// return this.filters;
- 	//  }
+	//  }
 
 	getIdAvailable() {
 		// ottengo il primo Id disponibile

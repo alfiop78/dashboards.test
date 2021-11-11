@@ -96,12 +96,18 @@ class Queries {
 	get where() {return this._where;}
 
 	set factRelation(dimension) {
-		console.log('dimName : ', dimension.name);
+		// console.log('dimName : ', dimension.name);
 		this._factRelation[dimension.name] = dimension.cubes;
-		console.log('fact join : ', this._factRelation);
+		console.log('_factRelation : ', this._factRelation);
 	}
 
 	get factRelation() {this._factRelation;}
+
+	deleteFactRelation(dimName) {
+		debugger;
+		delete this._factRelation[dimName];
+		console.log('_factRelation : ', this._factRelation);
+	}
 
 	set filters(object) {
 		this.#obj = {};

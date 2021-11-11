@@ -8,6 +8,10 @@ var StorageMetric = new MetricStorage();
 
 (() => {
 	App.init();
+
+	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
+	var Step = new Steps('stepTranslate');
+
 	var app = {
 		// templates
 		tmplListField : document.getElementById('templateListField'),
@@ -106,9 +110,6 @@ var StorageMetric = new MetricStorage();
 		app.popup.style.display = 'none';
 	};
 
-	// la Classe Steps deve impostare alcune proprietà DOPO che viene visualizzato il body, non può essere posizionato prima di App.init();
-	var Step = new Steps('stepTranslate');
-
 	// 2021-10-19 click sul report da processare/elaborare. tasto "Process Report"
 	app.handlerReportToBeProcessed = async (e) => {
 		const label = e.target.getAttribute('label');
@@ -158,6 +159,7 @@ var StorageMetric = new MetricStorage();
 		// const cubeId = e.currentTarget.getAttribute('data-cube-id');
 		// const fieldType = e.currentTarget.getAttribute('data-list-type');
 		StorageCube.selected = e.currentTarget.getAttribute('label');
+
 		console.log('cube selected : ', StorageCube.selected.name);
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
@@ -168,6 +170,8 @@ var StorageMetric = new MetricStorage();
 				dimension.hidden = false;
 				dimension.toggleAttribute('data-searchable');
 			});
+			// aggiungo la FACT al cubeSelected, questa mi serve per recuperare i filtri nella dialog-metrics che appartengono alla FACT
+			StorageCube.addCube();
 			// visualizzo la FACT nello step 3 Metrics
 			document.querySelectorAll("ul[data-id='fields-tables'] > section[data-cube-name='"+StorageCube.selected.name+"']").forEach( (table) => {
 				table.hidden = false;
@@ -184,90 +188,34 @@ var StorageMetric = new MetricStorage();
 				table.hidden = true;
 				table.toggleAttribute('data-searchable');
 			});
+			StorageCube.deleteCube();
 		}
 	};
 
+	// selezione delle dimensioni
 	app.handlerDimensionSelected = (e) => {
 		Dim.selected = e.currentTarget.getAttribute('data-dimension-name');
 		console.log('Dimensione selezionata : ', Dim.selected);
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
 			document.querySelectorAll("ul[data-id='fields-hierarchies'] > section[data-dimension-name='"+Dim.selected.name+"']").forEach( (hier) => {
-				// console.log('elenco gerarchie appartententi alla dimensione selezionata : ', hier);
 				hier.hidden = false;
 				hier.toggleAttribute('data-searchable');
 			});
 			Query.factRelation = Dim.selected;
-			// Query.where = Dim.selected.join;
-			// Query.from = Dim.selected.from;
+			// imposto, in un object le dimensioni selezionate, questo mi servirà nella dialog-metrics per visualizzare/nascondere solo i filtri appartenenti alle dimensioni selezionate
+			// ... probabilmente mi servirà anche nella dialog-filter per lo stesso utilizzo
+			Dim.addDimensions();
 		} else {
-			// TODO: deselect cube
 			document.querySelectorAll("ul[data-id='fields-hierarchies'] > section[data-dimension-name='"+Dim.selected.name+"']").forEach( (hier) => {
-				// console.log('elenco gerarchie appartententi alla dimensione selezionata : ', hier);
 				hier.hidden = true;
 				hier.toggleAttribute('data-searchable');
 			});
 			// TODO: delete factRelation
+			Query.deleteFactRelation(Dim.selected.name);
+			Dim.deleteDimensions();
 		}
 	};
-
-	// selezione del cubo step-1
-	/*app.handlerCubeSelected = (e) => {
-		const cubeId = e.currentTarget.getAttribute('data-cube-id');
-		StorageCube.selected = e.currentTarget.getAttribute('label');
-		console.log('cube selected : ', StorageCube.selected);
-		e.currentTarget.toggleAttribute('selected');
-		if (e.currentTarget.hasAttribute('selected')) {
-			Query.addFromCubes(StorageCube.selected.FACT);	
-			// aggiungo la fact table nella clausola FROM
-			// Query.from = StorageCube.selected.FACT;
-			// Query.addFromCubes(StorageCube.selected.FACT);
-			// ...e la join presente nella fact, stabilita in Mapping
-			// la join non è più presente nella fact ma nelle dimensioni
-			// Query.factRelation = StorageCube.selected.relations;
-			
-			app.createListTableMetrics(StorageCube.selected.metrics, StorageCube.selected.name);
-			
-			// recupero l'object StorageCube dallo storage, con questo object recupero le dimensioni associate al cubo in 'associatedDimensions'
-			// console.log(StorageCube.associatedDimensions(cubeName));
-			let ul = document.getElementById('dimensions');
-			// dimensioni associate al cubo selezionato
-			const dimensions = StorageCube.associatedDimensions(StorageCube.selected.name);
-		} else {
-			Query.deleteFromCubes(StorageCube.selected.FACT);
-		}
-	};*/
-
-	// selezione delle dimensioni da utilizzare per la creazione del report
-	/*app.handlerDimensionSelected = (e) => {
-		// imposto attributo selected sulle dimensioni selezionate
-		e.currentTarget.toggleAttribute('selected');
-		// popolo la sezione step 2, "colonne"
-		// popolo anche lo step 3 che riguarda l'inserimento dei filtri, quindi deve essere popolato con le tabelle, compresa la fact
-		const dimName = e.currentTarget.getAttribute('label');
-		Dim.selected = dimName;
-		console.log('Dimensione selezionata : ', Dim.selected);
-		// nella dimensione selezionata c'è la join con il cubo
-		// console.log('join fact : ', Dim.selected.cubes[StorageCube.selected.name]);
-		console.log(Dim.selected.cubes[StorageCube.selected.name]); // relazione con il cubo presente nella dimensione
-		// debugger;
-		// for ( const [k, v] of Object.entries(Dim.selected.cubes[StorageCube.selected.name])) {
-		// 	console.log('k : ', k);
-		// 	console.log('v : ', v);
-		// }
-		// da valutare se passare le join a Query.where una alla volta (ciclo for) oppure passandogli tutto l'object che poi si va a ciclare all'iinterno del Query.where
-		// debugger;
-		Query.where = Dim.selected.cubes[StorageCube.selected.name];
-		app.createListHierarchies(Dim.selected.hierarchies);
-
-		// app.createListTableColumns(Dim.selected.columns);
-
-		// app.createListTableFilters(Dim.selected.from);
-
-		// l'elenco delle relazioni (key "hierarchies") lo devo prendere quando stabilisco le colonne da aggiungere alla FX.
-		// Questo perchè nelle relazioni possono esserci tabelle i cui campi non li aggiungo alla FX, per cui non devono essere messe in join nella query finale
-		// Es.: se scelgo le colonne Azienda.descrizione e Sede.Descrizione ma nella dimensione è presente anche ZonaVenditaCM, non devo aggiungere, nella where, la tabella ZonaVenditaCM (tabella non utilizzata nella clausola SELECT)
-	};*/
 
 	// selezione della gerarchia
 	app.handlerHierSelected = (e) => {
@@ -290,196 +238,6 @@ var StorageMetric = new MetricStorage();
 			});
 		}
 	};
-
-	// crreo la lista delle gerarchie presenti nella dimensione selezionata
-	/*app.createListHierarchies = (hierarchies) => {
-		const ul = document.getElementById('dimension-hierarchies');
-		console.log('ul dimension-hierarchies : ', ul);
-		Object.keys(hierarchies).forEach( (hier, index) => {
-			let elementTable = document.createElement('div');  
-			elementTable.className = 'element';
-			let li = document.createElement('li');
-			li.innerText = hier;
-			li.setAttribute('data-list-type', 'tables');
-			li.setAttribute('label', hier);
-			li.setAttribute('data-hier-id', index);
-			elementTable.appendChild(li);
-			ul.appendChild(elementTable);
-			li.onclick = app.handlerHierSelected;
-
-			// creo lista tabelle nello step "tabelle" 2
-			app.createTableListForColumns(index, hierarchies[hier]);
-
-			// creo lista tabelle nello step "filtri" 3
-			app.createTableListForFilters(index, hierarchies[hier]);
-		});
-	};*/
-
-	// creo l'elenco delle tabelle nel div fieldList-tables, nello step "Gerarchie/Tabelle"
-	/*app.createTableListForColumns = (index, elements) => {
-		let tmpl_ulList = document.getElementById('tmpl_ulList');
-		let ulContent = tmpl_ulList.content.cloneNode(true);
-		let ulTables = ulContent.querySelector('ul[data-id="fields-tables"]');
-		const parentElement = document.getElementById('fieldList-tables'); // elemento a cui aggiungere la ul
-
-		ulTables.setAttribute('data-hier-id', index);
-
-		for (const [tableId, table] of Object.entries(elements)) {
-			// inserisco i field della tabella, nascondo la lista per poi visualizzarla quando si clicca sul nome della tabella
-			let content = app.tmplListField.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
-			li.innerText = table;
-			li.setAttribute('data-table-id', tableId);
-
-			li.setAttribute('label', table);
-			element.appendChild(li);
-			ulTables.appendChild(element);
-			li.onclick = app.handlerTableSelectedColumns; // tabella selezionata
-		}
-		parentElement.appendChild(ulTables);
-	};*/
-
-	// creo elenco tabelle nel div tableList-filter presente nello step Filtri
-	/*app.createTableListForFilters = (index, elements) => {
-		let tmpl_ulList = document.getElementById('tmpl_ulList');
-		let ulContent = tmpl_ulList.content.cloneNode(true);
-		let ulTables = ulContent.querySelector('ul[data-id="fields-tables"]');
-		const parentElement = document.getElementById('tableList-filter'); // elemento a cui aggiungere la ul
-
-		ulTables.setAttribute('data-hier-id', index); // questo id indicherà quale lista tabelle visualizzare, è la <ul> appartenente alla gerarchia
-
-		for ( const [k, value] of Object.entries(elements)) {
-			// elenco tabelle disponibili per ogni dimensione selezionata
-			console.log('elements k: ', k);
-			console.log('elements value: ', value);
-			let content = app.tmplListField.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
-			li.innerText = value;
-			li.setAttribute('label', value);
-			li.setAttribute('data-table-id', k);
-			li.setAttribute('data-list-type', 'filter');
-			element.appendChild(li);
-			ulTables.appendChild(element);
-			li.onclick = app.handlerTableSelectedFilter;
-			// i.onclick = app.handlerAddFilter; // apro la dialog
-			// per ogni tabella presente nella dimensione creo la lista con i filtri appartenenti alla tabella
-			let ulContentFilters = tmpl_ulList.content.cloneNode(true);
-			let ulFilters = ulContentFilters.querySelector('ul[data-id="fields-filter"]'); // conterrà l'elenco dei filtri per ogni tabella presente nella gerarchia
-			ulFilters.setAttribute('data-table-id', k);
-			const parentElement = document.getElementById('fieldList-existFilter'); // elemento a cui aggiungere la ul presa dal template tmpl_ulList
-
-			console.log('lista filtri : ', StorageFilter.list(value));
-			const filters = StorageFilter.list(value);
-
-			for (const [name, value] of Object.entries(filters)) {
-				let content = app.tmplListField.content.cloneNode(true);
-				let element = content.querySelector('.element');
-				let li = element.querySelector('li');
-				li.innerText = name;
-				li.setAttribute('label', name);
-				element.appendChild(li);
-				ulFilters.appendChild(element);
-				li.onclick = app.handlerFilterSelected; // filtro selezionato
-			}
-			parentElement.appendChild(ulFilters);
-		}
-		parentElement.appendChild(ulTables);
-	};*/
-
-	// creo la lista delle tabelle nella sezione dello step 3 - Filtri
-	/*app.createListTableFilters = (from) => {
-		// console.log(from); // array
-		let ul = document.getElementById('tables-filter');
-
-		from.forEach((table, index) => {
-			let li = document.createElement('li');
-			let element = document.createElement('div');
-			let i = document.createElement('i');
-			element.className = 'element';
-			li.innerText = table;
-			i.className = 'material-icons md-18';
-			i.innerText = 'add';
-			i.setAttribute('label', table);
-			li.setAttribute('data-table-id', index);
-			li.setAttribute('data-list-type', 'filter');
-			li.setAttribute('label', table);
-			element.appendChild(li);
-			element.appendChild(i);
-			ul.appendChild(element);
-			li.onclick = app.handlerTableSelectedFilter;
-			i.onclick = app.handlerAddFilter; // apro la dialog
-		});
-	};*/
-
-	/*app.createListTableMetrics = (metrics, cubeName) => {
-		// ulTable conterrà le tabelle che hanno metriche (step-4 1° colonna)
-		let ulTable = document.getElementById('tables-metric');
-		// metrics è un Object che contiene un'array di campi impostati, nel Mapping, come metriche
-		/*
-			DocVenditaDettaglio: Array(3)
-				0: "NettoRiga"
-				1: "PrzMedioPond"
-				2: "Quantita"
-		*//*
-		// per ogni tabella contenente metriche ciclo i suoi campi per aggiungerli nella lista sectionFields-metrics
-		Object.keys(metrics).forEach((table, index) => {
-			// console.log(table);
-			// console.log(metrics[table]);
-			// aggiunta elenco tabelle
-			let liTable = document.createElement('li');
-			let elementTable = document.createElement('div');
-			elementTable.className = 'element';
-			liTable.innerText = table;
-			liTable.setAttribute('data-table-id', index);
-			liTable.setAttribute('data-list-type', 'metric');
-			liTable.setAttribute('label', table);
-			elementTable.appendChild(liTable);
-			ulTable.appendChild(elementTable);
-			liTable.onclick = app.handlerTableSelectedMetrics;
-			// aggiunta ul con elenco metriche 
-			let tmpl_ulList = document.getElementById('tmpl_ulList');
-			let ulContent = tmpl_ulList.content.cloneNode(true);
-			let ulField = ulContent.querySelector('ul[data-id="fields-metric"]');
-			const parentElement = document.getElementById('sectionFields-metric'); // elemento a cui aggiungere la ul
-
-			let tmplFieldList = document.getElementById('templateListField');
-
-			ulField.setAttribute('data-table-id', index);
-
-			metrics[table].forEach((metric) => {
-				// console.log(metric);
-				let content = tmplFieldList.content.cloneNode(true);
-				let element = content.querySelector('.element');
-				let li = element.querySelector('li');
-			  
-				li.innerText = metric;
-				// li.innerText = metrics[name].alias;
-				li.setAttribute('label', metric);
-				li.setAttribute('data-field', metric);
-				li.setAttribute('data-cube-name', cubeName);
-				element.appendChild(li);
-				ulField.appendChild(element);
-				li.onclick = app.handlerFieldSelectedMetric;
-			});
-			parentElement.appendChild(ulField);
-		});
-	};*/
-
-	// tasto add nella sezione Filtri (step 3)
-	// app.handlerAddFilter = (e) => {
-	// 	// carico elenco field per la tabella selezionata
-	// 	debugger;
-	// 	Query.table = e.currentTarget.getAttribute('label');
-	// 	// app.getFields();
-	// 	// apro la dialog filter
-	// 	app.dialogFilter.showModal();
-	// 	// event su <li> degli operatori
-	// 	document.querySelectorAll('#operatorList').forEach((li) => {
-	// 		li.onclick = app.handlerFilterOperatorSelected;
-	// 	});
-	// };
 
 	// selezione di un filtro già esistente, lo salvo nell'oggetto Query, come quando si salva un nuovo filtro dalla dialog
 	app.handlerFilterSelected = (e) => {
@@ -522,6 +280,7 @@ var StorageMetric = new MetricStorage();
 
 	// selezione della metrica, apro la dialog per impostare la metrica
 	app.handlerSelectedMetricToSet = (e) => {
+		console.clear();
 		Query.field = e.currentTarget.getAttribute('label');
 		app.dialogMetric.querySelector('h4 > span').innerHTML = Query.field;
 		app.dialogMetric.querySelector('section').setAttribute('data-table-selected', e.currentTarget.getAttribute('data-table-name'));
@@ -534,11 +293,10 @@ var StorageMetric = new MetricStorage();
 		const parent = document.getElementById('existsFilter_Metric'); // dove verrà inserita la <ul>
 		// ripulisco la lista dei filtri
 		if (parent.querySelector('ul')) parent.querySelector('ul').remove();
-		console.log('Dim.dimension : ', Dim.dimensions);
-		debugger;
-		for (const [key, value] of (Object.entries(Dim.dimensions))) {
-			// per ogni tabella presente nella property 'from' recupero i filtri presenti nello storage
-			value.from.forEach( (table) => {
+		// console.log('Dimensioni selezionate : ', Dim.selectedDimensions);
+		// ottengo un oggetto Map con key: nomedimensione, value : [array di tabelle presenti nella dimensione]
+		for (const [dim, from] of Dim.selectedDimensions) {
+			from.forEach( (table) => {
 				console.log('table : ', table);
 				const filters = StorageFilter.tableFilters(table);
 				filters.forEach( (filter) => {
@@ -549,6 +307,7 @@ var StorageMetric = new MetricStorage();
 					section.hidden = false;
 					section.setAttribute('data-label-search', filter.name);
 					section.setAttribute('data-table-name', table);
+					section.setAttribute('data-dimension-name', dim);
 					li.innerText = filter.name;
 					li.setAttribute('label', filter.name);
 					ul.appendChild(section);
@@ -557,7 +316,25 @@ var StorageMetric = new MetricStorage();
 				parent.appendChild(ul);
 			});
 		}
-	
+		// oltre ai filtri presenti sulla dimensione/i selezionata, recupero anche quelli presenti sulla FACT
+		console.log('cubeSelected : ', StorageCube.cubeSelected);
+		for (let fact of StorageCube.cubeSelected) {
+			const filters = StorageFilter.tableFilters(fact);
+			filters.forEach( (filter) => {
+				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+				const section = contentElement.querySelector('section');
+				const element = section.querySelector('.element');
+				const li = element.querySelector('li');
+				section.hidden = false;
+				section.setAttribute('data-label-search', filter.name);
+				section.setAttribute('data-table-name', fact);
+				li.innerText = filter.name;
+				li.setAttribute('label', filter.name);
+				ul.appendChild(section);
+				li.onclick = e => e.currentTarget.toggleAttribute('selected');
+			});
+		}
+		debugger;
 		app.dialogMetric.showModal();
 	};
 
@@ -1284,12 +1061,23 @@ var StorageMetric = new MetricStorage();
 	};
 	/* events */
 
-	app.btnPreviousStep.onclick = function() {Step.previous();}
+	app.checkSelection = () => {
+		debugger;
+		// TODO: devo sapere in quale step mi trovo per poter verificare se sono stati selezionati gli elementi per proseguire
+	};
 
-	app.btnNextStep.onclick = function() {Step.next();};
+	app.btnPreviousStep.onclick = () => {
+		Step.previous();
+	}
+
+	app.btnNextStep.onclick = () => {
+		// verifica selezioni cubo e dimensioni
+		app.checkSelection();
+		Step.next();
+	};
 
 	// tasto completato nello step 4, // dialog per il salvataggio del nome del report
-	app.btnStepDone.onclick = function(e) {
+	app.btnStepDone.onclick = (e) => {
 		app.dialogSaveReport.showModal();
 		// sulla dialog imposto la modalità di salvataggio tra process/report, se impostato su process salvo, dal tasto OK, il process del report, altrimenti salvo il report con tutte le sue opzioni
 		app.dialogSaveReport.setAttribute('mode', 'process');
