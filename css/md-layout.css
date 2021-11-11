@@ -32,10 +32,10 @@ header h1{font-size: 1.4rem;font-weight: 400;margin: 0 8px;flex-grow: 1;flex-shr
 #content > #body{font-size: .9rem;margin: 0 auto;margin-bottom: 90px;color: #3f3f40;padding: 1em;height: calc(100% - 90px);}
 #console{/*position: absolute;*/ position: fixed;bottom: -64px;left: 0;right: 0;display: flex;justify-content: center; transition: bottom 500ms;
   padding: 0 16px;flex-direction: column;z-index: 1002;background: #1d1d1d; color: whitesmoke;font-size: .85rem;height: 64px;}
-#console i.info{color: #d0c5ab;}
-#console i.error{color: brown;}
-#console i.warning{color: chocolate;}
-#console i.done{color: green;}
+#console i[data-icon="info"]{color: #d0c5ab;}
+#console i[data-icon="error"]{color: brown;}
+#console i[data-icon="warning"]{color: chocolate;}
+#console i[data-icon="done"]{color: green;}
 #console[open]{bottom: 0;}
 
 #fabsConsole{display: flex;flex-grow: 1;max-width: 1025px;width: 100%;margin: 0 auto;align-items: center;}

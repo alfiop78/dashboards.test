@@ -391,10 +391,17 @@ var dimension = new Dimension();
 
 	app.createHierarchy = (e) => {
 		console.log('create Relations');
-		debugger;
 		let hier = [];
 		// let hierObj = {};
 		let colSelected = [];
+		console.log( document.querySelectorAll('.cardTable[mode="relations"] li[relations][selected]').length);
+		// quando i campi selezionati sono 1 recupero il nome della tabella perchè questa gerarchia avrà il nome della prima tabella selezionata da mettere in relazione
+		if (document.querySelectorAll('.cardTable[mode="relations"] li[relations][selected]').length === 1) {
+			dimension.table = document.querySelector('.cardTable[mode="relations"] li[relations][selected]').getAttribute('data-table-name');
+			// let li = document.querySelector('.cardTable[mode="relations"] li[relations][selected]');
+		}
+		console.log('dimension.table : ', dimension.table);
+		debugger;
 		document.querySelectorAll('.cardTable[mode="relations"]').forEach((card) => {
 			let tableName = card.getAttribute('name');
 			let liRef = card.querySelector('li[relations][selected]');
@@ -413,14 +420,13 @@ var dimension = new Dimension();
 					cube.relations['cubeJoin_'+cube.relationId] = hier;
 					cube.relationId++;
 					console.log(cube.relations);
-					cube.saveRelation = colSelected;
+					cube.saveRelation(colSelected);
 				} else {
-					dimension.hierarchies = hier;
-					dimension.relationId++;
-					//debugger;
-					// visualizzo l'icona per capire che c'è una relazione tra le due colonne
 					debugger;
-					dimension.saveRelation = colSelected;
+					dimension.hierarchies = hier;
+					// dimension.relationId++;
+					// visualizzo l'icona per capire che c'è una relazione tra le due colonne
+					dimension.saveRelation(colSelected);
 					console.log(dimension.hierarchies);
 					// esiste una relazione, visualizzo il div hierarchiesContainer
 					app.hierarchyContainer.removeAttribute('hidden');
@@ -610,6 +616,7 @@ var dimension = new Dimension();
 						// let iElement = element.querySelector('i');
 						li.innerText = value[0];
 						li.setAttribute('label', value[0]);
+						li.setAttribute('data-table-name', table);
 						// scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
 						let pos = value[1].indexOf('(');
 						let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];

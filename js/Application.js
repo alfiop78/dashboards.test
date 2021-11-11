@@ -141,28 +141,23 @@ class Application {
 		});
 	}
 
-	handlerConsole() {
-		this.#console.toggleAttribute('open');
-	}
+	// handlerConsole() {
+	// 	this.#console.toggleAttribute('open');
+	// }
 
 	handlerConsole(message, icon, time) {
-	    console.log(message+icon);
+	    // console.log(message+icon);
+	    if (!time) time = 2000; // se time non è impostato lo imposto su 2secondi
 	    // type = info, warning, error, done
 	    document.querySelector('#console p').innerText = message;
-	    document.querySelector('#console i').classList.add(icon);
+	    document.querySelector('#console i').setAttribute('data-icon', icon);
 	    document.querySelector('#console i').innerText = icon;
-	    document.getElementById("console").setAttribute('open',true);
+	    document.getElementById("console").toggleAttribute('open');
 
 	    setTimeout(function() {
-	    	document.getElementById("console").removeAttribute('open');
+	    	// chiudo la console dopo "time" secondi
+	    	document.getElementById("console").toggleAttribute('open');
 	    }, time);
-
-	    setTimeout(function() {
-	      // dopo un secondo rimuovo il contenuto del messaggio insieme alla class icon (done, error, warning, ecc..)
-	      document.querySelector('#console p').innerText = "";
-	  	  document.querySelector('#console i').innerText = "";
-	  	  document.querySelector('#console i').classList.remove(icon);
-	    }, time+1000);
   }
 
 } // end Class

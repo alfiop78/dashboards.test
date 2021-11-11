@@ -24,7 +24,7 @@ class Cube {
 
 	get relations() {return this._join;}
 
-	set saveRelation(value) {
+	saveRelation(value) {
 		// value : colSelected
 		value.forEach((el) => {
 			el.setAttribute('data-rel-'+this.relationId, this.relationId);
@@ -104,6 +104,7 @@ class Cube {
 class Dimension {
 	#columns; // private
 	#field;
+	#table;
 	constructor() {
 		this._dimension = {};
 		this._join = {}; // relazioni tra le tabelle
@@ -113,6 +114,10 @@ class Dimension {
 		this.#field = {};
 		this.relationId = 0;
 	}
+
+	set table(value) {this.#table = value;}
+
+	get table() {return this.#table;}
 
 	set id(value) {this._id = value;}
 
@@ -139,8 +144,19 @@ class Dimension {
 
 	get from() {return this._from;}
 
-	set hierarchies(value) {this._join[this.relationId] = value;}
-	// set hierarchies(value) {this._join['dimensionJoin_'+this.relationId] = value;}
+	set hierarchies(value) {
+		if (!this._join.hasOwnProperty(this.#table)) {
+			this.relationId = 0;
+			this._join[this.#table] = {[this.relationId] : value};
+			// this._join[this.#table] = value;
+			this.relationId++;
+		} else {
+			this._join[this.#table][this.relationId] = value;
+		}
+		console.log('this._join : ', this._join);
+		
+	}
+	// set hierarchies(value) {this._join[this.relationId] = value;}
 
 	get hierarchies() {return this._join;}
 
@@ -154,7 +170,7 @@ class Dimension {
 
 	get hierarchyOrder() {return this._hierarchies;}
 
-	set saveRelation(value) {
+	saveRelation(value) {
 		// value : colSelected
 		value.forEach((el) => {
 			el.setAttribute('data-rel-'+this.relationId, this.relationId);
