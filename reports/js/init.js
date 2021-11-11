@@ -1068,7 +1068,6 @@ var StorageMetric = new MetricStorage();
 	/* events */
 
 	app.checkSelection = () => {
-		debugger;
 		// TODO: devo sapere in quale step mi trovo per poter verificare se sono stati selezionati gli elementi per proseguire
 		const activeStep = document.querySelector('.step[selected]');
 		const dataStep = +activeStep.getAttribute('data-step');
@@ -1081,6 +1080,7 @@ var StorageMetric = new MetricStorage();
 				}
 				if (Dim.selectedDimensions.size === 0) {
 					console.log('Dimensione non selezionata');
+					App.handlerConsole();
 					return false;
 				}
 			break

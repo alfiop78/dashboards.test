@@ -3,6 +3,7 @@
  */
 
 class Application {
+	#console = document.getElementById('console');
 	constructor() {}
 
 	init() {
@@ -139,5 +140,29 @@ class Application {
 		  	item.hidden = true : item.hidden = false;
 		});
 	}
+
+	handlerConsole() {
+		this.#console.toggleAttribute('open');
+	}
+
+	handlerConsole(message, icon, time) {
+	    console.log(message+icon);
+	    // type = info, warning, error, done
+	    document.querySelector('#console p').innerText = message;
+	    document.querySelector('#console i').classList.add(icon);
+	    document.querySelector('#console i').innerText = icon;
+	    document.getElementById("console").setAttribute('open',true);
+
+	    setTimeout(function() {
+	    	document.getElementById("console").removeAttribute('open');
+	    }, time);
+
+	    setTimeout(function() {
+	      // dopo un secondo rimuovo il contenuto del messaggio insieme alla class icon (done, error, warning, ecc..)
+	      document.querySelector('#console p').innerText = "";
+	  	  document.querySelector('#console i').innerText = "";
+	  	  document.querySelector('#console i').classList.remove(icon);
+	    }, time+1000);
+  }
 
 } // end Class
