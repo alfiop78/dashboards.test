@@ -128,8 +128,9 @@ class Queries {
 	get filters() {return this._filter};
 
 	deleteFilter() {
-		debugger;
-		delete this._filter[this.filterName];
+		delete this._filter[this._table][this.filterName];
+		// se, per questa tabella non ci sono altri filtri, elimino anche la property this._table
+		if (Object.keys(this._filter[this._table]).length === 0) delete this._filter[this._table];
 		console.log('filter : ', this._filter);
 	}
 

@@ -359,12 +359,12 @@ var StorageMetric = new MetricStorage();
 		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimensionName);
 		// visualizzo solo i campi della tabella selezionata e anche della dimensione selezionata.
 		// Se ci sono due tabelle uguali, in due dimensioni diverse, occorre mettere nel querySelectorAll anche il nome della dimensione a cui si riferisce la tabella selezionta, altrimenti vengono duplicate le colonne
-		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hier+"']").forEach( (table) => {
+		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hierName+"']").forEach( (table) => {
 			table.hidden = false;
 			table.toggleAttribute('data-searchable');
 		});
 		// nascondo i field NON appartenenti alla tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-column'] > section:not([data-table-name='"+Query.table+"'])").forEach( table => table.hidden = true);
+		document.querySelectorAll("ul[data-id='fields-column'] > section:not([data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hierName+"'])").forEach( table => table.hidden = true);
 		app.dialogTables.querySelector('h4 > span').innerHTML = Query.table;
 		app.dialogTables.showModal();
 	};
@@ -496,6 +496,7 @@ var StorageMetric = new MetricStorage();
 		.catch( (err) => console.error(err));
 	};
 
+	// "Fatto" nella dialog filter
 	app.btnColumnDone.onclick = () => {
 		// console.log('Query.table : ', Query.table);
 		// console.log('Query.tableId : ', Query.tableId);
@@ -507,6 +508,7 @@ var StorageMetric = new MetricStorage();
 		// ... quindi, oltre a verificare se ci sono colonne selezionate, devo verificare anche se ce n'è una sola, quella è la primaryKey
 
 		if (Query.select[Query.table]) {
+			debugger;
 			// TODO: L'aggiunta della primaryKey NON deve essere impostata per ogni tabella...10.10.2021 in corso di valutazione. Probabilmente deve essere impostato solo sulla prima tabella della gerarchia
 			// Ci sono colonne selezionate per questa tabella, quindi aggiungo anche la primaryKey (contrassegnata dall'attr data-key)
 			/*const fieldList = document.getElementById('table-fieldList'); // contiene la ul con i nomi dei field
@@ -514,13 +516,13 @@ var StorageMetric = new MetricStorage();
 			Query.field = fieldList.querySelector('section[data-table-name="'+Query.table+'"] li[data-key="PRI"]').getAttribute('label');
 			Query.select = {SQLFormat: null, alias : "pri_"+Query.table+"_"+Query.field};
 			Query.groupBy = {SQLFormat: null};*/
-			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
+			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
 				if (+k >= Query.tableId) {
 					Query.from = table;
-					if (Dim.selected.join[+k]) {
+					if (Dim.selected.join[table]) {
 						Query.joinId = +k;
-						Query.where = Dim.selected.join[+k];
+						Query.where = Dim.selected.join[table];
 					};
 				};
 			}
@@ -531,55 +533,33 @@ var StorageMetric = new MetricStorage();
 			// non ci sono colonne impostati/selezionati per questa tabella, oppure c'è solo l'id impostato (in automatico) per questa tabella. 
 			// La elimino da Query.from e dalla Query.join, deseleziono con l'attr 'selected' in 'fieldList-tables'
 			// se l'elemento <li> con il nome della tabella NON contiene l'attr data-filters (quindi su questa tabella non è stato impostata un filtro) la posso eliminare dalla _from e dalla _join
-			// liTable.removeAttribute('data-columns');
+			list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table).removeAttribute('selected');
 			
 			// se l'icona filter-icon NON ha l'attributo 'selected' non è stato impostato alcun filtro su questa tabella, quindi posso rimuoverla dalla _from/_join
 			// controllo tutte le tabelle di gerarchia inferiore
-			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
+			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
 				// elimino tutte le tabelle appartenenti a gerarchie superiori alla tabella selezionata
 				if (+k <= Query.tableId) {
-					Query.deleteFrom(Query.table);
-					if (Dim.selected.join[+k]) {
+					Query.deleteFrom(table);
+					if (Dim.selected.join[table]) {
 						Query.joinId = +k;
 						Query.deleteWhere();
 					}
 				}
-				// vado a controllare tutte le tabelle di gerarchia inferiore a quella selezionata, andando a controllare se sono impostati filtri o colonne
+				// vado a controllare tutte le tabelle di gerarchia inferiore a quella selezionata, controllo se sono impostati filtri o colonne
 				const filterIcon = list.querySelector('section[data-label-search="'+table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+table);
-				console.log('filterIcon : ', filterIcon);
+				// console.log('filterIcon : ', filterIcon);
 				const columnIcon = list.querySelector('section[data-label-search="'+table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+table);
-				columnIcon.removeAttribute('selected');
+				// console.log('filterIcon : ', columnIcon);
 				if (!filterIcon.hasAttribute('selected') && !columnIcon.hasAttribute('selected')) {
 					// non ha nè filtri impostati nè colonne impostate, quindi la elimino dalla _from/_join
 					Query.deleteFrom(table);
-					if (Dim.selected.join[+k]) {
+					if (Dim.selected.join[table]) {
 						Query.joinId = +k;
 						Query.deleteWhere();
 					}
 				}
 			}
-
-			/*if (!filterIcon.hasAttribute('selected')) {
-				for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
-					debugger;
-					Query.deleteFrom(table);
-					if (Dim.selected.join[+k]) {
-						Query.joinId = +k;
-						Query.deleteWhere();
-					}
-					// TODO: devo controllare se, le tabelle successive nella gerarchia, NON hanno nè filtri nè colonne impostate, in questo caso devo eliminare anche quelle dalla _from/_join
-					// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
-					// elimino, incondizionatamente (sia se hanno filtri/colonne impostate, sia che non ce l'hanno), tutte le tabelle e join apppartenenti a livelli di gerarchia superiore alla tabella appena rimossa
-					if (+k <= Query.tableId) {
-						Query.deleteFrom(Query.table);
-						if (Dim.selected.join[+k]) {
-							Query.joinId = +k;
-							Query.deleteWhere();
-						};
-					};
-				}
-			}*/
-			
 		}
 		app.dialogTables.close();
 	};
@@ -691,38 +671,50 @@ var StorageMetric = new MetricStorage();
 		let hier = app.dialogFilter.querySelector('section').getAttribute('data-hier-name');
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogFilter.querySelector('section').getAttribute('data-dimension-name');
-		const liTable = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] li'); // elemento <li> che contiene il nome della tabella da impostare
-		const columnIcon = list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+Query.table);
-		// console.log('filterIcon : ', filterIcon);
 		console.log(Query.filters);
 		console.log(Query.filters[Query.table]);
 		debugger;
 		if (Query.filters[Query.table]) {
-		// if (Object.keys(Query.filters).length !== 0) {
 			// sono stati selezionati dei filtri per questa tabella, imposto il nome della tabella con l'attr 'selected' in 'fieldList-tables'
 			
-			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier])) {
+			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
 				// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata
 				if (+k >= Query.tableId) {
 					Query.from = table;
-					if (Dim.selected.join[+k]) {
+					if (Dim.selected.join[table]) {
 						Query.joinId = +k;
-						Query.where = Dim.selected.join[+k];
+						Query.where = Dim.selected.join[table];
 					}
 				};
 			}
-			list.querySelectorAll('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"]').forEach( (section) => {
-				section.querySelector('li').setAttribute('data-filters', true);
-				section.querySelector('#filter-icon-'+hier+"-"+Query.table).setAttribute('selected', true);
-			});
+			list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+Query.table).setAttribute('selected', true);
 		} else {
 			debugger;
-			// non ci sono filtri impostati/selezionati per questa tabella, la elimina da Query.from e deseleziono con l'attr 'selected' in 'fieldList-tables'
-			list.querySelectorAll('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"]').forEach( (section) => {
-				section.querySelector('li').removeAttribute('data-filters');
-				section.querySelector('#filter-icon-'+hier+"-"+Query.table).removeAttribute('selected');
-			});
-			Query.deleteFrom(Query.table);
+			list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+Query.table).removeAttribute('selected');
+			for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
+				// elimino tutte le tabelle appartenenti a gerarchie superiori alla tabella selezionata
+				if (+k <= Query.tableId) {
+					Query.deleteFrom(table);
+					if (Dim.selected.join[table]) {
+						Query.joinId = +k;
+						Query.deleteWhere();
+					}
+				}
+				// vado a controllare tutte le tabelle di gerarchia inferiore a quella selezionata, controllo se sono impostati filtri o colonne
+				const filterIcon = list.querySelector('section[data-label-search="'+table+'"][data-hier-name="'+hier+'"] #filter-icon-'+hier+"-"+table);
+				// console.log('filterIcon : ', filterIcon);
+				const columnIcon = list.querySelector('section[data-label-search="'+table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+table);
+				// console.log('filterIcon : ', columnIcon);
+				
+				if (!filterIcon.hasAttribute('selected') && !columnIcon.hasAttribute('selected')) {
+					// non ha nè filtri impostati nè colonne impostate, quindi la elimino dalla _from/_join
+					Query.deleteFrom(table);
+					if (Dim.selected.join[table]) {
+						Query.joinId = +k;
+						Query.deleteWhere();
+					}
+				}
+			}
 		}		
 		app.dialogFilter.close();
 	};
@@ -877,8 +869,9 @@ var StorageMetric = new MetricStorage();
 			Dim.selected = dimName;
 			console.log('hierarchies : ', Dim.selected.hierarchies);
 			for (const hier in Dim.selected.hierarchies) {
-				for (const [key, value] of Object.entries(Dim.selected.hierarchies[hier])) {
+				for (const [key, value] of Object.entries(Dim.selected.hierarchies[hier]['order'])) {
 					// ciclo le tabelle presenti nella gerarchia
+					console.log(key, value);
 					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
 					const section = contentElement.querySelector('section');
 					const element = section.querySelector('.element');

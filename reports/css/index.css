@@ -71,6 +71,8 @@ div.textarea > span.formulaLogicalOperator{background: brown; border-radius: 4px
 
 /* btn */
 .steps .btn{display: flex; flex-direction: column;align-items: center;justify-content: center;}
+.steps[data-step="1"] > .hr > .btn #stepPrevious{display: none;}
+.steps[data-step="3"] > .hr > .btn #stepNext{display: none;}
 .steps:not([data-step="3"]) > .hr > .btn #stepDone{display: none;}
 .steps[data-step="3"] > .hr > .btn #stepDone{display: initial;}
 /* btn */
