@@ -421,9 +421,18 @@ var StorageMetric = new MetricStorage();
 		if (listRef.querySelector('ul')) listRef.querySelector('ul').remove();
 		app.getFields(); // recupero i campi della tabella selezionata
 		// visualizzo i filtri ESISTENTI della tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( filter => filter.hidden = false);
+		// TODO: aggiungere anche la data-hier-name
+		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( (filter) => {
+			filter.hidden = false;
+			// gli elementi appartenenti alla tabella, dimensione,gerarchia possono essere ricercati dalla input search
+			filter.toggleAttribute('data-searchable');
+		});
 		// nascondo i filter NON appartenenti alla tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( filter => filter.hidden = true);
+		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( (filter) => {
+			filter.hidden = true;
+			// gli elementi nascosti non possono essere ricercati dalla input search
+			filter.removeAttribute('data-searchable');
+		});
 		app.dialogPopup = app.dialogFilter.querySelector('#dialog-popup');
 		app.dialogFilter.showModal();
 	};
@@ -476,6 +485,7 @@ var StorageMetric = new MetricStorage();
 						const element = section.querySelector('.element');
 						const li = element.querySelector('li');
 						section.hidden = false;
+						section.setAttribute('data-searchable', true);
 						section.setAttribute('data-label-search', value[0]);
 						section.setAttribute('data-table-name', Query.table);
 						li.innerText = value[0];
@@ -946,27 +956,6 @@ var StorageMetric = new MetricStorage();
 					parent.appendChild(ul);
 				}
 			}
-/*			for ( const [table, fields] of Object.entries(value.columns)) {
-				console.log('table : ', table);
-				// console.log('fields : ', fields);
-				for (const field in fields) {
-					// console.log(fields[field]); // type
-					// console.log(field); // field
-					const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-					const section = contentElement.querySelector('section');
-					const element = section.querySelector('.element');
-					const li = element.querySelector('li');
-					section.setAttribute('data-label-search', field);
-					section.setAttribute('data-table-name', table);
-					section.setAttribute('data-dimension-name', key);
-					li.innerText = field;
-					li.setAttribute('label', field);
-					li.setAttribute('data-key', fields[field]);
-					ul.appendChild(section);
-					li.onclick = app.selectColumn;
-				}
-				parent.appendChild(ul);
-			}*/
 		}
 	};
 
@@ -977,6 +966,9 @@ var StorageMetric = new MetricStorage();
 		const ul = content.querySelector("ul[data-id='fields-filter']");
 		const parent = document.getElementById('existFilters'); // dove verrà inserita la <ul>
 		console.log('Dim.dimension : ', Dim.dimensions);
+		// TODO: per avere il data-hier-name nel tag section (degli elementi da cercare) devo recuperare la table dalla property hierarchies.nomegerarchia.order, in questo modo posso aggiungere
+		// section.setAttribute('data-hier-name', nomegerarchia);
+		// L'unione di data-dimension-name+data-hier-name consentirà di evitare bug quando ci sono tabelle uguali in gerarchie diverse o in dimensioni diverse
 		for (const [key, value] of (Object.entries(Dim.dimensions))) {
 			// key : nome della dimensione
 			// value : tutte le property della dimensione
