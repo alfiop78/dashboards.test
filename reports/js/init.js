@@ -351,12 +351,15 @@ var StorageMetric = new MetricStorage();
 		// console.log('e.currentTarget : ', e.currentTarget);
 		console.log('Query.table : ', Query.table);
 		console.log('Query.tableId : ', Query.tableId);
+		const hierName = e.currentTarget.getAttribute('data-hier-name');
+		const dimensionName = e.currentTarget.getAttribute('data-dimension-name');
 		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
 		app.dialogTables.querySelector('section').setAttribute('data-table-selected', Query.table);
-		app.dialogTables.querySelector('section').setAttribute('data-hier-name', e.currentTarget.getAttribute('data-hier-name'));
-		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', e.currentTarget.getAttribute('data-dimension-name'));
-		// visualizzo solo i campi della tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+Query.table+"']").forEach( (table) => {
+		app.dialogTables.querySelector('section').setAttribute('data-hier-name', hierName);
+		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimensionName);
+		// visualizzo solo i campi della tabella selezionata e anche della dimensione selezionata.
+		// Se ci sono due tabelle uguali, in due dimensioni diverse, occorre mettere nel querySelectorAll anche il nome della dimensione a cui si riferisce la tabella selezionta, altrimenti vengono duplicate le colonne
+		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hier+"']").forEach( (table) => {
 			table.hidden = false;
 			table.toggleAttribute('data-searchable');
 		});
@@ -923,7 +926,34 @@ var StorageMetric = new MetricStorage();
 			// value : tutte le property della dimensione
 			console.log('key : ', key);
 			// console.log('value : ', value.columns);
-			for ( const [table, fields] of Object.entries(value.columns)) {
+			// le columns sono all'interno della prop hierarchies.nomeGerarchia.columns per cui vado a ciclare questa prop
+			// per ogni gerarchia vado ad aggiungere le columns
+			for (const [hier, hierValue] of Object.entries(value.hierarchies)) {
+				console.log('hier : ', hier, hierValue.columns);
+				for (const [table, fields] of Object.entries(hierValue.columns)) {
+					console.log('table : ', table);
+					console.log('fields : ', fields);
+					for (let field in fields) {
+						console.log('field : ', field);
+						console.log('fields[field] : ', fields[field]);
+						const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
+						const section = contentElement.querySelector('section');
+						const element = section.querySelector('.element');
+						const li = element.querySelector('li');
+						section.setAttribute('data-label-search', field);
+						section.setAttribute('data-table-name', table);
+						section.setAttribute('data-dimension-name', key);
+						section.setAttribute('data-hier-name', hier);
+						li.innerText = field;
+						li.setAttribute('label', field);
+						li.setAttribute('data-key', fields[field]);
+						ul.appendChild(section);
+						li.onclick = app.selectColumn;
+					}
+					parent.appendChild(ul);
+				}
+			}
+/*			for ( const [table, fields] of Object.entries(value.columns)) {
 				console.log('table : ', table);
 				// console.log('fields : ', fields);
 				for (const field in fields) {
@@ -935,6 +965,7 @@ var StorageMetric = new MetricStorage();
 					const li = element.querySelector('li');
 					section.setAttribute('data-label-search', field);
 					section.setAttribute('data-table-name', table);
+					section.setAttribute('data-dimension-name', key);
 					li.innerText = field;
 					li.setAttribute('label', field);
 					li.setAttribute('data-key', fields[field]);
@@ -942,7 +973,7 @@ var StorageMetric = new MetricStorage();
 					li.onclick = app.selectColumn;
 				}
 				parent.appendChild(ul);
-			}
+			}*/
 		}
 	};
 

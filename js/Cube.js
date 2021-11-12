@@ -156,13 +156,13 @@ class Dimension {
 		console.log('this._join : ', this._join);
 		
 	}
-	// set hierarchies(value) {this._join[this.relationId] = value;}
 
 	get hierarchies() {return this._join;}
 
 	set hierarchyOrder(object) {
 		console.log('object : ', object);
-		this._hierarchies[object.title] = object.hierarchyOrder;
+		this._hierarchies[object.title] = {order : object.hierarchyOrder};
+		this._hierarchies[object.title]['columns'] = this.#columns;
 		this._lastTableInHierarchy = object.hierarchyOrder[Object.keys(object.hierarchyOrder).length-1];
 		console.log('this._hierarchies : ', this._hierarchies);
 		console.log('this._lastTableInHierarchy : ', this._lastTableInHierarchy);
@@ -204,7 +204,7 @@ class Dimension {
 		debugger;
 		this._dimension.type = 'DIMENSION';
 		// TODO Aggiungere dimensionId
-		this._dimension.columns = this.#columns;
+		// this._dimension.columns = this.#columns;
 		this._dimension.name = this._title;
 		this._dimension.from = this._from;
 		this._dimension.join = this._join;
