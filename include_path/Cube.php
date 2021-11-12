@@ -2,8 +2,9 @@
 require_once 'ConnectDB.php';
 
 class Cube {
-	private $_select, $_columns = array(), $_from, $_and, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_reportId, $_metricTable;
+	private $_select, $_columns = array(), $_from, $_and, $_where, $_reportFilters, $_metricFilters, $_reportMetrics, $_metrics, $_groupBy, $_sql, $_metricTable;
 	private $reportName;
+	private $reportId;
 
 	// function __construct($fact_table) {
 	//   $this->fact = $fact_table;
@@ -24,10 +25,6 @@ class Cube {
 		$this->$prop = $value;
 	}
 
-	function setReportId($reportId) {$this->_reportId = $reportId;}
-
-	function getReportId() {return $this->_reportId;}
-
 	public function n_select($columns) {
 		$fieldList = array();
 		$this->_select = "SELECT ";
@@ -45,18 +42,18 @@ class Cube {
 
 	public function n_from($from) {
 		// per ogni dimensione esistente vado a aggiungere, in this->_from, i FROM che si trovano al suo interno
-		$this->_from = " FROM ";
-		$this->_from .= implode(", ", $from);
+		$this->_from = " FROM " . implode(", ", $from);
 		// var_dump($this->_from);
 	}
 
 	public function n_where($joins) {
 		$i = 0;
-		foreach ($joins as $join) {
-			$relation = array();
-			$relation = implode(" = ", $join);
-			($i === 0) ? $this->_where .= " WHERE ".$relation : $this->_where .= " AND " . $relation;
-			$i++;
+		foreach ($joins as $joinId) {
+			foreach ($joinId as $join) {
+				$relation = implode(" = ", $join);
+				($i === 0) ? $this->_where .= " WHERE ".$relation : $this->_where .= " AND " . $relation;
+				$i++;
+			}
 		}
 		// var_dump($this->_where);
 	}
@@ -133,8 +130,7 @@ class Cube {
 
 		if (!is_null($this->_groupBy)) {$this->_sql .= $this->_groupBy;}
 
-		// $sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->_reportId." AS ".$this->_sql.";";
-		$sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->reportName." AS ".$this->_sql.";";
+		$sql = "CREATE TEMPORARY TABLE decisyon_cache.W_AP_base_".$this->reportId." AS ".$this->_sql.";";
 		var_dump($sql);
 		// return;
 		return $this->connect->multiInsert($sql);
@@ -149,11 +145,9 @@ class Cube {
 
 			unset($this->_sql);
 			$metric = "{$metrics->SQLFunction}({$metrics->table}.{$metrics->field}) AS `{$metrics->alias}`";
-			// echo $this->createMetricTable('W_AP_metric_'.$this->_reportId."_".$i, $metric, $metrics->filters);
-			echo $this->createMetricTable('W_AP_metric_'.$this->reportName."_".$i, $metric, $metrics->filters);
+			echo $this->createMetricTable('W_AP_metric_'.$this->reportId."_".$i, $metric, $metrics->filters);
 			// a questo punto metto in relazione (left) la query baseTable con la/e metriche contenenti filtri
-			// $this->_metricTable["W_AP_metric_".$this->_reportId."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
-			$this->_metricTable["W_AP_metric_".$this->reportName."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
+			$this->_metricTable["W_AP_metric_".$this->reportId."_".$i] = $metrics->alias; // memorizzo qui quante tabelle per metriche filtrate sono state create
 			$i++;
 		}
 	}
@@ -181,10 +175,8 @@ class Cube {
 
 	public function createDatamart() {
 		// TODO: https://dev.mysql.com/doc/refman/8.0/en/create-table-select.html Il create table può essere migliorato impostando il datatype per ogni colonna e un id univoco
-		// $baseTableName = "W_AP_base_".$this->_reportId;
-		$baseTableName = "W_AP_base_".$this->reportName;
-		// $datamartName = "decisyon_cache.FX_".$this->_reportId;
-		$datamartName = "decisyon_cache.FX_".$this->reportName;
+		$baseTableName = "W_AP_base_".$this->reportId;
+		$datamartName = "decisyon_cache.FX_".$this->reportId;
 		// se _metricTable ha qualche metrica (sono metriche filtrate) allora procedo con la creazione FX con LEFT JOIN, altrimenti creo una singola FX
 
 		$sql = "CREATE TABLE $datamartName AS ";

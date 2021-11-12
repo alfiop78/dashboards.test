@@ -13,7 +13,8 @@
 	// $arrData = json_decode($_POST['data'], true); // array
 
 	$q = new Cube();
-	$q->setReportId($cube->{'processId'});
+	// $q->setReportId($cube->{'processId'});
+	$q->reportId = $cube->{'processId'};
 	$q->reportName = $cube->{'name'}; // il nome del report non deve avere caratteri non consentiti per la creazione di tabelle (per ora non c'è un controllo sul nome inserito, da javascript)
 	$q->n_select($cube->{'select'});
 	$q->metrics($cube->{'metrics'});

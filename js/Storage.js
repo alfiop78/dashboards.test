@@ -434,7 +434,7 @@ class FilterStorage extends Storages {
 	get filters() {return this._filters;} // tutti i filtri
 
 	tableFilters(table) {
-		console.clear();
+		// console.clear();
 		// recupero tutti i filtri appartenenti alla table e restituisco un array
 		// console.log(table);
 		this._tableFilters = [];
