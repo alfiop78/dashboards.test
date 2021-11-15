@@ -25,183 +25,180 @@ class ConnectDB {
 
 	// Metodo Connect
 	protected function connect() {
-	$this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
-	return $this->link;
+		$this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
+		return $this->link;
 	}
 
 	public function openConnection() {
 		$this->_link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
-	return $this->_link;
+		return $this->_link;
 	}
 
-  function getResultRow($query) {
-	$this->link = $this->connect();
-	try {
-	  if (!$result = $this->link->query($query)) {
-		//throw new Exception("Errore nella query");
-		throw new DBError("Errore : ",$this->link->errno);
-	  } elseif ($result->num_rows > 0) {
-		$row = $result->fetch_assoc();
-		$this->link->close();
-		return $row;
-	  } else {
-		//throw new Exception("Nessun risultato dalla query");
-		throw new Exception(0);
-	  }
-	} catch (DBError $exc) {
-	  //echo $exc->getTraceAsString();
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
-	  echo $e->getMessage();
-	}
-  }
-
-  function insert($query) {
-	$this->link = $this->connect();
-	$affectedRow = 0;
-	$stmt = $this->link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
-	//TODO ottimizzare la gestione degli errori
-	try {
-	  if ($stmt->prepare($query)){
-		if (!$stmt->execute()) {
-		  //throw new Exception("Errore nell'esecuzione della query");
-				throw new DBError("Err.",$this->link->errno);
+	function getResultRow($query) {
+		$this->link = $this->connect();
+		try {
+			if (!$result = $this->link->query($query)) {
+				//throw new Exception("Errore nella query");
+				throw new DBError("Errore : ",$this->link->errno);
+			} elseif ($result->num_rows > 0) {
+				$row = $result->fetch_assoc();
+				$this->link->close();
+				return $row;
+			} else {
+				//throw new Exception("Nessun risultato dalla query");
+				throw new Exception(0);
+			}
+		} catch (DBError $exc) {
+			//echo $exc->getTraceAsString();
+			echo $exc->getDetailError();
+		} catch (Exception $e) {
+			echo $e->getMessage();
 		}
-		$affectedRow = $stmt->affected_rows;
-		$stmt->close();
-		$this->link->close();
-		return $affectedRow;
-	  } else {
-		// throw new DBError("Error : ",$this->link->errno);
-				throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
-		//return FALSE;
-	  }
-	} catch (DBError $exc) {
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
+	}
+
+	function insert($query) {
+		$this->link = $this->connect();
+		$affectedRow = 0;
+		$stmt = $this->link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
+		//TODO ottimizzare la gestione degli errori
+		try {
+			if ($stmt->prepare($query)){
+				if (!$stmt->execute()) {
+				  //throw new Exception("Errore nell'esecuzione della query");
+					throw new DBError("Err.",$this->link->errno);
+				}
+				$affectedRow = $stmt->affected_rows;
+				$stmt->close();
+				$this->link->close();
+				return $affectedRow;
+		  	} else {
+			  	// throw new DBError("Error : ",$this->link->errno);
+			  	throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
+				//return FALSE;
+		  	}
+		} catch (DBError $exc) {
+		  	echo $exc->getDetailError();
+		} catch (Exception $e) {
 			echo $e->getMessage()."\n";
-		  echo "CODICE MYSQL : ".$e->getCode();
+			echo "CODICE MYSQL : ".$e->getCode();
 		}
-
-  }
-
-  function multiInsert($query) {
-		/* Metodo creato per NON chiudere la connessione al DB perchè vengono create delle TEMPORARY TABLE*/
-	$affectedRow = 0;
-	$stmt = $this->_link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
-
-	try {
-	  if ($stmt->prepare($query)){
-		if (!$stmt->execute()) {
-		  //throw new Exception("Errore nell'esecuzione della query");
-				throw new Exception("ERRORE : ");
-				// throw new DBError("Err.",$this->_link->errno);
-		}
-		$affectedRow = $stmt->affected_rows;
-		$stmt->close();
-		return $affectedRow;
-	  } else {
-		throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
-		//return FALSE;
-	  }
-	} catch (Exception $e) {
-			// TODO: Perfezionare la gestione dei messaggi d'errore
-		  echo $e->getMessage()."\n";
-		  echo "CODICE MYSQL : ".$e->getCode();
-		}
-
-  }
-
-  function delete($query) {
-	$this->link = $this->connect();
-
-	$stmt = $this->link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
-	//TODO ottimizzare la gestione degli errori
-	try {
-	  if ($stmt->prepare($query)){
-		if (!$stmt->execute()) {
-		  //throw new Exception("Errore nell'esecuzione della query");
-		  throw new DBError("Err.",$this->link->errno);
-		}
-
-		return $stmt->execute();
-	  } else {
-		throw new DBError("Error : ",$this->link->errno);
-		//return FALSE;
-	  }
-	} catch (DBError $exc) {
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
-		  echo $e->getMessage();
-		}
-  }
-
-  function getResultArray($query) {
-	$this->link = $this->connect();
-	try {
-	  if (!$result = $this->link->query($query)) {
-		//throw new Exception("Errore nella query");
-		throw new DBError("Errore : ",$this->link->errno);
-	  } elseif ($result->num_rows > 0) {
-		while ($row = $result->fetch_row()) {$arr[] = $row;}
-		$this->link->close();
-		return $arr;
-	  } else {
-		return FALSE;
-		//throw new Exception("Nessun risultato dalla query");
-	  }
-	} catch (DBError $exc) {
-	  //echo $exc->getTraceAsString();
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
-	  echo $e->getMessage();
 	}
-  }
 
-  function getResultField($query) {
-	$this->link = $this->connect();
-	try {
-	  if (!$result = $this->link->query($query)) {
-		//throw new Exception("Errore nella query");
-		throw new DBError("Errore : ",$this->link->errno);
-	  } elseif ($result->num_rows > 0) {
-		//$row = $result->fetch_row();
-		$field = $result->fetch_array(MYSQLI_BOTH);
-		$this->link->close();
-		return $field[0];
-	  } else {
+	function multiInsert($query) {
+		/* Metodo creato per NON chiudere la connessione al DB perchè vengono create delle TEMPORARY TABLE*/
+		$affectedRow = 0;
+		$stmt = $this->_link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
+
+		try {
+			if ($stmt->prepare($query)){
+				if (!$stmt->execute()) {
+				  	//throw new Exception("Errore nell'esecuzione della query");
+					throw new Exception("ERRORE : ");
+					// throw new DBError("Err.",$this->_link->errno);
+				}
+				$affectedRow = $stmt->affected_rows;
+				$stmt->close();
+				return $affectedRow;
+			} else {
+				throw new Exception("MYERROR : ".$this->_link->error, $this->_link->errno);
+				//return FALSE;
+			}
+		} catch (Exception $e) {
+			// TODO: Perfezionare la gestione dei messaggi d'errore
+		  	echo $e->getMessage()."\n";
+		  	echo "CODICE MYSQL : ".$e->getCode();
+		}
+	}
+
+	function delete($query) {
+		$this->link = $this->connect();
+
+		$stmt = $this->link->stmt_init(); // se non si usa questo e la query è errata non posso ottenere l'errore perchè l'oggetto stmt non viene istanziato
+		//TODO ottimizzare la gestione degli errori
+		try {
+			if ($stmt->prepare($query)){
+				if (!$stmt->execute()) {
+					//throw new Exception("Errore nell'esecuzione della query");
+					throw new DBError("Err.",$this->link->errno);
+				}
+				return $stmt->execute();
+			} else {
+				throw new DBError("Error : ",$this->link->errno);
+				//return FALSE;
+			}
+		} catch (DBError $exc) {
+			echo $exc->getDetailError();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
+
+	function getResultArray($query) {
+		$this->link = $this->connect();
+		try {
+			if (!$result = $this->link->query($query)) {
+				//throw new Exception("Errore nella query");
+				throw new DBError("Errore : ",$this->link->errno);
+			} elseif ($result->num_rows > 0) {
+				while ($row = $result->fetch_row()) {$arr[] = $row;}
+				$this->link->close();
+				return $arr;
+			} else {
+				return FALSE;
+				//throw new Exception("Nessun risultato dalla query");
+			}
+		} catch (DBError $exc) {
+			//echo $exc->getTraceAsString();
+			echo $exc->getDetailError();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
+
+	function getResultField($query) {
+		$this->link = $this->connect();
+		try {
+			if (!$result = $this->link->query($query)) {
+				//throw new Exception("Errore nella query");
+				throw new DBError("Errore : ",$this->link->errno);
+			} elseif ($result->num_rows > 0) {
+				//$row = $result->fetch_row();
+				$field = $result->fetch_array(MYSQLI_BOTH);
+				$this->link->close();
+				return $field[0];
+			} else {
 				return FALSE;
 				//        throw new Exception("Nessun risultato dalla query");
-	  }
-	} catch (DBError $exc) {
-	  //echo $exc->getTraceAsString();
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
-	  echo $e->getMessage();
+			}
+		} catch (DBError $exc) {
+			//echo $exc->getTraceAsString();
+			echo $exc->getDetailError();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
-  }
 
-  function getResultAssoc($query) {
-	$this->link = $this->connect();
-	try {
-	  if (!$result = $this->link->query($query)) {
-		//throw new Exception("Errore nella query");
-		throw new DBError("Errore : ",$this->link->errno);
-	  } elseif ($result->num_rows > 0) {
-		while ($row = $result->fetch_assoc()) {$arr[] = $row;}
-		$this->link->close();
-		return $arr;
-	  } else {
-		return FALSE;
-		//throw new Exception("Nessun risultato dalla query");
-	  }
-	} catch (DBError $exc) {
-	  //echo $exc->getTraceAsString();
-	  echo $exc->getDetailError();
-	} catch (Exception $e) {
-	  echo $e->getMessage();
+	function getResultAssoc($query) {
+		$this->link = $this->connect();
+		try {
+			if (!$result = $this->link->query($query)) {
+				//throw new Exception("Errore nella query");
+				throw new DBError("Errore : ",$this->link->errno);
+			} elseif ($result->num_rows > 0) {
+				while ($row = $result->fetch_assoc()) {$arr[] = $row;}
+				$this->link->close();
+				return $arr;
+			} else {
+				return FALSE;
+				//throw new Exception("Nessun risultato dalla query");
+			}
+		} catch (DBError $exc) {
+			//echo $exc->getTraceAsString();
+			echo $exc->getDetailError();
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
-  }
 
 }
 
@@ -209,36 +206,36 @@ class ConnectDB {
 // TODO: da ottimizzare
 class DBError extends Exception {
 
-  function getDetailError() {
-	//var_dump($this->code);
-	$msg = NULL;
-	switch ($this->code) {
-	  case 1054:
-		// nome di colonna sconosciuto
-		//return "Nome di colonna sconosciuto";
-		$msg = "Nome di colonna sconosciuto ($this->code)";
-		break;
-	  case 1064:
-		// sintassi errata
-		$msg = "Sintassi della query errata ($this->code)";
-		break;
-	  case 1146:
-		$msg = "Errore nella sintassi del / nome tabella sconosciuta / (msg da completare) nome campo ($this->code)";
-		break;
-		  case 1136:
+	function getDetailError() {
+		//var_dump($this->code);
+		$msg = NULL;
+		switch ($this->code) {
+			case 1054:
+				// nome di colonna sconosciuto
+				//return "Nome di colonna sconosciuto";
+				$msg = "Nome di colonna sconosciuto ($this->code)";
+				break;
+			case 1064:
+				// sintassi errata
+				$msg = "Sintassi della query errata ($this->code)";
+				break;
+			case 1146:
+				$msg = "Errore nella sintassi del / nome tabella sconosciuta / (msg da completare) nome campo ($this->code)";
+				break;
+			case 1136:
 				// in una insert le colonne non corrispondono ((1136, "Column count doesn't match value count at row 1")
 				$msg = "Il conteggio delle colonne non corrisponde al conteggio dei valori alla riga 1 ($this->code)";
 				break;
-		  case 1364:
+			case 1364:
 				$msg = "Il campo non ha un valore di default ($this->code)"; // (Field doesn't have a default value)
 				break;
 			case 1060:
 				$msg = "Nome di colonna duplicato ($this->code)";
 				break;
-	  default:
-		$msg = "Errore generico: $this->code";
-		break;
+			default:
+				$msg = "Errore generico: $this->code";
+				break;
+		}
+		return $msg;
 	}
-	return $msg;
-  }
 }
