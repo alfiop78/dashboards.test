@@ -15,11 +15,15 @@ var StorageMetric = new MetricStorage();
 
 	var app = {
 		// templates
-		tmplListField : document.getElementById('templateListField'),
-		tmpl_ulList : document.getElementById('tmpl_ulList'),
-		tmpl_ulListHidden : document.getElementById('templateListHidden'),
-		tmpl_ulListWithEdit : document.getElementById('templateListWithEdit'),
-		tmpl_ulListSection : document.getElementById('templateListSection'),
+		// tmplListField : document.getElementById('templateListField'),
+		// tmpl_ulList : document.getElementById('tmpl_ulList'),
+		// tmpl_ulListHidden : document.getElementById('templateListHidden'),
+		// tmpl_ulListWithEdit : document.getElementById('templateListWithEdit'),
+		// tmpl_ulListSection : document.getElementById('templateListSection'),
+
+		// template
+		tmplUlList : document.getElementById('template_ulList'), // contiene le <ul>
+		tmplList : document.getElementById('templateList'), // contiene i section
 
 		// popup
 		popup : document.getElementById('popup'),
@@ -158,7 +162,7 @@ var StorageMetric = new MetricStorage();
 	// creo la lista degli elementi da processare
 	app.datamartToBeProcessed = () => {
 		const ul = document.getElementById('reportsProcess');
-		const toProcess = StorageProcess.list(app.tmplListField, ul);
+		const toProcess = StorageProcess.list(app.tmplList, ul);
 		// associo la Fn che gestisce il click sulle <li>
 		ul.querySelectorAll('li').forEach( (li) => li.addEventListener('click', app.handlerReportToBeProcessed) );
 	};
@@ -791,13 +795,12 @@ var StorageMetric = new MetricStorage();
 
 	// carico elenco Cubi su cui creare il report
 	app.getCubes = () => {
-		// StorageCube.list(ul);
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-cubes']");
 		const parent = document.getElementById('fieldList-cubes'); // dove verrà inserita la <ul>
 		for (const [key, value] of Object.entries(StorageCube.cubes)) {
-			const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-			const section = contentElement.querySelector('section');
+			const contentElement = app.tmplList.content.cloneNode(true);
+			const section = contentElement.querySelector('section[data-no-icon]');
 			const element = section.querySelector('.element');
 			const li = element.querySelector('li');
 			section.setAttribute('data-label-search', key);
@@ -816,7 +819,7 @@ var StorageMetric = new MetricStorage();
 
 	app.getDimensions = () => {
 		// elenco di tutte le dimensioni
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-dimensions']");
 		const parent = document.getElementById('dimensionList'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
@@ -827,8 +830,8 @@ var StorageMetric = new MetricStorage();
 			console.log('dimensioni associate : ', cubeValue.associatedDimensions);
 			// per ogni dimensione presente in associatedDimensions inserisco un element (preso dal template app.tmplListField)
 			cubeValue.associatedDimensions.forEach( (dimension, index) => {
-				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-				const section = contentElement.querySelector('section');
+				const contentElement = app.tmplList.content.cloneNode(true);
+				const section = contentElement.querySelector('section[data-no-icon]');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
 				section.setAttribute('data-label-search', dimension); // questo attr consente la ricerca dalla input sopra
@@ -848,7 +851,7 @@ var StorageMetric = new MetricStorage();
 
 	app.getHierarchies = () => {
 		// lista di tutte le gerarchie, imposto un data-dimension-id/name sugli .element della lista gerarchie, in questo modo posso filtrarle quando seleziono le dimensioni nello step precedente
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-hierarchies']");
 		const parent = document.getElementById('tableList-hierarchies'); // dove verrà inserita la <ul>
 
@@ -858,8 +861,8 @@ var StorageMetric = new MetricStorage();
 		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {	
 			// per ogni dimensione presente in associatedDimensions inserisco un element (preso dal template app.tmplListField)
 			for (const hier in dimValue.hierarchies) {
-				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-				const section = contentElement.querySelector('section');
+				const contentElement = app.tmplList.content.cloneNode(true);
+				const section = contentElement.querySelector('section[data-icon-column][data-icon-filter');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
 				section.setAttribute('data-label-search', hier); // ricerca dalla input sopra
@@ -1089,17 +1092,17 @@ var StorageMetric = new MetricStorage();
 
 	app.getHierarchies();
 
-	app.getTablesInHierarchies();
+	// app.getTablesInHierarchies();
 
-	app.getColumnsInTable();
+	// app.getColumnsInTable();
 
-	app.getFiltersInFrom();
+	// app.getFiltersInFrom();
 
-	app.getTables();
+	// app.getTables();
 
-	app.getMetricsInCubes();
+	// app.getMetricsInCubes();
 
-	app.getMetrics();
+	// app.getMetrics();
 
 	app.datamartToBeProcessed();
 

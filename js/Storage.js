@@ -225,13 +225,15 @@ class ProcessStorage extends Storages {
 		for (let process in this.processes) {
 			// console.log(proc);
 			// console.log(toBeProcessed[proc]);
+			console.log('template : ', template);
 			const content = template.content.cloneNode(true);
-			let element = content.querySelector('.element');
-			let li = element.querySelector('li');
+			let section = content.querySelector('section[data-no-icon]');
+			section.hidden = false;
+			let li = section.querySelector('li');
 			li.innerText = process;
 			li.setAttribute('label', process);
 			li.setAttribute('data-id', this.processes[process]['processId']);
-			ul.appendChild(element);
+			ul.appendChild(section);
 		}
 	}
 

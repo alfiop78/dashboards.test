@@ -27,29 +27,32 @@
 
 		<small id="popup" class="popupToast"></small>
 
-		<dialog id="dialogTables">
+		<dialog id="dialogTables" class="dialog-tables">
 			<small id="dialog-popup" class="popupToast"></small>
 			<section data-table-selected>
 				<h4>Seleziona le colonne da includere per la tabella <span></span></h4>
 
-				<div class="formulaDefine">
+				<div class="stepLayout">
 
-					<section class="formula">
-						<div class="title">
-							<h5>Colonne</h5><h6>Seleziona le colonne da includere</h6>
+					<section class="sectionLists">
+						<h5>Tabelle</h5><h6></h6>
+						<div class="md-field">
+							<input type="search" id="searchTables" value="" autocomplete="off" />
+							<label for="searchTables" class="">Ricerca</label>
 						</div>
-
-						<div class="listContent">
-							<div class="md-field" value>
-								<input type="search" id="fieldSearch" value="" autocomplete="off" />
-								<label for="fieldSearch" class="">Ricerca</label>
-							</div>
-							<div id="table-fieldList"></div>
-							<!-- <div id="table-fieldList" class="list middleList"></div> -->
-						</div>
+						<div id="fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
 					</section>
 
-					<section class="sql">
+					<section class="sectionLists">
+						<h5>Colonne</h5><h6>Seleziona le colonne da includere</h6>
+						<div class="md-field" value>
+							<input type="search" id="fieldSearch" value="" autocomplete="off" />
+							<label for="fieldSearch" class="">Ricerca</label>
+						</div>
+						<div id="table-fieldList"></div>
+					</section>
+
+					<section class="sectionLists">
 						<div class="md-field">
 							<textarea id="sqlFormula" name="columnSQL" rows="5" cols="33" placeholder="SQL"></textarea>
 						</div>
@@ -60,6 +63,7 @@
 					</section>
 
 				</div>
+
 
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
@@ -243,8 +247,6 @@
 			<div id="container" data-page="1">
 				<div id="content">
 					<div id="body" hidden>
-						<h3>title</h3>
-						<h5>descrizione</h5>
 
 						<div class="actions">
 							<span class="popupContent"><i id="btnProcessReport" class="material-icons md-24">folder_open</i><small class="popup">Crea FX</small></span>
@@ -261,40 +263,33 @@
 							</div>
 						</div>
 	  
-						<template id="templateListField">
-							<div class="element" name="">
-								<li class="elementSearch" label=""></li>
-							</div>
-						</template>
+						<!-- template con icone 'column' e 'filter' -->
+						<template id="templateList">
 
-						<template id="templateListHidden">
-							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+							<section hidden data-label-search data-icon-column data-icon-filter>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
 									<i id="columns-icon" class="material-icons md-18">view_list</i>
 									<i id="filter-icon" class="material-icons md-18">filter_alt</i>
 								</div>	
 							</section>
-						</template>
 
-						<template id="templateListWithEdit">
-							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+							<section hidden data-label-search data-icon-edit>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
 									<i id="edit-icon" class="material-icons md-18">edit</i>
 								</div>	
 							</section>
-						</template>
 
-						<template id="templateListSection">
-							<section hidden data-label-search>
+							<section hidden data-label-search data-no-icon>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
 								</div>	
 							</section>
+
 						</template>
 
-						<template id="tmpl_ulList">
+						<template id="template_ulList">
 							<ul data-id="fields-cubes" class="overflowList"></ul>
 							<ul data-id="fields-filter" class="overflowList"></ul>
 							<ul data-id="fields-dimensions" class="overflowList"></ul>
@@ -360,14 +355,14 @@
 														</div>
 													</section>
 
-													<section class="sectionLists" id="sectionFields-tables">
+													<!-- <section class="sectionLists" id="sectionFields-tables">
 														<h5>Tabelle disponibili</h5>
 														<div class="md-field">
 															<input type="search" id="searchTables" value="" autocomplete="off" />
 															<label for="searchTables" class="">Ricerca</label>
 														</div>
-														<div id="fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
-													</section>
+														<div id="fieldList-tables"></div>
+													</section> -->
 												</div>
 											</section>
 										</section>

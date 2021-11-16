@@ -32,7 +32,7 @@ i[open]{color: red;}
 
 .stepLayout{display: grid;}
 .step:first-child .stepLayout{grid-template-columns: 39% 59%; grid-column-gap: 2%; height: inherit;}
-.step:nth-child(2) .stepLayout{grid-template-columns: 39% 59%; grid-column-gap: 2%; height: inherit;}
+.step:nth-child(2) .stepLayout{grid-template-columns: 50% auto; grid-column-gap: 2%; height: inherit;}
 .step:nth-child(3) .stepLayout{grid-template-columns: 29% 39% 29%; grid-column-gap: 3%; height: inherit;}
 .step:last-child .stepLayout{grid-template-columns: 29% 39% 29%; grid-column-gap: 3%; height: inherit;}
 
@@ -40,6 +40,7 @@ i[open]{color: red;}
 
 dialog.dialog-filters .stepLayout{grid-template-columns: 25% auto 30%; grid-column-gap: 3%; height: inherit;margin : 0 2em;}
 dialog.dialog-metrics .stepLayout{grid-template-columns: 20% auto 25%; grid-column-gap: 3%; height: inherit;margin: 0 2em;}
+dialog.dialog-tables .stepLayout{grid-template-columns: 25% auto 30%; grid-column-gap: 3%; height: inherit;margin : 0 2em;}
 
 .overflowList{max-height: 400px; min-height: 350px; overflow-y: auto; background: gainsboro;}
 #fieldList-filter{padding: 0 16px;}
