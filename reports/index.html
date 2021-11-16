@@ -35,7 +35,7 @@
 				<div class="stepLayout">
 
 					<section class="sectionLists">
-						<h5>Tabelle</h5><h6></h6>
+						<h5>Tabelle</h5><h6>subtitle</h6>
 						<div class="md-field">
 							<input type="search" id="searchTables" value="" autocomplete="off" />
 							<label for="searchTables" class="">Ricerca</label>
@@ -53,21 +53,27 @@
 					</section>
 
 					<section class="sectionLists">
+						<h5>SQL</h5><h6>Aggiungere un alias per la colonna</h6>
 						<div class="md-field">
-							<textarea id="sqlFormula" name="columnSQL" rows="5" cols="33" placeholder="SQL"></textarea>
+							<input type="text" id="columnName" name="columnName" autocomplete="off" />
+							<label for="columnName" class="">Nome per la colonna</label>
 						</div>
 						<div class="md-field">
-							<input type="text" id="inputColumnName" name="columnName" autocomplete="off" />
-							<label for="inputColumnName" class="">Alias per la colonna</label>
+							<input type="text" id="columnAlias" name="columnAlias" autocomplete="off" />
+							<label for="columnAlias" class="">Alias</label>
 						</div>
+
+						<div class="md-field">
+							<textarea id="sqlFormula" name="columnSQL" rows="10" cols="50" placeholder="es.: CONCAT(tabella.campo,'-',tabella.campo)"></textarea>
+						</div>
+						<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
 					</section>
 
 				</div>
 
-
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
-					<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
+					<!-- <button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button> -->
 					<button id="btnColumnDone" type="button" name="done" class="md-button">fatto</button>
 				</div>
 			</section>

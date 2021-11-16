@@ -354,27 +354,19 @@ var StorageMetric = new MetricStorage();
 	};
 
 	// selezione della tabella nella sezione Column
-	app.handlerTableSelectedColumns = (e) => {
-		Query.table = e.currentTarget.getAttribute('data-table-name');
-		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
-		// console.log('e.currentTarget : ', e.currentTarget);
-		console.log('Query.table : ', Query.table);
-		console.log('Query.tableId : ', Query.tableId);
-		const hierName = e.currentTarget.getAttribute('data-hier-name');
-		const dimensionName = e.currentTarget.getAttribute('data-dimension-name');
-		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
-		app.dialogTables.querySelector('section').setAttribute('data-table-selected', Query.table);
-		app.dialogTables.querySelector('section').setAttribute('data-hier-name', hierName);
-		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimensionName);
-		// visualizzo solo i campi della tabella selezionata e anche della dimensione selezionata.
-		// Se ci sono due tabelle uguali, in due dimensioni diverse, occorre mettere nel querySelectorAll anche il nome della dimensione a cui si riferisce la tabella selezionta, altrimenti vengono duplicate le colonne
-		document.querySelectorAll("ul[data-id='fields-column'] > section[data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hierName+"']").forEach( (table) => {
+	app.openDialogTables = (e) => {
+		const hier = e.currentTarget.getAttribute('data-hier-name');
+		const dimension = e.currentTarget.getAttribute('data-dimension-name');
+		app.dialogTables.querySelector('section').setAttribute('data-hier-name', hier);
+		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimension);
+		// visualizzo le tabelle appartenenti alla hier selezionata
+		document.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-name='"+hier+"']").forEach( (table) => {
+			// console.log('tabelle appartententi alla gerarchia selezionata : ', table);
 			table.hidden = false;
+			// imposto l'elemento con l'attr 'searchable' in modo che il metodo SearchInSectionList cerca solo tra gli elementi che hanno questo attributo
+			// senza questo attributo, il metodo cerca tra tutti gli elementi e quindi và a nascondere/visualizzare anche quelli appartenenti ad altre dimensioni/gerarchie/tabelle ecc...
 			table.toggleAttribute('data-searchable');
 		});
-		// nascondo i field NON appartenenti alla tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-column'] > section:not([data-table-name='"+Query.table+"'][data-dimension-name='"+dimensionName+"'][data-hier-name='"+hierName+"'])").forEach( table => table.hidden = true);
-		app.dialogTables.querySelector('h4 > span').innerHTML = Query.table;
 		app.dialogTables.showModal();
 	};
 
@@ -388,11 +380,24 @@ var StorageMetric = new MetricStorage();
 			Query.deleteGroupBy();
 		} else {
 			// selezionato
-			// passo il focus alla textarea
-			// document.getElementById('sqlFormula').focus();
-			document.getElementById('inputColumnName').focus();
+			document.getElementById('columnName').value = "";
+			document.getElementById('columnName').focus();
+			document.getElementById('columnAlias').value = "";
+			// imposto sul tasto salva un attributo con il nome della tabella che sto salvando
+			app.btnSaveColumn.setAttribute('data-table-name', e.currentTarget.getAttribute('data-table-name'));
 		}
 		
+	};
+
+	app.handlerTableSelected = (e) => {
+		const dimension = e.currentTarget.getAttribute('data-dimension-name');
+		const table = e.currentTarget.getAttribute('label');
+		const hier = e.currentTarget.getAttribute('data-hier-name');
+		// TODO: visualizzo le colonne appartenenti alla tabella selezionata
+		document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
+			field.hidden = false;
+			field.toggleAttribute('data-searchable');
+		});
 	};
 
 	// selezione della FACT nella sezione metric
@@ -415,7 +420,7 @@ var StorageMetric = new MetricStorage();
 	};
 
 	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
-	app.handlerTableSelectedFilter = (e) => {
+	app.openDialogFilters = (e) => {
 		console.info('Tabella selezionata: ', e.currentTarget.getAttribute('data-table-name'));
 		Query.table = e.currentTarget.getAttribute('data-table-name');
 		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
@@ -865,6 +870,12 @@ var StorageMetric = new MetricStorage();
 				const section = contentElement.querySelector('section[data-icon-column][data-icon-filter');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
+				const iColumns = element.querySelector('#columns-icon');
+				const iFilter = element.querySelector('#filter-icon');
+				iColumns.setAttribute('data-dimension-name', dimName);
+				iColumns.setAttribute('data-hier-name', hier);
+				iColumns.onclick = app.openDialogTables; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
+				iFilter.onclick = app.openDialogFilters; // apre la dialog dialogFilter per impostare i filtri
 				section.setAttribute('data-label-search', hier); // ricerca dalla input sopra
 				section.setAttribute('data-dimension-name', dimValue.name);
 				section.setAttribute('data-hier-name', hier);
@@ -879,7 +890,7 @@ var StorageMetric = new MetricStorage();
 
 	app.getTablesInHierarchies = () => {
 		// lista di tutte le tabelle, incluse nelle dimensioni e di conseguenza, nelle gerarchie
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-tables']");
 		const parent = document.getElementById('fieldList-tables'); // dove verrà inserita la <ul>
 		// per ogni dimensione, vado a leggere le hierarchies presenti, le ciclo per creare una <ul>, in sectionFields-tables, con le tabelle presenti nella gerarchia in ciclo
@@ -890,33 +901,19 @@ var StorageMetric = new MetricStorage();
 				for (const [key, value] of Object.entries(Dim.selected.hierarchies[hier]['order'])) {
 					// ciclo le tabelle presenti nella gerarchia
 					console.log(key, value);
-					const contentElement = app.tmpl_ulListHidden.content.cloneNode(true);
-					const section = contentElement.querySelector('section');
+					const contentElement = app.tmplList.content.cloneNode(true);
+					const section = contentElement.querySelector('section[data-no-icon]');
 					const element = section.querySelector('.element');
 					const li = element.querySelector('li');
-					const iColumns = element.querySelector('#columns-icon');
-					const iFilter = element.querySelector('#filter-icon');
 					section.setAttribute('data-label-search', value); // utilizzabile per la ricerca dalla input sopra
 					section.setAttribute('data-dimension-name', dimName); // utilizzabile dalla dimensione + gerarchia selezionata
 					section.setAttribute('data-hier-name', hier);
 					li.innerText = value;
 					li.setAttribute('data-table-id', key);
 					li.setAttribute('label', value);
-					iColumns.setAttribute('data-dimension-name', dimName); // attributo che viene letto in app.handlerTableSelected per recuperare la property 'columns' della dimensione
-					iColumns.setAttribute('data-table-name', value);
-					iColumns.setAttribute('data-hier-name', hier);
-					iColumns.id = "columns-icon-"+hier+"-"+value;
-					iColumns.setAttribute('data-table-id', key);
-					iFilter.setAttribute('data-dimension-name', dimName);
-					iFilter.setAttribute('data-table-name', value);
-					iFilter.id = "filter-icon-"+hier+"-"+value;
-					iFilter.setAttribute('data-hier-name', hier);
-					iFilter.setAttribute('data-table-id', key);
-					// imposto onclick sulle icone columns e filter
-					iColumns.onclick = app.handlerTableSelectedColumns; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
-					iFilter.onclick = app.handlerTableSelectedFilter; // apre la dialog dialogFilter per impostare i filtri
-					iFilter.setAttribute('data-popup-label', 'Filtri');
-					iColumns.setAttribute('data-popup-label', 'Colonne');
+					li.setAttribute('data-dimension-name', dimName);
+					li.setAttribute('data-hier-name', hier);
+					li.onclick = app.handlerTableSelected;
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
@@ -926,7 +923,7 @@ var StorageMetric = new MetricStorage();
 
 	app.getColumnsInTable = () => {
 		// lista di tutte le colonne, incluse nelle dimensioni, property 'columns'
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-column']");
 		const parent = document.getElementById('table-fieldList'); // dove verrà inserita la <ul>
 		// per ogni dimensione, recupero la property 'columns'
@@ -946,8 +943,8 @@ var StorageMetric = new MetricStorage();
 					for (let field in fields) {
 						console.log('field : ', field);
 						console.log('fields[field] : ', fields[field]);
-						const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-						const section = contentElement.querySelector('section');
+						const contentElement = app.tmplList.content.cloneNode(true);
+						const section = contentElement.querySelector('section[data-no-icon');
 						const element = section.querySelector('.element');
 						const li = element.querySelector('li');
 						section.setAttribute('data-label-search', field);
@@ -957,6 +954,7 @@ var StorageMetric = new MetricStorage();
 						li.innerText = field;
 						li.setAttribute('label', field);
 						li.setAttribute('data-key', fields[field]);
+						li.setAttribute('data-table-name', table);
 						ul.appendChild(section);
 						li.onclick = app.selectColumn;
 					}
@@ -1092,9 +1090,9 @@ var StorageMetric = new MetricStorage();
 
 	app.getHierarchies();
 
-	// app.getTablesInHierarchies();
+	app.getTablesInHierarchies();
 
-	// app.getColumnsInTable();
+	app.getColumnsInTable();
 
 	// app.getFiltersInFrom();
 
@@ -1227,7 +1225,11 @@ var StorageMetric = new MetricStorage();
 		icon.onmouseleave = app.hidePopupDialog;
 	});
 
-	document.getElementById('inputColumnName').oninput = (e) => {
+	document.getElementById('columnAlias').oninput = (e) => {
+		(e.target.value.length === 0) ? app.btnSaveColumn.disabled = true : app.btnSaveColumn.disabled = false;
+	};
+
+	document.getElementById('columnName').oninput = (e) => {
 		(e.target.value.length === 0) ? app.btnSaveColumn.disabled = true : app.btnSaveColumn.disabled = false;
 	};
 
@@ -1255,13 +1257,16 @@ var StorageMetric = new MetricStorage();
 
 	// 'Salva' nella dialogTables
 	app.btnSaveColumn.onclick = (e) => {
-		const alias = document.getElementById('inputColumnName').value;
+		Query.table = e.currentTarget.getAttribute('data-table-name');
+		// BOOKMARK : aggiunta la property 'column' nella Classe Query
+		const name = document.getElementById('columnName').value;
+		const alias = document.getElementById('columnAlias').value;
 		const textarea = (document.getElementById('sqlFormula').value.length === 0) ? null : document.getElementById('sqlFormula').value;
 		debugger;
-		Query.select = {SQLFormat: textarea, alias};
+		Query.select = {table : Query.table, SQL: textarea, alias};
 		// aggiungo la colonna selezionata a Query.groupBy
-		Query.groupBy = {SQLFormat: textarea};
-		document.getElementById('inputColumnName').value = '';
+		Query.groupBy = {SQL: textarea};
+		document.getElementById('columnAlias').value = '';
 	};
 
 	mdcMapping.onclick = () => location.href = '/mapping/';

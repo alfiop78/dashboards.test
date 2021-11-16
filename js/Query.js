@@ -3,6 +3,8 @@ class Queries {
 	#select;
 	#groupBy;
 	#obj;
+	#table;
+	#column;
 	constructor() {
 		this.#select = {};
 		this.#groupBy = {};
@@ -15,9 +17,9 @@ class Queries {
 		this._filteredMetrics = {};
 	}
 
-	set table(value) {this._table = value;}
+	set table(value) {this.#table = value;}
 
-	get table() {return this._table;}
+	get table() {return this.#table;}
 
 	set tableId(value) {this._tableId = value;}
 
@@ -48,18 +50,22 @@ class Queries {
 
 	get filterName() {return this._filterName;}
 
+	set column(value) {this.#column = value;}
+
+	get column() {return this.#column;}
+
 	set select(object) {
 		// es.: this.#select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
 		this.#obj = {};
-		if (this.#select.hasOwnProperty(this._table)) {
+		if (this.#select.hasOwnProperty(this.#table)) {
 			// tabella già presente nell'object #select
-			if (!this.#select[this._table].hasOwnProperty(this._field)) {
-				// field NON presente in #select[_table], lo aggiungo
-				this.#select[this._table][this._field] = object;
+			if (!this.#select[this.#table].hasOwnProperty(this._field)) {
+				// field NON presente in #select[#table], lo aggiungo
+				this.#select[this.#table][this._field] = object;
 			}
 		} else {
 			this.#obj[this._field] = object;
-			this.#select[this._table] = this.#obj;
+			this.#select[this.#table] = this.#obj;
 		}
 		console.log('select : ', this.#select);
 	}
@@ -67,15 +73,15 @@ class Queries {
 	get select() {return this.#select;}
 
 	deleteSelect() {
-		delete this.#select[this._table][this._field];
-		// verifico se this.#select[this._table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this.#select[this._table]).length === 0) delete this.#select[this._table];
+		delete this.#select[this.#table][this._field];
+		// verifico se this.#select[this.#table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
+		if (Object.keys(this.#select[this.#table]).length === 0) delete this.#select[this.#table];
 
 		console.log('select : ', this.#select);
 	}
 
 	getAliasColumn() {
-		return this.#select[this._table][this._field]['alias'];
+		return this.#select[this.#table][this._field]['alias'];
 	}
 
 	set joinId(value) {this._joinId = value;}
@@ -111,14 +117,14 @@ class Queries {
 
 	set filters(object) {
 		this.#obj = {};
-		if (this._filter.hasOwnProperty(this._table)) {
+		if (this._filter.hasOwnProperty(this.#table)) {
 			// tabella già presente nell'object #select
-			if (!this._filter[this._table].hasOwnProperty(this._filterName)) {
-				this._filter[this._table][this._filterName] = object;
+			if (!this._filter[this.#table].hasOwnProperty(this._filterName)) {
+				this._filter[this.#table][this._filterName] = object;
 			}
 		} else {
 			this.#obj[this._filterName] = object;
-			this._filter[this._table] = this.#obj;
+			this._filter[this.#table] = this.#obj;
 		}
 		// *********************
 		// this._filter[this._filterName] = {table : object.table, formula : object.formula};
@@ -128,9 +134,9 @@ class Queries {
 	get filters() {return this._filter};
 
 	deleteFilter() {
-		delete this._filter[this._table][this.filterName];
-		// se, per questa tabella non ci sono altri filtri, elimino anche la property this._table
-		if (Object.keys(this._filter[this._table]).length === 0) delete this._filter[this._table];
+		delete this._filter[this.#table][this.filterName];
+		// se, per questa tabella non ci sono altri filtri, elimino anche la property this.#table
+		if (Object.keys(this._filter[this.#table]).length === 0) delete this._filter[this.#table];
 		console.log('filter : ', this._filter);
 	}
 
@@ -138,15 +144,15 @@ class Queries {
 		// aggiungo l'object per il group by
 		// es.: this.#groupBy[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format)}
 		this.#obj = {};
-		if (this.#groupBy.hasOwnProperty(this._table)) {
+		if (this.#groupBy.hasOwnProperty(this.#table)) {
 			// tabella già presente nell'object #select
-			if (!this.#groupBy[this._table].hasOwnProperty(this._field)) {
-				// field NON presente in #groupBy[_table], lo aggiungo
-				this.#groupBy[this._table][this._field] = object;
+			if (!this.#groupBy[this.#table].hasOwnProperty(this._field)) {
+				// field NON presente in #groupBy[#table], lo aggiungo
+				this.#groupBy[this.#table][this._field] = object;
 			}
 		} else {
 			this.#obj[this._field] = object;
-			this.#groupBy[this._table] = this.#obj;
+			this.#groupBy[this.#table] = this.#obj;
 		}
 		console.log('groupBy : ', this.#groupBy);
 	}
@@ -154,9 +160,9 @@ class Queries {
 	get groupBy() {return this.#groupBy;}
 
 	deleteGroupBy() {
-		delete this.#groupBy[this._table][this._field];
+		delete this.#groupBy[this.#table][this._field];
 		// stessa logica di deleteSelect()
-		if (Object.keys(this.#groupBy[this._table]).length === 0) delete this.#groupBy[this._table];
+		if (Object.keys(this.#groupBy[this.#table]).length === 0) delete this.#groupBy[this.#table];
 
 		console.log('groupBy : ', this.#groupBy);
 	}
