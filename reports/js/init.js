@@ -1261,6 +1261,9 @@ var StorageMetric = new MetricStorage();
 		document.getElementById('inputColumnName').value = '';
 	};
 
-	mdcMapping.onclick = () => location.href = '/mapping/';
+	app.btnMapping.onclick = () => {
+		debugger;
+		location.href = '/mapping/';
+	};
 
 })();
