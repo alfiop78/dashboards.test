@@ -29,7 +29,7 @@
 
 		<dialog id="dialogTables" class="dialog-tables">
 			<small id="dialog-popup" class="popupToast"></small>
-			<section data-table-selected>
+			<section data-hier-name data-dimension-name>
 				<h4>Seleziona le colonne da includere per la tabella <span></span></h4>
 
 				<div class="stepLayout">
@@ -287,6 +287,13 @@
 								</div>	
 							</section>
 
+							<section data-label-search data-icon-delete>
+								<div class="element" name="">
+									<li class="elementSearch" label=""></li>
+									<i id="delete-icon" class="material-icons md-18">delete</i>
+								</div>	
+							</section>
+
 							<section hidden data-label-search data-no-icon>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
@@ -300,7 +307,7 @@
 							<ul data-id="fields-filter" class="overflowList"></ul>
 							<ul data-id="fields-dimensions" class="overflowList"></ul>
 							<ul data-id="fields-hierarchies" class="overflowList"></ul>
-							<ul data-id="fields-column" class="list middleList"></ul>
+							<ul data-id="fields-column" class="overflowList"></ul>
 							<ul data-id="fields-field" class="list middleList"></ul>
 							<ul data-id="fields-values" class="list middleList"></ul>
 							<ul data-id="fields-tables" class="overflowList"></ul>
@@ -367,7 +374,7 @@
 															<input type="search" id="" value="" autocomplete="off" />
 															<label for="" class="">Ricerca</label>
 														</div>
-														<div id=""></div>
+														<div><ul id="columnsSet"></ul></div>
 													</section>
 													<section class="sectionLists">
 														<h5>Filtri impostati</h5>

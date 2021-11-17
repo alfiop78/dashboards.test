@@ -393,6 +393,8 @@ var StorageMetric = new MetricStorage();
 		const dimension = e.currentTarget.getAttribute('data-dimension-name');
 		const table = e.currentTarget.getAttribute('label');
 		const hier = e.currentTarget.getAttribute('data-hier-name');
+		// deseleziono le precedenti selezioni
+		if (document.querySelector('#fieldList-tables ul li[selected]')) document.querySelector('#fieldList-tables ul li[selected]').toggleAttribute('selected');
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
 			// visualizzo le colonne appartenenti alla tabella selezionata
@@ -529,13 +531,51 @@ var StorageMetric = new MetricStorage();
 		.catch( (err) => console.error(err));
 	};
 
-	// "Fatto" nella dialog filter
+	app.checkRelations = () => {
+		console.log('Query.select : ', Query.select);
+		/*
+		for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
+			// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
+			if (+k >= Query.tableId) {
+				Query.from = table;
+				if (Dim.selected.join[table]) {
+					Query.joinId = +k;
+					Query.where = Dim.selected.join[table];
+				};
+			};
+		}
+		*/
+		for (const [key, value] of Object.entries(Query.select)) {
+			debugger;
+			Query.from = value.table;
+		}
+	};
+
+	// "Fatto" nella dialog Tables
 	app.btnColumnDone.onclick = () => {
 		// console.log('Query.table : ', Query.table);
 		// console.log('Query.tableId : ', Query.tableId);
 		const hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
 		const list = document.getElementById('fieldList-tables');
 		Dim.selected = app.dialogTables.querySelector('section').getAttribute('data-dimension-name');
+		// recupero la property #select della classe Query per visualizzare nella <ul> #columnsSet
+		const ul = document.getElementById('columnsSet');
+		console.log('Query.select : ', Query.select);
+		for (const [key, value] of Object.entries(Query.select)) {
+			const contentElement = app.tmplList.content.cloneNode(true);
+			const section = contentElement.querySelector('section[data-icon-delete]');
+			const element = section.querySelector('.element');
+			const li = element.querySelector('li');
+			const iColumns = element.querySelector('#columns-icon');
+			section.setAttribute('data-label-search', key);
+			li.innerText = key;
+			ul.appendChild(section);
+		}
+
+		// verifico quali relazioni inserire in where e quindi anche in from
+		app.checkRelations();
+		app.dialogTables.close();
+		return;
 		
 		// verifico se l'object _select ha elementi selezionati (per una determinata tabella). _select avrà sempre almeno 1 elemento selezionato, si tratta della primaryKey
 		// ... quindi, oltre a verificare se ci sono colonne selezionate, devo verificare anche se ce n'è una sola, quella è la primaryKey
@@ -1152,8 +1192,6 @@ var StorageMetric = new MetricStorage();
 			case 2:
 				// colonne/filtri
 				// deve essere selezionata almeno una colonna per proseguire
-				debugger;
-				console.log('Query.select : ', Query.select);
 				if (Object.keys(Query.select).length === 0) {
 					App.handlerConsole('Selezionare almeno un livello dimensionale', 'warning')
 					return false;
