@@ -100,6 +100,15 @@
 			<section data-table-selected>
 				<h4>Selezione filtri per la tabella <span></span></h4>
 				<div class="stepLayout">
+
+					<section class="sectionLists">
+						<h5>Tabelle</h5><h6>subtitle</h6>
+						<div class="md-field">
+							<input type="search" id="filter-searchTables" value="" autocomplete="off" />
+							<label for="filter-searchTables" class="">Ricerca</label>
+						</div>
+						<div id="filter-fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
+					</section>
 					
 					<section class="sectionLists">
 						<h5>Crea filtro</h5>
@@ -107,7 +116,7 @@
 							<input type="search" id="fieldSearch" value="" autocomplete="off" />
 							<label for="fieldSearch" class="">Ricerca</label>
 						</div>
-						<div id="filter-fieldList"><!-- template ul--></div>
+						<div id="fieldList-filter"><!-- template ul--></div>
 						
 					</section>
 
@@ -275,8 +284,8 @@
 							<section hidden data-label-search data-icon-column data-icon-filter>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
-									<i id="columns-icon" class="material-icons md-18">view_list</i>
-									<i id="filter-icon" class="material-icons md-18">filter_alt</i>
+									<i data-id="columns-icon" class="material-icons md-18">view_list</i>
+									<i data-id="filter-icon" class="material-icons md-18">filter_alt</i>
 								</div>	
 							</section>
 

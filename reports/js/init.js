@@ -360,7 +360,7 @@ var StorageMetric = new MetricStorage();
 		app.dialogTables.querySelector('section').setAttribute('data-hier-name', hier);
 		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimension);
 		// visualizzo le tabelle appartenenti alla hier selezionata
-		document.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-name='"+hier+"']").forEach( (table) => {
+		app.dialogTables.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-name='"+hier+"']").forEach( (table) => {
 			// console.log('tabelle appartententi alla gerarchia selezionata : ', table);
 			table.hidden = false;
 			// imposto l'elemento con l'attr 'searchable' in modo che il metodo SearchInSectionList cerca solo tra gli elementi che hanno questo attributo
@@ -393,6 +393,7 @@ var StorageMetric = new MetricStorage();
 		Query.tableId = e.currentTarget.getAttribute('data-table-id');
 		const hier = e.currentTarget.getAttribute('data-hier-name');
 		// deseleziono le precedenti tabelle selezionate
+		// let activeDialog = document.querySelector('dialog[open]');
 		if (document.querySelector('#fieldList-tables ul li[selected]')) {
 			const li = document.querySelector('#fieldList-tables ul li[selected]');
 			li.toggleAttribute('selected');
@@ -433,32 +434,34 @@ var StorageMetric = new MetricStorage();
 
 	// selezione della tabella nello step Filter, visualizzo i filtri creati su questa tabella, recuperandoli dallo storage
 	app.openDialogFilters = (e) => {
-		console.info('Tabella selezionata: ', e.currentTarget.getAttribute('data-table-name'));
-		Query.table = e.currentTarget.getAttribute('data-table-name');
-		Query.tableId = +e.currentTarget.getAttribute('data-table-id');
-		app.dialogFilter.querySelector('section').setAttribute('data-table-selected', Query.table);
-		app.dialogFilter.querySelector('section').setAttribute('data-hier-name', e.currentTarget.getAttribute('data-hier-name'));
-		app.dialogFilter.querySelector('section').setAttribute('data-dimension-name', e.currentTarget.getAttribute('data-dimension-name'));
-		// visualizzo il nome della tabella nel tag h4 > span
-		app.dialogFilter.querySelector('h4 > span').innerHTML = Query.table;
-		// visualizzo elenco dei campi, aggiunti in fase di mapping, della tabella selezionata
-		// rimuovo, se già presente, la <ul> contenuto all'interno di #filter-fieldList per mostrare le colonne (recuperate dal DB) della tabella selezionata (esiste su selezione precedente)
-		const listRef = app.dialogFilter.querySelector('#filter-fieldList');
+		const hier = e.currentTarget.getAttribute('data-hier-name');
+		const dimension = e.currentTarget.getAttribute('data-dimension-name');
+		app.dialogTables.querySelector('section').setAttribute('data-hier-name', hier);
+		app.dialogTables.querySelector('section').setAttribute('data-dimension-name', dimension);
+		// visualizzo le tabelle appartenenti alla hier selezionata
+		app.dialogFilter.querySelectorAll("ul[data-id='fields-tables'] > section[data-hier-name='"+hier+"']").forEach( (table) => {
+			// console.log('tabelle appartententi alla gerarchia selezionata : ', table);
+			table.hidden = false;
+			// imposto l'elemento con l'attr 'searchable' in modo che il metodo SearchInSectionList cerca solo tra gli elementi che hanno questo attributo
+			// senza questo attributo, il metodo cerca tra tutti gli elementi e quindi và a nascondere/visualizzare anche quelli appartenenti ad altre dimensioni/gerarchie/tabelle ecc...
+			table.toggleAttribute('data-searchable');
+		});
+		// rimuovo, se già presente, la <ul> contenuto all'interno di #fieldList-filter per mostrare le colonne (recuperate dal DB) della tabella selezionata (esiste su selezione precedente)
+		const listRef = app.dialogFilter.querySelector('#fieldList-filter');
 		if (listRef.querySelector('ul')) listRef.querySelector('ul').remove();
-		app.getFields(); // recupero i campi della tabella selezionata
 		// visualizzo i filtri ESISTENTI della tabella selezionata
 		// TODO: aggiungere anche la data-hier-name
-		document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( (filter) => {
-			filter.hidden = false;
-			// gli elementi appartenenti alla tabella, dimensione,gerarchia possono essere ricercati dalla input search
-			filter.toggleAttribute('data-searchable');
-		});
+		// document.querySelectorAll("ul[data-id='fields-filter'] > section[data-table-name='"+Query.table+"']").forEach( (filter) => {
+		// 	filter.hidden = false;
+		// 	// gli elementi appartenenti alla tabella, dimensione,gerarchia possono essere ricercati dalla input search
+		// 	filter.toggleAttribute('data-searchable');
+		// });
 		// nascondo i filter NON appartenenti alla tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( (filter) => {
-			filter.hidden = true;
-			// gli elementi nascosti non possono essere ricercati dalla input search
-			filter.removeAttribute('data-searchable');
-		});
+		// document.querySelectorAll("ul[data-id='fields-filter'] > section:not([data-table-name='"+Query.table+"'])").forEach( (filter) => {
+		// 	filter.hidden = true;
+		// 	// gli elementi nascosti non possono essere ricercati dalla input search
+		// 	filter.removeAttribute('data-searchable');
+		// });
 		app.dialogPopup = app.dialogFilter.querySelector('#dialog-popup');
 		app.dialogFilter.showModal();
 	};
@@ -466,7 +469,7 @@ var StorageMetric = new MetricStorage();
 	// selezione del field nella dialogFilter
 	app.handlerFilterFieldSelected = (e) => {
 		// rimuovo eventuali altre selezioni precedenti
-		const fieldList = app.dialogFilter.querySelector('#filter-fieldList');
+		const fieldList = app.dialogFilter.querySelector('#fieldList-filter');
 		fieldList.querySelectorAll('ul li[selected]').forEach( element => element.toggleAttribute('selected'));
 		e.currentTarget.toggleAttribute('selected');
 		Query.field = e.target.getAttribute('label');
@@ -500,10 +503,10 @@ var StorageMetric = new MetricStorage();
 				// console.log(data);
 				if (data) {
 					// TODO: pulisco l'elenco dei campi
-					// let ul = document.getElementById('filter-fieldList');
+					// let ul = document.getElementById('fieldList-filter');
 					const content = app.tmpl_ulList.content.cloneNode(true);
 					const ul = content.querySelector("ul[data-id='fields-field']");
-					const parent = document.getElementById('filter-fieldList'); // dove verrà inserita la <ul>
+					const parent = document.getElementById('fieldList-filter'); // dove verrà inserita la <ul>
 					// ul.querySelectorAll('section').forEach((el) => {el.remove();});
 					for ( const [key, value] of Object.entries(data)) {
 						const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
@@ -921,11 +924,13 @@ var StorageMetric = new MetricStorage();
 				const section = contentElement.querySelector('section[data-icon-column][data-icon-filter');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
-				const iColumns = element.querySelector('#columns-icon');
-				const iFilter = element.querySelector('#filter-icon');
+				const iColumns = element.querySelector("i[data-id='columns-icon']");
+				const iFilter = element.querySelector("i[data-id='filter-icon']");
 				iColumns.setAttribute('data-dimension-name', dimName);
 				iColumns.setAttribute('data-hier-name', hier);
 				iColumns.onclick = app.openDialogTables; // apre la dialog dialogTables per impostare gli alias e SQL per le colonne
+				iFilter.setAttribute('data-dimension-name', dimName);
+				iFilter.setAttribute('data-hier-name', hier);
 				iFilter.onclick = app.openDialogFilters; // apre la dialog dialogFilter per impostare i filtri
 				section.setAttribute('data-label-search', hier); // ricerca dalla input sopra
 				section.setAttribute('data-dimension-name', dimValue.name);
@@ -943,7 +948,8 @@ var StorageMetric = new MetricStorage();
 		// lista di tutte le tabelle, incluse nelle dimensioni e di conseguenza, nelle gerarchie
 		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-tables']");
-		const parent = document.getElementById('fieldList-tables'); // dove verrà inserita la <ul>
+		const parent = document.getElementById('fieldList-tables'); // dove verrà inserita la <ul> nella dialog Tables
+		const parentDialogFilter = document.getElementById('filter-fieldList-tables'); // dove verrà inserita la <ul> nella dialog Filter
 		// per ogni dimensione, vado a leggere le hierarchies presenti, le ciclo per creare una <ul>, in sectionFields-tables, con le tabelle presenti nella gerarchia in ciclo
 		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {
 			Dim.selected = dimName;
@@ -968,6 +974,9 @@ var StorageMetric = new MetricStorage();
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
+				// clono la ul per inserirla anche nella dialogFilter
+				let ulDialogfilter = ul.cloneNode(true);
+				parentDialogFilter.appendChild(ulDialogfilter);
 			}
 		}
 	};
