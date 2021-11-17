@@ -377,35 +377,36 @@ var StorageMetric = new MetricStorage();
 		if (!e.currentTarget.hasAttribute('selected')) {
 			// deselezionato
 			Query.deleteSelect();
-			Query.deleteGroupBy();
+			// Query.deleteGroupBy();
 		} else {
 			// selezionato
 			document.getElementById('columnName').value = "";
 			document.getElementById('columnName').focus();
 			document.getElementById('columnAlias').value = "";
-			// imposto sul tasto salva un attributo con il nome della tabella che sto salvando
-			app.btnSaveColumn.setAttribute('data-table-name', e.currentTarget.getAttribute('data-table-name'));
 		}
 		
 	};
 
 	app.handlerTableSelected = (e) => {
 		const dimension = e.currentTarget.getAttribute('data-dimension-name');
-		const table = e.currentTarget.getAttribute('label');
+		Query.table = e.currentTarget.getAttribute('label');
+		Query.tableId = e.currentTarget.getAttribute('data-table-id');
 		const hier = e.currentTarget.getAttribute('data-hier-name');
-		// deseleziono le precedenti selezioni
-		if (document.querySelector('#fieldList-tables ul li[selected]')) document.querySelector('#fieldList-tables ul li[selected]').toggleAttribute('selected');
+		// deseleziono le precedenti tabelle selezionate
+		if (document.querySelector('#fieldList-tables ul li[selected]')) {
+			const li = document.querySelector('#fieldList-tables ul li[selected]');
+			li.toggleAttribute('selected');
+			// nascondo tutte le colonne che fanno parte della tabella precedentemente selezionata
+			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+li.getAttribute('label')+"']").forEach( (field) => {
+				field.hidden = true;
+				field.toggleAttribute('data-searchable');
+			});
+		}
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
 			// visualizzo le colonne appartenenti alla tabella selezionata
-			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
+			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+Query.table+"']").forEach( (field) => {
 				field.hidden = false;
-				field.toggleAttribute('data-searchable');
-			});
-		} else {
-			// TODO: tabella deselezionata, nascondo le colonne appartenenti a questa tabella
-			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
-				field.hidden = true;
 				field.toggleAttribute('data-searchable');
 			});
 		}
@@ -533,7 +534,13 @@ var StorageMetric = new MetricStorage();
 
 	app.checkRelations = () => {
 		console.log('Query.select : ', Query.select);
-		/*
+		// recupero la prima tabella selezionata della gerarchia
+		Query.table = app.dialogTables.querySelector('#fieldList-tables ul li[selected]').getAttribute('label');
+		Query.tableId = app.dialogTables.querySelector('#fieldList-tables ul li[selected]').getAttribute('data-table-id');
+		console.log('table : ', Query.table);
+		console.log('tableId : ', Query.tableId);
+		const hier = app.dialogTables.querySelector('section').getAttribute('data-hier-name');
+		debugger;
 		for ( const [k, table] of Object.entries(Dim.selected.hierarchies[hier].order)) {
 			// recupero la property 'join' (nella dimensione) dove la key è maggiore della tableId al momento selezionata (Quindi recupero tutte le hier inferiori)
 			if (+k >= Query.tableId) {
@@ -543,11 +550,6 @@ var StorageMetric = new MetricStorage();
 					Query.where = Dim.selected.join[table];
 				};
 			};
-		}
-		*/
-		for (const [key, value] of Object.entries(Query.select)) {
-			debugger;
-			Query.from = value.table;
 		}
 	};
 
@@ -563,10 +565,10 @@ var StorageMetric = new MetricStorage();
 		console.log('Query.select : ', Query.select);
 		for (const [key, value] of Object.entries(Query.select)) {
 			const contentElement = app.tmplList.content.cloneNode(true);
-			const section = contentElement.querySelector('section[data-icon-delete]');
+			const section = contentElement.querySelector('section[data-no-icon]');
 			const element = section.querySelector('.element');
 			const li = element.querySelector('li');
-			const iColumns = element.querySelector('#columns-icon');
+			section.hidden = false;
 			section.setAttribute('data-label-search', key);
 			li.innerText = key;
 			ul.appendChild(section);
@@ -1311,7 +1313,7 @@ var StorageMetric = new MetricStorage();
 
 	// 'Salva' nella dialogTables
 	app.btnSaveColumn.onclick = (e) => {
-		Query.table = e.currentTarget.getAttribute('data-table-name');
+		
 		Query.columnName = document.getElementById('columnName').value;
 		const alias = document.getElementById('columnAlias').value;
 		const textarea = (document.getElementById('columnSQL').value.length === 0) ? null : document.getElementById('columnSQL').value;
