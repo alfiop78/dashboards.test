@@ -17,12 +17,14 @@
 	$q->reportId = $cube->{'processId'};
 	$q->reportName = $cube->{'name'}; // il nome del report non deve avere caratteri non consentiti per la creazione di tabelle (per ora non c'è un controllo sul nome inserito, da javascript)
 	$q->n_select($cube->{'select'});
+	$q->n_groupBy($cube->{'select'});
+	return;
 	$q->metrics($cube->{'metrics'});
 	$q->n_from($cube->{'from'});
 	$q->n_where($cube->{'where'});
 	$q->joinFact($cube->{'factJoin'});
 	$q->filters($cube->{'filters'});
-	$q->n_groupBy($cube->{'groupBy'});
+	$q->n_groupBy($cube->{'select'});
 	$baseTable = $q->baseTable();
 	var_dump($baseTable);
 	// return;

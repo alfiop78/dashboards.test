@@ -50,22 +50,22 @@ class Queries {
 
 	get filterName() {return this._filterName;}
 
-	set column(value) {this.#column = value;}
+	set columnName(value) {this.#column = value;}
 
-	get column() {return this.#column;}
+	get columnName() {return this.#column;}
 
 	set select(object) {
 		// es.: this.#select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
 		this.#obj = {};
-		if (this.#select.hasOwnProperty(this.#table)) {
+		if (this.#select.hasOwnProperty(this.#column)) {
 			// tabella già presente nell'object #select
-			if (!this.#select[this.#table].hasOwnProperty(this._field)) {
+			if (!this.#select[this.#column].hasOwnProperty(this._field)) {
 				// field NON presente in #select[#table], lo aggiungo
-				this.#select[this.#table][this._field] = object;
+				this.#select[this.#column][this._field] = object;
 			}
 		} else {
-			this.#obj[this._field] = object;
-			this.#select[this.#table] = this.#obj;
+			// this.#obj[this._field] = object;
+			this.#select[this.#column] = object;
 		}
 		console.log('select : ', this.#select);
 	}
@@ -73,9 +73,11 @@ class Queries {
 	get select() {return this.#select;}
 
 	deleteSelect() {
-		delete this.#select[this.#table][this._field];
-		// verifico se this.#select[this.#table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this.#select[this.#table]).length === 0) delete this.#select[this.#table];
+		debugger;
+		// TODO: da completare dopo la modifica della select
+		delete this.#select[this.#column];
+		// if (Object.keys(this.#select).length === 0) delete this.#select;
+		// if (Object.keys(this.#select).length === 0) unset this.#select;
 
 		console.log('select : ', this.#select);
 	}

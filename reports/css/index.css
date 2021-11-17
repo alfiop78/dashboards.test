@@ -32,7 +32,7 @@ i[open]{color: red;}
 
 .stepLayout{display: grid;}
 .step:first-child .stepLayout{grid-template-columns: 39% 59%; grid-column-gap: 2%; height: inherit;}
-.step:nth-child(2) .stepLayout{grid-template-columns: 50% auto; grid-column-gap: 2%; height: inherit;}
+.step:nth-child(2) .stepLayout{grid-template-columns: 1fr auto auto; grid-column-gap: 2%; height: inherit;}
 .step:nth-child(3) .stepLayout{grid-template-columns: 29% 39% 29%; grid-column-gap: 3%; height: inherit;}
 .step:last-child .stepLayout{grid-template-columns: 29% 39% 29%; grid-column-gap: 3%; height: inherit;}
 

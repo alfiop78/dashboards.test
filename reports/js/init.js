@@ -393,11 +393,20 @@ var StorageMetric = new MetricStorage();
 		const dimension = e.currentTarget.getAttribute('data-dimension-name');
 		const table = e.currentTarget.getAttribute('label');
 		const hier = e.currentTarget.getAttribute('data-hier-name');
-		// TODO: visualizzo le colonne appartenenti alla tabella selezionata
-		document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
-			field.hidden = false;
-			field.toggleAttribute('data-searchable');
-		});
+		e.currentTarget.toggleAttribute('selected');
+		if (e.currentTarget.hasAttribute('selected')) {
+			// visualizzo le colonne appartenenti alla tabella selezionata
+			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
+				field.hidden = false;
+				field.toggleAttribute('data-searchable');
+			});
+		} else {
+			// TODO: tabella deselezionata, nascondo le colonne appartenenti a questa tabella
+			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+table+"']").forEach( (field) => {
+				field.hidden = true;
+				field.toggleAttribute('data-searchable');
+			});
+		}
 	};
 
 	// selezione della FACT nella sezione metric
@@ -557,7 +566,7 @@ var StorageMetric = new MetricStorage();
 			// non ci sono colonne impostati/selezionati per questa tabella, oppure c'è solo l'id impostato (in automatico) per questa tabella. 
 			// La elimino da Query.from e dalla Query.join, deseleziono con l'attr 'selected' in 'fieldList-tables'
 			// se l'elemento <li> con il nome della tabella NON contiene l'attr data-filters (quindi su questa tabella non è stato impostata un filtro) la posso eliminare dalla _from e dalla _join
-			list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table).removeAttribute('selected');
+			/*list.querySelector('section[data-label-search="'+Query.table+'"][data-hier-name="'+hier+'"] #columns-icon-'+hier+"-"+Query.table).removeAttribute('selected');
 			
 			// se l'icona filter-icon NON ha l'attributo 'selected' non è stato impostato alcun filtro su questa tabella, quindi posso rimuoverla dalla _from/_join
 			// controllo tutte le tabelle di gerarchia inferiore
@@ -583,7 +592,7 @@ var StorageMetric = new MetricStorage();
 						Query.deleteWhere();
 					}
 				}
-			}
+			}*/
 		}
 		app.dialogTables.close();
 	};
@@ -1005,7 +1014,7 @@ var StorageMetric = new MetricStorage();
 	};
 
 	app.getTables = () => {
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-tables']");
 		const parent = document.getElementById('tableList-metric'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
@@ -1017,8 +1026,8 @@ var StorageMetric = new MetricStorage();
 			// console.log('metriche : ', cubeValue.FACT);
 			// debugger;
 			// per ogni cubo leggo la fact
-			const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-			const section = contentElement.querySelector('section');
+			const contentElement = app.tmplList.content.cloneNode(true);
+			const section = contentElement.querySelector('section[data-no-icon]');
 			const element = section.querySelector('.element');
 			const li = element.querySelector('li');
 			section.setAttribute('data-label-search', cubeValue.FACT); // questo attr consente la ricerca dalla input sopra
@@ -1034,7 +1043,7 @@ var StorageMetric = new MetricStorage();
 
 	// elenco di tutte le metriche impostate all'interno del cubo, queste sono le metriche che si possono impostare, quindi mettere la funzione (SUM, AVG, ecc...), il distinct e l'alias
 	app.getMetricsInCubes = () => {
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-metric']");
 		const parent = document.getElementById('metrics'); // dove verrà inserita la <ul>
 		// creo un unica <ul> con dentro tutte le dimensioni, queste verranno filtrate quando si selezionano uno o più cubi
@@ -1043,8 +1052,8 @@ var StorageMetric = new MetricStorage();
 			// per ogni FACT aggiungo l'elenco delle metriche impostate sul cubo nel div #metrics
 			cubeValue.metrics[cubeValue.FACT].forEach( (metric) => {
 				// console.log('metric : ', metric);
-				const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-				const section = contentElement.querySelector('section');
+				const contentElement = app.tmplList.content.cloneNode(true);
+				const section = contentElement.querySelector('section[data-no-icon]');
 				const element = section.querySelector('.element');
 				const li = element.querySelector('li');
 				section.setAttribute('data-label-search', metric); // questo attr consente la ricerca dalla input sopra
@@ -1096,9 +1105,9 @@ var StorageMetric = new MetricStorage();
 
 	// app.getFiltersInFrom();
 
-	// app.getTables();
+	app.getTables();
 
-	// app.getMetricsInCubes();
+	app.getMetricsInCubes();
 
 	// app.getMetrics();
 
@@ -1214,6 +1223,13 @@ var StorageMetric = new MetricStorage();
 		}
 	});
 
+	// document.getElementById('columnSQL').oninput = () => {
+	// 	if (Array.from(document.querySelectorAll('#fieldList-tables ul li[selected]')).length === 0) {
+	// 		// non ci sono tabelle selezionate
+	// 		App.handlerConsole('Selezionare almeno una tabella', 'warning');
+	// 	}
+	// };
+
 	// eventi mouseEnter/Leave su tutte le icon con l'attributo data-popup-label
 	document.querySelectorAll('i[data-popup-label]').forEach( (icon) => {
 		icon.onmouseenter = app.showPopup;
@@ -1258,14 +1274,13 @@ var StorageMetric = new MetricStorage();
 	// 'Salva' nella dialogTables
 	app.btnSaveColumn.onclick = (e) => {
 		Query.table = e.currentTarget.getAttribute('data-table-name');
-		// BOOKMARK : aggiunta la property 'column' nella Classe Query
-		const name = document.getElementById('columnName').value;
+		Query.columnName = document.getElementById('columnName').value;
 		const alias = document.getElementById('columnAlias').value;
-		const textarea = (document.getElementById('sqlFormula').value.length === 0) ? null : document.getElementById('sqlFormula').value;
-		debugger;
-		Query.select = {table : Query.table, SQL: textarea, alias};
+		const textarea = (document.getElementById('columnSQL').value.length === 0) ? null : document.getElementById('columnSQL').value;
+		
+		Query.select = {table : Query.table, field: Query.field, SQL: textarea, alias};
 		// aggiungo la colonna selezionata a Query.groupBy
-		Query.groupBy = {SQL: textarea};
+		// Query.groupBy = {table : Query.table, field: Query.field, SQL: textarea};
 		document.getElementById('columnAlias').value = '';
 	};
 
