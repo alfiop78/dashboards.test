@@ -394,11 +394,11 @@ var StorageMetric = new MetricStorage();
 		const hier = e.currentTarget.getAttribute('data-hier-name');
 		// deseleziono le precedenti tabelle selezionate
 		// let activeDialog = document.querySelector('dialog[open]');
-		if (document.querySelector('#fieldList-tables ul li[selected]')) {
-			const li = document.querySelector('#fieldList-tables ul li[selected]');
+		if (app.dialogTables.querySelector('#fieldList-tables ul li[selected]')) {
+			const li = app.dialogTables.querySelector('#fieldList-tables ul li[selected]');
 			li.toggleAttribute('selected');
 			// nascondo tutte le colonne che fanno parte della tabella precedentemente selezionata
-			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+li.getAttribute('label')+"']").forEach( (field) => {
+			app.dialogTables.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+li.getAttribute('label')+"']").forEach( (field) => {
 				field.hidden = true;
 				field.toggleAttribute('data-searchable');
 			});
@@ -406,11 +406,36 @@ var StorageMetric = new MetricStorage();
 		e.currentTarget.toggleAttribute('selected');
 		if (e.currentTarget.hasAttribute('selected')) {
 			// visualizzo le colonne appartenenti alla tabella selezionata
-			document.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+Query.table+"']").forEach( (field) => {
+			app.dialogTables.querySelectorAll("ul[data-id='fields-column'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+Query.table+"']").forEach( (field) => {
 				field.hidden = false;
 				field.toggleAttribute('data-searchable');
 			});
 		}
+	};
+
+	app.handlerTableSelectedDialogFilter = (e) => {
+		const dimension = e.currentTarget.getAttribute('data-dimension-name');
+		Query.table = e.currentTarget.getAttribute('label');
+		Query.tableId = e.currentTarget.getAttribute('data-table-id');
+		const hier = e.currentTarget.getAttribute('data-hier-name');
+		// pulisco la <ul> della selezione precedente
+		if (app.dialogFilter.querySelector('#filter-fieldList-tables ul li[selected]')) {
+			const li = app.dialogFilter.querySelector('#filter-fieldList-tables ul li[selected]');
+			li.toggleAttribute('selected');
+			app.dialogFilter.querySelector('#fieldList-filter ul').remove();			
+			// nascondo tutti filtri che fanno parte della tabella precedentemente selezionata
+			app.dialogFilter.querySelectorAll("ul[data-id='fields-filter'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+li.getAttribute('label')+"']").forEach( (filter) => {
+				filter.hidden = true;
+				filter.toggleAttribute('data-searchable');
+			});
+		}
+		// TODO: visualizzo i filtri esistenti appartenenti alla tabella selezionata
+		app.dialogFilter.querySelectorAll("ul[data-id='fields-filter'] > section[data-dimension-name='"+dimension+"'][data-hier-name='"+hier+"'][data-table-name='"+Query.table+"']").forEach( (filter) => {
+			filter.hidden = false;
+			filter.toggleAttribute('data-searchable');
+		});
+		app.getFields();
+		e.currentTarget.toggleAttribute('selected');
 	};
 
 	// selezione della FACT nella sezione metric
@@ -504,13 +529,13 @@ var StorageMetric = new MetricStorage();
 				if (data) {
 					// TODO: pulisco l'elenco dei campi
 					// let ul = document.getElementById('fieldList-filter');
-					const content = app.tmpl_ulList.content.cloneNode(true);
+					const content = app.tmplUlList.content.cloneNode(true);
 					const ul = content.querySelector("ul[data-id='fields-field']");
 					const parent = document.getElementById('fieldList-filter'); // dove verrà inserita la <ul>
 					// ul.querySelectorAll('section').forEach((el) => {el.remove();});
 					for ( const [key, value] of Object.entries(data)) {
-						const contentElement = app.tmpl_ulListSection.content.cloneNode(true);
-						const section = contentElement.querySelector('section');
+						const contentElement = app.tmplList.content.cloneNode(true);
+						const section = contentElement.querySelector('section[data-no-icon]');
 						const element = section.querySelector('.element');
 						const li = element.querySelector('li');
 						section.hidden = false;
@@ -944,12 +969,43 @@ var StorageMetric = new MetricStorage();
 		}
 	};
 
+	app.getTablesInHierarchiesDialogFilter = () => {
+		const content = app.tmplUlList.content.cloneNode(true);
+		const ul = content.querySelector("ul[data-id='fields-tables']");
+		const parent = document.getElementById('filter-fieldList-tables'); // dove verrà inserita la <ul> nella dialog Tables
+		// per ogni dimensione, vado a leggere le hierarchies presenti, le ciclo per creare una <ul>, in sectionFields-tables, con le tabelle presenti nella gerarchia in ciclo
+		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {
+			Dim.selected = dimName;
+			console.log('hierarchies : ', Dim.selected.hierarchies);
+			for (const hier in Dim.selected.hierarchies) {
+				for (const [key, value] of Object.entries(Dim.selected.hierarchies[hier]['order'])) {
+					// ciclo le tabelle presenti nella gerarchia
+					console.log(key, value);
+					const contentElement = app.tmplList.content.cloneNode(true);
+					const section = contentElement.querySelector('section[data-no-icon]');
+					const element = section.querySelector('.element');
+					const li = element.querySelector('li');
+					section.setAttribute('data-label-search', value); // utilizzabile per la ricerca dalla input sopra
+					section.setAttribute('data-dimension-name', dimName); // utilizzabile dalla dimensione + gerarchia selezionata
+					section.setAttribute('data-hier-name', hier);
+					li.innerText = value;
+					li.setAttribute('data-table-id', key);
+					li.setAttribute('label', value);
+					li.setAttribute('data-dimension-name', dimName);
+					li.setAttribute('data-hier-name', hier);
+					li.onclick = app.handlerTableSelectedDialogFilter;
+					ul.appendChild(section);
+				}
+				parent.appendChild(ul);
+			}
+		}
+	};
+
 	app.getTablesInHierarchies = () => {
 		// lista di tutte le tabelle, incluse nelle dimensioni e di conseguenza, nelle gerarchie
 		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-tables']");
 		const parent = document.getElementById('fieldList-tables'); // dove verrà inserita la <ul> nella dialog Tables
-		const parentDialogFilter = document.getElementById('filter-fieldList-tables'); // dove verrà inserita la <ul> nella dialog Filter
 		// per ogni dimensione, vado a leggere le hierarchies presenti, le ciclo per creare una <ul>, in sectionFields-tables, con le tabelle presenti nella gerarchia in ciclo
 		for (const [dimName, dimValue] of (Object.entries(Dim.dimensions))) {
 			Dim.selected = dimName;
@@ -974,9 +1030,6 @@ var StorageMetric = new MetricStorage();
 					ul.appendChild(section);
 				}
 				parent.appendChild(ul);
-				// clono la ul per inserirla anche nella dialogFilter
-				let ulDialogfilter = ul.cloneNode(true);
-				parentDialogFilter.appendChild(ulDialogfilter);
 			}
 		}
 	};
@@ -1026,7 +1079,7 @@ var StorageMetric = new MetricStorage();
 
 	// recupero elenco di tutti i filtri presenti nello storage, per ogni dimensione
 	app.getFiltersInFrom = () => {
-		const content = app.tmpl_ulList.content.cloneNode(true);
+		const content = app.tmplUlList.content.cloneNode(true);
 		const ul = content.querySelector("ul[data-id='fields-filter']");
 		const parent = document.getElementById('existFilters'); // dove verrà inserita la <ul>
 		console.log('Dim.dimension : ', Dim.dimensions);
@@ -1043,8 +1096,8 @@ var StorageMetric = new MetricStorage();
 				for (const [tableKey, table] of Object.entries(hierValue.order)) {
 					const filters = StorageFilter.tableFilters(table);
 					filters.forEach( (filter) => {
-						const contentElement = app.tmpl_ulListWithEdit.content.cloneNode(true);
-						const section = contentElement.querySelector('section');
+						const contentElement = app.tmplList.content.cloneNode(true);
+						const section = contentElement.querySelector('section[data-icon-edit]');
 						const element = section.querySelector('.element');
 						const li = element.querySelector('li');
 						const iEdit = element.querySelector('#edit-icon');
@@ -1152,9 +1205,11 @@ var StorageMetric = new MetricStorage();
 
 	app.getTablesInHierarchies();
 
+	app.getTablesInHierarchiesDialogFilter();
+
 	app.getColumnsInTable();
 
-	// app.getFiltersInFrom();
+	app.getFiltersInFrom();
 
 	app.getTables();
 
