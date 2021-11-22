@@ -22,7 +22,7 @@
 	$q->n_where($cube->{'where'});
 	$q->joinFact($cube->{'factJoin'});
 	$q->filters($cube->{'filters'});
-	$q->n_groupBy($cube->{'groupBy'});
+	$q->n_groupBy($cube->{'select'});
 	$baseTable = $q->baseTable();
 	var_dump($baseTable);
 	// return;

@@ -28,16 +28,22 @@ class Cube {
 	public function n_select($columns) {
 		$fieldList = array();
 		$this->_select = "SELECT ";
-		foreach ($columns as $table => $col) {
-			// var_dump($table);
-			// print_r($col);
-			foreach ($col as $field => $param) {
-				$fieldList[] = $table.".".$field." AS '".$param->alias."'";
+
+		foreach ($columns as $key => $object) {
+			var_dump($key); // il nome dato alla colonna
+			print_r($object); // contiene l'object {table : tabella, field: campo, alias : alias, SQL : formulSQL}
+			var_dump($object->table);
+			$fieldList[] = "{$object->table}.{$object->field} AS `{$object->alias}`";
+			$this->_columns[] = $object->alias; // questo viene utilizzato nella clausola ON della LEFT JOIN
+			/*foreach ($object as $key => $value) {
+				// var_dump($key);
+				// var_dump($value);
+				$fieldList[] = $param->table.".".$field." AS '".$param->alias."'";
 				$this->_columns[] = $param->alias;
-			}
+			}*/
 		}
 		$this->_select .= implode(", ", $fieldList);
-		// var_dump($this->_select);
+		var_dump($this->_select);
 	}
 
 	public function n_from($from) {
@@ -105,17 +111,14 @@ class Cube {
 		$fieldList = array();
 		$this->_groupBy = " GROUP BY ";
 
-		foreach ($groups as $table => $col) {
-			// var_dump($col);
-			foreach ($col as $field => $param) {
-				// var_dump($field);
-				// return;
-				// TODO: aggiungere il format della colonna (es.: GROUP BY DATE_FORMAT(curdate(), '%Y%m'))
-				$fieldList[] = $table.".".$field;
-			}
+		foreach ($groups as $key => $object) {
+			var_dump($key); // il nome dato alla colonna
+			print_r($object); // contiene l'object {table : tabella, field: campo, alias : alias, SQL : formulSQL}
+			var_dump($object->table);
+			$fieldList[] = "{$object->table}.{$object->field}";
 		}
 		$this->_groupBy .= implode(", ", $fieldList);
-		// var_dump($this->_groupBy);
+		var_dump($this->_groupBy);
 	}
 
 	public function baseTable() {

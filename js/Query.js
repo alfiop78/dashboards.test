@@ -1,11 +1,12 @@
-// TODO: impostare le altre property come private, come fatto per #select, #groupBy e #obj
 class Queries {
 	#select;
-	#groupBy;
 	#obj;
+	#table;
+	#column;
+	#firstTable; // la prima tabella della gerarchia, da qui posso ottenere la from e la join
+	#joinId;
 	constructor() {
 		this.#select = {};
-		this.#groupBy = {};
 		this.#obj = {}; // object generico
 		this._fromSet = new Set();
 		this._where = {};
@@ -13,11 +14,12 @@ class Queries {
 		this._filter = {}
 		this._metrics = {};
 		this._filteredMetrics = {};
+		this.#firstTable = {};
 	}
 
-	set table(value) {this._table = value;}
+	set table(value) {this.#table = value;}
 
-	get table() {return this._table;}
+	get table() {return this.#table;}
 
 	set tableId(value) {this._tableId = value;}
 
@@ -39,6 +41,18 @@ class Queries {
 
 	get from() {return this._fromSet;}
 
+	addTables() {
+		if ( !this.#firstTable.hasOwnProperty('tableId')) this.#firstTable = {tableId : this._tableId, table : this.table};
+
+		if ( +this.#firstTable.tableId > +this._tableId ) {
+			this.#firstTable = {tableId : this._tableId, table : this.table};
+		}
+		console.log('#firstTable : ', this.#firstTable);
+	}
+
+	get tables() {return this.#firstTable;}
+
+
 	deleteFrom(tableName) {
 		this._fromSet.delete(tableName);
 		console.log('_from : ', this._fromSet);
@@ -48,18 +62,22 @@ class Queries {
 
 	get filterName() {return this._filterName;}
 
+	set columnName(value) {this.#column = value;}
+
+	get columnName() {return this.#column;}
+
 	set select(object) {
 		// es.: this.#select[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format), 'alias': "Cod.Sede"}
 		this.#obj = {};
-		if (this.#select.hasOwnProperty(this._table)) {
+		if (this.#select.hasOwnProperty(this.#column)) {
 			// tabella già presente nell'object #select
-			if (!this.#select[this._table].hasOwnProperty(this._field)) {
-				// field NON presente in #select[_table], lo aggiungo
-				this.#select[this._table][this._field] = object;
+			if (!this.#select[this.#column].hasOwnProperty(this._field)) {
+				// field NON presente in #select[#table], lo aggiungo
+				this.#select[this.#column][this._field] = object;
 			}
 		} else {
-			this.#obj[this._field] = object;
-			this.#select[this._table] = this.#obj;
+			// this.#obj[this._field] = object;
+			this.#select[this.#column] = object;
 		}
 		console.log('select : ', this.#select);
 	}
@@ -67,29 +85,31 @@ class Queries {
 	get select() {return this.#select;}
 
 	deleteSelect() {
-		delete this.#select[this._table][this._field];
-		// verifico se this.#select[this._table] contiene altri elementi, se contiene solo la primaryKey oppure non li contiene, elimino anche la proprietà che include il nome della tabella
-		if (Object.keys(this.#select[this._table]).length === 0) delete this.#select[this._table];
+		debugger;
+		// TODO: da completare dopo la modifica della select
+		delete this.#select[this.#column];
+		// if (Object.keys(this.#select).length === 0) delete this.#select;
+		// if (Object.keys(this.#select).length === 0) unset this.#select;
 
 		console.log('select : ', this.#select);
 	}
 
 	getAliasColumn() {
-		return this.#select[this._table][this._field]['alias'];
+		return this.#select[this.#table][this._field]['alias'];
 	}
 
-	set joinId(value) {this._joinId = value;}
+	set joinId(value) {this.#joinId = value;}
 
-	get joinId() {return this._joinId;}
+	get joinId() {return this.#joinId;}
 
 	set where(join) {
 		console.log('join : ', join);
-		this._where[this.joinId] = join;
+		this._where[this.#joinId] = join;
 		console.log('where : ', this._where);
 	}
 
 	deleteWhere() {
-		delete this._where[this._joinId];
+		delete this._where[this.#joinId];
 		console.log('where : ', this._where);	
 	}
 
@@ -111,14 +131,14 @@ class Queries {
 
 	set filters(object) {
 		this.#obj = {};
-		if (this._filter.hasOwnProperty(this._table)) {
+		if (this._filter.hasOwnProperty(this.#table)) {
 			// tabella già presente nell'object #select
-			if (!this._filter[this._table].hasOwnProperty(this._filterName)) {
-				this._filter[this._table][this._filterName] = object;
+			if (!this._filter[this.#table].hasOwnProperty(this._filterName)) {
+				this._filter[this.#table][this._filterName] = object;
 			}
 		} else {
 			this.#obj[this._filterName] = object;
-			this._filter[this._table] = this.#obj;
+			this._filter[this.#table] = this.#obj;
 		}
 		// *********************
 		// this._filter[this._filterName] = {table : object.table, formula : object.formula};
@@ -128,37 +148,10 @@ class Queries {
 	get filters() {return this._filter};
 
 	deleteFilter() {
-		delete this._filter[this._table][this.filterName];
-		// se, per questa tabella non ci sono altri filtri, elimino anche la property this._table
-		if (Object.keys(this._filter[this._table]).length === 0) delete this._filter[this._table];
+		delete this._filter[this.#table][this.filterName];
+		// se, per questa tabella non ci sono altri filtri, elimino anche la property this.#table
+		if (Object.keys(this._filter[this.#table]).length === 0) delete this._filter[this.#table];
 		console.log('filter : ', this._filter);
-	}
-
-	set groupBy(object) {
-		// aggiungo l'object per il group by
-		// es.: this.#groupBy[nometabella] = {field: nomecolonna, SQLFormat: (es.: date_format)}
-		this.#obj = {};
-		if (this.#groupBy.hasOwnProperty(this._table)) {
-			// tabella già presente nell'object #select
-			if (!this.#groupBy[this._table].hasOwnProperty(this._field)) {
-				// field NON presente in #groupBy[_table], lo aggiungo
-				this.#groupBy[this._table][this._field] = object;
-			}
-		} else {
-			this.#obj[this._field] = object;
-			this.#groupBy[this._table] = this.#obj;
-		}
-		console.log('groupBy : ', this.#groupBy);
-	}
-
-	get groupBy() {return this.#groupBy;}
-
-	deleteGroupBy() {
-		delete this.#groupBy[this._table][this._field];
-		// stessa logica di deleteSelect()
-		if (Object.keys(this.#groupBy[this._table]).length === 0) delete this.#groupBy[this._table];
-
-		console.log('groupBy : ', this.#groupBy);
 	}
 
 	set metricName(value) {this._metricName = value;}
@@ -222,7 +215,6 @@ class Queries {
 		this._reportProcess['where'] = this._where;
 		this._reportProcess['factJoin'] = this._factRelation;
 		this._reportProcess['filters'] = this._filter;
-		this._reportProcess['groupBy'] = this.#groupBy;
 		this._reportProcess['metrics'] = this._metrics;
 		this._reportProcess['filteredMetrics'] = this._filteredMetrics;
 		this._reportProcess['processId'] = processId; // questo creerà il datamart FX[processId]

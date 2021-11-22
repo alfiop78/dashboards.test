@@ -27,43 +27,53 @@
 
 		<small id="popup" class="popupToast"></small>
 
-		<dialog id="dialogTables">
+		<dialog id="dialogTables" class="dialog-tables">
 			<small id="dialog-popup" class="popupToast"></small>
-			<section data-table-selected>
+			<section data-hier-name data-dimension-name>
 				<h4>Seleziona le colonne da includere per la tabella <span></span></h4>
 
-				<div class="formulaDefine">
+				<div class="stepLayout">
 
-					<section class="formula">
-						<div class="title">
-							<h5>Colonne</h5><h6>Seleziona le colonne da includere</h6>
+					<section class="sectionLists">
+						<h5>Tabelle</h5><h6>subtitle</h6>
+						<div class="md-field">
+							<input type="search" id="searchTables" value="" autocomplete="off" />
+							<label for="searchTables" class="">Ricerca</label>
 						</div>
-
-						<div class="listContent">
-							<div class="md-field" value>
-								<input type="search" id="fieldSearch" value="" autocomplete="off" />
-								<label for="fieldSearch" class="">Ricerca</label>
-							</div>
-							<div id="table-fieldList"></div>
-							<!-- <div id="table-fieldList" class="list middleList"></div> -->
-						</div>
+						<div id="fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
 					</section>
 
-					<section class="sql">
+					<section class="sectionLists">
+						<h5>Colonne</h5><h6>Seleziona le colonne da includere</h6>
+						<div class="md-field" value>
+							<input type="search" id="fieldSearch" value="" autocomplete="off" />
+							<label for="fieldSearch" class="">Ricerca</label>
+						</div>
+						<div id="table-fieldList"></div>
+					</section>
+
+					<section class="sectionLists">
+						<h5>SQL</h5><h6>Aggiungere un alias per la colonna</h6>
 						<div class="md-field">
-							<textarea id="sqlFormula" name="columnSQL" rows="5" cols="33" placeholder="SQL"></textarea>
+							<input type="text" id="columnName" name="columnName" autocomplete="off" />
+							<label for="columnName" class="">Nome per la colonna</label>
 						</div>
 						<div class="md-field">
-							<input type="text" id="inputColumnName" name="columnName" autocomplete="off" />
-							<label for="inputColumnName" class="">Alias per la colonna</label>
+							<input type="text" id="columnAlias" name="columnAlias" autocomplete="off" />
+							<label for="columnAlias" class="">Alias</label>
 						</div>
+
+						<div class="md-field">
+							<textarea id="columnSQL" name="columnSQL" rows="10" cols="50" placeholder="es.: CONCAT(tabella.campo,'-',tabella.campo)"></textarea>
+						</div>
+						<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
 					</section>
 
 				</div>
 
 				<div class="dialog-buttons">
 					<button type="button" name="cancel" class="md-button">annulla</button>
-					<button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button>
+					<!-- <button id="btnSaveColumn" type="button" name="save" class="md-button" disabled>salva</button> -->
 					<button id="btnColumnDone" type="button" name="done" class="md-button">fatto</button>
 				</div>
 			</section>
@@ -90,19 +100,28 @@
 			<section data-table-selected>
 				<h4>Selezione filtri per la tabella <span></span></h4>
 				<div class="stepLayout">
+
+					<section class="sectionLists">
+						<h5>Tabelle</h5><h6>subtitle</h6>
+						<div class="md-field">
+							<input type="search" id="filter-searchTables" value="" autocomplete="off" />
+							<label for="filter-searchTables" class="">Ricerca</label>
+						</div>
+						<div id="filter-fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
+					</section>
 					
 					<section class="sectionLists">
-						<h5>Crea filtro</h5>
+						<h5>Crea filtro</h5><h6>subtitle</h6>
 						<div class="md-field">
 							<input type="search" id="fieldSearch" value="" autocomplete="off" />
 							<label for="fieldSearch" class="">Ricerca</label>
 						</div>
-						<div id="filter-fieldList"><!-- template ul--></div>
+						<div id="fieldList-filter"><!-- template ul--></div>
 						
 					</section>
 
 					<section class="sectionLists">
-						<h5>Modifica</h5>
+						<h5>Modifica</h5><h6>subtitle</h6>
 						<div class="md-field">
 							<input type="text" id="inputFilterName" name="filterName" autocomplete="off" />
 							<label for="inputFilterName" class="">Filter name</label>
@@ -119,7 +138,7 @@
 					</section>
 
 					<section class="sectionLists">
-						<h5>Filtri esistenti</h5>
+						<h5>Filtri esistenti</h5><h6>subtitle</h6>
 						<div class="md-field">
 							<input type="search" id="searchExistsFilter" value="" autocomplete="off" />
 							<label for="searchExistsFilter" class="">Ricerca</label>
@@ -259,46 +278,46 @@
 							</div>
 						</div>
 	  
-						<template id="templateListField">
-							<div class="element" name="">
-								<li class="elementSearch" label=""></li>
-							</div>
-						</template>
+						<!-- template con icone 'column' e 'filter' -->
+						<template id="templateList">
 
-						<template id="templateListHidden">
-							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+							<section hidden data-label-search data-icon-column data-icon-filter>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
-									<i id="columns-icon" class="material-icons md-18">view_list</i>
-									<i id="filter-icon" class="material-icons md-18">filter_alt</i>
+									<i data-id="columns-icon" class="material-icons md-18">view_list</i>
+									<i data-id="filter-icon" class="material-icons md-18">filter_alt</i>
 								</div>	
 							</section>
-						</template>
 
-						<template id="templateListWithEdit">
-							<section hidden data-label-search> <!-- qui si potrà aggiungere l'attributo hidden perchè non imposto il css display -->
+							<section hidden data-label-search data-icon-edit>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
 									<i id="edit-icon" class="material-icons md-18">edit</i>
 								</div>	
 							</section>
-						</template>
 
-						<template id="templateListSection">
-							<section hidden data-label-search>
+							<section data-label-search data-icon-delete>
+								<div class="element" name="">
+									<li class="elementSearch" label=""></li>
+									<i id="delete-icon" class="material-icons md-18">delete</i>
+								</div>	
+							</section>
+
+							<section hidden data-label-search data-no-icon>
 								<div class="element" name="">
 									<li class="elementSearch" label=""></li>
 								</div>	
 							</section>
+
 						</template>
 
-						<template id="tmpl_ulList">
+						<template id="template_ulList">
 							<ul data-id="fields-cubes" class="overflowList"></ul>
 							<ul data-id="fields-filter" class="overflowList"></ul>
 							<ul data-id="fields-dimensions" class="overflowList"></ul>
 							<ul data-id="fields-hierarchies" class="overflowList"></ul>
-							<ul data-id="fields-column" class="list middleList"></ul>
-							<ul data-id="fields-field" class="list middleList"></ul>
+							<ul data-id="fields-column" class="overflowList"></ul>
+							<ul data-id="fields-field" class="overflowList"></ul>
 							<ul data-id="fields-values" class="list middleList"></ul>
 							<ul data-id="fields-tables" class="overflowList"></ul>
 							<ul data-id="fields-metric" class="overflowList"></ul>
@@ -358,13 +377,21 @@
 														</div>
 													</section>
 
-													<section class="sectionLists" id="sectionFields-tables">
-														<h5>Tabelle disponibili</h5>
+													<section class="sectionLists">
+														<h5>Colonne impostate</h5>
 														<div class="md-field">
-															<input type="search" id="searchTables" value="" autocomplete="off" />
-															<label for="searchTables" class="">Ricerca</label>
+															<input type="search" id="" value="" autocomplete="off" />
+															<label for="" class="">Ricerca</label>
 														</div>
-														<div id="fieldList-tables"><!-- qui viene inserito il template tmpl_ulList--></div>
+														<div><ul id="columnsSet"></ul></div>
+													</section>
+													<section class="sectionLists">
+														<h5>Filtri impostati</h5>
+														<div class="md-field">
+															<input type="search" id="" value="" autocomplete="off" />
+															<label for="" class="">Ricerca</label>
+														</div>
+														<div><ul id="filtersSet"></ul></div>
 													</section>
 												</div>
 											</section>
