@@ -16,6 +16,8 @@
 
 		public function showTable() {
 			$l = new ConnectDB('automotive_bi_data');
+            var_dump($l);
+            return;
 			// $l = new ConnectDB('Sql1073234_1');
 			$this->_result = $l->getResultArray("SHOW TABLES;");
 			// $this->_result = $l->getResultAssoc("SHOW TABLES;");

@@ -3,7 +3,8 @@
 class ConnectDB {
 	// proprietà della Classe
 
-	private $_host, $_u, $_p, $_schema, $_document_root;
+	/* private $_host, $_u, $_p, $_schema, $_document_root; */
+    private $_dsn;
 	protected $link;
 	private $_link;
 	// db_1 Sql644100_1  - db_2 Sql644100_2
@@ -12,20 +13,32 @@ class ConnectDB {
 	function __construct($schema){
 		// $this->_host = $_SERVER['SERVER_NAME'];
 		// $this->_document_root = $_SERVER['DOCUMENT_ROOT'];
-		$this->_schema = $schema;
+		/* $this->_schema = $schema; */
 
 		// $this->_u='apietrantuono';
 		// $this->_host="192.168.2.3";
 		// $this->_p="4lfi0";
 
-		$this->_u='decisyon_v6';
-		$this->_host="192.168.2.7";
-		$this->_p="decisyon_v6";
+		/* $this->_u='decisyon_v6'; */
+		/* $this->_host="192.168.2.7"; */
+		/* $this->_p="decisyon_v6"; */
+		$this->_dsn = 'VMart251';
 	}
 
 	// Metodo Connect
 	protected function connect() {
-		$this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}");
+		/* $this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}"); */
+        $this->link = odbc_connect($this->_dsn,'','');
+        var_dump($this->link);
+        return;
+
+
+        if ($this->link == NULL) {
+            echo odbc_error();
+            echo odbc_errormsg();
+            exit();
+        }
+        echo "<p>Connected with DSN: $this->_dsn</p>";
 		return $this->link;
 	}
 

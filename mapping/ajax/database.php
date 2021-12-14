@@ -9,6 +9,7 @@ setlocale (LC_TIME, "it_IT");
 $q = new Queries();
 
 $result = $q->showTable();
-
+echo $result;
+exit();
 ob_clean();
 echo json_encode($result, JSON_FORCE_OBJECT);
