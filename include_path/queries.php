@@ -16,10 +16,10 @@
 
 		public function showTable() {
 			$l = new ConnectDB('automotive_bi_data');
-            var_dump($l);
-            return;
 			// $l = new ConnectDB('Sql1073234_1');
-			$this->_result = $l->getResultArray("SHOW TABLES;");
+			// $this->_result = $l->getResultArray("SELECT descrizione FROM automotive_bi_data.Azienda LIMIT 10;");
+			$this->_result = $l->getResultArray("SELECT table_name FROM all_tables WHERE schema_name = 'automotive_bi_data';");
+			// $this->_result = $l->getResultArray("SHOW TABLES;");
 			// $this->_result = $l->getResultAssoc("SHOW TABLES;");
 			return $this->_result;
 		}

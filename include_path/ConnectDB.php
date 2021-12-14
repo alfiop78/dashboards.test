@@ -29,16 +29,13 @@ class ConnectDB {
 	protected function connect() {
 		/* $this->link = new mysqli($this->_host, $this->_u, $this->_p, $this->_schema) or die("Errore nella connessione al DB {$this->link->error}"); */
         $this->link = odbc_connect($this->_dsn,'','');
-        var_dump($this->link);
-        return;
-
 
         if ($this->link == NULL) {
             echo odbc_error();
             echo odbc_errormsg();
             exit();
         }
-        echo "<p>Connected with DSN: $this->_dsn</p>";
+        echo "Connected with DSN: $this->_dsn";
 		return $this->link;
 	}
 
@@ -47,9 +44,41 @@ class ConnectDB {
 		return $this->_link;
 	}
 
+	private function errortrap_odbc($conn, $query) {
+		if(!$rs = odbc_exec($conn,$query)) {
+	        echo "<br/>Failed to execute SQL: $query<br/>" . odbc_errormsg($conn);
+	    } else {
+	        echo "<br/>Success: " . $query;
+	    }
+	    ob_clean();
+	    return $rs;
+	}
+
 	function getResultRow($query) {
 		$this->link = $this->connect();
-		try {
+		/*function errortrap_odbc($conn, $sql) {
+		    if(!$rs = odbc_exec($conn,$sql)) {
+		        echo "<br/>Failed to execute SQL: $sql<br/>" . odbc_errormsg($conn);
+		    } else {
+		        echo "<br/>Success: " . $sql;
+		    }
+		    return $rs;
+		}*/
+		
+		# Get the data from the table and display it
+		if($result = $this->errortrap_odbc($this->link, $query)) {
+			var_dump($result);
+			$row = odbc_fetch_array($result);
+		    while($row = odbc_fetch_array($result) ) {
+		    	var_dump($row);
+		    	$rows[] = $row;
+		    }
+		}
+		return $rows;
+		# Close the ODBC connection
+		odbc_close($this->link);
+
+		/*try {
 			if (!$result = $this->link->query($query)) {
 				//throw new Exception("Errore nella query");
 				throw new DBError("Errore : ",$this->link->errno);
@@ -66,7 +95,7 @@ class ConnectDB {
 			echo $exc->getDetailError();
 		} catch (Exception $e) {
 			echo $e->getMessage();
-		}
+		}*/
 	}
 
 	function insert($query) {
@@ -148,6 +177,20 @@ class ConnectDB {
 
 	function getResultArray($query) {
 		$this->link = $this->connect();
+		// TODO: utilizzare il try...catch invece di errortrap_odbc()
+		if($result = $this->errortrap_odbc($this->link, $query)) {
+			// var_dump($result);
+			$row = odbc_fetch_array($result);
+		    while($row = odbc_fetch_array($result) ) {
+		    	// var_dump($row);
+		    	$rows[] = $row;
+		    }
+		}
+		ob_clean();
+		# Close the ODBC connection
+		odbc_close($this->link);
+		return $rows;
+		/*$this->link = $this->connect();
 		try {
 			if (!$result = $this->link->query($query)) {
 				//throw new Exception("Errore nella query");
@@ -165,7 +208,7 @@ class ConnectDB {
 			echo $exc->getDetailError();
 		} catch (Exception $e) {
 			echo $e->getMessage();
-		}
+		}*/
 	}
 
 	function getResultField($query) {

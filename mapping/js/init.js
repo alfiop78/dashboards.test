@@ -555,21 +555,23 @@ var dimension = new Dimension();
 			})
 			.then( (response) => response.json())
 			.then( (data) => {
-		        // console.log(data);
+		        console.log(data);
+		        // debugger;
 		        if (data) {
 		        	let ul = document.getElementById('tables');
 		        	for (const [key, value] of Object.entries(data)) {
+		        		// debugger;
 		        		let tmpl = document.getElementById('el');
 						let tmplContent = tmpl.content.cloneNode(true);
 						let element = tmplContent.querySelector('.element.card');
 						element.ondragstart = app.handlerDragStart;
 						element.id = 'table-' + key;
-						element.setAttribute('label', value[0]);
+						element.setAttribute('label', value.table_name);
 						ul.appendChild(element);
 						let span = document.createElement('span');
 						span.classList = 'elementSearch';
-						span.setAttribute('label', value[0]);
-						span.innerHTML = value[0];
+						span.setAttribute('label', value.table_name);
+						span.innerHTML = value.table_name;
 						element.appendChild(span);
 		        	}
 		        } else {
