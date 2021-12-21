@@ -372,13 +372,13 @@ var dimension = new Dimension();
 		cube.activeCard = {'ref': cardTable, 'tableName': cardTable.getAttribute('name')};
 		// quando aggiungo la tabella imposto da subito la colonna id in "columns"
 		dimension.activeCard = cardTable; // card attiva
-		const primaryKey = dimension.activeCard.querySelector('ul li[data-key="PRI"]');
-		dimension.field = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
+		const primaryKey = dimension.activeCard.querySelector('ul li[data-key="pk"]');
+        if (primaryKey) dimension.field = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
 		// dimension.columns = {field : primaryKey.getAttribute('label'), type : primaryKey.getAttribute('data-key')};
 		dimension.columns();
 		// dimension.columns = primaryKey.getAttribute('label');
 		// con l'attributo columns verrà mostrata l'icona "columns associata"
-		primaryKey.toggleAttribute('columns');
+		if (primaryKey) primaryKey.toggleAttribute('columns');
 		cube.mode('columns', 'Seleziona le colonne da mettere nel corpo della tabella');
 	};
 
@@ -606,7 +606,7 @@ var dimension = new Dimension();
 			})
 			.then( (response) => response.json())
 			.then( (data) => {
-		        // console.log(data);
+		        console.log(data);
 		        if (data) {
 		        	ulContainer.removeAttribute('hidden');
 		        	for ( const [key, value] of Object.entries(data)) {
@@ -616,14 +616,14 @@ var dimension = new Dimension();
 						let li = element.querySelector('li');
 						li.className = 'elementSearch';
 						// let iElement = element.querySelector('i');
-						li.innerText = value[0];
-						li.setAttribute('label', value[0]);
+						li.innerText = value.COLUMN_NAME;
+						li.setAttribute('label', value.COLUMN_NAME);
 						li.setAttribute('data-table-name', table);
 						// scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-						let pos = value[1].indexOf('(');
-						let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
-						li.setAttribute('data-type', type);
-						li.setAttribute('data-key', value[3]); // PRI : chiave primaria
+						// let pos = value[1].indexOf('(');
+						// let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
+						li.setAttribute('data-type', value.DATA_TYPE);
+						li.setAttribute('data-key', value.CONSTRAINT_NAME); // pk : chiave primaria
 						//li.setAttribute('data-table',cube.table);
 						li.id = key;
 						ulContainer.appendChild(element);

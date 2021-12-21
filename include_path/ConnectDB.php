@@ -180,7 +180,7 @@ class ConnectDB {
 		// TODO: utilizzare il try...catch invece di errortrap_odbc()
 		if($result = $this->errortrap_odbc($this->link, $query)) {
 			// var_dump($result);
-			$row = odbc_fetch_array($result);
+			/* $row = odbc_fetch_array($result); */
 		    while($row = odbc_fetch_array($result) ) {
 		    	// var_dump($row);
 		    	$rows[] = $row;

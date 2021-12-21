@@ -29,10 +29,13 @@
 			// https://dev.mysql.com/doc/refman/8.0/en/show-columns.html
 			$l = new ConnectDB('automotive_bi_data');
 			// $l = new ConnectDB('Sql1073234_1');
-			$query = "DESCRIBE $table;";
-			$this->_result = $l->getResultArray($query);
+			/* $query = "DESCRIBE $table;"; */
+            $query = "SELECT C.COLUMN_NAME, C.DATA_TYPE, C.IS_NULLABLE, CC.CONSTRAINT_NAME
+                FROM COLUMNS C LEFT JOIN CONSTRAINT_COLUMNS CC ON C.TABLE_ID=CC.TABLE_ID AND C.COLUMN_NAME=CC.COLUMN_NAME AND CC.CONSTRAINT_TYPE='p' WHERE C.TABLE_NAME = '$table' ORDER BY c.ordinal_position ASC;";
+			/* $this->_result = $l->getResultArray($query); */
 			// $this->_result = $l->getResultAssoc("SHOW TABLES;");
-			return $this->_result;
+			/* return $this->_result; */
+            return $l->getResultArray($query);
 		}
 
 		public function distinctValues($table, $field) {
