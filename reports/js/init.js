@@ -538,14 +538,14 @@ var StorageMetric = new MetricStorage();
 						const li = element.querySelector('li');
 						section.hidden = false;
 						section.setAttribute('data-searchable', true);
-						section.setAttribute('data-label-search', value[0]);
+						section.setAttribute('data-label-search', value.COLUMN_NAME);
 						section.setAttribute('data-table-name', Query.table);
-						li.innerText = value[0];
+						li.innerText = value.COLUMN_NAME;
 						// scrivo il tipo di dato senza specificare la lunghezza int(8) voglio che mi scriva solo int
-						let pos = value[1].indexOf('('); // datatype
-						let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
-						li.setAttribute('data-type', type);
-						li.setAttribute('label', value[0]); // nome campo
+						// let pos = value[1].indexOf('('); // datatype
+						// let type = (pos !== -1) ? value[1].substring(0, pos) : value[1];
+						li.setAttribute('data-type', value.DATA_TYPE);
+						li.setAttribute('label', value.COLUMN_NAME); // nome campo
 						ul.appendChild(section);
 						li.onclick = app.handlerFilterFieldSelected;
 						parent.appendChild(ul);
